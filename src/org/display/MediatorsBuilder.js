@@ -4,7 +4,7 @@
 define(function (require, exports, module) {
 	"use strict";
 	var DisplayList = require("./DisplayList");
-	var signals = require("../../bower_components/signals/dist/signals.min");
+	var signals = require("../../../bower_components/signals/dist/signals.min");
 	var CACHE = {};
 	var Utils = {
 		uid: [

@@ -3,7 +3,7 @@
  */
 define(function (require) {
 	"use strict";
-	var Mediator = require("../org/display/Mediator");
+	var Mediator = require("../../src/org/display/Mediator");
 
 	function MediatorC() {
 		Mediator.apply(this, arguments);

@@ -3,7 +3,7 @@
  */
 define(function (require, exports, module) {
 	"use strict";
-	var Mediator = require("../org/display/Mediator");
+	var Mediator = require("../../src/org/display/Mediator");
 
 
 	function MediatorB() {
@@ -17,12 +17,17 @@ define(function (require, exports, module) {
 		initialize: {
 			value: function () {
 				console.log("ModuleB" + this);
-				this.addContextListener("evento", this._handleEvento, this);
+				/**
+				 * a new listener is added.
+				 *
+				 */
+
+				this.addContextListener("evento", this._handleEvent, this);
 			}
 		},
-		_handleEvento: {
+		_handleEvent: {
 			value: function (e) {
-				console.log("_handleEvento", this);
+				console.log("_handleEvent", this);
 				//this.removeContextListener("evento", this._handleEvento);
 			}
 		},

@@ -6,6 +6,16 @@ define(function (require,exports,module) {
 	var EventDispatcher = require("../events/EventDispatcher");
 	var EventMap = require("../events/EventMap");
 
+	/**
+	 *
+	 *
+	 * @constructor
+	 * @param element {HTMLElement}
+	 *
+	 * @property element {HTMLElement}
+	 * @property eventMap {EventMap}
+	 * @property eventDispatcher {EventDispatcher}
+	 */
 	function Mediator(element) {
 		this.element = element;
 		this.eventMap = new EventMap();
@@ -22,17 +32,17 @@ define(function (require,exports,module) {
 		},
 		/**
 		 *
-		 * @param eventString
-		 * @param listener
-		 * @param scope
+		 * @param eventString {string}
+		 * @param listener {function}
+		 * @param scope {*} the context where 'this' is bind to
 		 */
 		addContextListener: function (eventString, listener,scope) {
 			this.eventMap.mapListener(this.eventDispatcher, eventString, listener,scope);
 		},
 		/**
 		 * @public
-		 * @param eventString
-		 * @param listener
+		 * @param eventString {string}
+		 * @param listener {function}
 		 */
 		removeContextListener: function (eventString, listener) {
 			this.eventMap.unmapListener(this.eventDispatcher, eventString, listener);
