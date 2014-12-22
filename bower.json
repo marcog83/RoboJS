@@ -1,0 +1,7 @@
+{
+  "name": "module-builder",
+  "dependencies": {
+
+    "signals": "~1.0.0"
+  }
+}
