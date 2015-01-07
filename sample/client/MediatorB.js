@@ -21,7 +21,6 @@ define(function (require, exports, module) {
 				 * a new listener is added.
 				 *
 				 */
-
 				this.addContextListener("evento", this._handleEvent, this);
 			}
 		},

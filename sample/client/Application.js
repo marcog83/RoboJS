@@ -76,7 +76,6 @@ define(function (require) {
 				 */
 				element.click(function (e) {
 					element.remove();
-
 				});
 				$("body").append(element);
 			});
@@ -84,9 +83,9 @@ define(function (require) {
 			 * this is an example of Event dispatching.
 			 * MediatorB listens to it. When a new MediatorB instance is created, a new console.log is shown.
 			 */
-			/*setInterval(function () {
-			 this.eventDispatcher.dispatchEvent("evento", {name: "evento"});
-			 }.bind(this), 4000);*/
+			setInterval(function () {
+				this.eventDispatcher.dispatchEvent("evento", {name: "evento"});
+			}.bind(this), 4000);
 		}
 	};
 	return new Application();
