@@ -109,9 +109,14 @@ No matter how you implement inheritance. I just played with Vanilla-js to keep a
 
 
 
+    // MediatorB.js
+    
+    var Mediator = require("../../src/org/display/Mediator");
+    
     function MediatorB() {
 		Mediator.apply(this, arguments);
 	}
+	
 	MediatorB.prototype = Object.create(Mediator.prototype, {
         constructor: {
             value: MediatorB
