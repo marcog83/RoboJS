@@ -99,3 +99,46 @@ To remove the listener you can do
     this.removeContextListener("event-name", this._handleEvent);
 
 When DOM element is removed from DOM Tree, Mediator removes all listeners registered to EventDispatcher and the `destroy` method is executed.  
+
+
+###Concrete Mediator
+
+You have to sub-class Mediator Class in order to code your logic. For example i define `MediatorB`. 
+
+No matter how you implement inheritance. I just played with Vanilla-js to keep as cleaner as possible 
+
+
+
+    function MediatorB() {
+		Mediator.apply(this, arguments);
+	}
+	MediatorB.prototype = Object.create(Mediator.prototype, {
+        constructor: {
+            value: MediatorB
+        },
+        initialize: {
+            value: function () {
+                console.log("MediatorB", this.element);
+                /**
+                 * a new listener is added.
+                 *
+                 */
+                this.addContextListener("event-name", this._handleEvent, this);
+            }
+        },
+        _handleEvent: {
+            value: function (e) {
+                console.log("_handleEvent", this);
+                // after the first fired event, the listener is removed.
+                this.removeContextListener("event-name", this._handleEvent);
+            }
+        },
+        destroy: {
+            value: function () {
+                console.log("destroy");
+            }
+        }
+    });
+   
+
+	
