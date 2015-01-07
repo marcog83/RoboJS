@@ -10,15 +10,16 @@ define(function (require) {
 	 create an array of jQuery elements to append to the body on "click"
 	 */
 	var elements = [];
-	elements.push($("<div data-mediator='mediator-a'><ul><li>lista a caso</li></ul></div>"));
-	elements.push($("<div>" +
-	"<ul data-mediator='mediator-b'>" +
-	"<li>lista a caso</li>" +
-	"</ul>" +
-	"</div>"));
+	elements.push($("<div data-mediator='mediator-c'><ul><li>lista a caso</li></ul></div>"));
+	elements.push($('<div data-mediator="mediator-a">' +
+	'<div data-mediator="mediator-a">' +
+	' <div data-mediator="mediator-b">aab' +
+	'</div>' +
+	' </div>	' +
+	'</div>'));
 	elements.push($("<div data-mediator='mediator-a'>primo nodo</div><div data-mediator='mediator-c'>mediator c</div><span data-mediator='mediator-b'></span>"));
 	/*
-	helper function to get a random number from min to max
+	 helper function to get a random number from min to max
 	 */
 	function getRandomArbitrary(min, max) {
 		return Math.round(Math.random() * (max - min) + min);
@@ -54,7 +55,6 @@ define(function (require) {
 			 * The Signal argument is an Array of Mediator instances
 			 */
 			builder.onAdded.add(function (mediators) {
-
 				console.log("Mediators added async", mediators);
 			});
 			/**
@@ -69,7 +69,6 @@ define(function (require) {
 			 */
 			$(".add-button").on("click", function () {
 				var index = getRandomArbitrary(0, 2);
-
 				var element = elements[index];
 				/**
 				 * when an element is clicked, it will be removed.
@@ -77,8 +76,7 @@ define(function (require) {
 				 */
 				element.click(function (e) {
 					element.remove();
-					e.preventDefault();
-					e.stopPropagation();
+
 				});
 				$("body").append(element);
 			});
@@ -86,9 +84,9 @@ define(function (require) {
 			 * this is an example of Event dispatching.
 			 * MediatorB listens to it. When a new MediatorB instance is created, a new console.log is shown.
 			 */
-			setInterval(function () {
-				this.eventDispatcher.dispatchEvent("evento", {name: "evento"});
-			}.bind(this), 4000);
+			/*setInterval(function () {
+			 this.eventDispatcher.dispatchEvent("evento", {name: "evento"});
+			 }.bind(this), 4000);*/
 		}
 	};
 	return new Application();

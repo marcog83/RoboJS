@@ -16,7 +16,7 @@ define(function (require, exports, module) {
 		},
 		initialize: {
 			value: function () {
-				console.log("ModuleB" + this);
+				console.log("MediatorB", this.element);
 				/**
 				 * a new listener is added.
 				 *

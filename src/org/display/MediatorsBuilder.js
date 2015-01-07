@@ -4,7 +4,9 @@
 define(function (require, exports, module) {
 	"use strict";
 	var DisplayList = require("./DisplayList");
+	var ScriptLoader = require("../net/ScriptLoader");
 	var signals = require("../../../bower_components/signals/dist/signals.min");
+	var _ = require("../../../bower_components/lodash/dist/lodash.min");
 	var CACHE = {};
 	var Utils = {
 		uid: [
@@ -45,54 +47,42 @@ define(function (require, exports, module) {
 
 	MediatorsBuilder.prototype = {
 		getMediators: function (target) {
-			target = target || document;
-			var promises = [];
-			this.definitions.forEach(function (definition) {
-				var nodes = this.findNodes(definition.id, target);
-				if (nodes.length) {
-					var promise = this._getMediator(definition, nodes);
-					promises.push(promise);
-				}
+			target = target || document.body;
+			// find every children and transform from NodeList to Array
+			var nodes = [].slice.call(target.getElementsByTagName("*"), 0);
+			// add the target as first
+			nodes.unshift(target);
+			// find the promises for each Mediator
+			// for each node it increase the result Array (3^ parameter) and return it to promises.
+			var promises = _.reduce(nodes, this._findMediators.bind(this), []);
+			return Promise.all(promises);
+		},
+		_findMediators: function (result, node, index) {
+			// prefill _initMediator with node parameter
+			var _partialInit = _.partial(this._initMediator, node);
+			// filter definitions based on actual Node
+			var filtered = _.filter(this.definitions, function (def) {
+				return node.dataset && node.dataset.mediator == def.id;
+			});
+			// once you get the Mediator you need, load the specific script.
+			var mediators = _.map(filtered, function (def) {
+				return ScriptLoader.require(def.mediator).then(_partialInit);
 			}.bind(this));
-			return Promise.all(promises).then(this._bootstrapMediators.bind(this));
+			// add mediators promise to the result Array
+			return result.concat(mediators);
 		},
-		_bootstrapMediators: function (mediators) {
-			var _instances = [];
-			mediators.forEach(function (def) {
-				[].forEach.call(def.nodes, function (node) {
-					var mediatorId = Utils.nextUid();
-					node.dataset = node.dataset || {};
-					node.dataset.mediatorId = mediatorId;
-					var _mediator = new def.Mediator(node);
-					_mediator.id = mediatorId;
-					CACHE[mediatorId] = _mediator;
-					_mediator.initialize();
-					_instances.push(_mediator);
-				});
-			});
-			return _instances;
-		},
-		findNodes: function (id, target) {
-			var _found = [];
-			if (target.dataset && target.dataset.mediator == id) {
-				_found = [target];
-			} else {
-				_found = target.querySelectorAll("[data-mediator=" + id + "]");
-			}
-			return _found;
-		},
-		_getMediator: function (definition, nodes) {
-			return new Promise(function (resolve, reject) {
-				require([definition.mediator], function (Mediator) {
-					resolve({
-						Mediator: Mediator,
-						nodes: nodes
-					});
-				});
-			});
+		_initMediator: function (node, Mediator) {
+			var mediatorId = Utils.nextUid();
+			node.dataset = node.dataset || {};
+			node.dataset.mediatorId = mediatorId;
+			var _mediator = new Mediator(node);
+			_mediator.id = mediatorId;
+			CACHE[mediatorId] = _mediator;
+			_mediator.initialize();
+			return _mediator;
 		},
 		_handleNodesAdded: function (nodes) {
-			[].forEach.call(nodes, function (node) {
+			_.forEach(nodes, function (node) {
 				this.getMediators(node).then(function (mediators) {
 					if (mediators.length) {
 						this.onAdded.dispatch(mediators);

@@ -13,7 +13,7 @@ define(function (require, exports, module) {
 		 
 		initialize: {
 			value: function () {
-				console.log("MediatorA", this.eventMap);
+				console.log("MediatorA", this.element);
 			}
 		}
 	});
