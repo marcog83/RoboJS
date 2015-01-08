@@ -5,8 +5,8 @@ define(function (require, exports, module) {
 	"use strict";
 	var DisplayList = require("./DisplayList");
 	var ScriptLoader = require("../net/ScriptLoader");
-	var signals = require("../../../bower_components/signals/dist/signals.min");
-	var _ = require("../../../bower_components/lodash/dist/lodash.min");
+	var signals = require("signals");
+	var _ = require("lodash");
 	var CACHE = {};
 	var Utils = {
 		uid: [
