@@ -12,6 +12,7 @@ You set a `data-mediator` attribute with an ID (whatever you want)
 
 in `MediatorsMap.js` you define an Array that maps an ID and a Mediator path
 
+ ``` 
     [
         {
             "id": "mediator-a",
@@ -26,6 +27,7 @@ in `MediatorsMap.js` you define an Array that maps an ID and a Mediator path
             "mediator": "client/MediatorC"
         }
     ]
+ ``` 
     	
 For instance in this sample I mapped 3 different Mediators.
 
@@ -33,45 +35,47 @@ When the builder finds a match between a `data-mediator` attribute and an ID fro
 it will create a new instance of Mediator, storing the DOM Node into a property named `element` and executes `initialize` method
 
 ###Example:
-    
-    // main.js
-    
-    var MediatorsBuilder = require("../../src/org/display/MediatorsBuilder");
-    var MediatorsMap = require("./MediatorsMap");
-    
-    // create an instance of MediatorsBuilder passing the map of Mediators.
-    var builder = new MediatorsBuilder(MediatorsMap);
-   
-    /*
-     * get the mediators and return a promise.
-     * The promise argument is an Array of Mediator instances
-     *
-     */
-    builder.getMediators().then(function (mediators) {
-        console.log("Mediators loaded", mediators);
-    }).catch(function (e) {
-        console.log(e);
-    });
-    
-    /*
-     * when new DOM nodes are added to the document MutationObserver notify it, and a onAdded Signal is dispatched.
-     * The Signal argument is an Array of Mediator instances
-     *
-     */
-     
-    builder.onAdded.add(function (mediators) {
-        console.log("Mediators added async", mediators);
-    });
-    
-    /*
-     * when new DOM nodes are removed from the document MutationObserver notify it, and a onRemoved Signal is dispatched.
-     * The Signal argument is an instances of Mediator.
-     *
-     */
-     
-    builder.onRemoved.add(function (mediator) {
-        console.log("Mediators onRemoved async", mediator);
-    });
+
+```    
+// Application.js
+
+var MediatorsBuilder = require("../../src/org/display/MediatorsBuilder");
+var MediatorsMap = require("./MediatorsMap");
+
+// create an instance of MediatorsBuilder passing the map of Mediators.
+var builder = new MediatorsBuilder(MediatorsMap);
+
+/*
+ * get the mediators and return a promise.
+ * The promise argument is an Array of Mediator instances
+ *
+ */
+builder.getMediators().then(function (mediators) {
+    console.log("Mediators loaded", mediators);
+}).catch(function (e) {
+    console.log(e);
+});
+
+/*
+ * when new DOM nodes are added to the document MutationObserver notify it, and a onAdded Signal is dispatched.
+ * The Signal argument is an Array of Mediator instances
+ *
+ */
+ 
+builder.onAdded.add(function (mediators) {
+    console.log("Mediators added async", mediators);
+});
+
+/*
+ * when new DOM nodes are removed from the document MutationObserver notify it, and a onRemoved Signal is dispatched.
+ * The Signal argument is an instances of Mediator.
+ *
+ */
+ 
+builder.onRemoved.add(function (mediator) {
+    console.log("Mediators onRemoved async", mediator);
+});
+```
     
 #EventDispatcher Class.
 The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
