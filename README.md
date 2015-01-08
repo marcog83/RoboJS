@@ -12,22 +12,22 @@ You set a `data-mediator` attribute with an ID (whatever you want)
 
 in `MediatorsMap.js` you define an Array that maps an ID and a Mediator path
 
- ``` 
-    [
-        {
-            "id": "mediator-a",
-            "mediator": "client/MediatorA"
-        },
-        {
-            "id": "mediator-b",
-            "mediator": "client/MediatorB"
-        },
-        {
-            "id": "mediator-c",
-            "mediator": "client/MediatorC"
-        }
-    ]
- ``` 
+``` 
+[
+    {
+        "id": "mediator-a",
+        "mediator": "client/MediatorA"
+    },
+    {
+        "id": "mediator-b",
+        "mediator": "client/MediatorB"
+    },
+    {
+        "id": "mediator-c",
+        "mediator": "client/MediatorC"
+    }
+]
+``` 
     	
 For instance in this sample I mapped 3 different Mediators.
 
@@ -91,16 +91,20 @@ This way it can dispatch / listen to messages in your application.
 
 Usually events are registered in `initialize` function
 
-    // 'event-name' is a String.
-    // this._handleEvent is the listener function.
-    // this is the scope of listener.
-    this.addContextListener("event-name", this._handleEvent, this);
+```
+// 'event-name' is a String.
+// this._handleEvent is the listener function.
+// this is the scope of listener.
+this.addContextListener("event-name", this._handleEvent, this);
+```
 
 To remove the listener you can do 
 
-    // 'event-name' is a String.
-    // this._handleEvent is the listener function.
-    this.removeContextListener("event-name", this._handleEvent);
+```
+// 'event-name' is a String.
+// this._handleEvent is the listener function.
+this.removeContextListener("event-name", this._handleEvent);
+```
 
 When DOM element is removed from DOM Tree, Mediator removes all listeners registered to EventDispatcher and the `destroy` method is executed.  
 
@@ -112,42 +116,42 @@ You have to sub-class Mediator Class in order to code your logic. For example i 
 No matter how you implement inheritance. I just played with Vanilla-js to keep as cleaner as possible 
 
 
+```
+// MediatorB.js
 
-    // MediatorB.js
-    
-    var Mediator = require("../../src/org/display/Mediator");
-    
-    function MediatorB() {
-		Mediator.apply(this, arguments);
-	}
-	
-	MediatorB.prototype = Object.create(Mediator.prototype, {
-        constructor: {
-            value: MediatorB
-        },
-        initialize: {
-            value: function () {
-                console.log("MediatorB", this.element);
-                /**
-                 * a new listener is added.
-                 *
-                 */
-                this.addContextListener("event-name", this._handleEvent, this);
-            }
-        },
-        _handleEvent: {
-            value: function (e) {
-                console.log("_handleEvent", this);
-                // after the first fired event, the listener is removed.
-                this.removeContextListener("event-name", this._handleEvent);
-            }
-        },
-        destroy: {
-            value: function () {
-                console.log("destroy");
-            }
+var Mediator = require("../../src/org/display/Mediator");
+
+function MediatorB() {
+    Mediator.apply(this, arguments);
+}
+
+MediatorB.prototype = Object.create(Mediator.prototype, {
+    constructor: {
+        value: MediatorB
+    },
+    initialize: {
+        value: function () {
+            console.log("MediatorB", this.element);
+            /**
+             * a new listener is added.
+             *
+             */
+            this.addContextListener("event-name", this._handleEvent, this);
         }
-    });
-   
+    },
+    _handleEvent: {
+        value: function (e) {
+            console.log("_handleEvent", this);
+            // after the first fired event, the listener is removed.
+            this.removeContextListener("event-name", this._handleEvent);
+        }
+    },
+    destroy: {
+        value: function () {
+            console.log("destroy");
+        }
+    }
+});
+```
 
 	
