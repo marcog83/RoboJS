@@ -68,7 +68,7 @@ define(function (require) {
 			 * on click a new random element is added to the DOM tree
 			 */
 			$(".add-button").on("click", function () {
-				var index = getRandomArbitrary(0, 2);
+				var index =1; //getRandomArbitrary(0, 2);
 				var element = elements[index];
 				/**
 				 * when an element is clicked, it will be removed.

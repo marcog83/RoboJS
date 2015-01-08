@@ -61,13 +61,15 @@ define(function (require, exports, module) {
 			// prefill _initMediator with node parameter
 			var _partialInit = _.partial(this._initMediator, node);
 			// filter definitions based on actual Node
-			var filtered = _.filter(this.definitions, function (def) {
-				return node.dataset && node.dataset.mediator == def.id;
-			});
-			// once you get the Mediator you need, load the specific script.
-			var mediators = _.map(filtered, function (def) {
-				return ScriptLoader.require(def.mediator).then(_partialInit);
-			}.bind(this));
+
+			// once you get the Mediators you need, load the specific script.
+			var mediators = _.chain(this.definitions)
+				.filter(function (def) {
+					return node.dataset && node.dataset.mediator == def.id;
+				})
+				.map(function (def) {
+					return ScriptLoader.require(def.mediator).then(_partialInit);
+				}).value();
 			// add mediators promise to the result Array
 			return result.concat(mediators);
 		},
@@ -91,13 +93,14 @@ define(function (require, exports, module) {
 			}.bind(this));
 		},
 		_handleNodesRemoved: function (nodes) {
-			[].forEach.call(nodes, function (node) {
-				if (node.dataset && node.dataset.mediator) {
-					this._destroyMediator(node);
-				} else {
-					[].forEach.call(node.querySelectorAll("[data-mediator]"), this._destroyMediator.bind(this));
-				}
-			}.bind(this));
+			_.chain(nodes)
+				.reduce(this._reduceNodesRemoved, [])
+				.forEach(this._destroyMediator.bind(this))
+		},
+		_reduceNodesRemoved: function (result, node) {
+			var n = [].slice.call(node.getElementsByTagName("*"), 0);
+			n.unshift(node);
+			return result.concat(n);
 		},
 		_destroyMediator: function (node) {
 			var mediatorId = node.dataset && node.dataset.mediatorId;
