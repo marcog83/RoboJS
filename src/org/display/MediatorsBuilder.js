@@ -7,6 +7,7 @@ define(function (require, exports, module) {
 	var ScriptLoader = require("../net/ScriptLoader");
 	var signals = require("signals");
 	var _ = require("lodash");
+	var Promise = require("bluebird");
 	var CACHE = {};
 	var Utils = {
 		uid: [

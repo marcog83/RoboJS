@@ -3,6 +3,7 @@
  */
 define(function (require, exports, module) {
 	"use strict";
+	var Promise = require("bluebird");
 	function ScriptLoader() {}
 
 	ScriptLoader.prototype = {
