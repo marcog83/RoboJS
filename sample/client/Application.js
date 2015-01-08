@@ -5,7 +5,7 @@ define(function (require) {
 	"use strict";
 	var MediatorsBuilder = require("../../src/org/display/MediatorsBuilder"),
 		MediatorsMap = require("./MediatorsMap");
-	var EventDispatcher = require("../../src/org/events/EventDispatcher");
+	var EventDispatcher = require("../../bower_components/EventDispatcher/org/events/EventDispatcher");
 	/*
 	 create an array of jQuery elements to append to the body on "click"
 	 */

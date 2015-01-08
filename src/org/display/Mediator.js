@@ -3,7 +3,7 @@
  */
 define(function (require,exports,module) {
 	"use strict";
-	var EventDispatcher = require("../events/EventDispatcher");
+	var EventDispatcher = require("../../../bower_components/EventDispatcher/org/events/EventDispatcher");
 	var EventMap = require("../events/EventMap");
 
 	/**

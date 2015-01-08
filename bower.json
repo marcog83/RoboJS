@@ -3,6 +3,8 @@
   "dependencies": {
     "signals": "~1.0.0",
     "requirejs": "~2.1.15",
-    "lodash": "~2.4.1"
-  }
+    "lodash": "~2.4.1",
+    "EventDispatcher": "https://github.com/marcog83/EventDispatcher.git"
+  },
+  "ignore": [ "./sample/**" ]
 }
