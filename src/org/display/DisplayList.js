@@ -3,8 +3,8 @@
  */
 define(function (require, exports, module) {
 	"use strict";
-	var signals = require("../../../bower_components/signals/dist/signals.min");
-	var _ = require("../../../bower_components/lodash/dist/lodash.min");
+	var signals = require("signals");
+	var _ = require("lodash");
 
 	function DisplayList() {
 		this.onAdded = new signals.Signal();
