@@ -45,7 +45,7 @@ define(function (require) {
 			 * get the mediators and return a promise.
 			 * The promise argument is an Array of Mediator instances
 			 */
-			builder.getMediators().then(function (mediators) {
+			builder.bootstrap().then(function (mediators) {
 				console.log("Mediators loaded", mediators);
 			}).catch(function (e) {
 				console.log(e);
@@ -68,8 +68,11 @@ define(function (require) {
 			 * on click a new random element is added to the DOM tree
 			 */
 			$(".add-button").on("click", function () {
-				var index =1; //getRandomArbitrary(0, 2);
-				var element = elements[index];
+				var index = getRandomArbitrary(0, 2);
+				// NB if you don't clone the element, the same element will be
+				// first removed from tree (and mediator is destroyed too)
+				// then attached to body again (and a new mediator is created)
+				var element = elements[index].clone();
 				/**
 				 * when an element is clicked, it will be removed.
 				 * Every Mediators will be removed too.
@@ -77,6 +80,7 @@ define(function (require) {
 				element.click(function (e) {
 					element.remove();
 				});
+
 				$("body").append(element);
 			});
 			/**

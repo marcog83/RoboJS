@@ -47,22 +47,24 @@ define(function (require, exports, module) {
 	}
 
 	MediatorsBuilder.prototype = {
+		bootstrap: function () {
+			return this.getMediators([document.body]);
+		},
 		getMediators: function (target) {
-			target = target || document.body;
-			// find every children and transform from NodeList to Array
-			var nodes = [].slice.call(target.getElementsByTagName("*"), 0);
-			// add the target as first
-			nodes.unshift(target);
+			var promises = _.chain(target)
+				.reduce(this._reduceNodes, [])
+				.reduce(this._findMediators.bind(this), [])
+				.value();
+			// find every children
+			//
 			// find the promises for each Mediator
 			// for each node it increase the result Array (3^ parameter) and return it to promises.
-			var promises = _.reduce(nodes, this._findMediators.bind(this), []);
 			return Promise.all(promises);
 		},
 		_findMediators: function (result, node, index) {
 			// prefill _initMediator with node parameter
 			var _partialInit = _.partial(this._initMediator, node);
 			// filter definitions based on actual Node
-
 			// once you get the Mediators you need, load the specific script.
 			var mediators = _.chain(this.definitions)
 				.filter(function (def) {
@@ -85,20 +87,19 @@ define(function (require, exports, module) {
 			return _mediator;
 		},
 		_handleNodesAdded: function (nodes) {
-			_.forEach(nodes, function (node) {
-				this.getMediators(node).then(function (mediators) {
-					if (mediators.length) {
-						this.onAdded.dispatch(mediators);
-					}
-				}.bind(this));
+			this.getMediators(nodes).then(function (mediators) {
+				if (mediators.length) {
+					this.onAdded.dispatch(mediators);
+				}
 			}.bind(this));
 		},
 		_handleNodesRemoved: function (nodes) {
+			console.log("_handleNodesRemoved");
 			_.chain(nodes)
-				.reduce(this._reduceNodesRemoved, [])
+				.reduce(this._reduceNodes, [])
 				.forEach(this._destroyMediator.bind(this))
 		},
-		_reduceNodesRemoved: function (result, node) {
+		_reduceNodes: function (result, node) {
 			var n = [].slice.call(node.getElementsByTagName("*"), 0);
 			n.unshift(node);
 			return result.concat(n);
