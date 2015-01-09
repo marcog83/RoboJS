@@ -1,0 +1,8 @@
+{
+  "name": "RoboJS",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "load-grunt-config": "^0.16.0",
+    "path": "^0.11.14"
+  }
+}
