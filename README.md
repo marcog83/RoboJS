@@ -5,14 +5,14 @@ It started as a sample of how MutationObserver works.
 
 #How it works.
 You set a `data-mediator` attribute with an ID (whatever you want)
-
+```html
     <div data-mediator="mediator-a">a-2</div>
     <div data-mediator="mediator-b">b-1</div>
     <div data-mediator="mediator-c">c-1</div>
-
+```
 in `MediatorsMap.js` you define an Array that maps an ID and a Mediator path
 
-``` 
+```javascript
 [
     {
         "id": "mediator-a",
@@ -36,7 +36,7 @@ it will create a new instance of Mediator, storing the DOM Node into a property 
 
 ###Example:
 
-```    
+```javascript
 // Application.js
 
 var MediatorsBuilder = require("../../src/org/display/MediatorsBuilder");
@@ -91,7 +91,7 @@ This way it can dispatch / listen to messages in your application.
 
 Usually events are registered in `initialize` function
 
-```
+```javascript
 // 'event-name' is a String.
 // this._handleEvent is the listener function.
 // this is the scope of listener.
@@ -100,7 +100,7 @@ this.addContextListener("event-name", this._handleEvent, this);
 
 To remove the listener you can do 
 
-```
+```javascript
 // 'event-name' is a String.
 // this._handleEvent is the listener function.
 this.removeContextListener("event-name", this._handleEvent);
@@ -116,7 +116,7 @@ You have to sub-class Mediator Class in order to code your logic. For example i 
 No matter how you implement inheritance. I just played with Vanilla-js to keep as cleaner as possible 
 
 
-```
+```javascript
 // MediatorB.js
 
 var Mediator = require("../../src/org/display/Mediator");
