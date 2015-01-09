@@ -50,7 +50,7 @@ var builder = new MediatorsBuilder(MediatorsMap);
  * The promise argument is an Array of Mediator instances
  *
  */
-builder.getMediators().then(function (mediators) {
+builder.bootstrap().then(function (mediators) {
     console.log("Mediators loaded", mediators);
 }).catch(function (e) {
     console.log(e);
