@@ -187,9 +187,10 @@ MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 
 RoboJS depends on 3 third-party libraries
 
- * [Lodash](https://lodash.com/) One of my favorites library!
+ * [Lodash](https://lodash.com/) One of my favorite library!
  * [Signals](http://millermedeiros.github.com/js-signals/) You must look at this messaging system!
  * [bluebird](https://github.com/petkaantonov/bluebird) Because Promise is Promise!
+ * [RequireJS](http://requirejs.org/) I <3 U!!!
 
 
 
