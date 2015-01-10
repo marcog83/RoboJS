@@ -3,13 +3,14 @@
  */
 module.exports={
     options: {
+        compress: {
+            drop_console: true
+        },
+        sourceMap: true,
         stripbanners: true,
         banner: '<%= banner.compact %>',
         mangle: {
             except: ['RoboJS']
-        },
-        beautify: {
-            ascii_only: true
         }
     },
     dist: {
