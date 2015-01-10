@@ -4,7 +4,7 @@
 module.exports={
     options: {
         stripbanners: true,
-       // banner: '<%= banner.compact %>',
+        banner: '<%= banner.compact %>',
         mangle: {
             except: ['RoboJS']
         },
