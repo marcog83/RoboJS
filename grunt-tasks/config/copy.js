@@ -4,7 +4,7 @@
 module.exports={
     build: {
         files: {
-            'dist/robojs-build.js': 'build/src/robojs-build.js'
+            'dist/robojs.js': 'build/src/robojs-build.js'
         }
     }
 };

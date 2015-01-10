@@ -13,7 +13,7 @@ module.exports={
         }
     },
     dist: {
-        src: ['dist/robojs-build.js'],
-        dest: 'dist/robojs-build.min.js'
+        src: ['dist/robojs.js'],
+        dest: 'dist/robojs.min.js'
     }
 };
