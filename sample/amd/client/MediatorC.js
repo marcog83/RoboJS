@@ -3,13 +3,13 @@
  */
 define(function (require) {
 	"use strict";
-	var Mediator = require("../../src/org/display/Mediator");
+	var RoboJS=require("RoboJS");
 
 	function MediatorC() {
-		Mediator.apply(this, arguments);
+		RoboJS.display.Mediator.apply(this, arguments);
 	}
 
-	MediatorC.prototype = Object.create(Mediator.prototype, {
+	MediatorC.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 		initialize: {
 			value:function () {
 				console.log("ModuleC: " + this.element.innerHTML);

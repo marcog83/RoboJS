@@ -426,10 +426,11 @@
                 mediator.destroy && mediator.destroy();
                 mediator.postDestroy && mediator.postDestroy();
                 mediator.element && (mediator.element = null);
+                this.onRemoved.dispatch(mediator);
+                RoboJS.MEDIATORS_CACHE[mediatorId] = null;
+                mediator = null;
             }
-            this.onRemoved.dispatch(mediator);
-            RoboJS.MEDIATORS_CACHE[mediatorId] = null;
-            mediator = null;
+
         }
     };
     
