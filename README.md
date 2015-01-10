@@ -76,6 +76,34 @@ builder.onRemoved.add(function (mediator) {
     console.log("Mediators onRemoved async", mediator);
 });
 ```
+
+In this example `bootstrap` method scans `document.body` looking for `data-mediator` attribute
+
+But let's say... you dynamically attached some elements to the DOM.
+Well MutationObserver notify it and the `MediatorsBuilder` takes care to create the right Mediators.
+
+```javascript
+/**
+ * on click a new random element is added to the DOM tree
+ */
+$(".add-button").on("click", function () {
+
+    var element = $('<div data-mediator="mediator-b"></div>');
+    /**
+     * when an element is clicked, it will be removed.
+     * Every Mediators will be removed too.
+     */
+    element.click(function (e) {
+        element.remove();
+    });
+
+    $("body").append(element);
+});
+```
+
+`sample folder` contains a working example with more use cases, nested and sibling nodes
+
+
     
 #EventDispatcher Class.
 The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
