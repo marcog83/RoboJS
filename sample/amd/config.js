@@ -6,7 +6,7 @@ requirejs.config({
 		signals: "../../bower_components/signals/dist/signals.min",
 		lodash: "../../bower_components/lodash/dist/lodash.min",
 		bluebird: "../../bower_components/bluebird/js/browser/bluebird.min",
-		RoboJS: "../../dist/robojs"
+		RoboJS: "../../dist/robojs.min"
 
 	}
 });

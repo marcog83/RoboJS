@@ -141,7 +141,7 @@ MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
     },
     _handleEvent: {
         value: function (e) {
-            
+
             // after the first fired event, the listener is removed.
             this.removeContextListener("event-name", this._handleEvent);
         }
@@ -155,3 +155,38 @@ MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 ```
 
 	
+###Dependencies
+
+RoboJS depends on 3 third-party libraries
+
+ * [Lodash](https://lodash.com/) One of my favorites library!
+ * [Signals](http://millermedeiros.github.com/js-signals/) You must look at this messaging system!
+ * [bluebird](https://github.com/petkaantonov/bluebird) Because Promise is Promise!
+
+
+
+This is an example how you can set dependencies in AMD with RequireJS
+
+```javascript
+
+requirejs.config({
+	paths: {
+		signals: "../../bower_components/signals/dist/signals.min",
+		lodash: "../../bower_components/lodash/dist/lodash.min",
+		bluebird: "../../bower_components/bluebird/js/browser/bluebird.min",
+        RoboJS: "../../dist/robojs.min"
+	}
+});
+
+```
+
+or using Globals
+
+```html
+
+<script src="../../bower_components/signals/dist/signals.min.js"></script>
+<script src="../../bower_components/lodash/dist/lodash.min.js"></script>
+<script src="../../bower_components/bluebird/js/browser/bluebird.min.js"></script>
+<script src="../../dist/robojs.min.js"></script>
+
+```
