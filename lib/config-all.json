@@ -1,0 +1,7 @@
+{
+  "modules": [
+    "./org/display/namespace",
+    "./org/events/namespace",
+    "./org/net/namespace"
+  ]
+}

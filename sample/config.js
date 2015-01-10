@@ -5,8 +5,8 @@ requirejs.config({
 	paths: {
 		signals: "../bower_components/signals/dist/signals.min",
 		lodash: "../bower_components/lodash/dist/lodash.min",
-		bluebird: "../bower_components/bluebird/js/browser/bluebird.min",
-		EventDispatcher: "../bower_components/EventDispatcher/org/events/EventDispatcher"
+		bluebird: "../bower_components/bluebird/js/browser/bluebird.min"
+
 	}
 });
 require([
