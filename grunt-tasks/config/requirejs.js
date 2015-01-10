@@ -23,7 +23,7 @@ module.exports = {
                 'include': ['robojs-init'],
                 'create': true
             }],
-            fileExclusionRegExp: /^(.git|node_modules|modulizr|media|test)$/,
+            fileExclusionRegExp: /^(.git|node_modules|bower_components|grunt-tasks|dist|test|sample)$/,
             wrap: {
                 startFile: "src/intro.js",
                 endFile: "src/outro.js"

@@ -1,9 +1,9 @@
 /**
  * Created by marco.gobbi on 18/12/2014.
  */
-define(function (require, exports, module) {
+define(["./EventMapConfig"],function (EventMapConfig) {
 	"use strict";
-	var EventMapConfig = require("./EventMapConfig");
+
 
 	function EventMap() {
 		this._listeners = [];
@@ -67,5 +67,5 @@ define(function (require, exports, module) {
 			}
 		}
 	};
-	module.exports = EventMap;
+	return EventMap;
 });

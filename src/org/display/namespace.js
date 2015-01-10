@@ -3,7 +3,7 @@
  */
 define(["../core", "./DisplayList", "./Mediator", "./MediatorsBuilder"], function (RoboJS, DisplayList, Mediator, MediatorsBuilder) {
 
-    RoboJS.org.display = {
+    RoboJS.display = {
         DisplayList: DisplayList,
         Mediator: Mediator,
         MediatorsBuilder: MediatorsBuilder

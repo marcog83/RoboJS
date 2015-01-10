@@ -1,7 +1,7 @@
 /**
  * Created by marco on 10/01/2015.
  */
-define(function (require, exports, module) {
+define([],function () {
     "use strict";
     function EventDispatcher() {
         this._currentListeners = {};
@@ -69,13 +69,13 @@ define(function (require, exports, module) {
             }
         }
     };
-    var ____instance;
+    EventDispatcher.__instance=null;
     EventDispatcher.getInstance = function () {
 
-        if (!____instance) {
-            ____instance = new EventDispatcher();
+        if (!EventDispatcher.__instance) {
+            EventDispatcher.__instance = new EventDispatcher();
         }
-        return ____instance;
+        return EventDispatcher.__instance;
     };
-    module.exports = EventDispatcher;
+    return EventDispatcher;
 });

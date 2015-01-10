@@ -1,7 +1,7 @@
 /**
  * Created by marco.gobbi on 18/12/2014.
  */
-define(function (require,exports,module) {
+define([],function () {
 	"use strict";
 	function EventMapConfig(dispatcher, eventString, listener, callback,scope) {
 		this.dispatcher = dispatcher;
@@ -20,5 +20,5 @@ define(function (require,exports,module) {
 			//&& this.useCapture == useCapture;
 		}
 	};
-	module.exports = EventMapConfig;
+	return EventMapConfig;
 });

@@ -3,7 +3,7 @@
  */
 define(["../core", "./EventMap", "./EventMapConfig","./EventDispatcher"], function (RoboJS, EventMap, EventMapConfig,EventDispatcher) {
 
-    RoboJS.org.events = {
+    RoboJS.events = {
         EventDispatcher: EventDispatcher,
         EventMap: EventMap,
         EventMapConfig: EventMapConfig

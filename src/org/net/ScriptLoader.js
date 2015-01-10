@@ -1,19 +1,20 @@
 /**
  * Created by marco.gobbi on 07/01/2015.
  */
-define(function (require, exports, module) {
-	"use strict";
-	var Promise = require("bluebird");
-	function ScriptLoader() {}
+define(["bluebird"], function (Promise) {
+    "use strict";
 
-	ScriptLoader.prototype = {
-		require: function (id) {
-			return new Promise(function (resolve, reject) {
-				require([id], function (Mediator) {
-					resolve(Mediator);
-				});
-			});
-		}
-	};
-	module.exports = new ScriptLoader();
+    function ScriptLoader() {
+    }
+
+    ScriptLoader.prototype = {
+        get: function (id) {
+            return new Promise(function (resolve, reject) {
+                require([id], function (Mediator) {
+                    resolve(Mediator);
+                });
+            });
+        }
+    };
+    return ScriptLoader;
 });
