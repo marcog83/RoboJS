@@ -39,11 +39,11 @@ it will create a new instance of Mediator, storing the DOM Node into a property 
 ```javascript
 // Application.js
 
-var MediatorsBuilder = require("../../src/org/display/MediatorsBuilder");
+var RoboJS=require("RoboJS");
 var MediatorsMap = require("./MediatorsMap");
 
 // create an instance of MediatorsBuilder passing the map of Mediators.
-var builder = new MediatorsBuilder(MediatorsMap);
+var builder = new RoboJS.display.MediatorsBuilder(MediatorsMap);
 
 /*
  * get the mediators and return a promise.
@@ -119,19 +119,19 @@ No matter how you implement inheritance. I just played with Vanilla-js to keep a
 ```javascript
 // MediatorB.js
 
-var Mediator = require("../../src/org/display/Mediator");
+var RoboJS=require("RoboJS");
 
 function MediatorB() {
-    Mediator.apply(this, arguments);
+    RoboJS.display.Mediator.apply(this, arguments);
 }
 
-MediatorB.prototype = Object.create(Mediator.prototype, {
+MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
     constructor: {
         value: MediatorB
     },
     initialize: {
         value: function () {
-            console.log("MediatorB", this.element);
+
             /**
              * a new listener is added.
              *
@@ -141,7 +141,7 @@ MediatorB.prototype = Object.create(Mediator.prototype, {
     },
     _handleEvent: {
         value: function (e) {
-            console.log("_handleEvent", this);
+            
             // after the first fired event, the listener is removed.
             this.removeContextListener("event-name", this._handleEvent);
         }
