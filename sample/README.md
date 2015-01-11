@@ -25,11 +25,8 @@ The main idea is:
 Let's see *search-panel* module. The folder structure is
 
     |--> modules
-
-    |-->search-panel
-
-    |-->Mediator.js
-
-    |-->SearchPanel.js
+        |-->search-panel
+            |-->Mediator.js
+            |-->SearchPanel.js
 
 
