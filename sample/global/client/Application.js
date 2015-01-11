@@ -6,7 +6,7 @@
     "use strict";
     // create the MediatorsMap.
     // mediator property is how Mediator is Registered in global scope.
-    // another difference, here you need .js extension
+    //
     var MediatorsMap = [
         {
             "id": "mediator-a",
