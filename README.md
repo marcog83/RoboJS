@@ -185,11 +185,15 @@ MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 	
 ###Dependencies
 
-RoboJS depends on 3 third-party libraries
+RoboJS depends on 2 third-party libraries
 
  * [Lodash](https://lodash.com/) One of my favorite library!
- * [Signals](http://millermedeiros.github.com/js-signals/) You must look at this messaging system!
+ * [Signals](http://millermedeiros.github.com/js-signals/) You must have a look at this awesome messaging system!
+
+bluebird / Q.js and RequireJS are highly recommended
+
  * [bluebird](https://github.com/petkaantonov/bluebird) Because Promise is Promise!
+ * [Q.js](https://github.com/kriskowal/q) Because Promise is Promise!
  * [RequireJS](http://requirejs.org/) I <3 U!!!
 
 
@@ -202,7 +206,7 @@ requirejs.config({
 	paths: {
 		signals: "../../bower_components/signals/dist/signals.min",
 		lodash: "../../bower_components/lodash/dist/lodash.min",
-		bluebird: "../../bower_components/bluebird/js/browser/bluebird.min",
+		Promise: "path/to/any/promise-like/implementation",
         RoboJS: "../../dist/robojs.min"
 	}
 });
@@ -215,7 +219,7 @@ or using Globals
 
 <script src="../../bower_components/signals/dist/signals.min.js"></script>
 <script src="../../bower_components/lodash/dist/lodash.min.js"></script>
-<script src="../../bower_components/bluebird/js/browser/bluebird.min.js"></script>
+
 <script src="../../dist/robojs.min.js"></script>
 
 ```
