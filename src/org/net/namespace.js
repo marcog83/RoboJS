@@ -1,10 +1,12 @@
-/**
- * Created by marco on 10/01/2015.
- */
 define(["../core", "./ScriptLoader"], function (RoboJS, ScriptLoader) {
+    /*
+     * <strong>RoboJS.net</strong> package contains
+     * <ul>
+     *     <li>ScriptLoader</li>
+     * </ul>
+     *
+     * */
     RoboJS.net = {
-
-        ScriptLoader: ScriptLoader,
-        GlobalScriptLoader: {}//i'd like to provide a solid lightweight external resources... but at the moment i don't need
+        ScriptLoader: ScriptLoader
     };
 });

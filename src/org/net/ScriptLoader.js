@@ -1,9 +1,4 @@
-/**
- * Created by marco.gobbi on 07/01/2015.
- */
 define(["Promise"], function (Promise) {
-    "use strict";
-
     function ScriptLoader() {
     }
 

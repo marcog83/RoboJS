@@ -1,11 +1,6 @@
-/**
- * Created by marco.gobbi on 07/11/2014.
- */
 define(["signals", "lodash"], function (signals, _) {
-    "use strict";
 
-
-    function DisplayList() {
+     function DisplayList() {
         this.onAdded = new signals.Signal();
         this.onRemoved = new signals.Signal();
         // The node to be monitored

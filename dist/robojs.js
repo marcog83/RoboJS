@@ -1,4 +1,10 @@
+/*
+ RoboJS is a library that aims to dynamically load JS modules depending on how the DOM is composed.
+ Add a node to the DOM and a JS will be loaded!
+ Remove a node and the JS will be disposed!!
+ */
 (function (root, factory) {
+	// Uses AMD or browser globals to create a module.
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
 		define(['lodash',"signals","Promise"], factory);
@@ -8,10 +14,8 @@
 	}
 }(this, function (_,signals,Promise) {
 	'use strict';
-/**
- * Created by marco on 10/01/2015.
- */
 
+   //this is the core Object that contains all packages.
     var RoboJS = {
         MEDIATORS_CACHE: {},
         utils: {
@@ -43,14 +47,9 @@
         }
     };
     
-/**
- * Created by marco.gobbi on 07/11/2014.
- */
-
-    "use strict";
 
 
-    function DisplayList() {
+     function DisplayList() {
         this.onAdded = new signals.Signal();
         this.onRemoved = new signals.Signal();
         // The node to be monitored
@@ -80,11 +79,8 @@
         }
     };
     
-/**
- * Created by marco on 10/01/2015.
- */
 
-    "use strict";
+
     function EventDispatcher() {
         this._currentListeners = {};
     }
@@ -92,10 +88,10 @@
     EventDispatcher.prototype = {
         /**
          *
-         * @param type
-         * @param callback
-         * @param scope
-         * @returns {*}
+         * @param type {String} the event name to listen
+         * @param callback {Function} the callback to execute
+         * @param scope {Object | null} the scope of the callback
+         * @returns {Object} the listener added
          */
         addEventListener: function (type, callback, scope) {
             var listener = {
@@ -111,9 +107,9 @@
         },
         /**
          *
-         * @param eventName
-         * @param callback
-         * @param scope
+         * @param eventName {String} the event name to remove
+         * @param callback {Function} the callback to unmap
+         * @param scope {Object | null} the scope of the callback
          */
         removeEventListener: function (eventName, callback, scope) {
             var listeners = this._currentListeners[eventName] || [];
@@ -123,13 +119,16 @@
                 return !(sameCB && sameScope);
             });
         },
+        /**
+         *
+         * @param eventName {String} the event name to remove
+         */
         removeAllEventListeners: function (eventName) {
-            // var listeners = this._currentListeners[eventName] || [];
             this._currentListeners[eventName] = null;
         },
         /**
          *
-         * @param eventName
+         * @param eventName {String} the event to check
          * @returns {*}
          */
         hasEventListener: function (eventName) {
@@ -137,8 +136,8 @@
         },
         /**
          *
-         * @param type
-         * @param data
+         * @param type {String} the event to dispatch
+         * @param data {*} the data to pass
          */
         dispatchEvent: function (type, data) {
             var listeners = this._currentListeners[type] || [];
@@ -160,110 +159,85 @@
         return EventDispatcher.__instance;
     };
     
-/**
- * Created by marco.gobbi on 18/12/2014.
- */
-
-	"use strict";
-	function EventMapConfig(dispatcher, eventString, listener, callback,scope) {
-		this.dispatcher = dispatcher;
-		this.eventString = eventString;
-		this.listener = listener;
-		this.callback = callback;
-		this.scope = scope;
-	}
-
-	EventMapConfig.prototype = {
-		equalTo: function (dispatcher, eventString, listener) {
-			return this.eventString == eventString
-					//&& this.eventClass == eventClass
-				&& this.dispatcher == dispatcher
-				&& this.listener == listener;
-			//&& this.useCapture == useCapture;
-		}
-	};
-	
-/**
- * Created by marco.gobbi on 18/12/2014.
- */
-
-	"use strict";
 
 
-	function EventMap() {
-		this._listeners = [];
-		//this._suspendedListeners = [];
-		//this._suspended = false;
-	}
+    function EventMapConfig(dispatcher, eventString, listener, callback, scope) {
+        this.dispatcher = dispatcher;
+        this.eventString = eventString;
+        this.listener = listener;
+        this.callback = callback;
+        this.scope = scope;
+    }
 
-	EventMap.prototype = {
-		mapListener: function (dispatcher, eventString, listener, scope) {
-			var currentListeners = this._listeners;
-			/*this._suspended
-			 ? this._suspendedListeners
-			 : this._listeners;*/
-			//
-			var config;
-			var i = currentListeners.length;
-			while (i--) {
-				config = currentListeners[i];
-				if (config.equalTo(dispatcher, eventString, listener)) {
-					return;
-				}
-			}
-			var callback = listener;
-			/* EventMapConfig instance*/
-			config = new EventMapConfig(dispatcher, eventString, listener, callback,scope);
+    EventMapConfig.prototype = {
+        equalTo: function (dispatcher, eventString, listener) {
+            return this.eventString == eventString
+                && this.dispatcher == dispatcher
+                && this.listener == listener;
 
-			currentListeners.push(config);
-			//if (!this._suspended) {
-				dispatcher.addEventListener(eventString, callback, scope);
-			//}
-		},
-		unmapListener: function (dispatcher, eventString, listener) {
-			var currentListeners = this._listeners;
-			/*this._suspended
-			 ? this._suspendedListeners
-			 : this._listeners;*/
-			var i = currentListeners.length;
-			while (i--) {
-				var config = currentListeners[i];
-				if (config.equalTo(dispatcher, eventString, listener)) {
-					//if (!this._suspended) {
-					dispatcher.removeEventListener(eventString, config.callback, config.scope);
-					//}
-					currentListeners.splice(i, 1);
-					return;
-				}
-			}
-		},
-		unmapListeners: function () {
-			var currentListeners = this._listeners;
-			/*this._suspended
-			 ? this._suspendedListeners
-			 : this._listeners;*/
-			var eventConfig;
-			var dispatcher;
-			while (eventConfig = currentListeners.pop()) {
-				//if (!this._suspended) {
-				dispatcher = eventConfig.dispatcher;
-				dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback, eventConfig.scope);
-				//}
-			}
-		}
-	};
-	
-/**
- * Created by marco.gobbi on 18/12/2014.
- */
+        }
+    };
+    
 
-    "use strict";
 
+
+    function EventMap() {
+        this._listeners = [];
+
+    }
+
+    EventMap.prototype = {
+        mapListener: function (dispatcher, eventString, listener, scope) {
+            var currentListeners = this._listeners;
+
+            var config;
+            var i = currentListeners.length;
+            while (i--) {
+                config = currentListeners[i];
+                if (config.equalTo(dispatcher, eventString, listener)) {
+                    return;
+                }
+            }
+            var callback = listener;
+            /* EventMapConfig instance*/
+            config = new EventMapConfig(dispatcher, eventString, listener, callback, scope);
+
+            currentListeners.push(config);
+            dispatcher.addEventListener(eventString, callback, scope);
+
+        },
+        unmapListener: function (dispatcher, eventString, listener) {
+            var currentListeners = this._listeners;
+
+            var i = currentListeners.length;
+            while (i--) {
+                var config = currentListeners[i];
+                if (config.equalTo(dispatcher, eventString, listener)) {
+
+                    dispatcher.removeEventListener(eventString, config.callback, config.scope);
+
+                    currentListeners.splice(i, 1);
+                    return;
+                }
+            }
+        },
+        unmapListeners: function () {
+            var currentListeners = this._listeners;
+
+            var eventConfig;
+            var dispatcher;
+            while (eventConfig = currentListeners.pop()) {
+
+                dispatcher = eventConfig.dispatcher;
+                dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback, eventConfig.scope);
+
+            }
+        }
+    };
+    
 
     /**
-     *
-     *
-     * @constructor
+
      * @param element {HTMLElement}
      *
      * @property element {HTMLElement}
@@ -278,7 +252,7 @@
 
     Mediator.prototype = {
         /**
-         * @public
+         * @method
          */
         postDestroy: function () {
             console.log("postDestroy");
@@ -294,7 +268,7 @@
             this.eventMap.mapListener(this.eventDispatcher, eventString, listener, scope);
         },
         /**
-         * @public
+         *
          * @param eventString {string}
          * @param listener {function}
          */
@@ -302,34 +276,29 @@
             this.eventMap.unmapListener(this.eventDispatcher, eventString, listener);
         },
         /**
-         * @public
+         *
          * @param eventString {string}
          * @param data {*}
          */
-        dispatch: function (eventString,data) {
+        dispatch: function (eventString, data) {
             if (this.eventDispatcher.hasEventListener(eventString)) {
-                this.eventDispatcher.dispatchEvent(eventString,data);
+                this.eventDispatcher.dispatchEvent(eventString, data);
             }
         },
         /**
-         * @public
+         *
          */
         initialize: function () {
             console.log("Mediator", this);
         },
         /**
-         * @public
+         *
          */
         destroy: function () {
             //
         }
     };
     
-/**
- * Created by marco.gobbi on 07/01/2015.
- */
-
-    "use strict";
 
     function ScriptLoader() {
     }
@@ -344,12 +313,6 @@
         }
     };
     
-/**
- * Created by marco.gobbi on 09/12/2014.
- */
-
-    "use strict";
-
 
     function MediatorsBuilder(_definition) {
         this.onAdded = new signals.Signal();
@@ -431,8 +394,9 @@
             if (mediator) {
                 mediator.destroy && mediator.destroy();
                 mediator.postDestroy && mediator.postDestroy();
-                mediator.element && (mediator.element = null);
+
                 this.onRemoved.dispatch(mediator);
+                mediator.element && (mediator.element = null);
                 RoboJS.MEDIATORS_CACHE[mediatorId] = null;
                 mediator = null;
             }
@@ -440,11 +404,17 @@
         }
     };
     
-/**
- * Created by marco on 10/01/2015.
- */
 
+/*
 
+* <strong>RoboJS.display</strong> package contains
+* <ul>
+*     <li>DisplayList</li>
+*     <li>Mediator</li>
+*     <li>MediatorBuilder</li>
+* </ul>
+*
+* */
     RoboJS.display = {
         DisplayList: DisplayList,
         Mediator: Mediator,
@@ -453,11 +423,17 @@
 
 
 
-/**
- * Created by marco on 10/01/2015.
- */
 
+    /*
 
+     * <strong>RoboJS.events</strong> package contains
+     * <ul>
+     *     <li>EventDispatcher</li>
+     *     <li>EventMap</li>
+     *     <li>EventMapConfig</li>
+     * </ul>
+     *
+     * */
     RoboJS.events = {
         EventDispatcher: EventDispatcher,
         EventMap: EventMap,
@@ -465,14 +441,16 @@
     };
 
 
-/**
- * Created by marco on 10/01/2015.
- */
 
+    /*
+     * <strong>RoboJS.net</strong> package contains
+     * <ul>
+     *     <li>ScriptLoader</li>
+     * </ul>
+     *
+     * */
     RoboJS.net = {
-
-        ScriptLoader: ScriptLoader,
-        GlobalScriptLoader: {}//i'd like to provide a solid lightweight external resources... but at the moment i don't need
+        ScriptLoader: ScriptLoader
     };
 
 

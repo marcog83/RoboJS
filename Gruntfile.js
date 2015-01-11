@@ -25,6 +25,7 @@ module.exports = function (grunt) {
         'copy',
         'clean:postbuild',
         'stripdefine',
+        'docker:app',
         'uglify'
     ]);
 };

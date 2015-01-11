@@ -1,7 +1,5 @@
-/**
- * Created by marco on 10/01/2015.
- */
 define([], function () {
+   //this is the core Object that contains all packages.
     var RoboJS = {
         MEDIATORS_CACHE: {},
         utils: {

@@ -1,8 +1,14 @@
-/**
- * Created by marco on 10/01/2015.
- */
-define(["../core", "./EventMap", "./EventMapConfig","./EventDispatcher"], function (RoboJS, EventMap, EventMapConfig,EventDispatcher) {
+define(["../core", "./EventMap", "./EventMapConfig", "./EventDispatcher"], function (RoboJS, EventMap, EventMapConfig, EventDispatcher) {
+    /*
 
+     * <strong>RoboJS.events</strong> package contains
+     * <ul>
+     *     <li>EventDispatcher</li>
+     *     <li>EventMap</li>
+     *     <li>EventMapConfig</li>
+     * </ul>
+     *
+     * */
     RoboJS.events = {
         EventDispatcher: EventDispatcher,
         EventMap: EventMap,

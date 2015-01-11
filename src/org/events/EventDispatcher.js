@@ -1,8 +1,5 @@
-/**
- * Created by marco on 10/01/2015.
- */
 define([],function () {
-    "use strict";
+
     function EventDispatcher() {
         this._currentListeners = {};
     }
@@ -10,10 +7,10 @@ define([],function () {
     EventDispatcher.prototype = {
         /**
          *
-         * @param type
-         * @param callback
-         * @param scope
-         * @returns {*}
+         * @param type {String} the event name to listen
+         * @param callback {Function} the callback to execute
+         * @param scope {Object | null} the scope of the callback
+         * @returns {Object} the listener added
          */
         addEventListener: function (type, callback, scope) {
             var listener = {
@@ -29,9 +26,9 @@ define([],function () {
         },
         /**
          *
-         * @param eventName
-         * @param callback
-         * @param scope
+         * @param eventName {String} the event name to remove
+         * @param callback {Function} the callback to unmap
+         * @param scope {Object | null} the scope of the callback
          */
         removeEventListener: function (eventName, callback, scope) {
             var listeners = this._currentListeners[eventName] || [];
@@ -41,13 +38,16 @@ define([],function () {
                 return !(sameCB && sameScope);
             });
         },
+        /**
+         *
+         * @param eventName {String} the event name to remove
+         */
         removeAllEventListeners: function (eventName) {
-            // var listeners = this._currentListeners[eventName] || [];
             this._currentListeners[eventName] = null;
         },
         /**
          *
-         * @param eventName
+         * @param eventName {String} the event to check
          * @returns {*}
          */
         hasEventListener: function (eventName) {
@@ -55,8 +55,8 @@ define([],function () {
         },
         /**
          *
-         * @param type
-         * @param data
+         * @param type {String} the event to dispatch
+         * @param data {*} the data to pass
          */
         dispatchEvent: function (type, data) {
             var listeners = this._currentListeners[type] || [];

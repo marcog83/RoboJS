@@ -1,14 +1,6 @@
-/**
- * Created by marco.gobbi on 18/12/2014.
- */
 define(["../events/EventDispatcher", "../events/EventMap"], function (EventDispatcher, EventMap) {
-    "use strict";
-
-
     /**
-     *
-     *
-     * @constructor
+
      * @param element {HTMLElement}
      *
      * @property element {HTMLElement}
@@ -23,7 +15,7 @@ define(["../events/EventDispatcher", "../events/EventMap"], function (EventDispa
 
     Mediator.prototype = {
         /**
-         * @public
+         * @method
          */
         postDestroy: function () {
             console.log("postDestroy");
@@ -39,7 +31,7 @@ define(["../events/EventDispatcher", "../events/EventMap"], function (EventDispa
             this.eventMap.mapListener(this.eventDispatcher, eventString, listener, scope);
         },
         /**
-         * @public
+         *
          * @param eventString {string}
          * @param listener {function}
          */
@@ -47,23 +39,23 @@ define(["../events/EventDispatcher", "../events/EventMap"], function (EventDispa
             this.eventMap.unmapListener(this.eventDispatcher, eventString, listener);
         },
         /**
-         * @public
+         *
          * @param eventString {string}
          * @param data {*}
          */
-        dispatch: function (eventString,data) {
+        dispatch: function (eventString, data) {
             if (this.eventDispatcher.hasEventListener(eventString)) {
-                this.eventDispatcher.dispatchEvent(eventString,data);
+                this.eventDispatcher.dispatchEvent(eventString, data);
             }
         },
         /**
-         * @public
+         *
          */
         initialize: function () {
             console.log("Mediator", this);
         },
         /**
-         * @public
+         *
          */
         destroy: function () {
             //
