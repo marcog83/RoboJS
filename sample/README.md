@@ -68,7 +68,8 @@ As far as *results-module* , it listens to *"search-done"* event and updates the
 
 
 Now if we have a look at `SearchPanel` and `ResultsPanel` we can see that they are implemented in 2 totally different way.
-`SearchPanel` uses RxJS AWESOME Functional Reactive Library
-`ResultsPanel` uses AngularJS implementation.
+
+-   `SearchPanel` uses RxJS AWESOME Functional Reactive Library
+-   `ResultsPanel` uses AngularJS implementation.
 
 Actually I pushed a bit to show that RoboJS is not about modules implementation, but **WHEN A MODULE SHOULD BE BOOTSTRAPED**.
