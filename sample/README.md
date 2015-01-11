@@ -63,8 +63,26 @@ Mediator.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 
 ```
 
-As far as *results-module* , it listens to *"search-done"* event and updates the `view`.
-`view` is an instance of `ResultsPanel`.
+As far as *results-module* , it listens to *"search-done"* event and updates the `view` that is an instance of `ResultsPanel`.
+
+```javascript
+Mediator.prototype = Object.create(RoboJS.display.Mediator.prototype, {
+
+    initialize: {
+        value: function () {
+            this.view = new ResultsPanel(this.element);
+            this.view.initialize();
+            this.addContextListener("search-done",this._handleSearchDone,this)
+
+        }
+    },
+    _handleSearchDone: {
+        value: function (data) {
+           this.view.update(data);
+        }
+    }
+});
+```
 
 
 Now if we have a look at `SearchPanel` and `ResultsPanel` we can see that they are implemented in 2 totally different way.

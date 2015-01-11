@@ -22,11 +22,6 @@ define(function (require, exports, module) {
             value: function (data) {
                this.view.update(data);
             }
-        },
-        _handleSearchFailed: {
-            value: function (e) {
-                //this.dispatch("search-failed", e);
-            }
         }
     });
     module.exports =Mediator;
