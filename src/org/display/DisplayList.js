@@ -11,13 +11,16 @@ define(["signals", "lodash"], function (signals, _) {
         // The node to be monitored
         // Create an observer instance
         var observer = new MutationObserver(this.handleMutations.bind(this));
-        // Configuration of the observer:
-        // Pass in the target node, as well as the observer options
-        observer.observe(document.body, {
-            attributes: false,
-            childList: true,
-            characterData: false
-        });
+
+        setTimeout(function () {
+            // Configuration of the observer:
+            // Pass in the target node, as well as the observer options
+            observer.observe(document.body, {
+                attributes: false,
+                childList: true,
+                characterData: false
+            });
+        }, 0);
     }
 
     DisplayList.prototype = {
@@ -32,5 +35,5 @@ define(["signals", "lodash"], function (signals, _) {
             response.removedNodes.length && this.onRemoved.dispatch(response.removedNodes);
         }
     };
-   return DisplayList;
+    return DisplayList;
 });

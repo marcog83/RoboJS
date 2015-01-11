@@ -1,9 +1,8 @@
 /**
  * Created by marco.gobbi on 09/12/2014.
  */
-define(["../core","./DisplayList", "../net/ScriptLoader", "signals", "lodash", "bluebird"], function (RoboJS,DisplayList, ScriptLoader, signals, _, Promise) {
+define(["../core", "./DisplayList", "../net/ScriptLoader", "signals", "lodash", "Promise"], function (RoboJS, DisplayList, ScriptLoader, signals, _, Promise) {
     "use strict";
-
 
 
     function MediatorsBuilder(_definition) {
@@ -13,12 +12,15 @@ define(["../core","./DisplayList", "../net/ScriptLoader", "signals", "lodash", "
         this.displayList = new DisplayList();
         this.displayList.onAdded.add(this._handleNodesAdded, this);
         this.displayList.onRemoved.add(this._handleNodesRemoved, this);
+        // by default ScriptLoader is how you will load external scripts.
         this.loader = new ScriptLoader();
     }
 
 
     MediatorsBuilder.prototype = {
+
         bootstrap: function () {
+
             return this.getMediators([document.body]);
         },
         getMediators: function (target) {

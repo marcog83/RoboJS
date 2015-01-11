@@ -1,7 +1,7 @@
 /**
  * Created by marco.gobbi on 07/01/2015.
  */
-define(["bluebird"], function (Promise) {
+define(["Promise"], function (Promise) {
     "use strict";
 
     function ScriptLoader() {

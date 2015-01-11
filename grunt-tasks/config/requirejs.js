@@ -13,7 +13,7 @@ module.exports = {
             paths: {
                 signals:"empty:",
                 lodash:"empty:",
-                bluebird:"empty:",
+                Promise:"empty:",
 
 
                 'robojs-init': '../tmp/robojs-init'

@@ -1,10 +1,10 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['lodash',"signals","bluebird"], factory);
+		define(['lodash',"signals","Promise"], factory);
 	} else {
 		// Browser globals
-		root.RoboJS = factory(root._,root.signals,root.bluebird);
+		root.RoboJS = factory(root._,root.signals,root.Promise);
 	}
 }(this, function (_,signals,Promise) {
 	'use strict';
@@ -56,13 +56,16 @@
         // The node to be monitored
         // Create an observer instance
         var observer = new MutationObserver(this.handleMutations.bind(this));
-        // Configuration of the observer:
-        // Pass in the target node, as well as the observer options
-        observer.observe(document.body, {
-            attributes: false,
-            childList: true,
-            characterData: false
-        });
+
+        setTimeout(function () {
+            // Configuration of the observer:
+            // Pass in the target node, as well as the observer options
+            observer.observe(document.body, {
+                attributes: false,
+                childList: true,
+                characterData: false
+            });
+        }, 0);
     }
 
     DisplayList.prototype = {
@@ -77,7 +80,7 @@
             response.removedNodes.length && this.onRemoved.dispatch(response.removedNodes);
         }
     };
-   
+    
 /**
  * Created by marco on 10/01/2015.
  */
@@ -348,7 +351,6 @@
     "use strict";
 
 
-
     function MediatorsBuilder(_definition) {
         this.onAdded = new signals.Signal();
         this.onRemoved = new signals.Signal();
@@ -356,12 +358,15 @@
         this.displayList = new DisplayList();
         this.displayList.onAdded.add(this._handleNodesAdded, this);
         this.displayList.onRemoved.add(this._handleNodesRemoved, this);
+        // by default ScriptLoader is how you will load external scripts.
         this.loader = new ScriptLoader();
     }
 
 
     MediatorsBuilder.prototype = {
+
         bootstrap: function () {
+
             return this.getMediators([document.body]);
         },
         getMediators: function (target) {
@@ -465,7 +470,8 @@
 
     RoboJS.net = {
 
-        ScriptLoader: ScriptLoader
+        ScriptLoader: ScriptLoader,
+        GlobalScriptLoader: {}//i'd like to provide a solid lightweight external resources... but at the moment i don't need
     };
 
 
