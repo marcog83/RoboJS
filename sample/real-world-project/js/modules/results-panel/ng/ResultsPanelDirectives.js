@@ -3,7 +3,7 @@
  */
 define(function (require, exports, module) {
     'use strict';
-    function ResultsPanelDirectives(model) {
+    function ResultsPanelDirectives(model,$rootScope) {
         return {
             restrict: "E",
             link: function ($scope, $element) {
@@ -13,6 +13,7 @@ define(function (require, exports, module) {
                         $scope.model.results = data;
                     })
                 };
+
                 $scope.$on("$destroy",function(){
                     console.log("scope destroyed");
                     model.results=[];
@@ -23,5 +24,5 @@ define(function (require, exports, module) {
         }
     }
 
-    module.exports = ["model", ResultsPanelDirectives];
+    module.exports = ["model","$rootScope", ResultsPanelDirectives];
 });

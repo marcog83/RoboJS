@@ -5,7 +5,7 @@ define(function (require, exports, module) {
     'use strict';
     var $ = require("jquery");
     var angular = require("angular");
-    var ModelProvider = require("./ng/ModelProvider");
+    var Model = require("./ng/Model");
     var ResultsPanelDirectives = require("./ng/ResultsPanelDirectives");
 
     function ResultsPanel(element) {
@@ -15,7 +15,13 @@ define(function (require, exports, module) {
     ResultsPanel.prototype = {
         initialize: function () {
             var module = angular.module("ResultsPanel", []);
-            module.provider("model", ModelProvider);
+            module.provider("model", {
+                model: new Model(),
+                $get: [function () {
+                    return this.model; //resolved for the lifetime of app
+                }
+                ]
+            });
             module.directive("resultsPanel", ResultsPanelDirectives);
             angular.bootstrap(this.element, ["ResultsPanel"]);
         },
