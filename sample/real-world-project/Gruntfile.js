@@ -11,6 +11,8 @@ var REQUIRE_CONFIG = {
 //
         "signals": "./bower_components/signals/dist/signals.min",
         "Promise": "./bower_components/bluebird/js/browser/bluebird",
+        "rx": "./bower_components/rxjs/dist/rx.all.min",
+        "angular": "./bower_components/angular/angular.min",
 
         //
         "lodash": "./bower_components/lodash/dist/lodash"
@@ -24,22 +26,7 @@ var REQUIRE_CONFIG = {
     getLibraries: function () {
         return _.keys(this.paths);
     },
-    modules_name: [
-        "modules/app-guida-tv/Application",
-        "modules/approfondimenti/approfondimenti",
-        "modules/canali-opzionali/Application",
-        "modules/facebook/facebook",
-        "modules/footer/footer",
-        "modules/lightbox/lightbox",
-        "modules/pacchetti/Application",
-        "modules/points-panel/points-panel",
-        "modules/sky-hd/Application",
-        "modules/telecomando/Application",
-        "modules/vedi-tutti-i-video/Application",
-        "modules/pop-video/Application",
-        "modules/video-player/video-player",
-        "modules/tracking/tracking"
-    ]
+    modules_name: []
 };
 var Utils = {
 
@@ -66,7 +53,12 @@ module.exports = function (grunt) {
                     baseUrl: "./",
                     out: Utils.getSourcePath(Utils.JS) + "libs/libraries.min.js",
                     paths: REQUIRE_CONFIG.paths,
-
+                    shim: {
+                        angular:{
+                            deps:["jquery"],
+                            exports:"angular"
+                        }
+                    },
                     optimize: 'none',
 
                     include: REQUIRE_CONFIG.getLibraries()

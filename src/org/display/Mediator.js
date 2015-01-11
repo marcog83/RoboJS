@@ -49,10 +49,11 @@ define(["../events/EventDispatcher", "../events/EventMap"], function (EventDispa
         /**
          * @public
          * @param eventString {string}
+         * @param data {*}
          */
-        dispatch: function (eventString) {
+        dispatch: function (eventString,data) {
             if (this.eventDispatcher.hasEventListener(eventString)) {
-                this.eventDispatcher.dispatchEvent(eventString);
+                this.eventDispatcher.dispatchEvent(eventString,data);
             }
         },
         /**
