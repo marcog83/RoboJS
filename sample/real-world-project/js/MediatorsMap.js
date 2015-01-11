@@ -11,6 +11,14 @@ define(function (require) {
         {
             "id": "results-panel",
             "mediator": "modules/results-panel/Mediator"
+        },
+        {
+            "id":"jquery-results-panel",
+            "mediator":"modules/jquery-results-panel/Mediator"
+        },
+        {
+            "id":"toggle",
+            "mediator":"modules/toggle/Mediator"
         }
     ];
 });

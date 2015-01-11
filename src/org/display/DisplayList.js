@@ -12,15 +12,14 @@ define(["signals", "lodash"], function (signals, _) {
         // Create an observer instance
         var observer = new MutationObserver(this.handleMutations.bind(this));
 
-        setTimeout(function () {
-            // Configuration of the observer:
-            // Pass in the target node, as well as the observer options
-            observer.observe(document.body, {
-                attributes: false,
-                childList: true,
-                characterData: false
-            });
-        }, 0);
+        // Configuration of the observer:
+        // Pass in the target node, as well as the observer options
+        observer.observe(document.body, {
+            attributes: false,
+            childList: true,
+            characterData: false,
+            subtree:true
+        });
     }
 
     DisplayList.prototype = {

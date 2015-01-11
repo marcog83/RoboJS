@@ -7,7 +7,7 @@ var REQUIRE_CONFIG = {
     paths: {
         "jquery": "./bower_components/jquery/dist/jquery.min",
         'jquery-private': "./external_components/jquery/jquery-private",
-        RoboJS: "../../dist/robojs.min",
+        RoboJS: "../../dist/robojs",
 //
         "signals": "./bower_components/signals/dist/signals.min",
         "Promise": "./bower_components/bluebird/js/browser/bluebird",

@@ -74,6 +74,7 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "signals", "lodash", 
                 .forEach(this._destroyMediator.bind(this))
         },
         _reduceNodes: function (result, node) {
+            if (!node || !node.getElementsByTagName)return result;
             var n = [].slice.call(node.getElementsByTagName("*"), 0);
             n.unshift(node);
             return result.concat(n);
@@ -84,8 +85,9 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "signals", "lodash", 
             if (mediator) {
                 mediator.destroy && mediator.destroy();
                 mediator.postDestroy && mediator.postDestroy();
-                mediator.element && (mediator.element = null);
+
                 this.onRemoved.dispatch(mediator);
+                mediator.element && (mediator.element = null);
                 RoboJS.MEDIATORS_CACHE[mediatorId] = null;
                 mediator = null;
             }

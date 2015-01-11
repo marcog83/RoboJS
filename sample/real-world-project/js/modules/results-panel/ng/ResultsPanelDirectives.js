@@ -12,7 +12,12 @@ define(function (require, exports, module) {
                     $scope.$apply(function () {
                         $scope.model.results = data;
                     })
-                }
+                };
+                $scope.$on("$destroy",function(){
+                    console.log("scope destroyed");
+                    model.results=[];
+                })
+
             },
             template:"<ul><li ng-repeat='item in model.results'>{{item}}</li></ul>"
         }

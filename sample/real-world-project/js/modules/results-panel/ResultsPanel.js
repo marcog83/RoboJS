@@ -21,6 +21,10 @@ define(function (require, exports, module) {
         },
         update: function (data) {
             this.element.find(".content").scope().update(data);
+        },
+        destroy: function () {
+            // dispose angular application in some way ! actually i don't know how to do ;)
+            //this.element.find(".content").scope().$destroy();
         }
     };
     module.exports = ResultsPanel;

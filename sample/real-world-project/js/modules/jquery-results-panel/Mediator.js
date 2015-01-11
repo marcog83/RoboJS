@@ -20,12 +20,7 @@ define(function (require, exports, module) {
         },
         _handleSearchDone: {
             value: function (data) {
-               this.view.update(data);
-            }
-        },
-        destroy:{
-            value:function(){
-                this.view.destroy();
+                this.view.update(data);
             }
         }
     });

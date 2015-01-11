@@ -57,15 +57,14 @@
         // Create an observer instance
         var observer = new MutationObserver(this.handleMutations.bind(this));
 
-        setTimeout(function () {
-            // Configuration of the observer:
-            // Pass in the target node, as well as the observer options
-            observer.observe(document.body, {
-                attributes: false,
-                childList: true,
-                characterData: false
-            });
-        }, 0);
+        // Configuration of the observer:
+        // Pass in the target node, as well as the observer options
+        observer.observe(document.body, {
+            attributes: false,
+            childList: true,
+            characterData: false,
+            subtree:true
+        });
     }
 
     DisplayList.prototype = {
@@ -421,6 +420,7 @@
                 .forEach(this._destroyMediator.bind(this))
         },
         _reduceNodes: function (result, node) {
+            if (!node || !node.getElementsByTagName)return result;
             var n = [].slice.call(node.getElementsByTagName("*"), 0);
             n.unshift(node);
             return result.concat(n);
