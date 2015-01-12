@@ -3,11 +3,12 @@
  */
 module.exports={
 options:{
-    sidebarState: false
+    sidebarState: true,
+    colourScheme:"default"
 },
     app: {
         // Specify `src` and `dest` directly on the task object
         src: ['dist/robojs.js'],
-        dest: 'docs/RoboJS'
+        dest: '../gh-pages/RoboJS'
     }
 }

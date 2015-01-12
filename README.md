@@ -3,10 +3,13 @@ Add a node to the DOM and a JS will be loaded!
 Remove a node and the JS will be disposed!!
 Not further framework frontend , but a tool that lets you manage the association DOM and JS.
 
+
+
 #Installation
 ```javascript
 bower install robojs
 ```
+
 
 #How it works.
 You set a `data-mediator` attribute with an ID (whatever you want)
@@ -38,6 +41,9 @@ For instance in this sample I mapped 3 different Mediators.
 
 When the builder finds a match between a `data-mediator` attribute and an ID from `MediatorsMap`, 
 it will create a new instance of Mediator, storing the DOM Node into a property named `element` and executes `initialize` method
+
+#API References
+[API References](https://marcog83.github.io/RoboJS)
 
 ###Example:
 
