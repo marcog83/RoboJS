@@ -1,4 +1,5 @@
 define(["../core", "./DisplayList", "../net/ScriptLoader", "signals", "lodash", "Promise"], function (RoboJS, DisplayList, ScriptLoader, signals, _, Promise) {
+
     function MediatorsBuilder(_definition) {
         this.onAdded = new signals.Signal();
         this.onRemoved = new signals.Signal();

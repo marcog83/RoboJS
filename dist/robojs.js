@@ -52,12 +52,16 @@
      function DisplayList() {
         this.onAdded = new signals.Signal();
         this.onRemoved = new signals.Signal();
-        // The node to be monitored
-        // Create an observer instance
+       /*
+       * <strong>MutationObserver</strong><br/> provides developers a way to react to changes in a DOM.<br/>
+        * It is designed as a replacement for Mutation Events defined in the DOM3 Events specification.
+        * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">docs!</a>
+       * */
         var observer = new MutationObserver(this.handleMutations.bind(this));
 
-        // Configuration of the observer:
-        // Pass in the target node, as well as the observer options
+        /* <strong>Configuration of the observer.</strong><br/>
+         Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.
+        */
         observer.observe(document.body, {
             attributes: false,
             childList: true,
@@ -80,14 +84,18 @@
     };
     
 
-
+    /*
+     * <strong>EventDispatcher</strong>
+     * <p>The EventDispatcher class is a Singleton that handle Events in RoboJS.<br/>
+     * It can also be used as the base class for all classes that dispatch events.</p>
+     * */
     function EventDispatcher() {
         this._currentListeners = {};
     }
 
     EventDispatcher.prototype = {
         /**
-         *
+         *<strong>addEventListener</strong>
          * @param type {String} the event name to listen
          * @param callback {Function} the callback to execute
          * @param scope {Object | null} the scope of the callback
@@ -106,7 +114,7 @@
             return listener;
         },
         /**
-         *
+         *<strong>removeEventListener</strong>
          * @param eventName {String} the event name to remove
          * @param callback {Function} the callback to unmap
          * @param scope {Object | null} the scope of the callback
@@ -120,14 +128,14 @@
             });
         },
         /**
-         *
+         *<strong>removeAllEventListeners</strong>
          * @param eventName {String} the event name to remove
          */
         removeAllEventListeners: function (eventName) {
             this._currentListeners[eventName] = null;
         },
         /**
-         *
+         *<strong>hasEventListener</strong>
          * @param eventName {String} the event to check
          * @returns {*}
          */
@@ -135,7 +143,7 @@
             return this._currentListeners[eventName] && this._currentListeners[eventName].length
         },
         /**
-         *
+         *<strong>dispatchEvent</strong>
          * @param type {String} the event to dispatch
          * @param data {*} the data to pass
          */
@@ -150,7 +158,7 @@
             }
         }
     };
-    EventDispatcher.__instance=null;
+    EventDispatcher.__instance = null;
     EventDispatcher.getInstance = function () {
 
         if (!EventDispatcher.__instance) {
@@ -180,13 +188,25 @@
     
 
 
-
+    /**
+     * <strong>EventMap</strong>
+     * <p>The Event Map keeps track of listeners and provides the ability
+     * to unregister all listeners with a single method call.</p>
+     */
     function EventMap() {
         this._listeners = [];
 
     }
 
     EventMap.prototype = {
+        /**
+          <strong>mapListener</strong>
+        * <p>The same as calling addEventListener directly on the EventDispatcher, but keeps a list of listeners for easy (usually automatic) removal.</p>
+        * @param dispatcher {EventDispatcher} -- The EventDispatcher to listen to
+         *@param eventString {String} -- The Event type to listen for
+         *@param listener {Function} -- The Event handler
+         *@param scope {*} -- the listener scope (default = null)
+        */
         mapListener: function (dispatcher, eventString, listener, scope) {
             var currentListeners = this._listeners;
 
@@ -199,13 +219,23 @@
                 }
             }
             var callback = listener;
-            /* EventMapConfig instance*/
+
             config = new EventMapConfig(dispatcher, eventString, listener, callback, scope);
 
             currentListeners.push(config);
             dispatcher.addEventListener(eventString, callback, scope);
 
         },
+        /**
+         * <strong>unmapListener</strong>
+         * <p>The same as calling <code>removeEventListener</code> directly on the <code>EventDispatcher</code>,
+         * but updates our local list of listeners.</p>
+         *
+         * @param dispatcher The <code>EventDispatcher</code>
+         * @param eventString The <code>String</code> type
+         * @param listener The <code>Function</code> handler
+
+         */
         unmapListener: function (dispatcher, eventString, listener) {
             var currentListeners = this._listeners;
 
@@ -221,6 +251,9 @@
                 }
             }
         },
+        /**
+         * Removes all listeners registered through <code>mapListener</code>
+         */
         unmapListeners: function () {
             var currentListeners = this._listeners;
 
@@ -237,12 +270,42 @@
     
 
     /**
-
-     * @param element {HTMLElement}
+     * <strong>Mediator</strong>
+     * <p>Mediators should observe one of the following forms:</p>
+     * <ul>
+     *     <li>Extend the base mediator class and override <i>initialize()</i> and, if needed, <i>destroy</i>.</li>
+     *     <li>Don't extend the base mediator class, and provide functions <i>initialize()</i> and, if needed, also <i>destroy()</i>.</li>
+     * </ul>
      *
-     * @property element {HTMLElement}
-     * @property eventMap {EventMap}
-     * @property eventDispatcher {EventDispatcher}
+     * <p>A mediator that extends the Mediator might look like this:</p>
+     *
+     * <pre>
+     * var RoboJS=require("RoboJS");
+     * function MediatorA() {
+     *    RoboJS.display.Mediator.apply(this, arguments);
+     * }
+     * MediatorA.prototype = Object.create(RoboJS.display.Mediator.prototype, {
+     *     initialize: {
+     *         value: function () {
+     *             // code goes here
+     *        }
+     *      }
+     * });
+     *</pre>
+     *
+     *<p>You do not have to extend the Mediator:</p>
+     *
+     * <pre>
+     *
+     *    function MediatorA() {}
+     *
+     *    MediatorA.prototype={
+     *        initialize:function(){
+     *            //your code goes here
+     *        }
+     *    }
+     * </pre>
+     *
      */
     function Mediator(element) {
         this.element = element;
@@ -252,14 +315,17 @@
 
     Mediator.prototype = {
         /**
-         * @method
+         * <strong>postDestroy</strong>
+         * <p>Runs after the mediator has been destroyed.
+         * Cleans up listeners mapped through the local EventMap.</p>
          */
         postDestroy: function () {
             console.log("postDestroy");
             this.eventMap.unmapListeners();
         },
         /**
-         *
+         * <strong>addContextListener</strong>
+         * <p>Syntactical sugar for mapping a listener to an EventDispatcher</p>
          * @param eventString {string}
          * @param listener {function}
          * @param scope {*} the context where 'this' is bind to
@@ -268,7 +334,8 @@
             this.eventMap.mapListener(this.eventDispatcher, eventString, listener, scope);
         },
         /**
-         *
+         *<strong>removeContextListener</strong>
+         * <p>Syntactical sugar for unmapping a listener to an EventDispatcher</p>
          * @param eventString {string}
          * @param listener {function}
          */
@@ -276,27 +343,19 @@
             this.eventMap.unmapListener(this.eventDispatcher, eventString, listener);
         },
         /**
+         *<strong>dispatch</strong>
          *
-         * @param eventString {string}
-         * @param data {*}
+         * <p>Dispatch helper method</p>
+         * @param eventString {string} The Event name to dispatch on the system
+         * @param data {*} the data dispatched
          */
         dispatch: function (eventString, data) {
             if (this.eventDispatcher.hasEventListener(eventString)) {
                 this.eventDispatcher.dispatchEvent(eventString, data);
             }
         },
-        /**
-         *
-         */
-        initialize: function () {
-            console.log("Mediator", this);
-        },
-        /**
-         *
-         */
-        destroy: function () {
-            //
-        }
+        initialize: function () {},
+        destroy: function () {}
     };
     
 
@@ -313,6 +372,7 @@
         }
     };
     
+
 
     function MediatorsBuilder(_definition) {
         this.onAdded = new signals.Signal();

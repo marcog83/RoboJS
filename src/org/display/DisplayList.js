@@ -3,12 +3,16 @@ define(["signals", "lodash"], function (signals, _) {
      function DisplayList() {
         this.onAdded = new signals.Signal();
         this.onRemoved = new signals.Signal();
-        // The node to be monitored
-        // Create an observer instance
+       /*
+       * <strong>MutationObserver</strong><br/> provides developers a way to react to changes in a DOM.<br/>
+        * It is designed as a replacement for Mutation Events defined in the DOM3 Events specification.
+        * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">docs!</a>
+       * */
         var observer = new MutationObserver(this.handleMutations.bind(this));
 
-        // Configuration of the observer:
-        // Pass in the target node, as well as the observer options
+        /* <strong>Configuration of the observer.</strong><br/>
+         Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.
+        */
         observer.observe(document.body, {
             attributes: false,
             childList: true,
