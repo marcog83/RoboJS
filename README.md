@@ -1,6 +1,7 @@
-NOTE. this is more an experiment than a production code. 
-It is inspired by Robotlegs. (the mvc bundle package) 
-It started as a sample of how MutationObserver works.
+RoboJS is a library that aims to dynamically load JS modules depending on how the DOM is composed.
+Add a node to the DOM and a JS will be loaded!
+Remove a node and the JS will be disposed!!
+Not further framework frontend , but a tool that lets you manage the association DOM and JS. 
 
 #Installation
 ```javascript
