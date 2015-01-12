@@ -1,5 +1,7 @@
 define(["../core", "./DisplayList", "../net/ScriptLoader", "signals", "lodash", "Promise"], function (RoboJS, DisplayList, ScriptLoader, signals, _, Promise) {
-
+    /*
+     <h2>MediatorsBuilder</h2>
+     */
     function MediatorsBuilder(_definition) {
         this.onAdded = new signals.Signal();
         this.onRemoved = new signals.Signal();
@@ -7,7 +9,7 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "signals", "lodash", 
         this.displayList = new DisplayList();
         this.displayList.onAdded.add(this._handleNodesAdded, this);
         this.displayList.onRemoved.add(this._handleNodesRemoved, this);
-        // by default ScriptLoader is how you will load external scripts.
+
         this.loader = new ScriptLoader();
     }
 
@@ -23,26 +25,20 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "signals", "lodash", 
                 .reduce(this._reduceNodes, [])
                 .reduce(this._findMediators.bind(this), [])
                 .value();
-            // find every children
-            //
-            // find the promises for each Mediator
-            // for each node it increase the result Array (3^ parameter) and return it to promises.
+
             return Promise.all(promises);
         },
         _findMediators: function (result, node, index) {
 
-
-            // filter definitions based on actual Node
-            // once you get the Mediators you need, load the specific script.
             var mediators = _.chain(this.definitions)
                 .filter(function (def) {
                     return node.dataset && node.dataset.mediator == def.id;
                 })
                 .map(function (def) {
-                    // prefill _initMediator with node parameter
+
                     return this.loader.get(def.mediator).then(this._initMediator.bind(this, node));
                 }.bind(this)).value();
-            // add mediators promise to the result Array
+
             return result.concat(mediators);
         },
         _initMediator: function (node, Mediator) {

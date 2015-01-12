@@ -1,7 +1,7 @@
 RoboJS is a library that aims to dynamically load JS modules depending on how the DOM is composed.
 Add a node to the DOM and a JS will be loaded!
 Remove a node and the JS will be disposed!!
-Not further framework frontend , but a tool that lets you manage the association DOM and JS. 
+Not further framework frontend , but a tool that lets you manage the association DOM and JS.
 
 #Installation
 ```javascript
@@ -144,7 +144,7 @@ When DOM element is removed from DOM Tree, Mediator removes all listeners regist
 
 ###Concrete Mediator
 
-You have to sub-class Mediator Class in order to code your logic. For example i define `MediatorB`. 
+You can sub-class Mediator Class in order to code your logic. For example i define `MediatorB`.
 
 No matter how you implement inheritance. I just played with Vanilla-js to keep as cleaner as possible 
 

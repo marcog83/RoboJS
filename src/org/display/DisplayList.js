@@ -1,17 +1,22 @@
 define(["signals", "lodash"], function (signals, _) {
+/*
+<h2>DisplayList</h2>
 
+*
+*/
      function DisplayList() {
         this.onAdded = new signals.Signal();
         this.onRemoved = new signals.Signal();
        /*
-       * <strong>MutationObserver</strong><br/> provides developers a way to react to changes in a DOM.<br/>
-        * It is designed as a replacement for Mutation Events defined in the DOM3 Events specification.
+       * <h3>MutationObserver</h3>
+       * <p>provides developers a way to react to changes in a DOM.<br/>
+        * It is designed as a replacement for Mutation Events defined in the DOM3 Events specification.</p>
         * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">docs!</a>
        * */
         var observer = new MutationObserver(this.handleMutations.bind(this));
 
-        /* <strong>Configuration of the observer.</strong><br/>
-         Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.
+        /* <h3>Configuration of the observer.</h3>
+         <p>Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.</p>
         */
         observer.observe(document.body, {
             attributes: false,

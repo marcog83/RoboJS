@@ -1,4 +1,7 @@
 define(["Promise"], function (Promise) {
+   /*
+   <h2>ScriptLoader</h2>
+    */
     function ScriptLoader() {
     }
 

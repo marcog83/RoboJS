@@ -1,5 +1,7 @@
 define([], function () {
-
+/*
+ <h2>EventMapConfig</h2>
+ */
     function EventMapConfig(dispatcher, eventString, listener, callback, scope) {
         this.dispatcher = dispatcher;
         this.eventString = eventString;

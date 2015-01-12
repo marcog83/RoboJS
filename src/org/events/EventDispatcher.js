@@ -1,6 +1,6 @@
 define([], function () {
     /*
-     * <strong>EventDispatcher</strong>
+     * <h2><strong>EventDispatcher</strong></h2>
      * <p>The EventDispatcher class is a Singleton that handle Events in RoboJS.<br/>
      * It can also be used as the base class for all classes that dispatch events.</p>
      * */
@@ -10,11 +10,12 @@ define([], function () {
 
     EventDispatcher.prototype = {
         /**
-         *<strong>addEventListener</strong>
-         * @param type {String} the event name to listen
-         * @param callback {Function} the callback to execute
-         * @param scope {Object | null} the scope of the callback
-         * @returns {Object} the listener added
+         * <h3>addEventListener</h3>
+         * <p>Registers an event listener object with an EventDispatcher object so that the listener receives notification of an event.</p>
+         * @param type <code>String</code> the event name to listen
+         * @param callback <code>Function</code> the callback to execute
+         * @param scope <code>Object</code> the scope of the callback (default=null)
+         * @returns <code>Object</code> the listener added
          */
         addEventListener: function (type, callback, scope) {
             var listener = {
@@ -29,10 +30,11 @@ define([], function () {
             return listener;
         },
         /**
-         *<strong>removeEventListener</strong>
-         * @param eventName {String} the event name to remove
-         * @param callback {Function} the callback to unmap
-         * @param scope {Object | null} the scope of the callback
+         *<h3>removeEventListener</h3>
+         * <p>Removes a listener from the EventDispatcher object.</p>
+         * @param eventName <code>String</code> the event name to remove
+         * @param callback <code>Function</code> the callback to unmap
+         * @param scope <code>Object</code> the scope of the callback
          */
         removeEventListener: function (eventName, callback, scope) {
             var listeners = this._currentListeners[eventName] || [];
@@ -43,24 +45,27 @@ define([], function () {
             });
         },
         /**
-         *<strong>removeAllEventListeners</strong>
-         * @param eventName {String} the event name to remove
+         *<h3>removeAllEventListeners</h3>
+         * <p>Removes all listeners from the EventDispatcher object.</p>
+         * @param eventName <code>String</code> the event name to remove
          */
         removeAllEventListeners: function (eventName) {
             this._currentListeners[eventName] = null;
         },
         /**
-         *<strong>hasEventListener</strong>
-         * @param eventName {String} the event to check
-         * @returns {*}
+         *<h3>hasEventListener</h3>
+         * <p>Checks whether the EventDispatcher object has any listeners registered for a specific type of event.</p>
+         * @param eventName <code>String</code> the event to check
+         * @returns <code>*</code>
          */
         hasEventListener: function (eventName) {
             return this._currentListeners[eventName] && this._currentListeners[eventName].length
         },
         /**
-         *<strong>dispatchEvent</strong>
-         * @param type {String} the event to dispatch
-         * @param data {*} the data to pass
+         *<h3>dispatchEvent</h3>
+         * <p>Dispatches an event into the event flow.</p>
+         * @param type <code>String</code> the event to dispatch
+         * @param data <code>*</code> the data to pass
          */
         dispatchEvent: function (type, data) {
             var listeners = this._currentListeners[type] || [];
@@ -74,6 +79,11 @@ define([], function () {
         }
     };
     EventDispatcher.__instance = null;
+    /**
+     * <h3>getInstance</h3>
+     * <p>static method to get Singleton instance</p>
+     * @returns <code>EventDispatcher</code>
+     */
     EventDispatcher.getInstance = function () {
 
         if (!EventDispatcher.__instance) {

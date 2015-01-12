@@ -1,7 +1,7 @@
 define(["./EventMapConfig"], function (EventMapConfig) {
 
     /**
-     * <strong>EventMap</strong>
+     * <h2><strong>EventMap</strong></h2>
      * <p>The Event Map keeps track of listeners and provides the ability
      * to unregister all listeners with a single method call.</p>
      */
@@ -12,12 +12,12 @@ define(["./EventMapConfig"], function (EventMapConfig) {
 
     EventMap.prototype = {
         /**
-          <strong>mapListener</strong>
+          <h3>mapListener</h3>
         * <p>The same as calling addEventListener directly on the EventDispatcher, but keeps a list of listeners for easy (usually automatic) removal.</p>
-        * @param dispatcher {EventDispatcher} -- The EventDispatcher to listen to
-         *@param eventString {String} -- The Event type to listen for
-         *@param listener {Function} -- The Event handler
-         *@param scope {*} -- the listener scope (default = null)
+        * @param dispatcher <code>EventDispatcher</code> -- The EventDispatcher to listen to
+         *@param eventString <code>String</code> -- The Event type to listen for
+         *@param listener <code>Function</code> -- The Event handler
+         *@param scope <code>*</code> -- the listener scope (default = null)
         */
         mapListener: function (dispatcher, eventString, listener, scope) {
             var currentListeners = this._listeners;
@@ -39,7 +39,7 @@ define(["./EventMapConfig"], function (EventMapConfig) {
 
         },
         /**
-         * <strong>unmapListener</strong>
+         * <h3>unmapListener</h3>
          * <p>The same as calling <code>removeEventListener</code> directly on the <code>EventDispatcher</code>,
          * but updates our local list of listeners.</p>
          *
@@ -64,7 +64,8 @@ define(["./EventMapConfig"], function (EventMapConfig) {
             }
         },
         /**
-         * Removes all listeners registered through <code>mapListener</code>
+         * <h3>unmapListeners</h3>
+         * <p>Removes all listeners registered through <code>mapListener</code></p>
          */
         unmapListeners: function () {
             var currentListeners = this._listeners;
