@@ -4,6 +4,7 @@
   "main": ["dist/robojs.min.js"],
   "ignore": [
     "node_modules",
+    "bower_components",
     "grunt-tasks",
     "lib",
     "src",
