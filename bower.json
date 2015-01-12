@@ -1,5 +1,5 @@
 {
-  "name": "RoboJS",
+  "name": "robojs",
   "version": "0.9.0",
   "main": ["dist/robojs.min.js"],
   "ignore": [
