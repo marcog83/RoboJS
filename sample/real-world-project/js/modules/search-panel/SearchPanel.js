@@ -4,14 +4,14 @@
 define(function (require, exports, module) {
     'use strict';
     var $ = require("jquery");
-    var signals = require("signals");
+    var RoboJS = require("RoboJS");
     var Rx = require("rx");
 
     function SearchPanel(element) {
         this.element = $(element);
         this.input = this.element.find(".search-input");
-        this.onSearchDone = new signals.Signal();
-        this.onSearchFailed = new signals.Signal();
+        this.onSearchDone = new RoboJS.events.Signal();
+        this.onSearchFailed = new RoboJS.events.Signal();
     }
 
     SearchPanel.prototype = {

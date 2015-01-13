@@ -237,10 +237,10 @@ ToggleModule.prototype = {
 	
 ###Dependencies
 
-RoboJS depends on 2 third-party libraries
+RoboJS depends on a third-party library
 
  * [Lodash](https://lodash.com/) One of my favorite library!
- * [Signals](http://millermedeiros.github.com/js-signals/) You must have a look at this awesome messaging system!
+
 
 bluebird / Q.js and RequireJS are highly recommended
 
@@ -256,7 +256,7 @@ This is an example how you can set dependencies in AMD with RequireJS
 
 requirejs.config({
 	paths: {
-		signals: "../../bower_components/signals/dist/signals.min",
+
 		lodash: "../../bower_components/lodash/dist/lodash.min",
 		Promise: "path/to/any/promise-like/implementation",
         RoboJS: "../../dist/robojs.min"
@@ -269,7 +269,7 @@ or using Globals
 
 ```html
 
-<script src="../../bower_components/signals/dist/signals.min.js"></script>
+
 <script src="../../bower_components/lodash/dist/lodash.min.js"></script>
 
 <script src="../../dist/robojs.min.js"></script>

@@ -3,7 +3,7 @@
  */
 requirejs.config({
 	paths: {
-		signals: "../../bower_components/signals/dist/signals.min",
+
 		lodash: "../../bower_components/lodash/dist/lodash.min",
 		Promise: "./native-promise",
 		RoboJS: "../../dist/robojs.min"

@@ -1,10 +1,10 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
-		define(['lodash',"signals","Promise"], factory);
+		define(['lodash',"Promise"], factory);
 	} else {
-		root.RoboJS = factory(root._,root.signals,root.Promise);
+		root.RoboJS = factory(root._,root.Promise);
 	}
-}(this, function (_,signals,Promise) {
+}(this, function (_,Promise) {
 	'use strict';
 
     /**
@@ -17,10 +17,9 @@
      <p><pre><code>bower install robojs</code></pre></p>
      <h1>Dependencies</h1>
 
-     <p>RoboJS depends on 2 third-party libraries</p>
+     <p>RoboJS depends on a third-party library</p>
      <ul>
         <li><a href="https://lodash.com/">Lodash</a>One of my favorite library!</li>
-        <li><a href="http://millermedeiros.github.com/js-signals/">Signals</a>You must have a look at this awesome messaging system!</li>
      </ul>
      <p>bluebird / Q.js and RequireJS are highly recommended </p>
      <ul>
@@ -33,7 +32,7 @@
      ```javascript
      requirejs.config({
          paths: {
-            signals: "bower_components/signals/dist/signals.min",
+
             lodash: "bower_components/lodash/dist/lodash.min",
             Promise: "path/to/any/promise/implementation",
             RoboJS: "bower_components/robojs/dist/robojs.min"
@@ -42,7 +41,7 @@
      ```
      <p>or using Globals</p>
      ```html
-     <script src="signals.min.js"></script>
+
      <script src="lodash.min.js"></script>
      <script src="robojs.min.js"></script>
      ```
@@ -284,8 +283,8 @@
 *
 */
      function DisplayList() {
-        this.onAdded = new signals.Signal();
-        this.onRemoved = new signals.Signal();
+        this.onAdded = new Signal();
+        this.onRemoved = new Signal();
        /*
        * <h3>MutationObserver</h3>
        * <p>provides developers a way to react to changes in a DOM.<br/>
@@ -638,8 +637,8 @@
      <h2>MediatorsBuilder</h2>
      */
     function MediatorsBuilder(_definition) {
-        this.onAdded = new signals.Signal();
-        this.onRemoved = new signals.Signal();
+        this.onAdded = new Signal();
+        this.onRemoved = new Signal();
         this.definitions = _definition || [];
         this.displayList = new DisplayList();
         this.displayList.onAdded.add(this._handleNodesAdded, this);

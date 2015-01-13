@@ -1,10 +1,10 @@
-define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "lodash", "Promise"], function (RoboJS, DisplayList, ScriptLoader, signals, _, Promise) {
+define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "lodash", "Promise"], function (RoboJS, DisplayList, ScriptLoader, Signal, _, Promise) {
     /*
      <h2>MediatorsBuilder</h2>
      */
     function MediatorsBuilder(_definition) {
-        this.onAdded = new signals.Signal();
-        this.onRemoved = new signals.Signal();
+        this.onAdded = new Signal();
+        this.onRemoved = new Signal();
         this.definitions = _definition || [];
         this.displayList = new DisplayList();
         this.displayList.onAdded.add(this._handleNodesAdded, this);

@@ -7,9 +7,7 @@ var REQUIRE_CONFIG = {
     paths: {
         "jquery": "./bower_components/jquery/dist/jquery.min",
         'jquery-private': "./external_components/jquery/jquery-private",
-        RoboJS: "../../dist/robojs",
-//
-        "signals": "./bower_components/signals/dist/signals.min",
+         RoboJS: "../../dist/robojs",
         "Promise": "./bower_components/bluebird/js/browser/bluebird",
         "rx": "./bower_components/rxjs/dist/rx.all.min",
         "angular": "./bower_components/angular/angular.min",
@@ -54,9 +52,9 @@ module.exports = function (grunt) {
                     out: Utils.getSourcePath(Utils.JS) + "libs/libraries.min.js",
                     paths: REQUIRE_CONFIG.paths,
                     shim: {
-                        angular:{
-                            deps:["jquery"],
-                            exports:"angular"
+                        angular: {
+                            deps: ["jquery"],
+                            exports: "angular"
                         }
                     },
                     optimize: 'none',

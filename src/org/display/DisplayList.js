@@ -1,12 +1,12 @@
-define(["../events/Signal", "lodash"], function (signals, _) {
+define(["../events/Signal", "lodash"], function (Signal, _) {
 /*
 <h2>DisplayList</h2>
 
 *
 */
      function DisplayList() {
-        this.onAdded = new signals.Signal();
-        this.onRemoved = new signals.Signal();
+        this.onAdded = new Signal();
+        this.onRemoved = new Signal();
        /*
        * <h3>MutationObserver</h3>
        * <p>provides developers a way to react to changes in a DOM.<br/>
