@@ -1,4 +1,4 @@
-define(["../core", "./EventMap", "./EventMapConfig", "./EventDispatcher"], function (RoboJS, EventMap, EventMapConfig, EventDispatcher) {
+define(["../core", "./EventMap", "./EventMapConfig", "./EventDispatcher","./Signal"], function (RoboJS, EventMap, EventMapConfig, EventDispatcher,Signal) {
     /*
 
      * <strong>RoboJS.events</strong> package contains
@@ -12,7 +12,8 @@ define(["../core", "./EventMap", "./EventMapConfig", "./EventDispatcher"], funct
     RoboJS.events = {
         EventDispatcher: EventDispatcher,
         EventMap: EventMap,
-        EventMapConfig: EventMapConfig
+        EventMapConfig: EventMapConfig,
+        Signal: Signal
     };
 
 });

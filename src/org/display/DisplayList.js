@@ -1,4 +1,4 @@
-define(["signals", "lodash"], function (signals, _) {
+define(["../events/Signal", "lodash"], function (signals, _) {
 /*
 <h2>DisplayList</h2>
 

@@ -1,4 +1,4 @@
-define(["../core", "./DisplayList", "../net/ScriptLoader", "signals", "lodash", "Promise"], function (RoboJS, DisplayList, ScriptLoader, signals, _, Promise) {
+define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "lodash", "Promise"], function (RoboJS, DisplayList, ScriptLoader, signals, _, Promise) {
     /*
      <h2>MediatorsBuilder</h2>
      */
