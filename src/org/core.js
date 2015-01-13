@@ -8,7 +8,37 @@ define([], function () {
      <h1>Installation</h1>
      <p><pre><code>bower install robojs</code></pre></p>
      <h1>Dependencies</h1>
-     <p> </p>
+
+     <p>RoboJS depends on 2 third-party libraries</p>
+     <ul>
+        <li><a href="https://lodash.com/">Lodash</a>One of my favorite library!</li>
+        <li><a href="http://millermedeiros.github.com/js-signals/">Signals</a>You must have a look at this awesome messaging system!</li>
+     </ul>
+     <p>bluebird / Q.js and RequireJS are highly recommended </p>
+     <ul>
+         <li><a href="https://github.com/petkaantonov/bluebird">bluebird</a>Because Promise is Promise!</li>
+         <li><a href="https://github.com/kriskowal/q">Q.js</a>Because Promise is Promise!</li>
+         <li><a href="http://requirejs.org">RequireJS</a>I <3 U!!!</li>
+     </ul>
+     <p>This is an example how you can set dependencies in AMD with RequireJS</p>
+
+     ```javascript
+     requirejs.config({
+         paths: {
+            signals: "bower_components/signals/dist/signals.min",
+            lodash: "bower_components/lodash/dist/lodash.min",
+            Promise: "path/to/any/promise/implementation",
+            RoboJS: "bower_components/robojs/dist/robojs.min"
+         }
+     });
+     ```
+     <p>or using Globals</p>
+     ```html
+     <script src="signals.min.js"></script>
+     <script src="lodash.min.js"></script>
+     <script src="robojs.min.js"></script>
+     ```
+
      <h1>Usage</h1>
      <p>You set a <code>data-mediator</code> attribute with an ID (whatever you want)
      ```html
