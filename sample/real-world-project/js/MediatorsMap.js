@@ -18,7 +18,7 @@ define(function (require) {
         },
         {
             "id":"toggle",
-            "mediator":"modules/toggle/Mediator"
+            "mediator":"modules/toggle/ToggleModule"
         }
     ];
 });

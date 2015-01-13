@@ -124,11 +124,25 @@ It's meant to be a Singleton ( EventDispatcher.getInstance() ) in your applicati
 Mediator is the context where your logic runs for a specific bunch of DOM.
 When a `data-mediator` matches an ID from MediatorsMap a new instance of Mediator is created. the DOM element is stored into a property named `element` and the `initialize` method is invoked.
 
-Mediator has a reference to `eventDispatcher` too. 
-This way it can dispatch / listen to messages in your application.
-`addContextListener` and `removeContextListener` are responsible to map and unmap an event registered in EventDispatcher. `dispatch` is responsible to send an event with EventDispatcher.
 
-Usually events are registered in `initialize` function
+Mediators should observe one of the following forms:
+
+* Extend the base `RoboJS.dislay.Mediator` class and override `initialize()` and, if needed, `destroy()`.
+* Don't extend the base `RoboJS.dislay.Mediator` class, and provide functions `initialize()` and, if needed, also `destroy()`.
+
+`initialize()` function initializes the mediator. This is run automatically by the `MediatorBuilder` when a mediator is created. 
+Normally the `initialize` function is where you would add handlers or dispatch events using the `eventMap`.
+
+
+###Mediator that exends RoboJS.dislay.Mediator
+
+You can sub-class `RoboJS.dislay.Mediator` class in order to code your logic. For example i defined `MediatorB`.
+
+`RoboJS.dislay.Mediator` has a reference to `eventDispatcher`. 
+This way it can dispatch / listen to messages in your application.
+`addContextListener` and `removeContextListener` are responsible to map and unmap events registered to `eventDispatcher`. `dispatch` is responsible to send events with `eventDispatcher`.
+
+Usually handlers are registered in `initialize` function
 
 ```javascript
 // 'event-name' is a String.
@@ -145,12 +159,7 @@ To remove the listener you can do
 this.removeContextListener("event-name", this._handleEvent);
 ```
 
-When DOM element is removed from DOM Tree, Mediator removes all listeners registered to EventDispatcher and the `destroy` method is executed.  
-
-
-###Concrete Mediator
-
-You can sub-class Mediator Class in order to code your logic. For example i define `MediatorB`.
+When DOM element is removed from DOM Tree, `RoboJS.dislay.Mediator` removes all listeners registered to `eventMap` and the `destroy` method is executed.  
 
 No matter how you implement inheritance. I just played with Vanilla-js to keep as cleaner as possible 
 
@@ -193,6 +202,38 @@ MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 });
 ```
 
+###Mediator that DOESN'T exends RoboJS.dislay.Mediator
+
+If you just need to load JS based on DOM and you don't need `RoboJS.dislay.Mediator` features, you can create your own class and provide functions `initialize()` and, if needed, also `destroy()`.
+By default `element` parameter, that represents DOM node, is always passed into constructor by `MediatorsBuilder`
+In `sample/real-world-project/js/modules/toggle` folder there is `ToggleModule` implemented in this way.
+
+```javascript
+function ToggleModule(element) {
+    this.element = $(element);
+}
+
+ToggleModule.prototype = {
+    initialize: function () {
+        var JQUERY_MODULE = "<div class='results-panel' data-mediator='jquery-results-panel'></div>";
+        var ANGULAR_MODULE = '<div class="results-panel" data-mediator="results-panel"><results-panel class="content"></results-panel></div>';
+        this.element.on("click", function () {
+            this.element.toggleClass("toggled");
+            $(".results-panel").remove();
+            var element, text;
+            if (this.element.hasClass("toggled")) {
+                element = JQUERY_MODULE;
+                text = 'CHANGE TO ANGULAR MODULE';
+            } else {
+                element = ANGULAR_MODULE;
+                text = 'CHANGE TO JQUERY MODULE';
+            }
+            this.element.html(text);
+            $("body").append(element);
+        }.bind(this))
+    }
+}
+```
 	
 ###Dependencies
 

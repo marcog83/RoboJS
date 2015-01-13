@@ -90,5 +90,35 @@ Now if we have a look at `SearchPanel` and `ResultsPanel` we can see that they a
 -   `SearchPanel` uses RxJS AWESOME Functional Reactive Library
 -   `ResultsPanel` uses AngularJS OMG framework.
 
+`toggle` module doesn't need to communicate with other modules. For this reason we don't extend a `RoboJS.display.Mediator`. Instead we create a class `ToggleModule` that has `initialize` function.
+By default `element` parameter is always passed into constructor by `MediatorsBuilder`
+
+```javascript
+function ToggleModule(element) {
+    this.element = $(element);
+}
+
+ToggleModule.prototype = {
+    initialize: function () {
+        var JQUERY_MODULE = "<div class='results-panel' data-mediator='jquery-results-panel'></div>";
+        var ANGULAR_MODULE = '<div class="results-panel" data-mediator="results-panel"><results-panel class="content"></results-panel></div>';
+        this.element.on("click", function () {
+            this.element.toggleClass("toggled");
+            $(".results-panel").remove();
+            var element, text;
+            if (this.element.hasClass("toggled")) {
+                element = JQUERY_MODULE;
+                text = 'CHANGE TO ANGULAR MODULE';
+            } else {
+                element = ANGULAR_MODULE;
+                text = 'CHANGE TO JQUERY MODULE';
+            }
+            this.element.html(text);
+            $("body").append(element);
+        }.bind(this))
+    }
+}
+```
+
 Actually I pushed a bit to show that RoboJS is not about modules implementation, but 
 **WHEN A MODULE SHOULD BE BOOTSTRAPED**.
