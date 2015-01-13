@@ -127,18 +127,18 @@ When a `data-mediator` matches an ID from MediatorsMap a new instance of Mediato
 
 Mediators should observe one of the following forms:
 
-* Extend the base `RoboJS.dislay.Mediator` class and override `initialize()` and, if needed, `destroy()`.
-* Don't extend the base `RoboJS.dislay.Mediator` class, and provide functions `initialize()` and, if needed, also `destroy()`.
+* Extend the base `RoboJS.display.Mediator` class and override `initialize()` and, if needed, `destroy()`.
+* Don't extend the base `RoboJS.display.Mediator` class, and provide functions `initialize()` and, if needed, also `destroy()`.
 
 `initialize()` function initializes the mediator. This is run automatically by the `MediatorBuilder` when a mediator is created. 
 Normally the `initialize` function is where you would add handlers or dispatch events using the `eventMap`.
 
 
-###Mediator that exends RoboJS.dislay.Mediator
+###Mediator that exends RoboJS.display.Mediator
 
-You can sub-class `RoboJS.dislay.Mediator` class in order to code your logic. For example i defined `MediatorB`.
+You can sub-class `RoboJS.display.Mediator` class in order to code your logic. For example i defined `MediatorB`.
 
-`RoboJS.dislay.Mediator` has a reference to `eventDispatcher`. 
+`RoboJS.display.Mediator` has a reference to `eventDispatcher`. 
 This way it can dispatch / listen to messages in your application.
 `addContextListener` and `removeContextListener` are responsible to map and unmap events registered to `eventDispatcher`. `dispatch` is responsible to send events with `eventDispatcher`.
 
@@ -159,7 +159,7 @@ To remove the listener you can do
 this.removeContextListener("event-name", this._handleEvent);
 ```
 
-When DOM element is removed from DOM Tree, `RoboJS.dislay.Mediator` removes all listeners registered to `eventMap` and the `destroy` method is executed.  
+When DOM element is removed from DOM Tree, `RoboJS.display.Mediator` removes all listeners registered to `eventMap` and the `destroy` method is executed.  
 
 No matter how you implement inheritance. I just played with Vanilla-js to keep as cleaner as possible 
 
@@ -202,9 +202,9 @@ MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 });
 ```
 
-###Mediator that DOESN'T exends RoboJS.dislay.Mediator
+###Mediator that DOESN'T exends RoboJS.display.Mediator
 
-If you just need to load JS based on DOM and you don't need `RoboJS.dislay.Mediator` features, you can create your own class and provide functions `initialize()` and, if needed, also `destroy()`.
+If you just need to load JS based on DOM and you don't need `RoboJS.display.Mediator` features, you can create your own class and provide functions `initialize()` and, if needed, also `destroy()`.
 By default `element` parameter, that represents DOM node, is always passed into constructor by `MediatorsBuilder`
 In `sample/real-world-project/js/modules/toggle` folder there is `ToggleModule` implemented in this way.
 
