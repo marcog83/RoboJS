@@ -1,6 +1,6 @@
 {
   "name": "RoboJS",
-  "version": "0.0.1",
+  "version": "0.10.0",
   "license": "MIT",
   "devDependencies": {
     "glob": "^4.3.2",
