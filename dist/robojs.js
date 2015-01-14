@@ -92,7 +92,7 @@
       The Signal argument is an Array of Mediator instances
      </p>
      ```javascript
-     builder.onAdded.add(function (mediators) {
+     builder.onAdded.connect(function (mediators) {
         // Mediators added async --> mediators
     });
      ```
@@ -101,7 +101,7 @@
        The Signal argument is an instances of Mediator.
      </p>
      ```javascript
-     builder.onRemoved.add(function (mediator) {
+     builder.onRemoved.connect(function (mediator) {
         // Mediator onRemoved async --> mediator
     });
      ```

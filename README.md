@@ -73,7 +73,7 @@ builder.bootstrap().then(function (mediators) {
  *
  */
  
-builder.onAdded.add(function (mediators) {
+builder.onAdded.connect(function (mediators) {
     console.log("Mediators added async", mediators);
 });
 
@@ -83,7 +83,7 @@ builder.onAdded.add(function (mediators) {
  *
  */
  
-builder.onRemoved.add(function (mediator) {
+builder.onRemoved.connect(function (mediator) {
     console.log("Mediators onRemoved async", mediator);
 });
 ```
