@@ -1,7 +1,15 @@
-define([],function () {
-    'use strict';
+define([], function () {
+     /*
+     <h2>Signal</h2>
+     <p>Signals and slots are used for communication between objects. The signals and slots mechanism is a central feature of Qt </p>
+     <p>A <code>signal</code> is emitted when a particular event occurs.
+     A <code>slot</code> is a function that is called in response to a particular <code>signal</code>.
+     You can connect as many signals as you want to a single slot, and a signal can be connected to as many slots as you need.
+
+     </p>
 
 
+      */
     function Signal() {
 
         this.listenerBoxes = [];
@@ -9,10 +17,7 @@ define([],function () {
         this._valueClasses = null;
 
         this.listenersNeedCloning = false;
-        // allow sub classes to pass an array of Classes
-        //if (arguments.length == 1 && arguments[0] instanceof Array)
-        //setValueClasses(arguments[0])
-        //else
+
         this.setValueClasses(arguments);
     }
 
@@ -23,31 +28,59 @@ define([],function () {
         getValueClasses: function () {
             return this._valueClasses;
         },
-        add: function (listener, scope) {
-            this.registerListener(listener, scope, false);
+        /**
+         <h3>connect</h3>
+         <p>Connects the signal this to the incoming slot.</p>
+         @param <code>Function</code> the slot function
+         @param <code>Object</code> the scope of slot function execution
+         */
+        connect: function (slot, scope) {
+            this.registerListener(slot, scope, false);
         },
-        addOnce: function (listener, scope) {
-            this.registerListener(listener, scope, true);
+        /**
+         <h3>connectOnce</h3>
+         <p></p>
+         @param <code>Function</code> the slot function
+         @param <code>Object</code> the scope of slot function execution
+         */
+        connectOnce: function (slot, scope) {
+            this.registerListener(slot, scope, true);
         },
-        remove: function (listener, scope) {
-            if (listenersNeedCloning) {
+        /**
+         <h3>disconnect</h3>
+         <p>the given slot are disconnected.</p>
+         @param <code>Function</code> the slot function
+         @param <code>Object</code> the scope of slot function execution
+         */
+        disconnect: function (slot, scope) {
+            if (this.listenersNeedCloning) {
                 this.listenerBoxes = this.listenerBoxes.slice();
                 this.listenersNeedCloning = false;
             }
 
             for (var i = this.listenerBoxes.length; i--;) {
-                if (this.listenerBoxes[i].listener == listener && this.listenerBoxes[i].scope == scope) {
+                if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
                     this.listenerBoxes.splice(i, 1);
                     return;
                 }
             }
         },
-        removeAll: function () {
-            // Looping backwards is more efficient when removing array items.
+        /**
+         <h3>disconnectAll</h3>
+         <p>Disconnects all slots connected to the signal.</p>
+
+         */
+        disconnectAll: function () {
+
             for (var i = this.listenerBoxes.length; i--;) {
-                this.remove(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
+                this.disconnect(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
             }
         },
+        /**
+         <h3>dispatch</h3>
+         <p>Dispatches an event into the signal flow.</p>
+
+         */
         dispatch: function () {
             var valueObject;
             for (var n = 0; n < this._valueClasses.length; n++) {
@@ -64,12 +97,12 @@ define([],function () {
             var listenerBoxes = this.listenerBoxes;
             var len = listenerBoxes.length;
             var listenerBox;
-            //var scope;
+
             this.listenersNeedCloning = true;
             for (var i = 0; i < len; i++) {
                 listenerBox = listenerBoxes[i];
                 if (listenerBox.once)
-                    this.remove(listenerBox.listener, listenerBox.scope);
+                    this.disconnect(listenerBox.listener, listenerBox.scope);
 
                 listenerBox.listener.apply(listenerBox.scope, arguments);
             }

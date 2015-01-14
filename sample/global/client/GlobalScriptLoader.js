@@ -11,11 +11,11 @@ function GlobalScriptLoader() {
 GlobalScriptLoader.prototype = {
 
     get: function (path) {
-        var mediator = _.chain(path.split("."))
+        var mediator = path.split(".")
             .reduce(function (result, key) {
                 return result[key]
-            }, window)
-            .value();
+            }, window);
+
 
         return Promise.resolve(mediator);
     }

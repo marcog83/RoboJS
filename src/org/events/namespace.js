@@ -6,6 +6,7 @@ define(["../core", "./EventMap", "./EventMapConfig", "./EventDispatcher","./Sign
      *     <li>EventDispatcher</li>
      *     <li>EventMap</li>
      *     <li>EventMapConfig</li>
+     *     <li>Signal</li>
      * </ul>
      *
      * */

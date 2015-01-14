@@ -237,17 +237,20 @@ ToggleModule.prototype = {
 	
 ###Dependencies
 
-RoboJS depends on a third-party library
+RoboJS depends on **ES5** for
 
- * [Lodash](https://lodash.com/) One of my favorite library!
+ * Array.prototype.reduce()
+ * Array.prototype.map()
+ * Array.prototype.filter()
 
 
-bluebird / Q.js and RequireJS are highly recommended
 
- * [bluebird](https://github.com/petkaantonov/bluebird) Because Promise is Promise!
- * [Q.js](https://github.com/kriskowal/q) Because Promise is Promise!
- * [RequireJS](http://requirejs.org/) I <3 U!!!
+**[bluebird](https://github.com/petkaantonov/bluebird)** and **[Q.js](https://github.com/kriskowal/q)** can be used where native Promise is not implemented.
 
+
+
+**[RequireJS](http://requirejs.org/)** is used internally as script loader in `ScriptLoader` Class.
+You can override `loader` property of `MediatorsBuilder` instance with your own implementation to load JS.
 
 
 This is an example how you can set dependencies in AMD with RequireJS
@@ -256,8 +259,6 @@ This is an example how you can set dependencies in AMD with RequireJS
 
 requirejs.config({
 	paths: {
-
-		lodash: "../../bower_components/lodash/dist/lodash.min",
 		Promise: "path/to/any/promise-like/implementation",
         RoboJS: "../../dist/robojs.min"
 	}
@@ -268,10 +269,5 @@ requirejs.config({
 or using Globals
 
 ```html
-
-
-<script src="../../bower_components/lodash/dist/lodash.min.js"></script>
-
 <script src="../../dist/robojs.min.js"></script>
-
 ```

@@ -60,14 +60,14 @@ define(function (require) {
 			 * when new DOM nodes are added to the document MutationObserver notify it, and a onAdded Signal is dispatched.
 			 * The Signal argument is an Array of Mediator instances
 			 */
-			builder.onAdded.add(function (mediators) {
+			builder.onAdded.connect(function (mediators) {
 				console.log("Mediators added async", mediators);
 			});
 			/**
 			 * when new DOM nodes are removed from the document MutationObserver notify it, and a onRemoved Signal is dispatched.
 			 * The Signal argument is an instances of Mediator.
 			 */
-			builder.onRemoved.add(function (mediator) {
+			builder.onRemoved.connect(function (mediator) {
 				console.log("Mediators onRemoved async", mediator);
 			});
 			/**

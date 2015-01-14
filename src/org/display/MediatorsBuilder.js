@@ -1,4 +1,4 @@
-define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "lodash", "Promise"], function (RoboJS, DisplayList, ScriptLoader, Signal, _, Promise) {
+define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "Promise"], function (RoboJS, DisplayList, ScriptLoader, Signal, Promise) {
     /*
      <h2>MediatorsBuilder</h2>
      */
@@ -7,9 +7,8 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "
         this.onRemoved = new Signal();
         this.definitions = _definition || [];
         this.displayList = new DisplayList();
-        this.displayList.onAdded.add(this._handleNodesAdded, this);
-        this.displayList.onRemoved.add(this._handleNodesRemoved, this);
-
+        this.displayList.onAdded.connect(this._handleNodesAdded, this);
+        this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
         this.loader = new ScriptLoader();
     }
 
@@ -21,25 +20,19 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "
             return this.getMediators([document.body]);
         },
         getMediators: function (target) {
-            var promises = _.chain(target)
+            return Promise.all(target
                 .reduce(this._reduceNodes, [])
-                .reduce(this._findMediators.bind(this), [])
-                .value();
-
-            return Promise.all(promises);
+                .reduce(this._findMediators.bind(this), []));
         },
         _findMediators: function (result, node, index) {
-
-            var mediators = _.chain(this.definitions)
+            return result.concat(this.definitions
                 .filter(function (def) {
                     return node.dataset && node.dataset.mediator == def.id;
                 })
                 .map(function (def) {
-
                     return this.loader.get(def.mediator).then(this._initMediator.bind(this, node));
-                }.bind(this)).value();
+                }.bind(this)));
 
-            return result.concat(mediators);
         },
         _initMediator: function (node, Mediator) {
             var mediatorId = RoboJS.utils.nextUid();
@@ -59,10 +52,9 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "
             }.bind(this));
         },
         _handleNodesRemoved: function (nodes) {
+            nodes.reduce(this._reduceNodes, [])
+                .forEach(this._destroyMediator.bind(this));
 
-            _.chain(nodes)
-                .reduce(this._reduceNodes, [])
-                .forEach(this._destroyMediator.bind(this))
         },
         _reduceNodes: function (result, node) {
             if (!node || !node.getElementsByTagName)return result;
@@ -76,7 +68,6 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "
             if (mediator) {
                 mediator.destroy && mediator.destroy();
                 mediator.postDestroy && mediator.postDestroy();
-
                 this.onRemoved.dispatch(mediator);
                 mediator.element && (mediator.element = null);
                 RoboJS.MEDIATORS_CACHE[mediatorId] = null;

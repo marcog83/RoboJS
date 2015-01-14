@@ -10,10 +10,7 @@ var REQUIRE_CONFIG = {
          RoboJS: "../../dist/robojs",
         "Promise": "./bower_components/bluebird/js/browser/bluebird",
         "rx": "./bower_components/rxjs/dist/rx.all.min",
-        "angular": "./bower_components/angular/angular.min",
-
-        //
-        "lodash": "./bower_components/lodash/dist/lodash"
+        "angular": "./bower_components/angular/angular.min"
 
     },
     getEmptyPaths: function () {

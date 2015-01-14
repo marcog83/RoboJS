@@ -15,8 +15,8 @@ define(function (require, exports, module) {
         initialize: {
             value: function () {
                 this.view = new SearchPanel(this.element);
-                this.view.onSearchDone.add(this._handleSearchDone, this);
-                this.view.onSearchFailed.add(this._handleSearchFailed, this);
+                this.view.onSearchDone.connect(this._handleSearchDone, this);
+                this.view.onSearchFailed.connect(this._handleSearchFailed, this);
                 this.view.initialize();
             }
         },

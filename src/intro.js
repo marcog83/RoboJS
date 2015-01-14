@@ -1,8 +1,8 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
-		define(['lodash',"Promise"], factory);
+		define(["Promise"], factory);
 	} else {
-		root.RoboJS = factory(root._,root.Promise);
+		root.RoboJS = factory(root.Promise);
 	}
-}(this, function (_,Promise) {
+}(this, function (Promise) {
 	'use strict';

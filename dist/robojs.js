@@ -1,10 +1,10 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
-		define(['lodash',"Promise"], factory);
+		define(["Promise"], factory);
 	} else {
-		root.RoboJS = factory(root._,root.Promise);
+		root.RoboJS = factory(root.Promise);
 	}
-}(this, function (_,Promise) {
+}(this, function (Promise) {
 	'use strict';
 
     /**
@@ -17,23 +17,23 @@
      <p><pre><code>bower install robojs</code></pre></p>
      <h1>Dependencies</h1>
 
-     <p>RoboJS depends on a third-party library</p>
+     <p>RoboJS depends on ES5 for</p>
      <ul>
-        <li><a href="https://lodash.com/">Lodash</a>One of my favorite library!</li>
+        <li>Array.prototype.reduce()</li>
+        <li>Array.prototype.map()</li>
+        <li>Array.prototype.filter()</li>
      </ul>
-     <p>bluebird / Q.js and RequireJS are highly recommended </p>
-     <ul>
-         <li><a href="https://github.com/petkaantonov/bluebird">bluebird</a>Because Promise is Promise!</li>
-         <li><a href="https://github.com/kriskowal/q">Q.js</a>Because Promise is Promise!</li>
-         <li><a href="http://requirejs.org">RequireJS</a>I <3 U!!!</li>
-     </ul>
+     <p><a href="https://github.com/petkaantonov/bluebird">bluebird</a> or <a href="https://github.com/kriskowal/q">Q.js</a>
+     can be used where native Promise is not implemented.
+     </p>
+     <p><a href="http://requirejs.org">RequireJS</a> is used internally as script loader in <code>ScriptLoader</code> Class.
+     You can override <code>loader</code> property of <code>MediatorsBuilder</code> instance with your own implementation to load JS.</p>
+
      <p>This is an example how you can set dependencies in AMD with RequireJS</p>
 
      ```javascript
      requirejs.config({
          paths: {
-
-            lodash: "bower_components/lodash/dist/lodash.min",
             Promise: "path/to/any/promise/implementation",
             RoboJS: "bower_components/robojs/dist/robojs.min"
          }
@@ -41,8 +41,6 @@
      ```
      <p>or using Globals</p>
      ```html
-
-     <script src="lodash.min.js"></script>
      <script src="robojs.min.js"></script>
      ```
 
@@ -159,9 +157,17 @@
     };
     
 
-    'use strict';
+     /*
+     <h2>Signal</h2>
+     <p>Signals and slots are used for communication between objects. The signals and slots mechanism is a central feature of Qt </p>
+     <p>A <code>signal</code> is emitted when a particular event occurs.
+     A <code>slot</code> is a function that is called in response to a particular <code>signal</code>.
+     You can connect as many signals as you want to a single slot, and a signal can be connected to as many slots as you need.
+
+     </p>
 
 
+      */
     function Signal() {
 
         this.listenerBoxes = [];
@@ -169,10 +175,7 @@
         this._valueClasses = null;
 
         this.listenersNeedCloning = false;
-        // allow sub classes to pass an array of Classes
-        //if (arguments.length == 1 && arguments[0] instanceof Array)
-        //setValueClasses(arguments[0])
-        //else
+
         this.setValueClasses(arguments);
     }
 
@@ -183,31 +186,59 @@
         getValueClasses: function () {
             return this._valueClasses;
         },
-        add: function (listener, scope) {
-            this.registerListener(listener, scope, false);
+        /**
+         <h3>connect</h3>
+         <p>Connects the signal this to the incoming slot.</p>
+         @param <code>Function</code> the slot function
+         @param <code>Object</code> the scope of slot function execution
+         */
+        connect: function (slot, scope) {
+            this.registerListener(slot, scope, false);
         },
-        addOnce: function (listener, scope) {
-            this.registerListener(listener, scope, true);
+        /**
+         <h3>connectOnce</h3>
+         <p></p>
+         @param <code>Function</code> the slot function
+         @param <code>Object</code> the scope of slot function execution
+         */
+        connectOnce: function (slot, scope) {
+            this.registerListener(slot, scope, true);
         },
-        remove: function (listener, scope) {
-            if (listenersNeedCloning) {
+        /**
+         <h3>disconnect</h3>
+         <p>the given slot are disconnected.</p>
+         @param <code>Function</code> the slot function
+         @param <code>Object</code> the scope of slot function execution
+         */
+        disconnect: function (slot, scope) {
+            if (this.listenersNeedCloning) {
                 this.listenerBoxes = this.listenerBoxes.slice();
                 this.listenersNeedCloning = false;
             }
 
             for (var i = this.listenerBoxes.length; i--;) {
-                if (this.listenerBoxes[i].listener == listener && this.listenerBoxes[i].scope == scope) {
+                if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
                     this.listenerBoxes.splice(i, 1);
                     return;
                 }
             }
         },
-        removeAll: function () {
-            // Looping backwards is more efficient when removing array items.
+        /**
+         <h3>disconnectAll</h3>
+         <p>Disconnects all slots connected to the signal.</p>
+
+         */
+        disconnectAll: function () {
+
             for (var i = this.listenerBoxes.length; i--;) {
-                this.remove(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
+                this.disconnect(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
             }
         },
+        /**
+         <h3>dispatch</h3>
+         <p>Dispatches an event into the signal flow.</p>
+
+         */
         dispatch: function () {
             var valueObject;
             for (var n = 0; n < this._valueClasses.length; n++) {
@@ -224,12 +255,12 @@
             var listenerBoxes = this.listenerBoxes;
             var len = listenerBoxes.length;
             var listenerBox;
-            //var scope;
+
             this.listenersNeedCloning = true;
             for (var i = 0; i < len; i++) {
                 listenerBox = listenerBoxes[i];
                 if (listenerBox.once)
-                    this.remove(listenerBox.listener, listenerBox.scope);
+                    this.disconnect(listenerBox.listener, listenerBox.scope);
 
                 listenerBox.listener.apply(listenerBox.scope, arguments);
             }
@@ -277,41 +308,41 @@
 
     
 
-/*
-<h2>DisplayList</h2>
+    /*
+     <h2>DisplayList</h2>
 
-*
-*/
-     function DisplayList() {
+     *
+     */
+    function DisplayList() {
         this.onAdded = new Signal();
         this.onRemoved = new Signal();
-       /*
-       * <h3>MutationObserver</h3>
-       * <p>provides developers a way to react to changes in a DOM.<br/>
-        * It is designed as a replacement for Mutation Events defined in the DOM3 Events specification.</p>
-        * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">docs!</a>
-       * */
+        /*
+         * <h3>MutationObserver</h3>
+         * <p>provides developers a way to react to changes in a DOM.<br/>
+         * It is designed as a replacement for Mutation Events defined in the DOM3 Events specification.</p>
+         * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">docs!</a>
+         * */
         var observer = new MutationObserver(this.handleMutations.bind(this));
 
         /* <h3>Configuration of the observer.</h3>
          <p>Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.</p>
-        */
+         */
         observer.observe(document.body, {
             attributes: false,
             childList: true,
             characterData: false,
-            subtree:true
+            subtree: true
         });
     }
 
     DisplayList.prototype = {
         handleMutations: function (mutations) {
-            var response = _.reduce(mutations, function (result, mutation, index) {
+            var response = mutations.reduce(function (result, mutation, index) {
                 result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
                 result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
                 return result;
             }, {addedNodes: [], removedNodes: []});
-            //
+
             response.addedNodes.length && this.onAdded.dispatch(response.addedNodes);
             response.removedNodes.length && this.onRemoved.dispatch(response.removedNodes);
         }
@@ -641,9 +672,8 @@
         this.onRemoved = new Signal();
         this.definitions = _definition || [];
         this.displayList = new DisplayList();
-        this.displayList.onAdded.add(this._handleNodesAdded, this);
-        this.displayList.onRemoved.add(this._handleNodesRemoved, this);
-
+        this.displayList.onAdded.connect(this._handleNodesAdded, this);
+        this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
         this.loader = new ScriptLoader();
     }
 
@@ -655,25 +685,19 @@
             return this.getMediators([document.body]);
         },
         getMediators: function (target) {
-            var promises = _.chain(target)
+            return Promise.all(target
                 .reduce(this._reduceNodes, [])
-                .reduce(this._findMediators.bind(this), [])
-                .value();
-
-            return Promise.all(promises);
+                .reduce(this._findMediators.bind(this), []));
         },
         _findMediators: function (result, node, index) {
-
-            var mediators = _.chain(this.definitions)
+            return result.concat(this.definitions
                 .filter(function (def) {
                     return node.dataset && node.dataset.mediator == def.id;
                 })
                 .map(function (def) {
-
                     return this.loader.get(def.mediator).then(this._initMediator.bind(this, node));
-                }.bind(this)).value();
+                }.bind(this)));
 
-            return result.concat(mediators);
         },
         _initMediator: function (node, Mediator) {
             var mediatorId = RoboJS.utils.nextUid();
@@ -693,10 +717,9 @@
             }.bind(this));
         },
         _handleNodesRemoved: function (nodes) {
+            nodes.reduce(this._reduceNodes, [])
+                .forEach(this._destroyMediator.bind(this));
 
-            _.chain(nodes)
-                .reduce(this._reduceNodes, [])
-                .forEach(this._destroyMediator.bind(this))
         },
         _reduceNodes: function (result, node) {
             if (!node || !node.getElementsByTagName)return result;
@@ -710,7 +733,6 @@
             if (mediator) {
                 mediator.destroy && mediator.destroy();
                 mediator.postDestroy && mediator.postDestroy();
-
                 this.onRemoved.dispatch(mediator);
                 mediator.element && (mediator.element = null);
                 RoboJS.MEDIATORS_CACHE[mediatorId] = null;
@@ -747,6 +769,7 @@
      *     <li>EventDispatcher</li>
      *     <li>EventMap</li>
      *     <li>EventMapConfig</li>
+     *     <li>Signal</li>
      * </ul>
      *
      * */

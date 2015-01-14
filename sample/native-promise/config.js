@@ -4,7 +4,6 @@
 requirejs.config({
 	paths: {
 
-		lodash: "../../bower_components/lodash/dist/lodash.min",
 		Promise: "./native-promise",
 		RoboJS: "../../dist/robojs.min"
 
