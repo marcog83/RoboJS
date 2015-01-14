@@ -235,11 +235,11 @@
             }
         },
         /**
-         <h3>dispatch</h3>
+         <h3>emit</h3>
          <p>Dispatches an event into the signal flow.</p>
 
          */
-        dispatch: function () {
+        emit: function () {
             var valueObject;
             for (var n = 0; n < this._valueClasses.length; n++) {
                 if (this.primitiveMatchesValueClass(arguments[n], this._valueClasses[n]))
@@ -343,8 +343,8 @@
                 return result;
             }, {addedNodes: [], removedNodes: []});
 
-            response.addedNodes.length && this.onAdded.dispatch(response.addedNodes);
-            response.removedNodes.length && this.onRemoved.dispatch(response.removedNodes);
+            response.addedNodes.length && this.onAdded.emit(response.addedNodes);
+            response.removedNodes.length && this.onRemoved.emit(response.removedNodes);
         }
     };
     
@@ -712,7 +712,7 @@
         _handleNodesAdded: function (nodes) {
             this.getMediators(nodes).then(function (mediators) {
                 if (mediators.length) {
-                    this.onAdded.dispatch(mediators);
+                    this.onAdded.emit(mediators);
                 }
             }.bind(this));
         },
@@ -733,7 +733,7 @@
             if (mediator) {
                 mediator.destroy && mediator.destroy();
                 mediator.postDestroy && mediator.postDestroy();
-                this.onRemoved.dispatch(mediator);
+                this.onRemoved.emit(mediator);
                 mediator.element && (mediator.element = null);
                 RoboJS.MEDIATORS_CACHE[mediatorId] = null;
                 mediator = null;

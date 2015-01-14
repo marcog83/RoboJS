@@ -47,7 +47,7 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "
         _handleNodesAdded: function (nodes) {
             this.getMediators(nodes).then(function (mediators) {
                 if (mediators.length) {
-                    this.onAdded.dispatch(mediators);
+                    this.onAdded.emit(mediators);
                 }
             }.bind(this));
         },
@@ -68,7 +68,7 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "
             if (mediator) {
                 mediator.destroy && mediator.destroy();
                 mediator.postDestroy && mediator.postDestroy();
-                this.onRemoved.dispatch(mediator);
+                this.onRemoved.emit(mediator);
                 mediator.element && (mediator.element = null);
                 RoboJS.MEDIATORS_CACHE[mediatorId] = null;
                 mediator = null;

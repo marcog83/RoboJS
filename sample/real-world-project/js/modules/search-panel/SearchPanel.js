@@ -44,10 +44,10 @@ define(function (require, exports, module) {
         },
         _handleSearchDone: function (data) {
             var res = data[1];
-            this.onSearchDone.dispatch(res);
+            this.onSearchDone.emit(res);
         },
         _handleSearchFailed: function (error) {
-            this.onSearchFailed.dispatch([error]);
+            this.onSearchFailed.emit([error]);
         }
     };
 

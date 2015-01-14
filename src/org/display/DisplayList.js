@@ -34,8 +34,8 @@ define(["../events/Signal"], function (Signal) {
                 return result;
             }, {addedNodes: [], removedNodes: []});
 
-            response.addedNodes.length && this.onAdded.dispatch(response.addedNodes);
-            response.removedNodes.length && this.onRemoved.dispatch(response.removedNodes);
+            response.addedNodes.length && this.onAdded.emit(response.addedNodes);
+            response.removedNodes.length && this.onRemoved.emit(response.removedNodes);
         }
     };
     return DisplayList;

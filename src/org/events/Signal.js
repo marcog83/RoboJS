@@ -77,11 +77,11 @@ define([], function () {
             }
         },
         /**
-         <h3>dispatch</h3>
+         <h3>emit</h3>
          <p>Dispatches an event into the signal flow.</p>
 
          */
-        dispatch: function () {
+        emit: function () {
             var valueObject;
             for (var n = 0; n < this._valueClasses.length; n++) {
                 if (this.primitiveMatchesValueClass(arguments[n], this._valueClasses[n]))
