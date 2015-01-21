@@ -1,11 +1,17 @@
 define(function (require, exports, module) {
     'use strict';
-    var MyAppConfig=require("./Config");
-    var MVCBundle=require("./MVCBundle");
+
+	var Config=require("./Config");
+    var RoboJS=require("RoboJS");
     //
-    var _context = new Context()
-        .install(MVCBundle)
-        .configure(MyAppConfig,"MyAppConfig")
-        .initialize();
-    module.exports = {};
+    function Client(){
+	    var _context = new RoboJS.framework.Context();
+
+	    _context.install(MVCBundle)
+		        .configure(["Injector",Config],"MyAppConfig")
+		        .initialize();
+    }
+
+
+    module.exports = Client;
 });
