@@ -349,6 +349,196 @@
     };
     
 
+	/**
+	 * <h2>Mediator</h2>
+	 * <p>Mediators should observe one of the following forms:</p>
+	 * <ul>
+	 *     <li>Extend the base mediator class and override <code>initialize()</code> and, if needed, <code>destroy()</code>.</li>
+	 *     <li>Don't extend the base mediator class, and provide functions <code>initialize()</code> and, if needed, also <code>destroy()</code>.</li>
+	 * </ul>
+	 *
+	 * <p>A mediator that extends the Mediator might look like this:</p>
+	 *
+	 * <pre>
+	 * var RoboJS=require("RoboJS");
+	 * function MediatorA() {
+     *    RoboJS.display.Mediator.apply(this, arguments);
+     * }
+	 * MediatorA.prototype = Object.create(RoboJS.display.Mediator.prototype, {
+     *     initialize: {
+     *         value: function () {
+     *             // code goes here
+     *        }
+     *      }
+     * });
+	 *</pre>
+	 *
+	 *<p>You do not have to extend the Mediator:</p>
+	 *
+	 * <pre>
+	 *
+	 *    function MediatorA() {}
+	 *
+	 *    MediatorA.prototype={
+     *        initialize:function(){
+     *            //your code goes here
+     *        }
+     *    }
+	 * </pre>
+	 *
+	 */
+	function Mediator(eventDispatcher, eventMap) {
+
+		this.eventMap = eventMap;//new EventMap();
+		this.eventDispatcher = eventDispatcher; //EventDispatcher.getInstance();
+	}
+
+	Mediator.inherit = function (scope, args) {
+
+		Mediator.apply(scope,Array.prototype.slice.call(args,-2));
+	};
+	Mediator.prototype = {
+		/**
+		 * <h3>postDestroy</h3>
+		 * <p>Runs after the mediator has been destroyed.
+		 * Cleans up listeners mapped through the local <code>eventMap</code>.</p>
+		 */
+		postDestroy: function () {
+			console.log("postDestroy");
+			this.eventMap.unmapListeners();
+		},
+		/**
+		 * <h3>addContextListener</h3>
+		 * <p>Syntactical sugar for mapping a listener to an <code>EventDispatcher</code></p>
+		 * @param eventString <code>String</code>
+		 * @param listener <code>Function</code>
+		 * @param scope <code>*</code> the context where 'this' is bind to
+		 */
+		addContextListener: function (eventString, listener, scope) {
+			this.eventMap.mapListener(this.eventDispatcher, eventString, listener, scope);
+		},
+		/**
+		 *<h3>removeContextListener</h3>
+		 * <p>Syntactical sugar for unmapping a listener to an <code>EventDispatcher</code></p>
+		 * @param eventString <code>String</code>
+		 * @param listener <code>Function</code>
+		 */
+		removeContextListener: function (eventString, listener) {
+			this.eventMap.unmapListener(this.eventDispatcher, eventString, listener);
+		},
+		/**
+		 *<h3>dispatch</h3>
+		 *
+		 * <p>Dispatch helper method</p>
+		 * @param eventString <code>String</code> The Event name to dispatch on the system
+		 * @param data <code>*</code> the data dispatched
+		 */
+		dispatch: function (eventString, data) {
+			if (this.eventDispatcher.hasEventListener(eventString)) {
+				this.eventDispatcher.dispatchEvent(eventString, data);
+			}
+		},
+		/**
+		 * <h3>initialize</h3>
+		 * Initializes the mediator. This is run automatically by the <code>mediatorBuilder</code> when a mediator is created.
+		 * Normally the <code>initialize</code> function is where you would add handlers using the <code>eventMap</code>.
+		 */
+		initialize: function (node) {
+			this.element = node;
+		},
+		/**
+		 * <h3>destroy</h3>
+		 * Destroys the mediator. This is run automatically by the <code>mediatorBuilder</code> when a mediator is destroyed.
+		 * You should clean up any handlers that were added directly (<code>eventMap</code> handlers will be cleaned up automatically).
+		 */
+		destroy: function () {}
+	};
+	
+
+    /*
+     <h2>MediatorsBuilder</h2>
+     */
+    function MediatorsBuilder(displayList, scriptLoader,mediatorHandler, definitions) {
+        this.onAdded = new Signal();
+        this.onRemoved = new Signal();
+        this.definitions = definitions || [];
+        this.displayList = displayList;
+        this.mediatorHandler = mediatorHandler;
+        this.displayList.onAdded.connect(this._handleNodesAdded, this);
+        this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
+        this.loader = scriptLoader;
+    }
+
+
+    MediatorsBuilder.prototype = {
+
+        bootstrap: function () {
+
+            return this.getMediators([document.body]);
+        },
+        getMediators: function (target) {
+            return Promise.all(target
+                .reduce(this._reduceNodes, [])
+                .reduce(this._findMediators.bind(this), []));
+        },
+        _findMediators: function (result, node) {
+            return result.concat(this.definitions
+                .filter(function (def) {
+                    return node.dataset && node.dataset.mediator == def.id;
+                })
+                .map(function (def) {
+                    return this.loader.get(def.mediator).then(this._initMediator.bind(this, node));
+                }.bind(this)));
+
+        },
+        _initMediator: function (node, Mediator) {
+	        return this.mediatorHandler.create(node, Mediator);
+
+        },
+        _handleNodesAdded: function (nodes) {
+            this.getMediators(nodes).then(function (mediators) {
+                if (mediators.length) {
+                    this.onAdded.emit(mediators);
+                }
+            }.bind(this));
+        },
+        _handleNodesRemoved: function (nodes) {
+            nodes.reduce(this._reduceNodes, [])
+                .forEach(this._destroyMediator.bind(this));
+
+        },
+        _reduceNodes: function (result, node) {
+            if (!node || !node.getElementsByTagName)return result;
+            var n = [].slice.call(node.getElementsByTagName("*"), 0);
+            n.unshift(node);
+            return result.concat(n);
+        },
+        _destroyMediator: function (node) {
+	        var mediator = this.mediatorHandler.destroy(node);
+	        mediator &&  this.onRemoved.emit(mediator);
+
+
+        }
+    };
+    
+
+   /*
+   <h2>ScriptLoader</h2>
+    */
+    function ScriptLoader() {
+    }
+
+    ScriptLoader.prototype = {
+        get: function (id) {
+            return new Promise(function (resolve, reject) {
+                require([id], function (Mediator) {
+                    resolve(Mediator);
+                });
+            });
+        }
+    };
+    
+
     /*
      * <h2><strong>EventDispatcher</strong></h2>
      * <p>The EventDispatcher class is a Singleton that handle Events in RoboJS.<br/>
@@ -546,202 +736,66 @@
         }
     };
     
+/**
+ * Created by marco.gobbi on 21/01/2015.
+ */
 
-    /**
-     * <h2>Mediator</h2>
-     * <p>Mediators should observe one of the following forms:</p>
-     * <ul>
-     *     <li>Extend the base mediator class and override <code>initialize()</code> and, if needed, <code>destroy()</code>.</li>
-     *     <li>Don't extend the base mediator class, and provide functions <code>initialize()</code> and, if needed, also <code>destroy()</code>.</li>
-     * </ul>
-     *
-     * <p>A mediator that extends the Mediator might look like this:</p>
-     *
-     * <pre>
-     * var RoboJS=require("RoboJS");
-     * function MediatorA() {
-     *    RoboJS.display.Mediator.apply(this, arguments);
-     * }
-     * MediatorA.prototype = Object.create(RoboJS.display.Mediator.prototype, {
-     *     initialize: {
-     *         value: function () {
-     *             // code goes here
-     *        }
-     *      }
-     * });
-     *</pre>
-     *
-     *<p>You do not have to extend the Mediator:</p>
-     *
-     * <pre>
-     *
-     *    function MediatorA() {}
-     *
-     *    MediatorA.prototype={
-     *        initialize:function(){
-     *            //your code goes here
-     *        }
-     *    }
-     * </pre>
-     *
-     */
-    function Mediator(element) {
-        this.element = element;
-        this.eventMap = new EventMap();
-        this.eventDispatcher = EventDispatcher.getInstance();
-    }
-
-    Mediator.prototype = {
-        /**
-         * <h3>postDestroy</h3>
-         * <p>Runs after the mediator has been destroyed.
-         * Cleans up listeners mapped through the local <code>eventMap</code>.</p>
-         */
-        postDestroy: function () {
-            console.log("postDestroy");
-            this.eventMap.unmapListeners();
-        },
-        /**
-         * <h3>addContextListener</h3>
-         * <p>Syntactical sugar for mapping a listener to an <code>EventDispatcher</code></p>
-         * @param eventString <code>String</code>
-         * @param listener <code>Function</code>
-         * @param scope <code>*</code> the context where 'this' is bind to
-         */
-        addContextListener: function (eventString, listener, scope) {
-            this.eventMap.mapListener(this.eventDispatcher, eventString, listener, scope);
-        },
-        /**
-         *<h3>removeContextListener</h3>
-         * <p>Syntactical sugar for unmapping a listener to an <code>EventDispatcher</code></p>
-         * @param eventString <code>String</code>
-         * @param listener <code>Function</code>
-         */
-        removeContextListener: function (eventString, listener) {
-            this.eventMap.unmapListener(this.eventDispatcher, eventString, listener);
-        },
-        /**
-         *<h3>dispatch</h3>
-         *
-         * <p>Dispatch helper method</p>
-         * @param eventString <code>String</code> The Event name to dispatch on the system
-         * @param data <code>*</code> the data dispatched
-         */
-        dispatch: function (eventString, data) {
-            if (this.eventDispatcher.hasEventListener(eventString)) {
-                this.eventDispatcher.dispatchEvent(eventString, data);
-            }
-        },
-        /**
-         * <h3>initialize</h3>
-         * Initializes the mediator. This is run automatically by the <code>mediatorBuilder</code> when a mediator is created.
-         * Normally the <code>initialize</code> function is where you would add handlers using the <code>eventMap</code>.
-         */
-        initialize: function () {},
-        /**
-         * <h3>destroy</h3>
-         * Destroys the mediator. This is run automatically by the <code>mediatorBuilder</code> when a mediator is destroyed.
-         * You should clean up any handlers that were added directly (<code>eventMap</code> handlers will be cleaned up automatically).
-         */
-        destroy: function () {}
-    };
-    
-
-   /*
-   <h2>ScriptLoader</h2>
-    */
-    function ScriptLoader() {
-    }
-
-    ScriptLoader.prototype = {
-        get: function (id) {
-            return new Promise(function (resolve, reject) {
-                require([id], function (Mediator) {
-                    resolve(Mediator);
-                });
-            });
-        }
-    };
-    
-
-    /*
-     <h2>MediatorsBuilder</h2>
-     */
-    function MediatorsBuilder(_definition) {
-        this.onAdded = new Signal();
-        this.onRemoved = new Signal();
-        this.definitions = _definition || [];
-        this.displayList = new DisplayList();
-        this.displayList.onAdded.connect(this._handleNodesAdded, this);
-        this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
-        this.loader = new ScriptLoader();
-    }
+	"use strict";
 
 
-    MediatorsBuilder.prototype = {
+	function MediatorHandler() {
+	}
 
-        bootstrap: function () {
-
-            return this.getMediators([document.body]);
-        },
-        getMediators: function (target) {
-            return Promise.all(target
-                .reduce(this._reduceNodes, [])
-                .reduce(this._findMediators.bind(this), []));
-        },
-        _findMediators: function (result, node, index) {
-            return result.concat(this.definitions
-                .filter(function (def) {
-                    return node.dataset && node.dataset.mediator == def.id;
-                })
-                .map(function (def) {
-                    return this.loader.get(def.mediator).then(this._initMediator.bind(this, node));
-                }.bind(this)));
-
-        },
-        _initMediator: function (node, Mediator) {
-            var mediatorId = RoboJS.utils.nextUid();
-            node.dataset = node.dataset || {};
-            node.dataset.mediatorId = mediatorId;
-            var _mediator = new Mediator(node);
-            _mediator.id = mediatorId;
-            RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
-            _mediator.initialize();
-            return _mediator;
-        },
-        _handleNodesAdded: function (nodes) {
-            this.getMediators(nodes).then(function (mediators) {
-                if (mediators.length) {
-                    this.onAdded.emit(mediators);
-                }
-            }.bind(this));
-        },
-        _handleNodesRemoved: function (nodes) {
-            nodes.reduce(this._reduceNodes, [])
-                .forEach(this._destroyMediator.bind(this));
-
-        },
-        _reduceNodes: function (result, node) {
-            if (!node || !node.getElementsByTagName)return result;
-            var n = [].slice.call(node.getElementsByTagName("*"), 0);
-            n.unshift(node);
-            return result.concat(n);
-        },
-        _destroyMediator: function (node) {
-            var mediatorId = node.dataset && node.dataset.mediatorId;
-            var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
-            if (mediator) {
-                mediator.destroy && mediator.destroy();
-                mediator.postDestroy && mediator.postDestroy();
-                this.onRemoved.emit(mediator);
-                mediator.element && (mediator.element = null);
-                RoboJS.MEDIATORS_CACHE[mediatorId] = null;
-                mediator = null;
-            }
-
-        }
-    };
-    
+	MediatorHandler.prototype = {
+		create: function (node, Mediator) {
+			var mediatorId = RoboJS.utils.nextUid();
+			node.dataset = node.dataset || {};
+			node.dataset.mediatorId = mediatorId;
+			//
+			var _mediator = new Mediator(EventDispatcher.getInstance(), new EventMap());
+			_mediator.id = mediatorId;
+			RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
+			_mediator.initialize(node);
+			return _mediator;
+		},
+		destroy: function (node) {
+			var mediatorId = node.dataset && node.dataset.mediatorId;
+			var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
+			if (mediator) {
+				mediator.destroy && mediator.destroy();
+				mediator.postDestroy && mediator.postDestroy();
+				mediator.element && (mediator.element = null);
+				RoboJS.MEDIATORS_CACHE[mediatorId] = null;
+				mediator = null;
+			}
+		}
+	};
+	
+/**
+ * Created by marco.gobbi on 21/01/2015.
+ */
+define('org/display/bootstrap',[
+	"./DisplayList",
+	"./MediatorsBuilder",
+	"../net/ScriptLoader",
+	"./MediatorHandler"
+], function (DisplayList, MediatorsBuilder, ScriptLoader, MediatorHandler) {
+	"use strict";
+	//reduce dependencies of outside code on the inner workings of a library
+	function bootstrap(config) {
+		config.autoplay = config.autoplay == undefined ? true : config.autoplay;
+		var displayList = new DisplayList(),
+			scriptLoader = new ScriptLoader(),
+			mediatorHandler = new MediatorHandler();
+		/**
+		 * get the mediators and return a promise.
+		 * The promise argument is an Array of Mediator instances
+		 */
+		var builder = new MediatorsBuilder(displayList, scriptLoader, mediatorHandler, config.definitions);
+		return config.autoplay ? builder.bootstrap() : builder;
+	};
+	return bootstrap;
+});
 
 /*
 
@@ -749,6 +803,7 @@
 * <ul>
 *     <li>DisplayList</li>
 *     <li>Mediator</li>
+*     <li>MediatorsFacade</li>
 *     <li>MediatorBuilder</li>
 * </ul>
 *
@@ -756,6 +811,7 @@
     RoboJS.display = {
         DisplayList: DisplayList,
         Mediator: Mediator,
+	    bootstrap: bootstrap,
         MediatorsBuilder: MediatorsBuilder
     };
 

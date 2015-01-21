@@ -2,11 +2,12 @@ define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Pro
     /*
      <h2>MediatorsBuilder</h2>
      */
-    function MediatorsBuilder(displayList, scriptLoader, definitions) {
+    function MediatorsBuilder(displayList, scriptLoader,mediatorHandler, definitions) {
         this.onAdded = new Signal();
         this.onRemoved = new Signal();
         this.definitions = definitions || [];
         this.displayList = displayList;
+        this.mediatorHandler = mediatorHandler;
         this.displayList.onAdded.connect(this._handleNodesAdded, this);
         this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
         this.loader = scriptLoader;
@@ -35,14 +36,8 @@ define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Pro
 
         },
         _initMediator: function (node, Mediator) {
-            var mediatorId = RoboJS.utils.nextUid();
-            node.dataset = node.dataset || {};
-            node.dataset.mediatorId = mediatorId;
-            var _mediator = new Mediator(node);
-            _mediator.id = mediatorId;
-            RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
-            _mediator.initialize();
-            return _mediator;
+	        return this.mediatorHandler.create(node, Mediator);
+
         },
         _handleNodesAdded: function (nodes) {
             this.getMediators(nodes).then(function (mediators) {
@@ -63,16 +58,9 @@ define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Pro
             return result.concat(n);
         },
         _destroyMediator: function (node) {
-            var mediatorId = node.dataset && node.dataset.mediatorId;
-            var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
-            if (mediator) {
-                mediator.destroy && mediator.destroy();
-                mediator.postDestroy && mediator.postDestroy();
-                this.onRemoved.emit(mediator);
-                mediator.element && (mediator.element = null);
-                RoboJS.MEDIATORS_CACHE[mediatorId] = null;
-                mediator = null;
-            }
+	        var mediator = this.mediatorHandler.destroy(node);
+	        mediator &&  this.onRemoved.emit(mediator);
+
 
         }
     };

@@ -3,11 +3,12 @@
  */
 define(function (require) {
 	"use strict";
-	var RoboJS=require("RoboJS");
+	var RoboJS = require("RoboJS");
 	var MediatorsMap = require("./MediatorsMap");
+	var MediatorHandler = require("./MediatorHandler");
 	/*var MediatorsBuilder = require("../../src/org/display/MediatorsBuilder"),
 
-	var EventDispatcher = require("../../src/org/events/EventDispatcher");*/
+	 var EventDispatcher = require("../../src/org/events/EventDispatcher");*/
 	/*
 	 create an array of jQuery elements to append to the body on "click"
 	 */
@@ -42,11 +43,12 @@ define(function (require) {
 		main: function () {
 			/**
 			 *
-			 * @type { RoboJS.display.MediatorsBuilder}
-			 * an instance of MediatorsBuilder to get mediators.
+			 * @type { RoboJS.display.bootstrap}
+			 * an instance of MediatorsFacade to get mediators.
 			 * It looks for the entire DOM trying to match MediatorsMap ids with data-mediator attribute
 			 */
-			var builder = new RoboJS.display.MediatorsBuilder(MediatorsMap);
+
+			var builder = RoboJS.display.bootstrap({definitions: MediatorsMap, autoplay: false});
 			/**
 			 * get the mediators and return a promise.
 			 * The promise argument is an Array of Mediator instances
@@ -74,7 +76,7 @@ define(function (require) {
 			 * on click a new random element is added to the DOM tree
 			 */
 			$(".add-button").on("click", function () {
-				var index =getRandomArbitrary(0, 2);
+				var index = getRandomArbitrary(0, 2);
 				// NB if you don't clone the element, the same element will be
 				// first removed from tree (and mediator is destroyed too)
 				// then attached to body again (and a new mediator is created)
@@ -86,7 +88,6 @@ define(function (require) {
 				element.click(function (e) {
 					element.remove();
 				});
-
 				$("body").append(element);
 			});
 			/**
