@@ -1,15 +1,15 @@
-define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "Promise"], function (RoboJS, DisplayList, ScriptLoader, Signal, Promise) {
+define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Promise) {
     /*
      <h2>MediatorsBuilder</h2>
      */
-    function MediatorsBuilder(_definition) {
+    function MediatorsBuilder(displayList, scriptLoader, definitions) {
         this.onAdded = new Signal();
         this.onRemoved = new Signal();
-        this.definitions = _definition || [];
-        this.displayList = new DisplayList();
+        this.definitions = definitions || [];
+        this.displayList = displayList;
         this.displayList.onAdded.connect(this._handleNodesAdded, this);
         this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
-        this.loader = new ScriptLoader();
+        this.loader = scriptLoader;
     }
 
 
@@ -24,7 +24,7 @@ define(["../core", "./DisplayList", "../net/ScriptLoader", "../events/Signal", "
                 .reduce(this._reduceNodes, [])
                 .reduce(this._findMediators.bind(this), []));
         },
-        _findMediators: function (result, node, index) {
+        _findMediators: function (result, node) {
             return result.concat(this.definitions
                 .filter(function (def) {
                     return node.dataset && node.dataset.mediator == def.id;
