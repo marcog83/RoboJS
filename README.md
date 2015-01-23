@@ -42,8 +42,7 @@ For instance in this sample I mapped 3 different Mediators.
 When the builder finds a match between a `data-mediator` attribute and an ID from `MediatorsMap`, 
 it will create a new instance of Mediator, storing the DOM Node into a property named `element` and executes `initialize` method
 
-#API References
-[API References](https://marcog83.github.io/RoboJS)
+
 
 ###Example:
 
