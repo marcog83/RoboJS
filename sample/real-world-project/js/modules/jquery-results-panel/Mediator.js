@@ -3,16 +3,16 @@
  */
 define(function (require, exports, module) {
     'use strict';
-    var RoboJS = require("RoboJS");
+    var RoboJS = require("robojs");
     var ResultsPanel = require("./ResultsPanel");
     function Mediator() {
-        RoboJS.display.Mediator.apply(this, arguments);
+        RoboJS.display.Mediator.inherit(this, arguments);
     }
     Mediator.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 
         initialize: {
-            value: function () {
-                this.view = new ResultsPanel(this.element);
+            value: function (element) {
+                this.view = new ResultsPanel(element);
                 this.view.initialize();
                 this.addContextListener("search-done",this._handleSearchDone,this)
 

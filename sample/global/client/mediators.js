@@ -4,21 +4,21 @@
 !function (RoboJS) {
     // MediatorA
     function MediatorA() {
-        RoboJS.display.Mediator.apply(this, arguments);
+        RoboJS.display.Mediator.inherit(this, arguments);
     }
 
     MediatorA.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 
         initialize: {
-            value: function () {
-                console.log("MediatorA", this.element);
+            value: function (element) {
+                console.log("MediatorA", element);
             }
         }
     });
 
 // MediatorB
     function MediatorB() {
-        RoboJS.display.Mediator.apply(this, arguments);
+        RoboJS.display.Mediator.inherit(this, arguments);
     }
 
     MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
@@ -26,8 +26,8 @@
             value: MediatorB
         },
         initialize: {
-            value: function () {
-                console.log("MediatorB", this.element);
+            value: function (element) {
+                console.log("MediatorB", element);
                 /**
                  * a new listener is added.
                  *
@@ -50,13 +50,13 @@
 
 //MediatorC
     function MediatorC() {
-        RoboJS.display.Mediator.apply(this, arguments);
+        RoboJS.display.Mediator.inherit(this, arguments);
     }
 
     MediatorC.prototype = Object.create(RoboJS.display.Mediator.prototype, {
         initialize: {
-            value: function () {
-                console.log("ModuleC: " + this.element.innerHTML);
+            value: function (element) {
+                console.log("ModuleC: " + element.innerHTML);
             }
         },
         destroy: {

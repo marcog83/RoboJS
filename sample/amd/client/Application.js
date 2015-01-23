@@ -3,12 +3,9 @@
  */
 define(function (require) {
 	"use strict";
-	var RoboJS = require("RoboJS");
+	var RoboJS = require("robojs");
 	var MediatorsMap = require("./MediatorsMap");
-	var MediatorHandler = require("./MediatorHandler");
-	/*var MediatorsBuilder = require("../../src/org/display/MediatorsBuilder"),
 
-	 var EventDispatcher = require("../../src/org/events/EventDispatcher");*/
 	/*
 	 create an array of jQuery elements to append to the body on "click"
 	 */

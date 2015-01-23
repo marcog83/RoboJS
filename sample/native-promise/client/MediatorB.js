@@ -7,7 +7,7 @@ define(function (require, exports, module) {
 
 
 	function MediatorB() {
-		RoboJS.display.Mediator.apply(this, arguments);
+		RoboJS.display.Mediator.inherit(this, arguments);
 	}
 
 	MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
@@ -15,8 +15,9 @@ define(function (require, exports, module) {
 			value: MediatorB
 		},
 		initialize: {
-			value: function () {
-				console.log("MediatorB", this.element);
+			value: function (element) {
+				this.element=element;
+				console.log("MediatorB", element);
 				/**
 				 * a new listener is added.
 				 *

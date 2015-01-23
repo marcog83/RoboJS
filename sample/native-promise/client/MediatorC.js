@@ -6,13 +6,14 @@ define(function (require) {
 	var RoboJS=require("RoboJS");
 
 	function MediatorC() {
-		RoboJS.display.Mediator.apply(this, arguments);
+		RoboJS.display.Mediator.inherit(this, arguments);
 	}
 
 	MediatorC.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 		initialize: {
-			value:function () {
-				console.log("ModuleC: " + this.element.innerHTML);
+			value:function (element) {
+				this.element=element;
+				console.log("ModuleC: " + element.innerHTML);
 			}
 		},
 		destroy: {

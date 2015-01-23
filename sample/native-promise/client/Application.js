@@ -3,7 +3,7 @@
  */
 define(function (require) {
 	"use strict";
-	var RoboJS=require("RoboJS");
+	var RoboJS=require("robojs");
 	var MediatorsMap = require("./MediatorsMap");
 	/*var MediatorsBuilder = require("../../src/org/display/MediatorsBuilder"),
 
@@ -46,7 +46,7 @@ define(function (require) {
 			 * an instance of MediatorsBuilder to get mediators.
 			 * It looks for the entire DOM trying to match MediatorsMap ids with data-mediator attribute
 			 */
-			var builder = new RoboJS.display.MediatorsBuilder(MediatorsMap);
+			var builder = RoboJS.display.bootstrap({definitions:MediatorsMap,autoplay:false});
 			/**
 			 * get the mediators and return a promise.
 			 * The promise argument is an Array of Mediator instances

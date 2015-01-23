@@ -3,11 +3,11 @@
  */
 define(function (require, exports, module) {
 	"use strict";
-	var RoboJS=require("RoboJS");
+	var RoboJS=require("robojs");
 
 
 	function MediatorB() {
-		RoboJS.display.Mediator.apply(this, arguments);
+		RoboJS.display.Mediator.inherit(this, arguments);
 	}
 
 	MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
@@ -15,8 +15,8 @@ define(function (require, exports, module) {
 			value: MediatorB
 		},
 		initialize: {
-			value: function () {
-				console.log("MediatorB", this.element);
+			value: function (element) {
+				console.log("MediatorB", element);
 				/**
 				 * a new listener is added.
 				 *

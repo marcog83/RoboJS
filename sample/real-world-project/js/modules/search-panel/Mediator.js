@@ -3,18 +3,18 @@
  */
 define(function (require, exports, module) {
 
-    var RoboJS = require("RoboJS");
+    var RoboJS = require("robojs");
     var SearchPanel = require("./SearchPanel");
 
     function Mediator() {
-        RoboJS.display.Mediator.apply(this, arguments);
+        RoboJS.display.Mediator.inherit(this, arguments);
     }
 
     Mediator.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 
         initialize: {
-            value: function () {
-                this.view = new SearchPanel(this.element);
+            value: function (element) {
+                this.view = new SearchPanel(element);
                 this.view.onSearchDone.connect(this._handleSearchDone, this);
                 this.view.onSearchFailed.connect(this._handleSearchFailed, this);
                 this.view.initialize();

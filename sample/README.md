@@ -42,8 +42,8 @@ in `Mediator` you instantiate a `SearchPanel` Object that is the concrete implem
 Mediator.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 
    initialize: {
-       value: function () {
-           this.view = new SearchPanel(this.element);
+       value: function (element) {
+           this.view = new SearchPanel(element);
            this.view.onSearchDone.connect(this._handleSearchDone, this);
            this.view.onSearchFailed.connect(this._handleSearchFailed, this);
            this.view.initialize();
@@ -69,8 +69,8 @@ As far as *results-module* , it listens to *"search-done"* event and updates the
 Mediator.prototype = Object.create(RoboJS.display.Mediator.prototype, {
 
     initialize: {
-        value: function () {
-            this.view = new ResultsPanel(this.element);
+        value: function (element) {
+            this.view = new ResultsPanel(element);
             this.view.initialize();
             this.addContextListener("search-done",this._handleSearchDone,this)
 
@@ -94,27 +94,28 @@ Now if we have a look at `SearchPanel` and `ResultsPanel` we can see that they a
 By default `element` parameter is always passed into constructor by `MediatorsBuilder`
 
 ```javascript
-function ToggleModule(element) {
-    this.element = $(element);
+function ToggleModule() {
+   
 }
 
 ToggleModule.prototype = {
-    initialize: function () {
+    initialize: function (element) {
+        element = $(element);
         var JQUERY_MODULE = "<div class='results-panel' data-mediator='jquery-results-panel'></div>";
         var ANGULAR_MODULE = '<div class="results-panel" data-mediator="results-panel"><results-panel class="content"></results-panel></div>';
-        this.element.on("click", function () {
-            this.element.toggleClass("toggled");
+        element.on("click", function () {
+            element.toggleClass("toggled");
             $(".results-panel").remove();
-            var element, text;
-            if (this.element.hasClass("toggled")) {
-                element = JQUERY_MODULE;
+            var new_element, text;
+            if (element.hasClass("toggled")) {
+                new_element = JQUERY_MODULE;
                 text = 'CHANGE TO ANGULAR MODULE';
             } else {
-                element = ANGULAR_MODULE;
+                new_element = ANGULAR_MODULE;
                 text = 'CHANGE TO JQUERY MODULE';
             }
-            this.element.html(text);
-            $("body").append(element);
+            element.html(text);
+            $("body").append(new_element);
         }.bind(this))
     }
 }

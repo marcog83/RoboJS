@@ -4,7 +4,7 @@
 define(function (require, exports, module) {
     'use strict';
     var $ = require("jquery");
-    var RoboJS = require("RoboJS");
+    var RoboJS = require("robojs");
     var Rx = require("rx");
 
     function SearchPanel(element) {

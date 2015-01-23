@@ -50,11 +50,24 @@ it will create a new instance of Mediator, storing the DOM Node into a property 
 ```javascript
 // Application.js
 
-var RoboJS=require("RoboJS");
+var RoboJS=require("robojs");
 var MediatorsMap = require("./MediatorsMap");
+RoboJS.display.bootstrap({definitions:MediatorsMap});
 
+```
+
+This is the basic usage. ```bootstrap``` function creates a ```MediatorsBuilder``` instance and bootstraps it.
+
+Most of the time you need invoking bootstrap in this way.
+
+But if you need more control over ```MediatorsBuilder``` you can set ```autoplay``` to ```false```. This time bootstrap 
+function just create ```MediatorsBuilder``` and  returns it. Then you can manually bootstrap it, attach handlers if needed. 
+
+
+```javascript
 // create an instance of MediatorsBuilder passing the map of Mediators.
-var builder = new RoboJS.display.MediatorsBuilder(MediatorsMap);
+// autoplay by default is true, but if you need more control, you can just pass true and manual bootstrap the builder
+var builder = RoboJS.display.bootstrap({definitions:MediatorsMap,autoplay:false});
 
 /*
  * get the mediators and return a promise.
@@ -114,11 +127,6 @@ $(".add-button").on("click", function () {
 
 `sample folder` contains a working example with more use cases, nested and sibling nodes
 
-
-    
-#EventDispatcher Class.
-The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
-It's meant to be a Singleton ( EventDispatcher.getInstance() ) in your application, but you can instantiate it as a normal Class.
 
 #Mediator Class.
 Mediator is the context where your logic runs for a specific bunch of DOM.
@@ -234,6 +242,12 @@ ToggleModule.prototype = {
     }
 }
 ```
+
+#EventDispatcher Class.
+The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
+It's meant to be a Singleton ( EventDispatcher.getInstance() ) in your application, but you can instantiate it as a normal Class.
+
+	
 	
 ###Dependencies
 
@@ -260,7 +274,7 @@ This is an example how you can set dependencies in AMD with RequireJS
 requirejs.config({
 	paths: {
 		Promise: "path/to/any/promise-like/implementation",
-        RoboJS: "../../dist/robojs.min"
+        robojs: "../../dist/robojs.min"
 	}
 });
 

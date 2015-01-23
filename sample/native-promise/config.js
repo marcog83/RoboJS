@@ -5,7 +5,7 @@ requirejs.config({
 	paths: {
 
 		Promise: "./native-promise",
-		RoboJS: "../../dist/robojs.min"
+		robojs: "../../dist/robojs.min"
 
 	}
 });

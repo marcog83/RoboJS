@@ -2,7 +2,7 @@
  * Created by marco.gobbi on 09/12/2014.
  */
 define(function (require, exports, module) {
-	var RoboJS = require("RoboJS");
+	var RoboJS = require("robojs");
 
 	function MediatorA() {
 		RoboJS.display.Mediator.inherit(this, arguments);

@@ -9,11 +9,11 @@ requirejs.config({
 });
 require(["require", "libraries"], function (require) {
     "use strict";
-    require(["RoboJS",
+    require(["robojs",
         "./MediatorsMap"
     ], function (RoboJS, Map) {
-        var builder = new RoboJS.display.MediatorsBuilder(Map);
-        builder.bootstrap();
+        var builder =  RoboJS.display.bootstrap({definitions:Map});
+
     })
 
 });

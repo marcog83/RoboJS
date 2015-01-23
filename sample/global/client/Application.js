@@ -60,9 +60,9 @@
              * an instance of MediatorsBuilder to get mediators.
              * It looks for the entire DOM trying to match MediatorsMap ids with data-mediator attribute
              */
-            var builder = new RoboJS.display.MediatorsBuilder(MediatorsMap);
-            // override default ScriptLoader with one that load javascript without AMD style
-            builder.loader = new GlobalScriptLoader();
+            var builder = new  RoboJS.display.MediatorsBuilder(new RoboJS.display.DisplayList(), new GlobalScriptLoader(), new MediatorHandler(), MediatorsMap);
+
+
             /**
              * get the mediators and return a promise.
              * The promise argument is an Array of Mediator instances
