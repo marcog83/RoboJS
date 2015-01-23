@@ -1,4 +1,4 @@
-define(["RoboJS"], function (RoboJS) {
+define(["robojs"], function (RoboJS) {
     'use strict';
     var DomWatcherExtension = {
         extend: function (context) {

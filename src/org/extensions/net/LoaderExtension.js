@@ -1,4 +1,4 @@
-define(["RoboJS"], function (RoboJS) {
+define(["robojs"], function (RoboJS) {
     'use strict';
     var LoaderExtension = {
         extend: function (context) {

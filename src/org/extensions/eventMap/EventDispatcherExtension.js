@@ -1,4 +1,4 @@
-define(["RoboJS"], function (RoboJS) {
+define(["robojs"], function (RoboJS) {
     var EventDispatcherExtension = {
         extend: function (context) {
             // map EventDispatcher

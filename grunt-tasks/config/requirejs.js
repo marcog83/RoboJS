@@ -57,7 +57,7 @@ module.exports = {
             paths: {
 
                 jss:"empty:",
-                RoboJS:"empty:",
+	            robojs:"empty:",
                 Promise:"empty:",
 
 

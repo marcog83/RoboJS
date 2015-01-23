@@ -1,4 +1,4 @@
-define(["RoboJS", "./MediatorHandler"], function (RoboJS, MediatorHandler) {
+define(["robojs", "./MediatorHandler"], function (RoboJS, MediatorHandler) {
     'use strict';
     var MediatorMapExtension = {
         extend: function (context) {
