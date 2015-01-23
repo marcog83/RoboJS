@@ -12,7 +12,7 @@ require(["require", "libraries"], function (require) {
     require(["robojs",
         "./MediatorsMap"
     ], function (RoboJS, Map) {
-        var builder =  RoboJS.display.bootstrap({definitions:Map});
+        RoboJS.display.bootstrap({definitions:Map});
 
     })
 
