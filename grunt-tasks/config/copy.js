@@ -2,9 +2,14 @@
  * Created by marco on 10/01/2015.
  */
 module.exports={
-    build: {
+    core: {
         files: {
-            'dist/robojs.js': 'build/src/robojs-build.js'
+            'dist/robojs.js': 'build/src/js-build.js'
+        }
+    },
+    extensions: {
+        files: {
+            'dist/robojs.extensions.js': 'build/src/js-build.js'
         }
     }
 };

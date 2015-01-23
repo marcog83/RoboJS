@@ -43,9 +43,13 @@ define(function (require) {
 		main: function () {
 			/**
 			 *
-			 * @type { RoboJS.display.bootstrap}
-			 * an instance of MediatorsFacade to get mediators.
-			 * It looks for the entire DOM trying to match MediatorsMap ids with data-mediator attribute
+			 * @type {function}
+			 * bootstrap is a sugar function to hide internal dependencies.
+			 * A MediatorsBuilder is created.
+			 * MediatorsBuilder will iterate the DOM trying to match MediatorsMap ids with data-mediator attribute.
+			 * @return {RoboJS.display.MediatorsBuilder} if autoplay is false. By default autoplay is true and it returns a Promise.
+			 * Promise is meant to be resolved when every mediators are loaded.
+			 *
 			 */
 
 			var builder = RoboJS.display.bootstrap({definitions: MediatorsMap, autoplay: false});

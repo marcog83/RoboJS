@@ -4,12 +4,12 @@ define(['underscore'], function( _ ) {
     if (!config) {
       config = {};
     }
-    config.options = config.options || [];
+
     config['modules'] = config['modules'] || [];
 
 
 
-    var output = 'require(["./org/core"';
+    var output = 'require(["./org/core/core"';
 
 
 

@@ -6,15 +6,15 @@ define(function (require) {
 	return [
 		{
 			"id": "mediator-a",
-			"mediator": "client/MediatorA"
+			"mediator": "app/MediatorA"
 		},
 		{
 			"id": "mediator-b",
-			"mediator": "client/MediatorB"
+			"mediator": "app/MediatorB"
 		},
 		{
 			"id": "mediator-c",
-			"mediator": "client/MediatorC"
+			"mediator": "app/MediatorC"
 		}
 	];
 });

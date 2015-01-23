@@ -19,13 +19,22 @@ module.exports = function (grunt) {
     });
 
 // Build
-    grunt.registerTask('build', [
-        'generateinit',
-        'requirejs',
-        'copy',
+    grunt.registerTask('build-core', [
+        'generateinit:core',
+        'requirejs:core',
+        'copy:core',
         'clean:postbuild',
-        'stripdefine',
-        'docker:app',
-        'uglify'
+        'stripdefine:core',
+       // 'docker:app',
+        'uglify:core'
+    ]);
+    grunt.registerTask('build-extensions', [
+        'generateinit:extensions',
+        'requirejs:extensions',
+        'copy:extensions',
+        'clean:postbuild',
+        'stripdefine:extensions',
+
+        'uglify:extensions'
     ]);
 };

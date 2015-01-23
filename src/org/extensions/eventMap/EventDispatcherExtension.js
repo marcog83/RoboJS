@@ -1,9 +1,10 @@
-define(function (require, exports, module) {
-    'use strict';
+define(["RoboJS"], function (RoboJS) {
     var EventDispatcherExtension = {
         extend: function (context) {
-            context
+            // map EventDispatcher
+            context.injector.map(RoboJS.events.EventDispatcher, 'EventDispatcher').asSingleton();
+
         }
     };
-    module.exports = EventDispatcherExtension;
+    return EventDispatcherExtension;
 });

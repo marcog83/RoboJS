@@ -1,14 +1,14 @@
-define(function (require, exports, module) {
-    'use strict';
-
+define(["../extensions/mediatorMap/MediatorMapExtension","../extensions/domWatcher/DomWatcherExtension","../extensions/eventMap/EventDispatcherExtension","../extensions/net/LoaderExtension"],function (MediatorMapExtension, DomWatcherExtension, EventDispatcherExtension,LoaderExtension) {
 
     var MVCBundle = {
         extend: function (context) {
             context.install(
-                MediatorMapExtension,
-                EventDispatcherExtension
+                DomWatcherExtension,
+                EventDispatcherExtension,
+                LoaderExtension,
+                MediatorMapExtension
             );
         }
     };
-    module.exports = MVCBundle;
+    return MVCBundle;
 });

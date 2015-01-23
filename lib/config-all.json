@@ -1,7 +1,7 @@
 {
   "modules": [
-    "./org/display/namespace",
-    "./org/events/namespace",
-    "./org/net/namespace"
+    "./org/core/display/namespace",
+    "./org/core/events/namespace",
+    "./org/core/net/namespace"
   ]
 }
