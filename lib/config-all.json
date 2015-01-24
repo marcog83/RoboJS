@@ -1,5 +1,7 @@
 {
+  "corename":"RoboJS",
   "modules": [
+    "./org/core/core",
     "./org/core/display/namespace",
     "./org/core/events/namespace",
     "./org/core/net/namespace"

@@ -1,6 +1,6 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
-		define(["Promise"], factory);
+		define('robojs',["Promise"], factory);
 	} else {
 		root.RoboJS = factory(root.Promise);
 	}

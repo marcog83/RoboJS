@@ -5,14 +5,14 @@ module.exports ={
     core: {
         options:{
             modules:'lib/config-all.json',
-            script:'../src/generate'
+            script:'../lib/generate'
         },
         src: ['tmp/js-init.js']
     },
     extensions:{
         options:{
             modules:'lib/config-all-extensions.json',
-            script:'../src/generate-extensions'
+            script:'../lib/generate'
         },
         src:['tmp/js-init.js']
     }

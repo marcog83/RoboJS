@@ -18,7 +18,7 @@
             this.injector.map('Injector').toValue(this.injector);
             this.injector.map('Context').toValue(this);
             this.extensions = [];
-            this._extensionCache = [];
+
             this._configCache = [];
             this.configs = [];
         },

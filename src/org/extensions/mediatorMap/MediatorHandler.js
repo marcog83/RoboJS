@@ -1,7 +1,7 @@
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
-define(["RoboJS"], function (RoboJS) {
+define(["robojs"], function (RoboJS) {
     "use strict";
     function MediatorHandler(injector) {
         this.injector = injector;
