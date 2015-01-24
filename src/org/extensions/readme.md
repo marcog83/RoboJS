@@ -19,9 +19,9 @@ Last piece of the puzzle is a system that can Abstract which implementation to m
 This is why I ported the extension system implemented by Robotlegs 2.0. Actually is a lightweight porting, but it fit my needs.
 
 First of all you need to import
-*robojs core library
-*js-suspenders library
-*robojs.extensions library
+* robojs core library
+* js-suspenders library
+* robojs.extensions library
 
 then in your main application you initialize a Context, installing all the extensions you need and a Configuration. The Config function will be your app-specific configuration.
 
