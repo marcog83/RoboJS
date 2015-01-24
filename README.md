@@ -290,3 +290,5 @@ If you want use robojs.extensions you need js-suspenders project to be imported.
 robojs.extensions provides an Extension System that let you compose your application as you wish.
 You can image Extensions as bricks that you put together to create a building.
 You can find an example in sample/context folder.
+
+[More details about extensions...](https://github.com/marcog83/RoboJS/tree/master/src/org/extensions)
