@@ -18,7 +18,8 @@ define(function (require, exports, module) {
             $.each(data, function (_, value) {
                 $('<li>' + value + '</li>').appendTo(this.element);
             }.bind(this));
-        }
+        },
+        destroy:function(){}
     };
     module.exports = ResultsPanel;
 });

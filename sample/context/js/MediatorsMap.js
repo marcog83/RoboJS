@@ -16,7 +16,7 @@ define(function (require) {
         },
         {
             "id": "jquery-results-panel",
-            "mediator": "modules/jquery-results-panel/Mediator",
+            "mediator": "modules/results-panel/Mediator",
             "dependencies": ["modules/jquery-results-panel/ResultsPanel"]
         },
         {
