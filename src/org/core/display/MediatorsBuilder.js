@@ -26,22 +26,26 @@ define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Pro
                 .reduce(this._findMediators.bind(this), []));
         },
         _findMediators: function (result, node) {
-            return result.concat(
-                this.definitions.filter(function (def) {
-                    return node.dataset && node.dataset.mediator == def.id;
-                }).map(function (def) {
-                    return this.loader.get(def.mediator).then(this.mediatorHandler.create.bind(this.mediatorHandler, node, def));
-                }.bind(this))
-            );
+            var mediators = this.definitions
+                .filter(this._filterDefintions.bind(this, node))
+                .map(this._createMediator.bind(this, node));
+            return result.concat(mediators);
 
+        },
+        _filterDefintions: function (node, def) {
+            return node.dataset && node.dataset.mediator == def.id;
+        },
+        _createMediator: function (node, def) {
+            return this.loader.get(def.mediator).then(this.mediatorHandler.create.bind(this.mediatorHandler, node, def));
         },
 
         _handleNodesAdded: function (nodes) {
-            this.getMediators(nodes).then(function (mediators) {
-                if (mediators.length) {
-                    this.onAdded.emit(mediators);
-                }
-            }.bind(this));
+            this.getMediators(nodes).then(this._emitAddedSignal.bind(this));
+        },
+        _emitAddedSignal: function (mediators) {
+            if (mediators.length) {
+                this.onAdded.emit(mediators);
+            }
         },
         _handleNodesRemoved: function (nodes) {
             nodes.reduce(this._reduceNodes, [])
@@ -57,8 +61,6 @@ define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Pro
         _destroyMediator: function (node) {
             var mediator = this.mediatorHandler.destroy(node);
             mediator && this.onRemoved.emit(mediator);
-
-
         }
     };
     return MediatorsBuilder;
