@@ -144,6 +144,15 @@ define([], function () {
                 }
                 this.uid.unshift('0');
                 return this.uid.join('');
+            },
+            flip:function(func){
+                var f = func;
+                // construct g
+                return function() {
+                    var args = Array.prototype.slice.call(arguments);
+                    // flip arguments when called
+                    return f.apply(this, args.reverse());
+                };
             }
         }
     };

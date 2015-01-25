@@ -20,9 +20,7 @@ define(["robojs", "Promise"], function (RoboJS, Promise) {
                 var $inject = [];
                 var promises = def.dependencies.map(function (dep) {
                     $inject.push(dep);
-                    return this.loader.get(dep).then(function (Dep) {
-                        return this.injector.map(Dep, dep);
-                    }.bind(this))
+                    return this.loader.get(dep).then(RoboJS.utils.flip(this.injector.map).bind(this.injector,dep));
                 }.bind(this));
                 return Promise.all(promises).then(function () {
                     var type = $inject.concat(["EventDispatcher", "EventMap", Mediator]);
