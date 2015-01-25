@@ -6,7 +6,7 @@
 function MediatorHandler() {
 }
 MediatorHandler.prototype = {
-	create: function (node, Mediator) {
+	create: function (node,def, Mediator) {
 		var mediatorId = RoboJS.utils.nextUid();
 		node.dataset = node.dataset || {};
 		node.dataset.mediatorId = mediatorId;

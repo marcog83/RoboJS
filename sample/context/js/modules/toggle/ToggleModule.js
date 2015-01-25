@@ -9,7 +9,7 @@ define(function (require, exports, module) {
 
     }
 
-    ToggleModule.$name = 'ToggleModule';
+
     ToggleModule.prototype = {
         initialize: function (element) {
             element = $(element);

@@ -9,7 +9,7 @@ define(["robojs", "Promise"], function (RoboJS, Promise) {
     }
 
     MediatorHandler.prototype = {
-        create: function (node, Mediator, def) {
+        create: function (node,def, Mediator) {
 
 
             var mediatorId = RoboJS.utils.nextUid();

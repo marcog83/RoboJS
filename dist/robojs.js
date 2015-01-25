@@ -467,7 +467,7 @@
     /*
      <h2>MediatorsBuilder</h2>
      */
-    function MediatorsBuilder(displayList, scriptLoader,mediatorHandler, definitions) {
+    function MediatorsBuilder(displayList, scriptLoader, mediatorHandler, definitions) {
         this.onAdded = new Signal();
         this.onRemoved = new Signal();
         this.definitions = definitions || [];
@@ -491,19 +491,16 @@
                 .reduce(this._findMediators.bind(this), []));
         },
         _findMediators: function (result, node) {
-            return result.concat(this.definitions
-                .filter(function (def) {
+            return result.concat(
+                this.definitions.filter(function (def) {
                     return node.dataset && node.dataset.mediator == def.id;
-                })
-                .map(function (def) {
-                    return this.loader.get(def.mediator).then(this._initMediator.bind(this, node,def));
-                }.bind(this)));
+                }).map(function (def) {
+                    return this.loader.get(def.mediator).then(this.mediatorHandler.create.bind(this.mediatorHandler, node, def));
+                }.bind(this))
+            );
 
         },
-        _initMediator: function (node,def, Mediator) {
-	        return this.mediatorHandler.create(node, Mediator,def);
 
-        },
         _handleNodesAdded: function (nodes) {
             this.getMediators(nodes).then(function (mediators) {
                 if (mediators.length) {
@@ -523,8 +520,8 @@
             return result.concat(n);
         },
         _destroyMediator: function (node) {
-	        var mediator = this.mediatorHandler.destroy(node);
-	        mediator &&  this.onRemoved.emit(mediator);
+            var mediator = this.mediatorHandler.destroy(node);
+            mediator && this.onRemoved.emit(mediator);
 
 
         }
@@ -756,7 +753,7 @@
 	}
 
 	MediatorHandler.prototype = {
-		create: function (node, Mediator,mediatorName) {
+		create: function (node,def, Mediator) {
 			var mediatorId = RoboJS.utils.nextUid();
 			node.dataset = node.dataset || {};
 			node.dataset.mediatorId = mediatorId;
