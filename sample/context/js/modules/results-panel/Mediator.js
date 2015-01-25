@@ -17,15 +17,11 @@ define(function (require, exports, module) {
             value: function (element) {
 
                 this.view.initialize(element);
-                this.addContextListener("search-done", this._handleSearchDone, this)
+                this.addContextListener("search-done", this.view.update, this.view)
 
             }
         },
-        _handleSearchDone: {
-            value: function (data) {
-                this.view.update(data);
-            }
-        },
+
         destroy: {
             value: function () {
                 this.view.destroy();
