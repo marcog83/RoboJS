@@ -785,9 +785,9 @@
 	//it's a kind of Facade, that reduces dependencies of outside code on the inner workings of a library
 	function bootstrap(config) {
 		config.autoplay = config.autoplay == undefined ? true : config.autoplay;
-		var displayList = new DisplayList(),
-			scriptLoader = new ScriptLoader(),
-			mediatorHandler = new MediatorHandler();
+		var displayList =config.domWatcher || new DisplayList(),
+			scriptLoader =config.scriptLoader || new ScriptLoader(),
+			mediatorHandler =config.mediatorHandler || new MediatorHandler();
 		/**
 		 * get the mediators and return a promise.
 		 * The promise argument is an Array of Mediator instances
@@ -803,7 +803,7 @@
 * <ul>
 *     <li>DisplayList</li>
 *     <li>Mediator</li>
-*     <li>MediatorsFacade</li>
+*     <li>bootstrap</li>
 *     <li>MediatorBuilder</li>
 * </ul>
 *
@@ -812,6 +812,7 @@
         DisplayList: DisplayList,
         Mediator: Mediator,
 	    bootstrap: bootstrap,
+        MediatorHandler: MediatorHandler,
         MediatorsBuilder: MediatorsBuilder
     };
 

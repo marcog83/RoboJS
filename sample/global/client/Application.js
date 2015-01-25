@@ -54,13 +54,21 @@
 
     Application.prototype = {
         main: function () {
+            var config = {
+                domWatcher: null,
+                scriptLoader: new GlobalScriptLoader(),
+                mediatorHandler: null,
+                definitions: MediatorsMap,
+                autoplay: false
+            }
             /**
              *
              * @type { RoboJS.display.MediatorsBuilder}
              * an instance of MediatorsBuilder to get mediators.
              * It looks for the entire DOM trying to match MediatorsMap ids with data-mediator attribute
              */
-            var builder = new  RoboJS.display.MediatorsBuilder(new RoboJS.display.DisplayList(), new GlobalScriptLoader(), new MediatorHandler(), MediatorsMap);
+
+            var builder = RoboJS.display.bootstrap(config);
 
 
             /**

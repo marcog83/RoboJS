@@ -81,35 +81,34 @@
     }
 
     MediatorHandler.prototype = {
-        create: function (node,def, Mediator) {
-
-
+        create: function (node, def, Mediator) {
             var mediatorId = RoboJS.utils.nextUid();
             node.dataset = node.dataset || {};
             node.dataset.mediatorId = mediatorId;
+            //
+            def.dependencies = def.dependencies || [];
+            //
+            var params = {
+                type: def.dependencies.concat(["EventDispatcher", "EventMap", Mediator]),
+                mediatorId: mediatorId,
+                Mediator: Mediator,
+                def: def,
+                node: node
+            };
+            var promises = def.dependencies.map(function (dep) {
+                return this.loader.get(dep).then(RoboJS.utils.flip(this.injector.map).bind(this.injector, dep));
+            }.bind(this));
 
-            if (def.dependencies && def.dependencies.length) {
-                var $inject = [];
-                var promises = def.dependencies.map(function (dep) {
-                    $inject.push(dep);
-                    return this.loader.get(dep).then(RoboJS.utils.flip(this.injector.map).bind(this.injector,dep));
-                }.bind(this));
-                return Promise.all(promises).then(function () {
-                    var type = $inject.concat(["EventDispatcher", "EventMap", Mediator]);
-                    return this._initMediator(type, mediatorId, Mediator, def, node);
-                }.bind(this));
-            } else {
-                var type = ["EventDispatcher", "EventMap", Mediator];
-                return Promise.resolve(this._initMediator(type, mediatorId, Mediator, def, node));
-            }
+            //
+            return Promise.all(promises).then(this._initMediator.bind(this, params));
 
         },
 
-        _initMediator: function (type, mediatorId, Mediator, def, node) {
-            var _mediator = this.injector.getOrCreateNewInstance(type, def.id);
-            _mediator.id = mediatorId;
-            RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
-            _mediator.initialize(node);
+        _initMediator: function (params) {
+            var _mediator = this.injector.getOrCreateNewInstance(params.type, params.def.id);
+            _mediator.id = params.mediatorId;
+            RoboJS.MEDIATORS_CACHE[params.mediatorId] = _mediator;
+            _mediator.initialize(params.node);
             return _mediator;
         },
         destroy: function (node) {
