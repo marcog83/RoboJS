@@ -487,12 +487,12 @@
                     return node.dataset && node.dataset.mediator == def.id;
                 })
                 .map(function (def) {
-                    return this.loader.get(def.mediator).then(this._initMediator.bind(this, node));
+                    return this.loader.get(def.mediator).then(this._initMediator.bind(this, node,def));
                 }.bind(this)));
 
         },
-        _initMediator: function (node, Mediator) {
-	        return this.mediatorHandler.create(node, Mediator);
+        _initMediator: function (node,def, Mediator) {
+	        return this.mediatorHandler.create(node, Mediator,def);
 
         },
         _handleNodesAdded: function (nodes) {
@@ -747,7 +747,7 @@
 	}
 
 	MediatorHandler.prototype = {
-		create: function (node, Mediator) {
+		create: function (node, Mediator,mediatorName) {
 			var mediatorId = RoboJS.utils.nextUid();
 			node.dataset = node.dataset || {};
 			node.dataset.mediatorId = mediatorId;

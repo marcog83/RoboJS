@@ -5,6 +5,7 @@ define(function (require) {
 	"use strict";
 	var MediatorsMap = require("./MediatorsMap");
 
+
 	function Config(injector) {
 		this.injector = injector;
 	}
@@ -14,6 +15,8 @@ define(function (require) {
 			// configure your app dependencies;
 			// mediators list
 			this.injector.map('MediatorsMap').toValue(MediatorsMap);
+
+
 		},
 		initialize: function () {
 			//initialize all

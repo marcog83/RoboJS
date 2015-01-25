@@ -31,12 +31,12 @@ define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Pro
                     return node.dataset && node.dataset.mediator == def.id;
                 })
                 .map(function (def) {
-                    return this.loader.get(def.mediator).then(this._initMediator.bind(this, node));
+                    return this.loader.get(def.mediator).then(this._initMediator.bind(this, node,def));
                 }.bind(this)));
 
         },
-        _initMediator: function (node, Mediator) {
-	        return this.mediatorHandler.create(node, Mediator);
+        _initMediator: function (node,def, Mediator) {
+	        return this.mediatorHandler.create(node, Mediator,def);
 
         },
         _handleNodesAdded: function (nodes) {

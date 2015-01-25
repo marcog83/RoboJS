@@ -1,14 +1,14 @@
 define(function (require, exports, module) {
     'use strict';
 
-	var Config=require("./Config");
+	var AppConfig=require("./AppConfig");
     var RoboJS=require("robojs.extensions");
     //
     function Client(){
 	    var _context = new RoboJS.framework.Context();
 
 	    _context.install(RoboJS.extensions.MVCBundle)
-		        .configure(["Injector",Config],"MyAppConfig")
+		        .configure(["Injector",AppConfig],"AppConfig")
 		        .initialize();
     }
 

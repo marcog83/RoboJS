@@ -9,7 +9,7 @@ define(["../core","../events/EventDispatcher","../events/EventMap"],function (Ro
 	}
 
 	MediatorHandler.prototype = {
-		create: function (node, Mediator) {
+		create: function (node, Mediator,mediatorName) {
 			var mediatorId = RoboJS.utils.nextUid();
 			node.dataset = node.dataset || {};
 			node.dataset.mediatorId = mediatorId;

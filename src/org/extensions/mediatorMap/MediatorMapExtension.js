@@ -6,6 +6,7 @@ define(["robojs", "./MediatorHandler"], function (RoboJS, MediatorHandler) {
             // map how to handle Mediator Creation
             this.injector.map([
                 "Injector",
+                "ScriptLoader",
                 MediatorHandler
             ], "MediatorHandler").asSingleton();
 
