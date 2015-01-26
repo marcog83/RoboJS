@@ -292,3 +292,7 @@ You can image Extensions as bricks that you put together to create a building.
 You can find an example in sample/context folder.
 
 [More details about extensions...](https://github.com/marcog83/RoboJS/tree/master/src/org/extensions)
+
+
+###MutationObserver polyfill###
+if you need a polyfill you can check the [Webcomponents](https://github.com/webcomponents) polyfill.
