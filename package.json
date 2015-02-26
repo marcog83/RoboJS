@@ -1,6 +1,6 @@
 {
   "name": "robojs",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "license": "MIT",
   "devDependencies": {
     "glob": "^4.3.2",

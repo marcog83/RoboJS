@@ -11,8 +11,9 @@ define(["../core","../events/EventDispatcher","../events/EventMap"],function (Ro
 	MediatorHandler.prototype = {
 		create: function (node,def, Mediator) {
 			var mediatorId = RoboJS.utils.nextUid();
-			node.dataset = node.dataset || {};
-			node.dataset.mediatorId = mediatorId;
+			//node.dataset = node.dataset || {};
+			node.setAttribute('mediatorId',mediatorId);
+			//node.dataset.mediatorId = mediatorId;
 			//
 			var _mediator = new Mediator(EventDispatcher.getInstance(), new EventMap());
 			_mediator.id = mediatorId;
@@ -21,7 +22,8 @@ define(["../core","../events/EventDispatcher","../events/EventMap"],function (Ro
 			return _mediator;
 		},
 		destroy: function (node) {
-			var mediatorId = node.dataset && node.dataset.mediatorId;
+
+			var mediatorId = node.getAttribute("mediatorId") //&& node.dataset.mediatorId;
 			var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
 			if (mediator) {
 				mediator.destroy && mediator.destroy();

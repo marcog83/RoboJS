@@ -33,7 +33,8 @@ define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Pro
 
         },
         _filterDefintions: function (node, def) {
-            return node.dataset && node.dataset.mediator == def.id;
+            return node.getAttribute("data-mediator")== def.id;
+            //return node.dataset && node.dataset.mediator == def.id;
         },
         _createMediator: function (node, def) {
             return this.loader.get(def.mediator).then(this.mediatorHandler.create.bind(this.mediatorHandler, node, def));
