@@ -37,7 +37,7 @@ define(["../events/Signal"], function (Signal) {
             subtree: true
         });
         return {
-            onAddded: onAdded,
+            onAdded: onAdded,
             onRemoved: onRemoved
         }
     }

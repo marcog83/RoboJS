@@ -355,7 +355,7 @@
             subtree: true
         });
         return {
-            onAddded: onAdded,
+            onAdded: onAdded,
             onRemoved: onRemoved
         }
     }
