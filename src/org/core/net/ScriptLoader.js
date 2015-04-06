@@ -1,18 +1,14 @@
 define(["Promise"], function (Promise) {
-   /*
-   <h2>ScriptLoader</h2>
-    */
-    function ScriptLoader() {
-    }
-
-    ScriptLoader.prototype = {
+    /*
+     <h2>ScriptLoader</h2>
+     */
+    var ScriptLoader = {
         get: function (id) {
             return new Promise(function (resolve, reject) {
-                require([id], function (Mediator) {
-                    resolve(Mediator);
-                });
+                require([id], resolve, reject);
             });
         }
     };
+
     return ScriptLoader;
 });

@@ -2,67 +2,74 @@ define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Pro
     /*
      <h2>MediatorsBuilder</h2>
      */
-    function MediatorsBuilder(displayList, scriptLoader, mediatorHandler, definitions) {
-        this.onAdded = new Signal();
-        this.onRemoved = new Signal();
-        this.definitions = definitions || [];
-        this.displayList = displayList;
-        this.mediatorHandler = mediatorHandler;
-        this.displayList.onAdded.connect(this._handleNodesAdded, this);
-        this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
-        this.loader = scriptLoader;
-    }
+    function MediatorsBuilder(displayList, loader, mediatorHandler, definitions) {
+        var onAdded = new Signal();
+        var onRemoved = new Signal();
 
+        displayList.onAdded.connect(_handleNodesAdded);
+        displayList.onRemoved.connect(_handleNodesRemoved);
 
-    MediatorsBuilder.prototype = {
+        function _filterDefintions(node, def) {
+            return node.getAttribute("data-mediator") == def.id;
 
-        bootstrap: function () {
+        }
 
-            return this.getMediators([document.body]);
-        },
-        getMediators: function (target) {
-            return Promise.all(target
-                .reduce(this._reduceNodes, [])
-                .reduce(this._findMediators.bind(this), []));
-        },
-        _findMediators: function (result, node) {
-            var mediators = this.definitions
-                .filter(this._filterDefintions.bind(this, node))
-                .map(this._createMediator.bind(this, node));
+        function _createMediator(node, def) {
+            return loader.get(def.mediator).then(mediatorHandler.create.bind(null, node, def));
+        }
+
+        function _findMediators(result, node) {
+            var mediators = definitions
+                .filter(_filterDefintions.bind(null, node))
+                .map(_createMediator.bind(null, node));
             return result.concat(mediators);
 
-        },
-        _filterDefintions: function (node, def) {
-            return node.getAttribute("data-mediator")== def.id;
-            //return node.dataset && node.dataset.mediator == def.id;
-        },
-        _createMediator: function (node, def) {
-            return this.loader.get(def.mediator).then(this.mediatorHandler.create.bind(this.mediatorHandler, node, def));
-        },
+        }
 
-        _handleNodesAdded: function (nodes) {
-            this.getMediators(nodes).then(this._emitAddedSignal.bind(this));
-        },
-        _emitAddedSignal: function (mediators) {
+        function getMediators(target) {
+            return Promise.all(target
+                .reduce(_reduceNodes, [])
+                .reduce(_findMediators, []));
+        }
+
+        function _handleNodesAdded(nodes) {
+            getMediators(nodes).then(_emitAddedSignal);
+        }
+
+        function _emitAddedSignal(mediators) {
             if (mediators.length) {
-                this.onAdded.emit(mediators);
+                onAdded.emit(mediators);
             }
-        },
-        _handleNodesRemoved: function (nodes) {
-            nodes.reduce(this._reduceNodes, [])
-                .forEach(this._destroyMediator.bind(this));
+        }
 
-        },
-        _reduceNodes: function (result, node) {
+        function _handleNodesRemoved(nodes) {
+            nodes.reduce(_reduceNodes, [])
+                .forEach(_destroyMediator);
+
+        }
+
+        function _reduceNodes(result, node) {
             if (!node || !node.getElementsByTagName)return result;
             var n = [].slice.call(node.getElementsByTagName("*"), 0);
             n.unshift(node);
             return result.concat(n);
-        },
-        _destroyMediator: function (node) {
-            var mediator = this.mediatorHandler.destroy(node);
-            mediator && this.onRemoved.emit(mediator);
         }
-    };
+
+        function _destroyMediator(node) {
+            var mediator = mediatorHandler.destroy(node);
+            mediator && onRemoved.emit(mediator);
+        }
+
+        return {
+            onAdded: onAdded,
+            onRemoved: onRemoved,
+            bootstrap: function () {
+                return getMediators([document.body])
+            }
+        }
+
+    }
+
+
     return MediatorsBuilder;
 });

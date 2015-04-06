@@ -323,15 +323,27 @@
      *
      */
     function DisplayList() {
-        this.onAdded = new Signal();
-        this.onRemoved = new Signal();
+        var onAdded = new Signal();
+        var onRemoved = new Signal();
+
+        function handleMutations(mutations) {
+            var response = mutations.reduce(function (result, mutation, index) {
+                result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
+                result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
+                return result;
+            }, {addedNodes: [], removedNodes: []});
+
+            response.addedNodes.length && onAdded.emit(response.addedNodes);
+            response.removedNodes.length && onRemoved.emit(response.removedNodes);
+        }
+
         /*
          * <h3>MutationObserver</h3>
          * <p>provides developers a way to react to changes in a DOM.<br/>
          * It is designed as a replacement for Mutation Events defined in the DOM3 Events specification.</p>
          * <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">docs!</a>
          * */
-        var observer = new MutationObserver(this.handleMutations.bind(this));
+        var observer = new MutationObserver(handleMutations);
 
         /* <h3>Configuration of the observer.</h3>
          <p>Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.</p>
@@ -342,21 +354,14 @@
             characterData: false,
             subtree: true
         });
+        return {
+            onAddded: onAdded,
+            onRemoved: onRemoved
+        }
     }
 
-    DisplayList.prototype = {
-        handleMutations: function (mutations) {
-            var response = mutations.reduce(function (result, mutation, index) {
-                result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
-                result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
-                return result;
-            }, {addedNodes: [], removedNodes: []});
 
-            response.addedNodes.length && this.onAdded.emit(response.addedNodes);
-            response.removedNodes.length && this.onRemoved.emit(response.removedNodes);
-        }
-    };
-    
+    ;
 
 	/**
 	 * <h2>Mediator</h2>
@@ -467,85 +472,88 @@
     /*
      <h2>MediatorsBuilder</h2>
      */
-    function MediatorsBuilder(displayList, scriptLoader, mediatorHandler, definitions) {
-        this.onAdded = new Signal();
-        this.onRemoved = new Signal();
-        this.definitions = definitions || [];
-        this.displayList = displayList;
-        this.mediatorHandler = mediatorHandler;
-        this.displayList.onAdded.connect(this._handleNodesAdded, this);
-        this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
-        this.loader = scriptLoader;
-    }
+    function MediatorsBuilder(displayList, loader, mediatorHandler, definitions) {
+        var onAdded = new Signal();
+        var onRemoved = new Signal();
 
+        displayList.onAdded.connect(_handleNodesAdded);
+        displayList.onRemoved.connect(_handleNodesRemoved);
 
-    MediatorsBuilder.prototype = {
+        function _filterDefintions(node, def) {
+            return node.getAttribute("data-mediator") == def.id;
 
-        bootstrap: function () {
+        }
 
-            return this.getMediators([document.body]);
-        },
-        getMediators: function (target) {
-            return Promise.all(target
-                .reduce(this._reduceNodes, [])
-                .reduce(this._findMediators.bind(this), []));
-        },
-        _findMediators: function (result, node) {
-            var mediators = this.definitions
-                .filter(this._filterDefintions.bind(this, node))
-                .map(this._createMediator.bind(this, node));
+        function _createMediator(node, def) {
+            return loader.get(def.mediator).then(mediatorHandler.create.bind(null, node, def));
+        }
+
+        function _findMediators(result, node) {
+            var mediators = definitions
+                .filter(_filterDefintions.bind(null, node))
+                .map(_createMediator.bind(null, node));
             return result.concat(mediators);
 
-        },
-        _filterDefintions: function (node, def) {
-            return node.getAttribute("data-mediator")== def.id;
-            //return node.dataset && node.dataset.mediator == def.id;
-        },
-        _createMediator: function (node, def) {
-            return this.loader.get(def.mediator).then(this.mediatorHandler.create.bind(this.mediatorHandler, node, def));
-        },
+        }
 
-        _handleNodesAdded: function (nodes) {
-            this.getMediators(nodes).then(this._emitAddedSignal.bind(this));
-        },
-        _emitAddedSignal: function (mediators) {
+        function getMediators(target) {
+            return Promise.all(target
+                .reduce(_reduceNodes, [])
+                .reduce(_findMediators, []));
+        }
+
+        function _handleNodesAdded(nodes) {
+            getMediators(nodes).then(_emitAddedSignal);
+        }
+
+        function _emitAddedSignal(mediators) {
             if (mediators.length) {
-                this.onAdded.emit(mediators);
+                onAdded.emit(mediators);
             }
-        },
-        _handleNodesRemoved: function (nodes) {
-            nodes.reduce(this._reduceNodes, [])
-                .forEach(this._destroyMediator.bind(this));
+        }
 
-        },
-        _reduceNodes: function (result, node) {
+        function _handleNodesRemoved(nodes) {
+            nodes.reduce(_reduceNodes, [])
+                .forEach(_destroyMediator);
+
+        }
+
+        function _reduceNodes(result, node) {
             if (!node || !node.getElementsByTagName)return result;
             var n = [].slice.call(node.getElementsByTagName("*"), 0);
             n.unshift(node);
             return result.concat(n);
-        },
-        _destroyMediator: function (node) {
-            var mediator = this.mediatorHandler.destroy(node);
-            mediator && this.onRemoved.emit(mediator);
         }
-    };
-    
 
-   /*
-   <h2>ScriptLoader</h2>
-    */
-    function ScriptLoader() {
+        function _destroyMediator(node) {
+            var mediator = mediatorHandler.destroy(node);
+            mediator && onRemoved.emit(mediator);
+        }
+
+        return {
+            onAdded: onAdded,
+            onRemoved: onRemoved,
+            bootstrap: function () {
+                return getMediators([document.body])
+            }
+        }
+
     }
 
-    ScriptLoader.prototype = {
+
+    ;
+
+    /*
+     <h2>ScriptLoader</h2>
+     */
+    var ScriptLoader = {
         get: function (id) {
             return new Promise(function (resolve, reject) {
-                require([id], function (Mediator) {
-                    resolve(Mediator);
-                });
+                require([id], resolve, reject);
             });
         }
     };
+
     
 
     /*
@@ -670,118 +678,112 @@
      * to unregister all listeners with a single method call.</p>
      */
     function EventMap() {
-        this._listeners = [];
+        var currentListeners = [];
+        return {
+            /**
+             <h3>mapListener</h3>
+             * <p>The same as calling addEventListener directly on the EventDispatcher, but keeps a list of listeners for easy (usually automatic) removal.</p>
+             * @param dispatcher <code>EventDispatcher</code> -- The EventDispatcher to listen to
+             *@param eventString <code>String</code> -- The Event type to listen for
+             *@param listener <code>Function</code> -- The Event handler
+             *@param scope <code>*</code> -- the listener scope (default = null)
+             */
+            mapListener: function (dispatcher, eventString, listener, scope) {
 
+                var config;
+                var i = currentListeners.length;
+                while (i--) {
+                    config = currentListeners[i];
+                    if (config.equalTo(dispatcher, eventString, listener)) {
+                        return;
+                    }
+                }
+                var callback = listener;
+
+                config = new EventMapConfig(dispatcher, eventString, listener, callback, scope);
+
+                currentListeners.push(config);
+                dispatcher.addEventListener(eventString, callback, scope);
+
+            },
+            /**
+             * <h3>unmapListener</h3>
+             * <p>The same as calling <code>removeEventListener</code> directly on the <code>EventDispatcher</code>,
+             * but updates our local list of listeners.</p>
+             *
+             * @param dispatcher The <code>EventDispatcher</code>
+             * @param eventString The <code>String</code> type
+             * @param listener The <code>Function</code> handler
+
+             */
+            unmapListener: function (dispatcher, eventString, listener) {
+
+                var i = currentListeners.length;
+                while (i--) {
+                    var config = currentListeners[i];
+                    if (config.equalTo(dispatcher, eventString, listener)) {
+
+                        dispatcher.removeEventListener(eventString, config.callback, config.scope);
+
+                        currentListeners.splice(i, 1);
+                        return;
+                    }
+                }
+            },
+            /**
+             * <h3>unmapListeners</h3>
+             * <p>Removes all listeners registered through <code>mapListener</code></p>
+             */
+            unmapListeners: function () {
+
+                var eventConfig;
+                var dispatcher;
+                while (eventConfig = currentListeners.pop()) {
+
+                    dispatcher = eventConfig.dispatcher;
+                    dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback, eventConfig.scope);
+
+                }
+            }
+        };
     }
 
-    EventMap.prototype = {
-        /**
-          <h3>mapListener</h3>
-        * <p>The same as calling addEventListener directly on the EventDispatcher, but keeps a list of listeners for easy (usually automatic) removal.</p>
-        * @param dispatcher <code>EventDispatcher</code> -- The EventDispatcher to listen to
-         *@param eventString <code>String</code> -- The Event type to listen for
-         *@param listener <code>Function</code> -- The Event handler
-         *@param scope <code>*</code> -- the listener scope (default = null)
-        */
-        mapListener: function (dispatcher, eventString, listener, scope) {
-            var currentListeners = this._listeners;
 
-            var config;
-            var i = currentListeners.length;
-            while (i--) {
-                config = currentListeners[i];
-                if (config.equalTo(dispatcher, eventString, listener)) {
-                    return;
-                }
-            }
-            var callback = listener;
-
-            config = new EventMapConfig(dispatcher, eventString, listener, callback, scope);
-
-            currentListeners.push(config);
-            dispatcher.addEventListener(eventString, callback, scope);
-
-        },
-        /**
-         * <h3>unmapListener</h3>
-         * <p>The same as calling <code>removeEventListener</code> directly on the <code>EventDispatcher</code>,
-         * but updates our local list of listeners.</p>
-         *
-         * @param dispatcher The <code>EventDispatcher</code>
-         * @param eventString The <code>String</code> type
-         * @param listener The <code>Function</code> handler
-
-         */
-        unmapListener: function (dispatcher, eventString, listener) {
-            var currentListeners = this._listeners;
-
-            var i = currentListeners.length;
-            while (i--) {
-                var config = currentListeners[i];
-                if (config.equalTo(dispatcher, eventString, listener)) {
-
-                    dispatcher.removeEventListener(eventString, config.callback, config.scope);
-
-                    currentListeners.splice(i, 1);
-                    return;
-                }
-            }
-        },
-        /**
-         * <h3>unmapListeners</h3>
-         * <p>Removes all listeners registered through <code>mapListener</code></p>
-         */
-        unmapListeners: function () {
-            var currentListeners = this._listeners;
-
-            var eventConfig;
-            var dispatcher;
-            while (eventConfig = currentListeners.pop()) {
-
-                dispatcher = eventConfig.dispatcher;
-                dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback, eventConfig.scope);
-
-            }
-        }
-    };
-    
+    ;
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
 
-	"use strict";
+    "use strict";
 
+    var MediatorHandler = {
+        create: function (node, def, Mediator) {
+            var mediatorId = RoboJS.utils.nextUid();
+            //node.dataset = node.dataset || {};
+            node.setAttribute('mediatorId', mediatorId);
+            //node.dataset.mediatorId = mediatorId;
+            //
+            var _mediator = new Mediator(EventDispatcher.getInstance(), EventMap());
+            _mediator.id = mediatorId;
+            RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
+            _mediator.initialize(node);
+            return _mediator;
+        },
+        destroy: function (node) {
 
-	function MediatorHandler() {
-	}
+            var mediatorId = node.getAttribute("mediatorId"); //&& node.dataset.mediatorId;
+            var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
+            if (mediator) {
+                mediator.destroy && mediator.destroy();
+                mediator.postDestroy && mediator.postDestroy();
+                mediator.element && (mediator.element = null);
+                RoboJS.MEDIATORS_CACHE[mediatorId] = null;
+                mediator = null;
+            }
+        }
+    };
 
-	MediatorHandler.prototype = {
-		create: function (node,def, Mediator) {
-			var mediatorId = RoboJS.utils.nextUid();
-			//node.dataset = node.dataset || {};
-			node.setAttribute('mediatorId',mediatorId);
-			//node.dataset.mediatorId = mediatorId;
-			//
-			var _mediator = new Mediator(EventDispatcher.getInstance(), new EventMap());
-			_mediator.id = mediatorId;
-			RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
-			_mediator.initialize(node);
-			return _mediator;
-		},
-		destroy: function (node) {
-
-			var mediatorId = node.getAttribute("mediatorId") //&& node.dataset.mediatorId;
-			var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
-			if (mediator) {
-				mediator.destroy && mediator.destroy();
-				mediator.postDestroy && mediator.postDestroy();
-				mediator.element && (mediator.element = null);
-				RoboJS.MEDIATORS_CACHE[mediatorId] = null;
-				mediator = null;
-			}
-		}
-	};
-	
+    
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
@@ -790,14 +792,14 @@
 	//it's a kind of Facade, that reduces dependencies of outside code on the inner workings of a library
 	function bootstrap(config) {
 		config.autoplay = config.autoplay == undefined ? true : config.autoplay;
-		var displayList =config.domWatcher || new DisplayList(),
-			scriptLoader =config.scriptLoader || new ScriptLoader(),
-			mediatorHandler =config.mediatorHandler || new MediatorHandler();
+		var displayList =config.domWatcher || DisplayList(),
+			scriptLoader =config.scriptLoader || ScriptLoader,
+			mediatorHandler =config.mediatorHandler || MediatorHandler;
 		/**
 		 * get the mediators and return a promise.
 		 * The promise argument is an Array of Mediator instances
 		 */
-		var builder = new MediatorsBuilder(displayList, scriptLoader, mediatorHandler, config.definitions);
+		var builder = MediatorsBuilder(displayList, scriptLoader, mediatorHandler, config.definitions);
 		return config.autoplay ? builder.bootstrap() : builder;
 	}
 	;
