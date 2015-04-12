@@ -33,7 +33,7 @@ define(function (require) {
 		/**
 		 * EventDispatcher is the Singleton that is used to dispatch and listen to the events
 		 */
-		this.eventDispatcher = RoboJS.events.EventDispatcher.getInstance();
+		this.eventDispatcher = RoboJS.events.EventDispatcher;
 	}
 
 	Application.prototype = {

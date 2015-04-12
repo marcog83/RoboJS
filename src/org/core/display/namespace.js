@@ -1,22 +1,13 @@
-define(["../core", "./DisplayList", "./Mediator",  "./MediatorsBuilder","./bootstrap","./MediatorHandler"], function (RoboJS, DisplayList, Mediator, MediatorsBuilder,bootstrap,MediatorHandler) {
-/*
-
-* <strong>RoboJS.display</strong> package contains
-* <ul>
-*     <li>DisplayList</li>
-*     <li>Mediator</li>
-*     <li>bootstrap</li>
-*     <li>MediatorBuilder</li>
-* </ul>
-*
-* */
-    RoboJS.display = {
-        DisplayList: DisplayList,
-        Mediator: Mediator,
-	    bootstrap: bootstrap,
-        MediatorHandler: MediatorHandler,
-        MediatorsBuilder: MediatorsBuilder
-    };
-
-
-});
+import RoboJS from "../core";
+import DisplayList from "./DisplayList";
+import Mediator from "./Mediator";
+import MediatorsBuilder from "./MediatorsBuilder";
+import bootstrap from "./bootstrap";
+import MediatorHandler from "./MediatorHandler";
+RoboJS.display = {
+    DisplayList: DisplayList,
+    Mediator: Mediator,
+    bootstrap: bootstrap,
+    MediatorHandler: MediatorHandler,
+    MediatorsBuilder: MediatorsBuilder
+};

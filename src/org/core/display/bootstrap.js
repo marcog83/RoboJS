@@ -1,20 +1,22 @@
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
-define(["./MediatorsBuilder","./DisplayList", "../net/ScriptLoader", "./MediatorHandler"], function (MediatorsBuilder,DisplayList,  ScriptLoader, MediatorHandler) {
-	"use strict";
-	//it's a kind of Facade, that reduces dependencies of outside code on the inner workings of a library
-	function bootstrap(config) {
-		config.autoplay = config.autoplay == undefined ? true : config.autoplay;
-		var displayList =config.domWatcher || DisplayList(),
-			scriptLoader =config.scriptLoader || ScriptLoader,
-			mediatorHandler =config.mediatorHandler || MediatorHandler;
-		/**
-		 * get the mediators and return a promise.
-		 * The promise argument is an Array of Mediator instances
-		 */
-		var builder = MediatorsBuilder(displayList, scriptLoader, mediatorHandler, config.definitions);
-		return config.autoplay ? builder.bootstrap() : builder;
-	}
-	return bootstrap;
-});
+import MediatorsBuilder from "./MediatorsBuilder"
+import DisplayList from "./DisplayList"
+import ScriptLoader from "../net/ScriptLoader"
+import MediatorHandler from "./MediatorHandler"
+
+export default function bootstrap(config) {
+
+    let {definitions,autoplay=true,domWatcher=DisplayList(),scriptLoader=ScriptLoader,mediatorHandler=MediatorHandler}=config;
+
+    /*var displayList =config.domWatcher || DisplayList(),
+     scriptLoader =config.scriptLoader || ScriptLoader,
+     mediatorHandler =config.mediatorHandler || MediatorHandler;*/
+    /**
+     * get the mediators and return a promise.
+     * The promise argument is an Array of Mediator instances
+     */
+    var builder = MediatorsBuilder(domWatcher, scriptLoader, mediatorHandler, definitions);
+    return autoplay ? builder.bootstrap() : builder;
+};
