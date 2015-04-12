@@ -1,6 +1,6 @@
 import RoboJS from '../core';
 import Signal from "../events/Signal";
-export default function MediatorsBuilder(displayList, loader, mediatorHandler, definitions) {
+export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
     let onAdded = Signal(),
         onRemoved = Signal(),
         _emitAddedSignal = (mediators)=> {
@@ -25,8 +25,8 @@ export default function MediatorsBuilder(displayList, loader, mediatorHandler, d
         _handleNodesAdded = (nodes)=> getMediators(nodes).then(_emitAddedSignal),
         _handleNodesRemoved = (nodes)=>  nodes.reduce(_reduceNodes, []).forEach(_destroyMediator);
 
-    displayList.onAdded.connect(_handleNodesAdded);
-    displayList.onRemoved.connect(_handleNodesRemoved);
+    domWatcher.onAdded.connect(_handleNodesAdded);
+    domWatcher.onRemoved.connect(_handleNodesRemoved);
 
 
     return {

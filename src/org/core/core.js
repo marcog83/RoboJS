@@ -2,7 +2,7 @@ import ScriptLoader from "./net/ScriptLoader";
 import EventMap from "./events/EventMap";
 import  EventDispatcher from "./events/EventDispatcher";
 import Signal from "./events/Signal";
-import DisplayList from "./display/DisplayList";
+import DomWatcher from "./display/DomWatcher";
 import Mediator from "./display/Mediator";
 import MediatorsBuilder from "./display/MediatorsBuilder";
 import bootstrap from "./display/bootstrap";
@@ -36,30 +36,37 @@ function nextUid() {
 var flip = (f) => (...args) =>f.apply(this, args.reverse());
 
 
-let RoboJS = {
+let robojs = {
     MEDIATORS_CACHE: {},
     utils: {
         uid,
         nextUid,
         flip
+    },
+    display: {
+        DomWatcher,
+        Mediator,
+        bootstrap,
+        MediatorHandler,
+        MediatorsBuilder
+    },
+    events: {
+        EventDispatcher,
+        EventMap,
+        Signal
+    },
+    net: {
+        ScriptLoader
     }
+
 };
 
-RoboJS.display = {
-    DisplayList: DisplayList,
-    Mediator: Mediator,
-    bootstrap: bootstrap,
-    MediatorHandler: MediatorHandler,
-    MediatorsBuilder: MediatorsBuilder
-};
+if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define([], function(){return robojs});
+} else {
+    // Browser globals
+    window.robojs = robojs;
+}
 
-RoboJS.events = {
-    EventDispatcher: EventDispatcher,
-    EventMap: EventMap,
-    Signal: Signal
-};
-
-RoboJS.net = {
-    ScriptLoader: ScriptLoader
-};
-export default RoboJS;
+export default robojs;

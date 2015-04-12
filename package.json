@@ -15,5 +15,13 @@
     "path": "^0.11.14",
     "requirejs": "^2.1.15",
     "underscore": "^1.7.0"
+  },
+  "jspm": {
+    "directories": {},
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.0.12",
+      "babel-runtime": "npm:babel-runtime@^5.0.12",
+      "core-js": "npm:core-js@^0.8.1"
+    }
   }
 }

@@ -1,6 +1,6 @@
 import Signal from "../events/Signal";
 
-export default function DisplayList() {
+export default function DomWatcher() {
     let onAdded = Signal();
     let onRemoved = Signal();
 
