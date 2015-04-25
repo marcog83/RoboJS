@@ -1,6 +1,6 @@
 {
   "name": "robojs",
-  "version": "0.30.0",
+  "version": "1.1.0",
   "main": [
     "dist/robojs.es6.js"
   ],

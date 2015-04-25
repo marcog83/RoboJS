@@ -1,6 +1,6 @@
 {
   "name": "robojs",
-  "version": "0.30.0",
+  "version": "1.1.0",
   "license": "MIT",
   "devDependencies": {
     "babelify": "^6.0.2",
