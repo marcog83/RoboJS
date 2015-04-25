@@ -6840,7 +6840,7 @@ System.register("src/org/core/core", ["src/org/core/net/ScriptLoader", "src/org/
 
             if (typeof define === "function" && define.amd) {
                 // AMD. Register as an anonymous module.
-                define([], function () {
+                define("robojs", [], function () {
                     return robojs;
                 });
             } else {

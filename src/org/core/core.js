@@ -63,7 +63,7 @@ let robojs = {
 
 if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define([], function(){return robojs});
+    define('robojs',[], function(){return robojs});
 } else {
     // Browser globals
     window.robojs = robojs;
