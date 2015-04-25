@@ -3,14 +3,14 @@ import R from "ramda";
 export default function DomWatcher() {
     let onAdded = Signal();
     let onRemoved = Signal();
-    let _handleMutations = R.reduce(function (result, mutation) {
-        result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
-        result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
-        return result;
-    }, {addedNodes: [], removedNodes: []});
+
 
     let handleMutations = (mutations)=> {
-        let response = _handleMutations(mutations);
+        let response = R.reduce(function (result, mutation) {
+            result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
+            result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
+            return result;
+        }, {addedNodes: [], removedNodes: []},mutations);
         response.addedNodes.length && onAdded.emit(response.addedNodes);
         response.removedNodes.length && onRemoved.emit(response.removedNodes);
     };

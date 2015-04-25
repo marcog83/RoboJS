@@ -4,10 +4,10 @@
 import RoboJS from "../core";
 import EventDispatcher from "../events/EventDispatcher";
 import EventMap from "../events/EventMap";
-
+import R from "ramda";
 
 export default  {
-    create: function (node, def, Mediator) {
+    create: R.curryN(3,function (node, def, Mediator) {
         let mediatorId = RoboJS.utils.nextUid();
         //node.dataset = node.dataset || {};
         node.setAttribute('mediatorId', mediatorId);
@@ -18,7 +18,7 @@ export default  {
         RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
         _mediator.initialize(node);
         return _mediator;
-    },
+    }),
     destroy: function (node) {
 
         let mediatorId = node.getAttribute("mediatorId"); //&& node.dataset.mediatorId;

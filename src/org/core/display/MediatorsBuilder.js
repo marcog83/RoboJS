@@ -9,7 +9,7 @@ export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, de
             if (mediators.length)  onAdded.emit(mediators);
         },
         _filterDefinitions = R.curryN(2, (node, def)=>  node.getAttribute("data-mediator") == def.id),
-        _createMediator = R.curryN(2, (node, def)=> loader.load(def.mediator).then(mediatorHandler.create.bind(null, node, def))),
+        _createMediator = R.curryN(2, (node, def)=>  loader.load(def.mediator).then(mediatorHandler.create( node, def)) ),
         _reduceNodes = (result, node)=> {
             if (!node || !node.getElementsByTagName)return result;
             let n = [].slice.call(node.getElementsByTagName("*"), 0);

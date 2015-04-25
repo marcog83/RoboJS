@@ -6539,7 +6539,7 @@ System.register("src/org/core/display/MediatorsBuilder", ["npm:babel-runtime@5.0
             return node.getAttribute("data-mediator") == def.id;
         }),
             _createMediator = R.curryN(2, function (node, def) {
-            return loader.load(def.mediator).then(mediatorHandler.create.bind(null, node, def));
+            return loader.load(def.mediator).then(mediatorHandler.create(node, def));
         }),
             _reduceNodes = function _reduceNodes(result, node) {
             if (!node || !node.getElementsByTagName) {
@@ -6597,8 +6597,8 @@ System.register("src/org/core/display/MediatorsBuilder", ["npm:babel-runtime@5.0
         }
     };
 });
-System.register("src/org/core/display/MediatorHandler", ["src/org/core/core", "src/org/core/events/EventDispatcher", "src/org/core/events/EventMap"], function (_export) {
-    var RoboJS, EventDispatcher, EventMap;
+System.register("src/org/core/display/MediatorHandler", ["src/org/core/core", "src/org/core/events/EventDispatcher", "src/org/core/events/EventMap", "npm:ramda@0.13.0"], function (_export) {
+    var RoboJS, EventDispatcher, EventMap, R;
     return {
         setters: [function (_srcOrgCoreCore) {
             RoboJS = _srcOrgCoreCore["default"];
@@ -6606,6 +6606,8 @@ System.register("src/org/core/display/MediatorHandler", ["src/org/core/core", "s
             EventDispatcher = _srcOrgCoreEventsEventDispatcher["default"];
         }, function (_srcOrgCoreEventsEventMap) {
             EventMap = _srcOrgCoreEventsEventMap["default"];
+        }, function (_npmRamda0130) {
+            R = _npmRamda0130["default"];
         }],
         execute: function () {
             /**
@@ -6614,7 +6616,7 @@ System.register("src/org/core/display/MediatorHandler", ["src/org/core/core", "s
             "use strict";
 
             _export("default", {
-                create: function create(node, def, Mediator) {
+                create: R.curryN(3, function (node, def, Mediator) {
                     var mediatorId = RoboJS.utils.nextUid();
                     //node.dataset = node.dataset || {};
                     node.setAttribute("mediatorId", mediatorId);
@@ -6625,7 +6627,7 @@ System.register("src/org/core/display/MediatorHandler", ["src/org/core/core", "s
                     RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
                     _mediator.initialize(node);
                     return _mediator;
-                },
+                }),
                 destroy: function destroy(node) {
 
                     var mediatorId = node.getAttribute("mediatorId"); //&& node.dataset.mediatorId;
@@ -6688,14 +6690,13 @@ System.register("src/org/core/display/DomWatcher", ["src/org/core/events/Signal"
     function DomWatcher() {
         var onAdded = Signal();
         var onRemoved = Signal();
-        var _handleMutations = R.reduce(function (result, mutation) {
-            result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
-            result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
-            return result;
-        }, { addedNodes: [], removedNodes: [] });
 
         var handleMutations = function handleMutations(mutations) {
-            var response = _handleMutations(mutations);
+            var response = R.reduce(function (result, mutation) {
+                result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
+                result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
+                return result;
+            }, { addedNodes: [], removedNodes: [] }, mutations);
             response.addedNodes.length && onAdded.emit(response.addedNodes);
             response.removedNodes.length && onRemoved.emit(response.removedNodes);
         };
@@ -6840,7 +6841,7 @@ System.register("src/org/core/core", ["src/org/core/net/ScriptLoader", "src/org/
 
             if (typeof define === "function" && define.amd) {
                 // AMD. Register as an anonymous module.
-                define([], function () {
+                define("robojs", [], function () {
                     return robojs;
                 });
             } else {

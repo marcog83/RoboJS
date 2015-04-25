@@ -77,7 +77,7 @@ define(function (require) {
 			 * on click a new random element is added to the DOM tree
 			 */
 			$(".add-button").on("click", function () {
-				var index = getRandomArbitrary(0, 2);
+				var index =0; //getRandomArbitrary(0, 2);
 				// NB if you don't clone the element, the same element will be
 				// first removed from tree (and mediator is destroyed too)
 				// then attached to body again (and a new mediator is created)
