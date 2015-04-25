@@ -1,7 +1,0 @@
-{
-  "name": "robojs-samples",
-  "dependencies": {
-    "bluebird": "~2.8.2",
-    "requirejs": "~2.1.15"
-  }
-}

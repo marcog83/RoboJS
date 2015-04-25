@@ -1,68 +1,59 @@
-define(["../core", "../events/Signal", "Promise"], function (RoboJS, Signal, Promise) {
-    /*
-     <h2>MediatorsBuilder</h2>
-     */
-    function MediatorsBuilder(displayList, scriptLoader, mediatorHandler, definitions) {
-        this.onAdded = new Signal();
-        this.onRemoved = new Signal();
-        this.definitions = definitions || [];
-        this.displayList = displayList;
-        this.mediatorHandler = mediatorHandler;
-        this.displayList.onAdded.connect(this._handleNodesAdded, this);
-        this.displayList.onRemoved.connect(this._handleNodesRemoved, this);
-        this.loader = scriptLoader;
-    }
+import RoboJS from '../core';
+import Signal from "../events/Signal";
+import R from "ramda";
+export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
 
-
-    MediatorsBuilder.prototype = {
-
-        bootstrap: function () {
-
-            return this.getMediators([document.body]);
+    let onAdded = Signal(),
+        onRemoved = Signal(),
+        _emitAddedSignal = (mediators)=> {
+            if (mediators.length)  onAdded.emit(mediators);
         },
-        getMediators: function (target) {
-            return Promise.all(target
-                .reduce(this._reduceNodes, [])
-                .reduce(this._findMediators.bind(this), []));
-        },
-        _findMediators: function (result, node) {
-            var mediators = this.definitions
-                .filter(this._filterDefintions.bind(this, node))
-                .map(this._createMediator.bind(this, node));
-            return result.concat(mediators);
-
-        },
-        _filterDefintions: function (node, def) {
-            return node.getAttribute("data-mediator")== def.id;
-            //return node.dataset && node.dataset.mediator == def.id;
-        },
-        _createMediator: function (node, def) {
-            return this.loader.get(def.mediator).then(this.mediatorHandler.create.bind(this.mediatorHandler, node, def));
-        },
-
-        _handleNodesAdded: function (nodes) {
-            this.getMediators(nodes).then(this._emitAddedSignal.bind(this));
-        },
-        _emitAddedSignal: function (mediators) {
-            if (mediators.length) {
-                this.onAdded.emit(mediators);
-            }
-        },
-        _handleNodesRemoved: function (nodes) {
-            nodes.reduce(this._reduceNodes, [])
-                .forEach(this._destroyMediator.bind(this));
-
-        },
-        _reduceNodes: function (result, node) {
+        _filterDefinitions = R.curryN(2, (node, def)=>  node.getAttribute("data-mediator") == def.id),
+        _createMediator = R.curryN(2, (node, def)=> loader.load(def.mediator).then(mediatorHandler.create.bind(null, node, def))),
+        _reduceNodes = (result, node)=> {
             if (!node || !node.getElementsByTagName)return result;
-            var n = [].slice.call(node.getElementsByTagName("*"), 0);
+            let n = [].slice.call(node.getElementsByTagName("*"), 0);
             n.unshift(node);
             return result.concat(n);
         },
-        _destroyMediator: function (node) {
-            var mediator = this.mediatorHandler.destroy(node);
-            mediator && this.onRemoved.emit(mediator);
-        }
+        _destroyMediator = (node)=> {
+            let mediator = mediatorHandler.destroy(node);
+            mediator && onRemoved.emit(mediator);
+        },
+
+
+        _handleNodesRemoved = R.compose(
+            R.forEach(_destroyMediator),
+            R.reduce(_reduceNodes, [])
+        );
+
+
+    let _findMediators = (result, node) => {
+        "use strict";
+        let _composedFindMediator = R.compose(
+            R.map(_createMediator(node)),
+            R.filter(_filterDefinitions(node))
+        );
+        return result.concat(_composedFindMediator(definitions));
     };
-    return MediatorsBuilder;
-});
+
+    let _promiseReduce = R.compose(
+        R.reduce(_findMediators, []),
+        R.reduce(_reduceNodes, [])
+    );
+    let getMediators = (target) => Promise.all(_promiseReduce(target));
+    let _handleNodesAdded = (nodes)=> getMediators(nodes).then(_emitAddedSignal);
+
+    domWatcher.onAdded.connect(_handleNodesAdded);
+    domWatcher.onRemoved.connect(_handleNodesRemoved);
+
+
+    return {
+        onAdded,
+        onRemoved,
+        bootstrap: ()=> getMediators([document.body])
+    }
+
+}
+
+
