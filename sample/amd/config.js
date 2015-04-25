@@ -6,11 +6,6 @@ requirejs.config({
 
         robojs: "./robojs.es6"
 
-    },
-    maps: {
-        "*": {
-            "robojs": "src/org/core/core"
-        }
     }
 });
 require([
