@@ -1,16 +1,15 @@
 import RoboJS from '../core';
 import Signal from "../events/Signal";
+import R from "ramda";
 export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
+
     let onAdded = Signal(),
         onRemoved = Signal(),
         _emitAddedSignal = (mediators)=> {
             if (mediators.length)  onAdded.emit(mediators);
         },
-
-
-        _filterDefinitions = (node, def)=>  node.getAttribute("data-mediator") == def.id,
-        _createMediator = (node, def)=> loader.load(def.mediator).then(mediatorHandler.create.bind(null, node, def)),
-        _findMediators = (result, node) =>result.concat(definitions.filter(_filterDefinitions.bind(null, node)).map(_createMediator.bind(null, node))),
+        _filterDefinitions = R.curryN(2, (node, def)=>  node.getAttribute("data-mediator") == def.id),
+        _createMediator = R.curryN(2, (node, def)=> loader.load(def.mediator).then(mediatorHandler.create.bind(null, node, def))),
         _reduceNodes = (result, node)=> {
             if (!node || !node.getElementsByTagName)return result;
             let n = [].slice.call(node.getElementsByTagName("*"), 0);
@@ -21,9 +20,29 @@ export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, de
             let mediator = mediatorHandler.destroy(node);
             mediator && onRemoved.emit(mediator);
         },
-        getMediators = (target) => Promise.all(target.reduce(_reduceNodes, []).reduce(_findMediators, [])),
-        _handleNodesAdded = (nodes)=> getMediators(nodes).then(_emitAddedSignal),
-        _handleNodesRemoved = (nodes)=>  nodes.reduce(_reduceNodes, []).forEach(_destroyMediator);
+
+
+        _handleNodesRemoved = R.compose(
+            R.forEach(_destroyMediator),
+            R.reduce(_reduceNodes, [])
+        );
+
+
+    let _findMediators = (result, node) => {
+        "use strict";
+        let _composedFindMediator = R.compose(
+            R.map(_createMediator(node)),
+            R.filter(_filterDefinitions(node))
+        );
+        return result.concat(_composedFindMediator(definitions));
+    };
+
+    let _promiseReduce = R.compose(
+        R.reduce(_findMediators, []),
+        R.reduce(_reduceNodes, [])
+    );
+    let getMediators = (target) => Promise.all(_promiseReduce(target));
+    let _handleNodesAdded = (nodes)=> getMediators(nodes).then(_emitAddedSignal);
 
     domWatcher.onAdded.connect(_handleNodesAdded);
     domWatcher.onRemoved.connect(_handleNodesRemoved);
