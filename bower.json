@@ -1,8 +1,8 @@
 {
   "name": "robojs",
-  "version": "0.21.0",
+  "version": "0.30.0",
   "main": [
-    "dist/robojs.min.js"
+    "dist/robojs.es6.js"
   ],
   "ignore": [
     "node_modules",
@@ -14,7 +14,5 @@
     "Gruntfile.js",
     "package.json"
   ],
-  "dependencies": {
-    "js-suspenders": "https://github.com/marcog83/js-suspenders.git"
-  }
+  "dependencies": {}
 }

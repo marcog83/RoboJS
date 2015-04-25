@@ -4,11 +4,11 @@
 define(function (require, exports, module) {
 
 
-	function MediatorA() {
+	function MediatorA(dispacther,eventMap) {
 		return {
 			initialize:function(node){
 				"use strict";
-				console.log("MediatorA", node);
+				// node is the DOM element
 			}
 		}
 	}

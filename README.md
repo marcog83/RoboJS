@@ -127,121 +127,31 @@ $(".add-button").on("click", function () {
 `sample folder` contains a working example with more use cases, nested and sibling nodes
 
 
-#Mediator Class.
+#Mediator Object.
 Mediator is the context where your logic runs for a specific bunch of DOM.
-When a `data-mediator` matches an ID from MediatorsMap a new instance of Mediator is created. the DOM element is stored into a property named `element` and the `initialize` method is invoked.
+When a `data-mediator` matches an ID from MediatorsMap the `Mediator` constructor is called. 
+An instance of `EventDispatcher` and `EventMap` are passed as parameters.
 
+The `initialize` method is invoked and the DOM element is passed as parameter.
 
-Mediators should observe one of the following forms:
+Mediators should observe the following forms:
 
-* Extend the base `RoboJS.display.Mediator` class and override `initialize()` and, if needed, `destroy()`.
-* Don't extend the base `RoboJS.display.Mediator` class, and provide functions `initialize()` and, if needed, also `destroy()`.
+* It  provide functions `initialize()` and, if needed, also `destroy()`.
 
 `initialize()` function initializes the mediator. This is run automatically by the `MediatorBuilder` when a mediator is created. 
 Normally the `initialize` function is where you would add handlers or dispatch events using the `eventMap`.
 
-
-###Mediator that exends RoboJS.display.Mediator
-
-You can sub-class `RoboJS.display.Mediator` class in order to code your logic. For example i defined `MediatorB`.
-
-`RoboJS.display.Mediator` has a reference to `eventDispatcher`. 
-This way it can dispatch / listen to messages in your application.
-`addContextListener` and `removeContextListener` are responsible to map and unmap events registered to `eventDispatcher`. `dispatch` is responsible to send events with `eventDispatcher`.
-
-Usually handlers are registered in `initialize` function
-
 ```javascript
-// 'event-name' is a String.
-// this._handleEvent is the listener function.
-// this is the scope of listener.
-this.addContextListener("event-name", this._handleEvent, this);
-```
-
-To remove the listener you can do 
-
-```javascript
-// 'event-name' is a String.
-// this._handleEvent is the listener function.
-this.removeContextListener("event-name", this._handleEvent);
-```
-
-When DOM element is removed from DOM Tree, `RoboJS.display.Mediator` removes all listeners registered to `eventMap` and the `destroy` method is executed.  
-
-No matter how you implement inheritance. I just played with Vanilla-js to keep as cleaner as possible 
-
-
-```javascript
-// MediatorB.js
-
-var RoboJS=require("RoboJS");
-
-function MediatorB() {
-    RoboJS.display.Mediator.apply(this, arguments);
-}
-
-MediatorB.prototype = Object.create(RoboJS.display.Mediator.prototype, {
-    constructor: {
-        value: MediatorB
-    },
-    initialize: {
-        value: function () {
-
-            /**
-             * a new listener is added.
-             *
-             */
-            this.addContextListener("event-name", this._handleEvent, this);
-        }
-    },
-    _handleEvent: {
-        value: function (e) {
-
-            // after the first fired event, the listener is removed.
-            this.removeContextListener("event-name", this._handleEvent);
-        }
-    },
-    destroy: {
-        value: function () {
-            console.log("destroy");
-        }
-    }
-});
-```
-
-###Mediator that DOESN'T exends RoboJS.display.Mediator
-
-If you just need to load JS based on DOM and you don't need `RoboJS.display.Mediator` features, you can create your own class and provide functions `initialize()` and, if needed, also `destroy()`.
-By default `element` parameter, that represents DOM node, is always passed into constructor by `MediatorsBuilder`
-In `sample/real-world-project/js/modules/toggle` folder there is `ToggleModule` implemented in this way.
-
-```javascript
-function ToggleModule(element) {
-    this.element = $(element);
-}
-
-ToggleModule.prototype = {
-    initialize: function () {
-        var JQUERY_MODULE = "<div class='results-panel' data-mediator='jquery-results-panel'></div>";
-        var ANGULAR_MODULE = '<div class="results-panel" data-mediator="results-panel"><results-panel class="content"></results-panel></div>';
-        this.element.on("click", function () {
-            this.element.toggleClass("toggled");
-            $(".results-panel").remove();
-            var element, text;
-            if (this.element.hasClass("toggled")) {
-                element = JQUERY_MODULE;
-                text = 'CHANGE TO ANGULAR MODULE';
-            } else {
-                element = ANGULAR_MODULE;
-                text = 'CHANGE TO JQUERY MODULE';
-            }
-            this.element.html(text);
-            $("body").append(element);
-        }.bind(this))
-    }
-}
-```
-
+    function MediatorA(dispacther,eventMap) {
+		return {
+			initialize:function(node){
+				"use strict";
+				// node is the DOM element
+			}
+		}
+	}
+``` 
+ 
 #EventDispatcher Class.
 The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
 It's meant to be a Singleton ( EventDispatcher.getInstance() ) in your application, but you can instantiate it as a normal Class.
@@ -251,20 +161,11 @@ It's meant to be a Singleton ( EventDispatcher.getInstance() ) in your applicati
 ###Dependencies
 
 
-RoboJS depends on **ES5** for
+RoboJS depends on
 
- * Array.prototype.reduce()
- * Array.prototype.map()
- * Array.prototype.filter()
-
-
-
-**[bluebird](https://github.com/petkaantonov/bluebird)** and **[Q.js](https://github.com/kriskowal/q)** can be used where native Promise is not implemented.
-
-
-
+**[RamdaJS](http://ramdajs.com/)** to deal with functional programming. Curry, reduce, map, filter etc...
 **[RequireJS](http://requirejs.org/)** is used internally as script loader in `ScriptLoader` Class.
-You can override `loader` property of `MediatorsBuilder` instance with your own implementation to load JS.
+You can pass a different implementation of ScriptLoader in bootstrap function
 
 
 This is an example how you can set dependencies in AMD with RequireJS
@@ -273,7 +174,7 @@ This is an example how you can set dependencies in AMD with RequireJS
 
 requirejs.config({
 	paths: {
-		Promise: "path/to/any/promise-like/implementation",
+		
         robojs: "../../dist/robojs.min"
 	}
 });
@@ -286,12 +187,6 @@ or using Globals
 <script src="../../dist/robojs.min.js"></script>
 ```
 
-If you want use robojs.extensions you need js-suspenders project to be imported.
-robojs.extensions provides an Extension System that let you compose your application as you wish.
-You can image Extensions as bricks that you put together to create a building.
-You can find an example in sample/context folder.
-
-[More details about extensions...](https://github.com/marcog83/RoboJS/tree/master/src/org/extensions)
 
 
 ###MutationObserver polyfill###
