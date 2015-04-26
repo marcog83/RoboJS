@@ -18,6 +18,8 @@
     "underscore": "^1.7.0"
   },
   "jspm": {
+    "jspmNodeConversion": false,
+    "format": "es6",
     "directories": {},
     "dependencies": {
       "ramda": "npm:ramda@^0.13.0"
