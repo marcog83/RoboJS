@@ -2,7 +2,7 @@
   "name": "robojs",
   "version": "1.1.4",
   "license": "MIT",
-  ka
+  "main":"dist/robojs.es6.js",
   "devDependencies": {
     "babelify": "^6.0.2",
     "glob": "^4.3.2",
