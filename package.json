@@ -1,24 +1,10 @@
 {
   "name": "robojs",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "license": "MIT",
-  "main":"dist/robojs.es6.js",
-  "devDependencies": {
-    "babelify": "^6.0.2",
-    "glob": "^4.3.2",
-    "grunt": "^0.4.5",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-copy": "^0.7.0",
-    "grunt-contrib-requirejs": "^0.4.4",
-    "grunt-contrib-uglify": "^0.7.0",
-    "grunt-docker": "0.0.9",
-    "load-grunt-config": "^0.16.0",
-    "path": "^0.11.14",
-    "requirejs": "^2.1.15",
-    "underscore": "^1.7.0"
-  },
+  "main": "dist/robojs.es6.js",
   "jspm": {
-    "main":"src/org/core/robojs",
+    "main": "src/org/core/robojs",
     "format": "es6",
     "directories": {},
     "dependencies": {

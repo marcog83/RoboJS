@@ -1,7 +1,0 @@
-{
-  "corename":"",
-  "modules": [
-    "./org/framework/namespace",
-    "./org/extensions/namespace"
-  ]
-}

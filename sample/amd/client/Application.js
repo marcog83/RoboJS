@@ -49,7 +49,7 @@ define(function (require) {
 			 *
 			 */
 
-			var builder = RoboJS.display.bootstrap({definitions: MediatorsMap, autoplay: false});
+			var builder = RoboJS.display.bootstrap({definitions: MediatorsMap, autoplay: false,scriptLoader:RoboJS.net.AMDScriptLoader});
 			/**
 			 * get the mediators and return a promise.
 			 * The promise argument is an Array of Mediator instances
