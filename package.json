@@ -4,6 +4,7 @@
   "license": "MIT",
   "main": "dist/robojs.es6.js",
   "jspm": {
+    "name": "robojs",
     "main": "src/org/core/robojs",
     "format": "es6",
     "directories": {},
