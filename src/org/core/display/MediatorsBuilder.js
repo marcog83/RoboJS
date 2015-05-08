@@ -1,4 +1,4 @@
-import RoboJS from '../core';
+import RoboJS from '../robojs';
 import Signal from "../events/Signal";
 import R from "ramda";
 export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
@@ -29,7 +29,7 @@ export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, de
 
 
     let _findMediators = (result, node) => {
-        "use strict";
+
         let _composedFindMediator = R.compose(
             R.map(_createMediator(node)),
             R.filter(_filterDefinitions(node))

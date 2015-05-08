@@ -49,9 +49,9 @@ it will create a new instance of Mediator, storing the DOM Node into a property 
 ```javascript
 // Application.js
 
-var RoboJS=require("robojs");
+var robojs=require("robojs");
 var MediatorsMap = require("./MediatorsMap");
-RoboJS.display.bootstrap({definitions:MediatorsMap});
+robojs.display.bootstrap({definitions:MediatorsMap});
 
 ```
 
@@ -66,7 +66,7 @@ function just create ```MediatorsBuilder``` and  returns it. Then you can manual
 ```javascript
 // create an instance of MediatorsBuilder passing the map of Mediators.
 // autoplay by default is true, but if you need more control, you can just pass true and manual bootstrap the builder
-var builder = RoboJS.display.bootstrap({definitions:MediatorsMap,autoplay:false});
+var builder = robojs.display.bootstrap({definitions:MediatorsMap,autoplay:false});
 
 /*
  * get the mediators and return a promise.
@@ -147,6 +147,9 @@ Normally the `initialize` function is where you would add handlers or dispatch e
 			initialize:function(node){
 				"use strict";
 				// node is the DOM element
+			},
+			destroy:function(){
+			   // destroy everything
 			}
 		}
 	}
@@ -154,7 +157,7 @@ Normally the `initialize` function is where you would add handlers or dispatch e
  
 #EventDispatcher Class.
 The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
-It's meant to be a Singleton ( EventDispatcher.getInstance() ) in your application, but you can instantiate it as a normal Class.
+It's meant to be a Singleton in your application.
 
 	
 	
@@ -163,9 +166,13 @@ It's meant to be a Singleton ( EventDispatcher.getInstance() ) in your applicati
 
 RoboJS depends on
 
-**[RamdaJS](http://ramdajs.com/)** to deal with functional programming. Curry, reduce, map, filter etc...
-**[RequireJS](http://requirejs.org/)** is used internally as script loader in `ScriptLoader` Class.
-You can pass a different implementation of ScriptLoader in bootstrap function
+**[RamdaJS](http://ramdajs.com/)** to deal with functional programming. Curry, reduce, map, filter etc... It is internally used. NO needs to import ramda library.
+
+**`AMDScriptLoader` Object** supposes that `require` function is in global space, so if your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Object
+
+```javascript
+robojs.display.bootstrap({definitions: definitions,scriptLoader:robojs.net.AMDScriptLoader})
+```
 
 
 This is an example how you can set dependencies in AMD with RequireJS
@@ -175,7 +182,7 @@ This is an example how you can set dependencies in AMD with RequireJS
 requirejs.config({
 	paths: {
 		
-        robojs: "../../dist/robojs.min"
+        robojs: "../../dist/robojs.es6"
 	}
 });
 
@@ -184,9 +191,15 @@ requirejs.config({
 or using Globals
 
 ```html
-<script src="../../dist/robojs.min.js"></script>
+<script src="../../dist/robojs.es6.js"></script>
 ```
 
+###Build project###
+transpiling es6 sources to es5 is handled by AWESOME project [jspm](http://jspm.io/), that is a package manager for the SystemJS universal module loader, built on top of the dynamic ES6 module loader.
+
+```
+jspm bundle-sfx src/org/core/robojs -o dist/robojs.es6.js
+```
 
 
 ###MutationObserver polyfill###

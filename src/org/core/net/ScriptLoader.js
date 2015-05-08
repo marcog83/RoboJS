@@ -1,8 +1,12 @@
-//var System = require('es6-module-loader').System;
+function getPromise(){
+    if (System.import){
+        return System.import.bind(System);
+    }else{
+        return function(url){
+            return Promise.resolve(System.get(url));
+        }
+    }
+}
 export default  {
-    load: (id)=>   new Promise(function (resolve, reject) {
-        window.require([id], function (Mediator) {
-            resolve(Mediator);
-        });
-    })
+    load: id=> getPromise()(id).then(e=>e.default).catch(console.log.bind(console))
 };

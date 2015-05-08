@@ -1,4 +1,5 @@
 import ScriptLoader from "./net/ScriptLoader";
+import AMDScriptLoader from "./net/AMDScriptLoader";
 import EventMap from "./events/EventMap";
 import  EventDispatcher from "./events/EventDispatcher";
 import Signal from "./events/Signal";
@@ -56,6 +57,7 @@ let robojs = {
         Signal
     },
     net: {
+        AMDScriptLoader,
         ScriptLoader
     }
 

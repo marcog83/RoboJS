@@ -1,7 +1,7 @@
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
-import RoboJS from "../core";
+import RoboJS from "../robojs";
 import EventDispatcher from "../events/EventDispatcher";
 import EventMap from "../events/EventMap";
 import R from "ramda";
