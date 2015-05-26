@@ -4174,7 +4174,7 @@ System.register("src/org/core/display/MediatorsBuilder", ["npm:babel-runtime@5.2
             onRemoved = Signal();
 
         var _handleNodesRemoved = R.compose(R.tap(function (mediators) {
-            mediators.length && onRemoved.emit();
+            return mediators.length && onRemoved.emit();
         }), R.forEach(mediatorHandler.destroy), R.flatten());
 
         var findMediators = R.curryN(2, function (definitions, node) {
@@ -4185,16 +4185,12 @@ System.register("src/org/core/display/MediatorsBuilder", ["npm:babel-runtime@5.2
 
         var hasMediator = R.curryN(2, function (definitions, node) {
             var m = node.getAttribute("data-mediator");
-            //return m && R.find(R.propEq("id", m), definitions);
             return m && R.containsWith(function (a, b) {
                 return a.id === b.id;
             }, { id: m }, definitions);
         });
 
-        var _promiseReduce = R.compose(R.map(findMediators(definitions)), R.filter(hasMediator(definitions)), R.flatten());
-        var getMediators = function getMediators(target) {
-            return _Promise.all(_promiseReduce(target));
-        };
+        var getMediators = R.compose(_Promise.all.bind(_Promise), R.map(findMediators(definitions)), R.filter(hasMediator(definitions)), R.flatten());
         var _handleNodesAdded = function _handleNodesAdded(nodes) {
             return getMediators(nodes).then(function (mediators) {
                 return mediators.length && onAdded.emit(mediators);

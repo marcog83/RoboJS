@@ -26,12 +26,13 @@ export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, de
         return m && R.containsWith((a, b)=>a.id === b.id, {id: m}, definitions);
     });
 
-    var _promiseReduce = R.compose(
+
+    var getMediators = R.compose(
+        Promise.all.bind(Promise),
         R.map(findMediators(definitions)),
         R.filter(hasMediator(definitions)),
         R.flatten()
     );
-    var getMediators = target => Promise.all(_promiseReduce(target));
     var _handleNodesAdded = nodes=> getMediators(nodes).then(mediators=>(mediators.length && onAdded.emit(mediators)));
 
     domWatcher.onAdded.connect(_handleNodesAdded);
