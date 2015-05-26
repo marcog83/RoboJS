@@ -7,7 +7,7 @@ import EventMap from "../events/EventMap";
 import R from "ramda";
 
 export default  {
-    create: R.curryN(3,function (node, def, Mediator) {
+    create: R.curryN(3, function (node, def, Mediator) {
         let mediatorId = RoboJS.utils.nextUid();
         //node.dataset = node.dataset || {};
         node.setAttribute('mediatorId', mediatorId);
@@ -29,6 +29,9 @@ export default  {
             mediator.element && (mediator.element = null);
             RoboJS.MEDIATORS_CACHE[mediatorId] = null;
             mediator = null;
+            return true;
         }
+        return false;
+
     }
 };

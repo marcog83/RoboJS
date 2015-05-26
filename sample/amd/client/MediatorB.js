@@ -8,7 +8,7 @@ define(function (require, exports, module) {
 		return {
 			initialize:function(node){
 				"use strict";
-				console.log("MediatorA", node);
+				console.log("MediatorB", node);
 			}
 		}
 	}

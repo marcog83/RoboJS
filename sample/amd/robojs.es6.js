@@ -3984,67 +3984,65 @@ System.register("src/org/core/events/EventMap", [], function (_export) {
     };
 });
 System.register("src/org/core/events/EventDispatcher", [], function (_export) {
-    function EventDispatcher() {
+    var _currentListeners, removeAllEventListeners, hasEventListener;
 
-        var _currentListeners = {};
-
-        function addEventListener(type, callback, scope) {
-            var listener = {
-                type: type,
-                callback: callback,
-                scope: scope
-            };
-            if (!_currentListeners[type]) {
-                _currentListeners[type] = [];
-            }
-            _currentListeners[type].push(listener);
-            return listener;
-        }
-
-        function removeEventListener(eventName, callback, scope) {
-            var listeners = _currentListeners[eventName] || [];
-            _currentListeners[eventName] = listeners.filter(function (listener) {
-                var sameCB = listener.callback == callback;
-                var sameScope = listener.scope == scope;
-                return !(sameCB && sameScope);
-            });
-        }
-
-        var removeAllEventListeners = function removeAllEventListeners(eventName) {
-            return _currentListeners[eventName] = null;
+    function addEventListener(type, callback, scope) {
+        var listener = {
+            type: type,
+            callback: callback,
+            scope: scope
         };
-        var hasEventListener = function hasEventListener(eventName) {
-            return _currentListeners[eventName] && _currentListeners[eventName].length;
-        };
-
-        function dispatchEvent(type, data) {
-            var listeners = _currentListeners[type] || [];
-            var length = listeners.length,
-                l = undefined,
-                c = undefined,
-                s = undefined;
-            for (var i = 0; i < length; i++) {
-                l = listeners[i];
-                c = l.callback;
-                s = l.scope;
-                c.call(s, data);
-            }
+        if (!_currentListeners[type]) {
+            _currentListeners[type] = [];
         }
-        return {
-            addEventListener: addEventListener,
-            removeEventListener: removeEventListener,
-            removeAllEventListeners: removeAllEventListeners,
-            hasEventListener: hasEventListener,
-            dispatchEvent: dispatchEvent
-        };
-    }return {
+        _currentListeners[type].push(listener);
+        return listener;
+    }
+
+    function removeEventListener(eventName, callback, scope) {
+        var listeners = _currentListeners[eventName] || [];
+        _currentListeners[eventName] = listeners.filter(function (listener) {
+            var sameCB = listener.callback == callback;
+            var sameScope = listener.scope == scope;
+            return !(sameCB && sameScope);
+        });
+    }
+
+    function dispatchEvent(type, data) {
+        var listeners = _currentListeners[type] || [];
+        var length = listeners.length,
+            l = undefined,
+            c = undefined,
+            s = undefined;
+        for (var i = 0; i < length; i++) {
+            l = listeners[i];
+            c = l.callback;
+            s = l.scope;
+            c.call(s, data);
+        }
+    }
+    return {
         setters: [],
         execute: function () {
             "use strict";
 
-            ;
+            _currentListeners = {};
 
-            _export("default", EventDispatcher());
+            removeAllEventListeners = function removeAllEventListeners(eventName) {
+                return _currentListeners[eventName] = null;
+            };
+
+            hasEventListener = function hasEventListener(eventName) {
+                return _currentListeners[eventName] && _currentListeners[eventName].length;
+            };
+
+            _export("default", {
+                addEventListener: addEventListener,
+                removeEventListener: removeEventListener,
+                removeAllEventListeners: removeAllEventListeners,
+                hasEventListener: hasEventListener,
+                dispatchEvent: dispatchEvent
+            });
         }
     };
 });
@@ -4173,50 +4171,48 @@ System.register("src/org/core/display/MediatorsBuilder", ["npm:babel-runtime@5.2
     function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
 
         var onAdded = Signal(),
-            onRemoved = Signal(),
-            _emitAddedSignal = function _emitAddedSignal(mediators) {
-            if (mediators.length) onAdded.emit(mediators);
-        },
-            _filterDefinitions = R.curryN(2, function (node, def) {
-            return node.getAttribute("data-mediator") == def.id;
-        }),
-            _createMediator = R.curryN(2, function (node, def) {
+            onRemoved = Signal();
+
+        var _handleNodesRemoved = R.compose(R.tap(function (mediators) {
+            mediators.length && onRemoved.emit();
+        }), R.forEach(mediatorHandler.destroy), R.flatten());
+
+        var findMediators = R.curryN(2, function (definitions, node) {
+            var m = node.getAttribute("data-mediator");
+            var def = R.find(R.propEq("id", m), definitions);
             return loader.load(def.mediator).then(mediatorHandler.create(node, def));
-        }),
-            _reduceNodes = function _reduceNodes(result, node) {
-            if (!node || !node.getElementsByTagName) return result;
-            var n = [].slice.call(node.getElementsByTagName("*"), 0);
-            n.unshift(node);
-            return result.concat(n);
-        },
-            _destroyMediator = function _destroyMediator(node) {
-            var mediator = mediatorHandler.destroy(node);
-            mediator && onRemoved.emit(mediator);
-        },
-            _handleNodesRemoved = R.compose(R.forEach(_destroyMediator), R.reduce(_reduceNodes, []));
+        });
 
-        var _findMediators = function _findMediators(result, node) {
+        var hasMediator = R.curryN(2, function (definitions, node) {
+            var m = node.getAttribute("data-mediator");
+            //return m && R.find(R.propEq("id", m), definitions);
+            return m && R.containsWith(function (a, b) {
+                return a.id === b.id;
+            }, { id: m }, definitions);
+        });
 
-            var _composedFindMediator = R.compose(R.map(_createMediator(node)), R.filter(_filterDefinitions(node)));
-            return result.concat(_composedFindMediator(definitions));
-        };
-
-        var _promiseReduce = R.compose(R.reduce(_findMediators, []), R.reduce(_reduceNodes, []));
+        var _promiseReduce = R.compose(R.map(findMediators(definitions)), R.filter(hasMediator(definitions)), R.flatten());
         var getMediators = function getMediators(target) {
             return _Promise.all(_promiseReduce(target));
         };
         var _handleNodesAdded = function _handleNodesAdded(nodes) {
-            return getMediators(nodes).then(_emitAddedSignal);
+            return getMediators(nodes).then(function (mediators) {
+                return mediators.length && onAdded.emit(mediators);
+            });
         };
 
         domWatcher.onAdded.connect(_handleNodesAdded);
         domWatcher.onRemoved.connect(_handleNodesRemoved);
 
+        var _bootstrap = R.compose(getMediators, R.map(function (node) {
+            return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
+        }));
+
         return {
             onAdded: onAdded,
             onRemoved: onRemoved,
             bootstrap: function bootstrap() {
-                return getMediators([document.body]);
+                return _bootstrap([document.body]);
             }
         };
     }
@@ -4279,7 +4275,9 @@ System.register("src/org/core/display/MediatorHandler", ["src/org/core/robojs", 
                         mediator.element && (mediator.element = null);
                         RoboJS.MEDIATORS_CACHE[mediatorId] = null;
                         mediator = null;
+                        return true;
                     }
+                    return false;
                 }
             });
         }
@@ -4334,14 +4332,22 @@ System.register("src/org/core/display/DomWatcher", ["src/org/core/events/Signal"
         var onAdded = Signal();
         var onRemoved = Signal();
 
+        function makeChain(prop, emit) {
+            return R.compose(R.tap(function (nodes) {
+                return nodes.length && emit(nodes);
+            }), //onAdded.emit,onRemoved.emit
+            R.map(function (node) {
+                return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
+            }), R.flatten(), R.pluck(prop) //"addedNodes","removedNodes"
+            );
+        }
+
+        var getAdded = makeChain("addedNodes", onAdded.emit);
+        var getRemoved = makeChain("removedNodes", onRemoved.emit);
+
         var handleMutations = function handleMutations(mutations) {
-            var response = R.reduce(function (result, mutation) {
-                result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
-                result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
-                return result;
-            }, { addedNodes: [], removedNodes: [] }, mutations);
-            response.addedNodes.length && onAdded.emit(response.addedNodes);
-            response.removedNodes.length && onRemoved.emit(response.removedNodes);
+            getAdded(mutations);
+            getRemoved(mutations);
         };
         var observer = new MutationObserver(handleMutations);
 

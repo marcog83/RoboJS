@@ -18,7 +18,7 @@ define(function (require) {
 	' </div>	' +
 	'</div>'));
 	elements.push($("" +
-	"<div data-mediator='mediator-a'>primo nodo</div>" +
+	"<div data-mediator='mediator-a'><p>primo nodo</p><p>primo nodo 1 <strong>1.a</strong></p><p>primo nodo 2</p></div>" +
 	"<div data-mediator='mediator-a'>secondo nodo</div>" +
 	"<div data-mediator='mediator-c'>mediator c</div>" +
 	"<span data-mediator='mediator-b'></span>"));
@@ -77,7 +77,7 @@ define(function (require) {
 			 * on click a new random element is added to the DOM tree
 			 */
 			$(".add-button").on("click", function () {
-				var index =0; //getRandomArbitrary(0, 2);
+				var index =getRandomArbitrary(0, 2);
 				// NB if you don't clone the element, the same element will be
 				// first removed from tree (and mediator is destroyed too)
 				// then attached to body again (and a new mediator is created)

@@ -8,7 +8,7 @@ define(function (require, exports, module) {
 		return {
 			initialize:function(node){
 				"use strict";
-				// node is the DOM element
+				console.log("MediatorA", node);
 			}
 		}
 	}

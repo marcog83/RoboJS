@@ -4,15 +4,23 @@ export default function DomWatcher() {
     let onAdded = Signal();
     let onRemoved = Signal();
 
+    function makeChain(prop, emit) {
+        return R.compose(
+            R.tap(nodes=>(nodes.length && emit(nodes))),//onAdded.emit,onRemoved.emit
+            R.map(node=>[node].concat([].slice.call(node.getElementsByTagName("*"), 0))),
+            R.flatten(),
+            R.pluck(prop)//"addedNodes","removedNodes"
+        )
 
-    let handleMutations = (mutations)=> {
-        let response = R.reduce(function (result, mutation) {
-            result.addedNodes = result.addedNodes.concat(Array.prototype.slice.call(mutation.addedNodes));
-            result.removedNodes = result.removedNodes.concat(Array.prototype.slice.call(mutation.removedNodes));
-            return result;
-        }, {addedNodes: [], removedNodes: []},mutations);
-        response.addedNodes.length && onAdded.emit(response.addedNodes);
-        response.removedNodes.length && onRemoved.emit(response.removedNodes);
+    }
+
+    let getAdded = makeChain("addedNodes", onAdded.emit);
+    let getRemoved = makeChain("removedNodes", onRemoved.emit);
+
+    let handleMutations = mutations=> {
+        getAdded(mutations);
+        getRemoved(mutations);
+
     };
     let observer = new MutationObserver(handleMutations);
 
@@ -26,8 +34,8 @@ export default function DomWatcher() {
         subtree: true
     });
     return {
-        onAdded: onAdded,
-        onRemoved: onRemoved
+        onAdded,
+        onRemoved
     }
 };
 
