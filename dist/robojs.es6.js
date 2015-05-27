@@ -4266,7 +4266,7 @@ System.register("src/org/core/display/MediatorHandler", ["src/org/core/robojs", 
                     var mediatorId = node.getAttribute("mediatorId"); //&& node.dataset.mediatorId;
                     var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
                     if (mediator) {
-                        mediator.destroy && mediator.destroy();
+                        mediator.destroy && mediator.destroy(node);
                         mediator.postDestroy && mediator.postDestroy();
                         mediator.element && (mediator.element = null);
                         RoboJS.MEDIATORS_CACHE[mediatorId] = null;
