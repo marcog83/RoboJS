@@ -4334,6 +4334,8 @@ System.register("src/org/core/display/DomWatcher", ["src/org/core/events/Signal"
             }), //onAdded.emit,onRemoved.emit
             R.map(function (node) {
                 return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
+            }), R.filter(function (node) {
+                return node.getElementsByTagName;
             }), R.flatten(), R.pluck(prop) //"addedNodes","removedNodes"
             );
         }
