@@ -360,302 +360,6 @@
 
 (['src/org/core/robojs'], function(System) {
 
-System.register("npm:core-js@0.9.7/library/modules/$.fw", [], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function($) {
-    $.FW = false;
-    $.path = $.core;
-    return $;
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.uid", ["npm:core-js@0.9.7/library/modules/$"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var sid = 0;
-  function uid(key) {
-    return 'Symbol(' + key + ')_' + (++sid + Math.random()).toString(36);
-  }
-  uid.safe = require("npm:core-js@0.9.7/library/modules/$").g.Symbol || uid;
-  module.exports = uid;
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.string-at", ["npm:core-js@0.9.7/library/modules/$"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$");
-  module.exports = function(TO_STRING) {
-    return function(that, pos) {
-      var s = String($.assertDefined(that)),
-          i = $.toInteger(pos),
-          l = s.length,
-          a,
-          b;
-      if (i < 0 || i >= l)
-        return TO_STRING ? '' : undefined;
-      a = s.charCodeAt(i);
-      return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff ? TO_STRING ? s.charAt(i) : a : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.assert", ["npm:core-js@0.9.7/library/modules/$"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$");
-  function assert(condition, msg1, msg2) {
-    if (!condition)
-      throw TypeError(msg2 ? msg1 + msg2 : msg1);
-  }
-  assert.def = $.assertDefined;
-  assert.fn = function(it) {
-    if (!$.isFunction(it))
-      throw TypeError(it + ' is not a function!');
-    return it;
-  };
-  assert.obj = function(it) {
-    if (!$.isObject(it))
-      throw TypeError(it + ' is not an object!');
-    return it;
-  };
-  assert.inst = function(it, Constructor, name) {
-    if (!(it instanceof Constructor))
-      throw TypeError(name + ": use the 'new' operator!");
-    return it;
-  };
-  module.exports = assert;
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.def", ["npm:core-js@0.9.7/library/modules/$"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      global = $.g,
-      core = $.core,
-      isFunction = $.isFunction;
-  function ctx(fn, that) {
-    return function() {
-      return fn.apply(that, arguments);
-    };
-  }
-  $def.F = 1;
-  $def.G = 2;
-  $def.S = 4;
-  $def.P = 8;
-  $def.B = 16;
-  $def.W = 32;
-  function $def(type, name, source) {
-    var key,
-        own,
-        out,
-        exp,
-        isGlobal = type & $def.G,
-        target = isGlobal ? global : type & $def.S ? global[name] : (global[name] || {}).prototype,
-        exports = isGlobal ? core : core[name] || (core[name] = {});
-    if (isGlobal)
-      source = name;
-    for (key in source) {
-      own = !(type & $def.F) && target && key in target;
-      if (own && key in exports)
-        continue;
-      out = own ? target[key] : source[key];
-      if (isGlobal && !isFunction(target[key]))
-        exp = source[key];
-      else if (type & $def.B && own)
-        exp = ctx(out, global);
-      else if (type & $def.W && target[key] == out)
-        !function(C) {
-          exp = function(param) {
-            return this instanceof C ? new C(param) : C(param);
-          };
-          exp.prototype = C.prototype;
-        }(out);
-      else
-        exp = type & $def.P && isFunction(out) ? ctx(Function.call, out) : out;
-      $.hide(exports, key, exp);
-    }
-  }
-  module.exports = $def;
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.unscope", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.wks"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      UNSCOPABLES = require("npm:core-js@0.9.7/library/modules/$.wks")('unscopables');
-  if ($.FW && !(UNSCOPABLES in []))
-    $.hide(Array.prototype, UNSCOPABLES, {});
-  module.exports = function(key) {
-    if ($.FW)
-      [][UNSCOPABLES][key] = true;
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.ctx", ["npm:core-js@0.9.7/library/modules/$.assert"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var assertFunction = require("npm:core-js@0.9.7/library/modules/$.assert").fn;
-  module.exports = function(fn, that, length) {
-    assertFunction(fn);
-    if (~length && that === undefined)
-      return fn;
-    switch (length) {
-      case 1:
-        return function(a) {
-          return fn.call(that, a);
-        };
-      case 2:
-        return function(a, b) {
-          return fn.call(that, a, b);
-        };
-      case 3:
-        return function(a, b, c) {
-          return fn.call(that, a, b, c);
-        };
-    }
-    return function() {
-      return fn.apply(that, arguments);
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.iter-call", ["npm:core-js@0.9.7/library/modules/$.assert"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var assertObject = require("npm:core-js@0.9.7/library/modules/$.assert").obj;
-  function close(iterator) {
-    var ret = iterator['return'];
-    if (ret !== undefined)
-      assertObject(ret.call(iterator));
-  }
-  function call(iterator, fn, value, entries) {
-    try {
-      return entries ? fn(assertObject(value)[0], value[1]) : fn(value);
-    } catch (e) {
-      close(iterator);
-      throw e;
-    }
-  }
-  call.close = close;
-  module.exports = call;
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.set-proto", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.assert", "npm:core-js@0.9.7/library/modules/$.ctx"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      assert = require("npm:core-js@0.9.7/library/modules/$.assert");
-  function check(O, proto) {
-    assert.obj(O);
-    assert(proto === null || $.isObject(proto), proto, ": can't set as prototype!");
-  }
-  module.exports = {
-    set: Object.setPrototypeOf || ('__proto__' in {} ? function(buggy, set) {
-      try {
-        set = require("npm:core-js@0.9.7/library/modules/$.ctx")(Function.call, $.getDesc(Object.prototype, '__proto__').set, 2);
-        set({}, []);
-      } catch (e) {
-        buggy = true;
-      }
-      return function setPrototypeOf(O, proto) {
-        check(O, proto);
-        if (buggy)
-          O.__proto__ = proto;
-        else
-          set(O, proto);
-        return O;
-      };
-    }() : undefined),
-    check: check
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.species", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.wks"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      SPECIES = require("npm:core-js@0.9.7/library/modules/$.wks")('species');
-  module.exports = function(C) {
-    if ($.DESC && !(SPECIES in C))
-      $.setDesc(C, SPECIES, {
-        configurable: true,
-        get: $.that
-      });
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.invoke", [], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function(fn, args, that) {
-    var un = that === undefined;
-    switch (args.length) {
-      case 0:
-        return un ? fn() : fn.call(that);
-      case 1:
-        return un ? fn(args[0]) : fn.call(that, args[0]);
-      case 2:
-        return un ? fn(args[0], args[1]) : fn.call(that, args[0], args[1]);
-      case 3:
-        return un ? fn(args[0], args[1], args[2]) : fn.call(that, args[0], args[1], args[2]);
-      case 4:
-        return un ? fn(args[0], args[1], args[2], args[3]) : fn.call(that, args[0], args[1], args[2], args[3]);
-      case 5:
-        return un ? fn(args[0], args[1], args[2], args[3], args[4]) : fn.call(that, args[0], args[1], args[2], args[3], args[4]);
-    }
-    return fn.apply(that, args);
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.dom-create", ["npm:core-js@0.9.7/library/modules/$"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      document = $.g.document,
-      isObject = $.isObject,
-      is = isObject(document) && isObject(document.createElement);
-  module.exports = function(it) {
-    return is ? document.createElement(it) : {};
-  };
-  global.define = __define;
-  return module.exports;
-});
-
 System.register("npm:process@0.10.1/browser", [], true, function(require, exports, module) {
   var global = System.global,
       __define = global.define;
@@ -717,38 +421,29 @@ System.register("npm:process@0.10.1/browser", [], true, function(require, export
   return module.exports;
 });
 
-System.register("npm:core-js@0.9.7/library/modules/$.iter-detect", ["npm:core-js@0.9.7/library/modules/$.wks"], true, function(require, exports, module) {
+System.register("npm:process@0.10.1", ["npm:process@0.10.1/browser"], true, function(require, exports, module) {
   var global = System.global,
       __define = global.define;
   global.define = undefined;
-  var SYMBOL_ITERATOR = require("npm:core-js@0.9.7/library/modules/$.wks")('iterator'),
-      SAFE_CLOSING = false;
-  try {
-    var riter = [7][SYMBOL_ITERATOR]();
-    riter['return'] = function() {
-      SAFE_CLOSING = true;
-    };
-    Array.from(riter, function() {
-      throw 2;
-    });
-  } catch (e) {}
-  module.exports = function(exec) {
-    if (!SAFE_CLOSING)
-      return false;
-    var safe = false;
-    try {
-      var arr = [7],
-          iter = arr[SYMBOL_ITERATOR]();
-      iter.next = function() {
-        safe = true;
-      };
-      arr[SYMBOL_ITERATOR] = function() {
-        return iter;
-      };
-      exec(arr);
-    } catch (e) {}
-    return safe;
-  };
+  module.exports = require("npm:process@0.10.1/browser");
+  global.define = __define;
+  return module.exports;
+});
+
+System.register("github:jspm/nodelibs-process@0.1.1/index", ["npm:process@0.10.1"], true, function(require, exports, module) {
+  var global = System.global,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = System._nodeRequire ? process : require("npm:process@0.10.1");
+  global.define = __define;
+  return module.exports;
+});
+
+System.register("github:jspm/nodelibs-process@0.1.1", ["github:jspm/nodelibs-process@0.1.1/index"], true, function(require, exports, module) {
+  var global = System.global,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = require("github:jspm/nodelibs-process@0.1.1/index");
   global.define = __define;
   return module.exports;
 });
@@ -3111,313 +2806,6 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
   return module.exports;
 });
 
-System.register("npm:core-js@0.9.7/library/modules/$", ["npm:core-js@0.9.7/library/modules/$.fw"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  'use strict';
-  var global = typeof self != 'undefined' ? self : Function('return this')(),
-      core = {},
-      defineProperty = Object.defineProperty,
-      hasOwnProperty = {}.hasOwnProperty,
-      ceil = Math.ceil,
-      floor = Math.floor,
-      max = Math.max,
-      min = Math.min;
-  var DESC = !!function() {
-    try {
-      return defineProperty({}, 'a', {get: function() {
-          return 2;
-        }}).a == 2;
-    } catch (e) {}
-  }();
-  var hide = createDefiner(1);
-  function toInteger(it) {
-    return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-  }
-  function desc(bitmap, value) {
-    return {
-      enumerable: !(bitmap & 1),
-      configurable: !(bitmap & 2),
-      writable: !(bitmap & 4),
-      value: value
-    };
-  }
-  function simpleSet(object, key, value) {
-    object[key] = value;
-    return object;
-  }
-  function createDefiner(bitmap) {
-    return DESC ? function(object, key, value) {
-      return $.setDesc(object, key, desc(bitmap, value));
-    } : simpleSet;
-  }
-  function isObject(it) {
-    return it !== null && (typeof it == 'object' || typeof it == 'function');
-  }
-  function isFunction(it) {
-    return typeof it == 'function';
-  }
-  function assertDefined(it) {
-    if (it == undefined)
-      throw TypeError("Can't call method on  " + it);
-    return it;
-  }
-  var $ = module.exports = require("npm:core-js@0.9.7/library/modules/$.fw")({
-    g: global,
-    core: core,
-    html: global.document && document.documentElement,
-    isObject: isObject,
-    isFunction: isFunction,
-    it: function(it) {
-      return it;
-    },
-    that: function() {
-      return this;
-    },
-    toInteger: toInteger,
-    toLength: function(it) {
-      return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0;
-    },
-    toIndex: function(index, length) {
-      index = toInteger(index);
-      return index < 0 ? max(index + length, 0) : min(index, length);
-    },
-    has: function(it, key) {
-      return hasOwnProperty.call(it, key);
-    },
-    create: Object.create,
-    getProto: Object.getPrototypeOf,
-    DESC: DESC,
-    desc: desc,
-    getDesc: Object.getOwnPropertyDescriptor,
-    setDesc: defineProperty,
-    setDescs: Object.defineProperties,
-    getKeys: Object.keys,
-    getNames: Object.getOwnPropertyNames,
-    getSymbols: Object.getOwnPropertySymbols,
-    assertDefined: assertDefined,
-    ES5Object: Object,
-    toObject: function(it) {
-      return $.ES5Object(assertDefined(it));
-    },
-    hide: hide,
-    def: createDefiner(0),
-    set: global.Symbol ? simpleSet : hide,
-    mix: function(target, src) {
-      for (var key in src)
-        hide(target, key, src[key]);
-      return target;
-    },
-    each: [].forEach
-  });
-  if (typeof __e != 'undefined')
-    __e = core;
-  if (typeof __g != 'undefined')
-    __g = global;
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.wks", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.uid"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var global = require("npm:core-js@0.9.7/library/modules/$").g,
-      store = {};
-  module.exports = function(name) {
-    return store[name] || (store[name] = global.Symbol && global.Symbol[name] || require("npm:core-js@0.9.7/library/modules/$.uid").safe('Symbol.' + name));
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.iter", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.cof", "npm:core-js@0.9.7/library/modules/$.assert", "npm:core-js@0.9.7/library/modules/$.wks"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  'use strict';
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      cof = require("npm:core-js@0.9.7/library/modules/$.cof"),
-      assertObject = require("npm:core-js@0.9.7/library/modules/$.assert").obj,
-      SYMBOL_ITERATOR = require("npm:core-js@0.9.7/library/modules/$.wks")('iterator'),
-      FF_ITERATOR = '@@iterator',
-      Iterators = {},
-      IteratorPrototype = {};
-  setIterator(IteratorPrototype, $.that);
-  function setIterator(O, value) {
-    $.hide(O, SYMBOL_ITERATOR, value);
-    if (FF_ITERATOR in [])
-      $.hide(O, FF_ITERATOR, value);
-  }
-  module.exports = {
-    BUGGY: 'keys' in [] && !('next' in [].keys()),
-    Iterators: Iterators,
-    step: function(done, value) {
-      return {
-        value: value,
-        done: !!done
-      };
-    },
-    is: function(it) {
-      var O = Object(it),
-          Symbol = $.g.Symbol,
-          SYM = Symbol && Symbol.iterator || FF_ITERATOR;
-      return SYM in O || SYMBOL_ITERATOR in O || $.has(Iterators, cof.classof(O));
-    },
-    get: function(it) {
-      var Symbol = $.g.Symbol,
-          ext = it[Symbol && Symbol.iterator || FF_ITERATOR],
-          getIter = ext || it[SYMBOL_ITERATOR] || Iterators[cof.classof(it)];
-      return assertObject(getIter.call(it));
-    },
-    set: setIterator,
-    create: function(Constructor, NAME, next, proto) {
-      Constructor.prototype = $.create(proto || IteratorPrototype, {next: $.desc(1, next)});
-      cof.set(Constructor, NAME + ' Iterator');
-    }
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.iter-define", ["npm:core-js@0.9.7/library/modules/$.def", "npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.cof", "npm:core-js@0.9.7/library/modules/$.iter", "npm:core-js@0.9.7/library/modules/$.wks"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $def = require("npm:core-js@0.9.7/library/modules/$.def"),
-      $ = require("npm:core-js@0.9.7/library/modules/$"),
-      cof = require("npm:core-js@0.9.7/library/modules/$.cof"),
-      $iter = require("npm:core-js@0.9.7/library/modules/$.iter"),
-      SYMBOL_ITERATOR = require("npm:core-js@0.9.7/library/modules/$.wks")('iterator'),
-      FF_ITERATOR = '@@iterator',
-      KEYS = 'keys',
-      VALUES = 'values',
-      Iterators = $iter.Iterators;
-  module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE) {
-    $iter.create(Constructor, NAME, next);
-    function createMethod(kind) {
-      function $$(that) {
-        return new Constructor(that, kind);
-      }
-      switch (kind) {
-        case KEYS:
-          return function keys() {
-            return $$(this);
-          };
-        case VALUES:
-          return function values() {
-            return $$(this);
-          };
-      }
-      return function entries() {
-        return $$(this);
-      };
-    }
-    var TAG = NAME + ' Iterator',
-        proto = Base.prototype,
-        _native = proto[SYMBOL_ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT],
-        _default = _native || createMethod(DEFAULT),
-        methods,
-        key;
-    if (_native) {
-      var IteratorPrototype = $.getProto(_default.call(new Base));
-      cof.set(IteratorPrototype, TAG, true);
-      if ($.FW && $.has(proto, FF_ITERATOR))
-        $iter.set(IteratorPrototype, $.that);
-    }
-    if ($.FW)
-      $iter.set(proto, _default);
-    Iterators[NAME] = _default;
-    Iterators[TAG] = $.that;
-    if (DEFAULT) {
-      methods = {
-        keys: IS_SET ? _default : createMethod(KEYS),
-        values: DEFAULT == VALUES ? _default : createMethod(VALUES),
-        entries: DEFAULT != VALUES ? _default : createMethod('entries')
-      };
-      if (FORCE)
-        for (key in methods) {
-          if (!(key in proto))
-            $.hide(proto, key, methods[key]);
-        }
-      else
-        $def($def.P + $def.F * $iter.BUGGY, NAME, methods);
-    }
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/es6.array.iterator", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.unscope", "npm:core-js@0.9.7/library/modules/$.uid", "npm:core-js@0.9.7/library/modules/$.iter", "npm:core-js@0.9.7/library/modules/$.iter-define"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      setUnscope = require("npm:core-js@0.9.7/library/modules/$.unscope"),
-      ITER = require("npm:core-js@0.9.7/library/modules/$.uid").safe('iter'),
-      $iter = require("npm:core-js@0.9.7/library/modules/$.iter"),
-      step = $iter.step,
-      Iterators = $iter.Iterators;
-  require("npm:core-js@0.9.7/library/modules/$.iter-define")(Array, 'Array', function(iterated, kind) {
-    $.set(this, ITER, {
-      o: $.toObject(iterated),
-      i: 0,
-      k: kind
-    });
-  }, function() {
-    var iter = this[ITER],
-        O = iter.o,
-        kind = iter.k,
-        index = iter.i++;
-    if (!O || index >= O.length) {
-      iter.o = undefined;
-      return step(1);
-    }
-    if (kind == 'keys')
-      return step(0, index);
-    if (kind == 'values')
-      return step(0, O[index]);
-    return step(0, [index, O[index]]);
-  }, 'values');
-  Iterators.Arguments = Iterators.Array;
-  setUnscope('keys');
-  setUnscope('values');
-  setUnscope('entries');
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.for-of", ["npm:core-js@0.9.7/library/modules/$.ctx", "npm:core-js@0.9.7/library/modules/$.iter", "npm:core-js@0.9.7/library/modules/$.iter-call"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var ctx = require("npm:core-js@0.9.7/library/modules/$.ctx"),
-      get = require("npm:core-js@0.9.7/library/modules/$.iter").get,
-      call = require("npm:core-js@0.9.7/library/modules/$.iter-call");
-  module.exports = function(iterable, entries, fn, that) {
-    var iterator = get(iterable),
-        f = ctx(fn, that, entries ? 2 : 1),
-        step;
-    while (!(step = iterator.next()).done) {
-      if (call(iterator, f, step.value, entries) === false) {
-        return call.close(iterator);
-      }
-    }
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:process@0.10.1", ["npm:process@0.10.1/browser"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = require("npm:process@0.10.1/browser");
-  global.define = __define;
-  return module.exports;
-});
-
 System.register("npm:ramda@0.13.0", ["npm:ramda@0.13.0/dist/ramda"], true, function(require, exports, module) {
   var global = System.global,
       __define = global.define;
@@ -3427,1085 +2815,562 @@ System.register("npm:ramda@0.13.0", ["npm:ramda@0.13.0/dist/ramda"], true, funct
   return module.exports;
 });
 
-System.register("npm:core-js@0.9.7/library/modules/$.cof", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.wks"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      TAG = require("npm:core-js@0.9.7/library/modules/$.wks")('toStringTag'),
-      toString = {}.toString;
-  function cof(it) {
-    return toString.call(it).slice(8, -1);
-  }
-  cof.classof = function(it) {
-    var O,
-        T;
-    return it == undefined ? it === undefined ? 'Undefined' : 'Null' : typeof(T = (O = Object(it))[TAG]) == 'string' ? T : cof(O);
-  };
-  cof.set = function(it, tag, stat) {
-    if (it && !$.has(it = stat ? it : it.prototype, TAG))
-      $.hide(it, TAG, tag);
-  };
-  module.exports = cof;
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/es6.string.iterator", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.string-at", "npm:core-js@0.9.7/library/modules/$.uid", "npm:core-js@0.9.7/library/modules/$.iter", "npm:core-js@0.9.7/library/modules/$.iter-define"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  var set = require("npm:core-js@0.9.7/library/modules/$").set,
-      $at = require("npm:core-js@0.9.7/library/modules/$.string-at")(true),
-      ITER = require("npm:core-js@0.9.7/library/modules/$.uid").safe('iter'),
-      $iter = require("npm:core-js@0.9.7/library/modules/$.iter"),
-      step = $iter.step;
-  require("npm:core-js@0.9.7/library/modules/$.iter-define")(String, 'String', function(iterated) {
-    set(this, ITER, {
-      o: String(iterated),
-      i: 0
-    });
-  }, function() {
-    var iter = this[ITER],
-        O = iter.o,
-        index = iter.i,
-        point;
-    if (index >= O.length)
-      return step(1);
-    point = $at(O, index);
-    iter.i += point.length;
-    return step(0, point);
-  });
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/web.dom.iterable", ["npm:core-js@0.9.7/library/modules/es6.array.iterator", "npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.iter", "npm:core-js@0.9.7/library/modules/$.wks"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  require("npm:core-js@0.9.7/library/modules/es6.array.iterator");
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      Iterators = require("npm:core-js@0.9.7/library/modules/$.iter").Iterators,
-      ITERATOR = require("npm:core-js@0.9.7/library/modules/$.wks")('iterator'),
-      ArrayValues = Iterators.Array,
-      NodeList = $.g.NodeList;
-  if ($.FW && NodeList && !(ITERATOR in NodeList.prototype)) {
-    $.hide(NodeList.prototype, ITERATOR, ArrayValues);
-  }
-  Iterators.NodeList = ArrayValues;
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("github:jspm/nodelibs-process@0.1.1/index", ["npm:process@0.10.1"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = System._nodeRequire ? process : require("npm:process@0.10.1");
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/es6.object.to-string", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.cof", "npm:core-js@0.9.7/library/modules/$.wks"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  'use strict';
-  var $ = require("npm:core-js@0.9.7/library/modules/$"),
-      cof = require("npm:core-js@0.9.7/library/modules/$.cof"),
-      tmp = {};
-  tmp[require("npm:core-js@0.9.7/library/modules/$.wks")('toStringTag')] = 'z';
-  if ($.FW && cof(tmp) != 'z')
-    $.hide(Object.prototype, 'toString', function toString() {
-      return '[object ' + cof.classof(this) + ']';
-    });
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("github:jspm/nodelibs-process@0.1.1", ["github:jspm/nodelibs-process@0.1.1/index"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = require("github:jspm/nodelibs-process@0.1.1/index");
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/modules/$.task", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.ctx", "npm:core-js@0.9.7/library/modules/$.cof", "npm:core-js@0.9.7/library/modules/$.invoke", "npm:core-js@0.9.7/library/modules/$.dom-create", "github:jspm/nodelibs-process@0.1.1"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  (function(process) {
-    'use strict';
-    var $ = require("npm:core-js@0.9.7/library/modules/$"),
-        ctx = require("npm:core-js@0.9.7/library/modules/$.ctx"),
-        cof = require("npm:core-js@0.9.7/library/modules/$.cof"),
-        invoke = require("npm:core-js@0.9.7/library/modules/$.invoke"),
-        cel = require("npm:core-js@0.9.7/library/modules/$.dom-create"),
-        global = $.g,
-        isFunction = $.isFunction,
-        html = $.html,
-        process = global.process,
-        setTask = global.setImmediate,
-        clearTask = global.clearImmediate,
-        postMessage = global.postMessage,
-        addEventListener = global.addEventListener,
-        MessageChannel = global.MessageChannel,
-        counter = 0,
-        queue = {},
-        ONREADYSTATECHANGE = 'onreadystatechange',
-        defer,
-        channel,
-        port;
-    function run() {
-      var id = +this;
-      if ($.has(queue, id)) {
-        var fn = queue[id];
-        delete queue[id];
-        fn();
-      }
-    }
-    function listner(event) {
-      run.call(event.data);
-    }
-    if (!isFunction(setTask) || !isFunction(clearTask)) {
-      setTask = function(fn) {
-        var args = [],
-            i = 1;
-        while (arguments.length > i)
-          args.push(arguments[i++]);
-        queue[++counter] = function() {
-          invoke(isFunction(fn) ? fn : Function(fn), args);
-        };
-        defer(counter);
-        return counter;
+System.register("src/org/core/net/ScriptLoader", [], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/net/ScriptLoader";
+  function getPromise() {
+    if (System.import) {
+      return System.import.bind(System);
+    } else {
+      return function(url) {
+        return Promise.resolve(System.get(url));
       };
-      clearTask = function(id) {
-        delete queue[id];
-      };
-      if (cof(process) == 'process') {
-        defer = function(id) {
-          process.nextTick(ctx(run, id, 1));
-        };
-      } else if (addEventListener && isFunction(postMessage) && !global.importScripts) {
-        defer = function(id) {
-          postMessage(id, '*');
-        };
-        addEventListener('message', listner, false);
-      } else if (isFunction(MessageChannel)) {
-        channel = new MessageChannel;
-        port = channel.port2;
-        channel.port1.onmessage = listner;
-        defer = ctx(port.postMessage, port, 1);
-      } else if (ONREADYSTATECHANGE in cel('script')) {
-        defer = function(id) {
-          html.appendChild(cel('script'))[ONREADYSTATECHANGE] = function() {
-            html.removeChild(this);
-            run.call(id);
-          };
-        };
-      } else {
-        defer = function(id) {
-          setTimeout(ctx(run, id, 1), 0);
-        };
-      }
     }
-    module.exports = {
-      set: setTask,
-      clear: clearTask
+  }
+  return {
+    setters: [],
+    execute: function() {
+      $__export('default', {load: (function(id) {
+          return getPromise()(id).then((function(e) {
+            return e.default;
+          })).catch(console.log.bind(console));
+        })});
+    }
+  };
+});
+
+System.register("src/org/core/net/AMDScriptLoader", [], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/net/AMDScriptLoader";
+  return {
+    setters: [],
+    execute: function() {
+      $__export('default', {load: (function(id) {
+          return new Promise((function(resolve, reject) {
+            return window.require([id], resolve.bind(resolve));
+          }));
+        })});
+    }
+  };
+});
+
+System.register("src/org/core/events/EventMap", [], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/events/EventMap";
+  function EventMap() {
+    var currentListeners = [];
+    return {
+      mapListener: function(dispatcher, eventString, listener, scope) {
+        var $__0 = this;
+        var config;
+        var i = currentListeners.length;
+        while (i--) {
+          config = currentListeners[i];
+          if (config.equalTo(dispatcher, eventString, listener)) {
+            return ;
+          }
+        }
+        var callback = listener;
+        config = {
+          dispatcher: dispatcher,
+          eventString: eventString,
+          listener: listener,
+          callback: callback,
+          scope: scope,
+          equalTo: (function(dispatcher, eventString, listener) {
+            return ($__0.eventString == eventString && $__0.dispatcher == dispatcher && $__0.listener == listener);
+          })
+        };
+        currentListeners.push(config);
+        dispatcher.addEventListener(eventString, callback, scope);
+      },
+      unmapListener: function(dispatcher, eventString, listener) {
+        var i = currentListeners.length;
+        while (i--) {
+          var config = currentListeners[i];
+          if (config.equalTo(dispatcher, eventString, listener)) {
+            dispatcher.removeEventListener(eventString, config.callback, config.scope);
+            currentListeners.splice(i, 1);
+            return ;
+          }
+        }
+      },
+      unmapListeners: function() {
+        var eventConfig;
+        var dispatcher;
+        while (eventConfig = currentListeners.pop()) {
+          dispatcher = eventConfig.dispatcher;
+          dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback, eventConfig.scope);
+        }
+      }
     };
-  })(require("github:jspm/nodelibs-process@0.1.1"));
-  global.define = __define;
-  return module.exports;
+  }
+  $__export("default", EventMap);
+  return {
+    setters: [],
+    execute: function() {
+    }
+  };
 });
 
-System.register("npm:core-js@0.9.7/library/modules/es6.promise", ["npm:core-js@0.9.7/library/modules/$", "npm:core-js@0.9.7/library/modules/$.ctx", "npm:core-js@0.9.7/library/modules/$.cof", "npm:core-js@0.9.7/library/modules/$.def", "npm:core-js@0.9.7/library/modules/$.assert", "npm:core-js@0.9.7/library/modules/$.for-of", "npm:core-js@0.9.7/library/modules/$.set-proto", "npm:core-js@0.9.7/library/modules/$.species", "npm:core-js@0.9.7/library/modules/$.wks", "npm:core-js@0.9.7/library/modules/$.uid", "npm:core-js@0.9.7/library/modules/$.task", "npm:core-js@0.9.7/library/modules/$.iter-detect", "github:jspm/nodelibs-process@0.1.1"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  (function(process) {
-    'use strict';
-    var $ = require("npm:core-js@0.9.7/library/modules/$"),
-        ctx = require("npm:core-js@0.9.7/library/modules/$.ctx"),
-        cof = require("npm:core-js@0.9.7/library/modules/$.cof"),
-        $def = require("npm:core-js@0.9.7/library/modules/$.def"),
-        assert = require("npm:core-js@0.9.7/library/modules/$.assert"),
-        forOf = require("npm:core-js@0.9.7/library/modules/$.for-of"),
-        setProto = require("npm:core-js@0.9.7/library/modules/$.set-proto").set,
-        species = require("npm:core-js@0.9.7/library/modules/$.species"),
-        SPECIES = require("npm:core-js@0.9.7/library/modules/$.wks")('species'),
-        RECORD = require("npm:core-js@0.9.7/library/modules/$.uid").safe('record'),
-        PROMISE = 'Promise',
-        global = $.g,
-        process = global.process,
-        asap = process && process.nextTick || require("npm:core-js@0.9.7/library/modules/$.task").set,
-        P = global[PROMISE],
-        isFunction = $.isFunction,
-        isObject = $.isObject,
-        assertFunction = assert.fn,
-        assertObject = assert.obj;
-    var useNative = function() {
-      var test,
-          works = false;
-      function P2(x) {
-        var self = new P(x);
-        setProto(self, P2.prototype);
-        return self;
-      }
-      try {
-        works = isFunction(P) && isFunction(P.resolve) && P.resolve(test = new P(function() {})) == test;
-        setProto(P2, P);
-        P2.prototype = $.create(P.prototype, {constructor: {value: P2}});
-        if (!(P2.resolve(5).then(function() {}) instanceof P2)) {
-          works = false;
-        }
-      } catch (e) {
-        works = false;
-      }
-      return works;
-    }();
-    function getConstructor(C) {
-      var S = assertObject(C)[SPECIES];
-      return S != undefined ? S : C;
+System.register("src/org/core/events/EventDispatcher", [], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/events/EventDispatcher";
+  var _currentListeners,
+      removeAllEventListeners,
+      hasEventListener;
+  function addEventListener(type, callback, scope) {
+    var listener = {
+      type: type,
+      callback: callback,
+      scope: scope
+    };
+    if (!_currentListeners[type]) {
+      _currentListeners[type] = [];
     }
-    function isThenable(it) {
-      var then;
-      if (isObject(it))
-        then = it.then;
-      return isFunction(then) ? then : false;
+    _currentListeners[type].push(listener);
+    return listener;
+  }
+  function removeEventListener(eventName, callback, scope) {
+    var listeners = _currentListeners[eventName] || [];
+    _currentListeners[eventName] = listeners.filter(function(listener) {
+      var sameCB = listener.callback == callback;
+      var sameScope = listener.scope == scope;
+      return !(sameCB && sameScope);
+    });
+  }
+  function dispatchEvent(type, data) {
+    var listeners = _currentListeners[type] || [];
+    var length = listeners.length,
+        l,
+        c,
+        s;
+    for (var i = 0; i < length; i++) {
+      l = listeners[i];
+      c = l.callback;
+      s = l.scope;
+      c.call(s, data);
     }
-    function notify(record) {
-      var chain = record.c;
-      if (chain.length)
-        asap(function() {
-          var value = record.v,
-              ok = record.s == 1,
-              i = 0;
-          function run(react) {
-            var cb = ok ? react.ok : react.fail,
-                ret,
-                then;
-            try {
-              if (cb) {
-                if (!ok)
-                  record.h = true;
-                ret = cb === true ? value : cb(value);
-                if (ret === react.P) {
-                  react.rej(TypeError('Promise-chain cycle'));
-                } else if (then = isThenable(ret)) {
-                  then.call(ret, react.res, react.rej);
-                } else
-                  react.res(ret);
-              } else
-                react.rej(value);
-            } catch (err) {
-              react.rej(err);
-            }
+  }
+  return {
+    setters: [],
+    execute: function() {
+      _currentListeners = {};
+      removeAllEventListeners = (function(eventName) {
+        return _currentListeners[eventName] = null;
+      });
+      hasEventListener = (function(eventName) {
+        return _currentListeners[eventName] && _currentListeners[eventName].length;
+      });
+      $__export('default', {
+        addEventListener: addEventListener,
+        removeEventListener: removeEventListener,
+        removeAllEventListeners: removeAllEventListeners,
+        hasEventListener: hasEventListener,
+        dispatchEvent: dispatchEvent
+      });
+    }
+  };
+});
+
+System.register("src/org/core/events/Signal", [], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/events/Signal";
+  function Signal() {
+    var listenerBoxes = [];
+    function registerListener(listener, scope, once) {
+      for (var i = 0; i < listenerBoxes.length; i++) {
+        if (listenerBoxes[i].listener == listener && listenerBoxes[i].scope == scope) {
+          if (listenerBoxes[i].once && !once) {
+            throw new Error('You cannot addOnce() then try to add() the same listener ' + 'without removing the relationship first.');
+          } else if (once && !listenerBoxes[i].once) {
+            throw new Error('You cannot add() then addOnce() the same listener ' + 'without removing the relationship first.');
           }
-          while (chain.length > i)
-            run(chain[i++]);
-          chain.length = 0;
-        });
+          return ;
+        }
+      }
+      listenerBoxes.push({
+        listener: listener,
+        scope: scope,
+        once: once
+      });
     }
-    function isUnhandled(promise) {
-      var record = promise[RECORD],
-          chain = record.a || record.c,
-          i = 0,
-          react;
-      if (record.h)
-        return false;
-      while (chain.length > i) {
-        react = chain[i++];
-        if (react.fail || !isUnhandled(react.P))
+    function emit() {
+      var len = listenerBoxes.length;
+      var listenerBox;
+      for (var i = 0; i < len; i++) {
+        listenerBox = listenerBoxes[i];
+        if (listenerBox.once)
+          disconnect(listenerBox.listener, listenerBox.scope);
+        listenerBox.listener.apply(listenerBox.scope, arguments);
+      }
+    }
+    var connect = (function(slot, scope) {
+      return registerListener(slot, scope, false);
+    });
+    var connectOnce = (function(slot, scope) {
+      return registerListener(slot, scope, true);
+    });
+    function disconnect(slot, scope) {
+      for (var i = listenerBoxes.length; i--; ) {
+        if (listenerBoxes[i].listener == slot && listenerBoxes[i].scope == scope) {
+          listenerBoxes.splice(i, 1);
+          return ;
+        }
+      }
+    }
+    function disconnectAll() {
+      for (var i = listenerBoxes.length; i--; ) {
+        disconnect(listenerBoxes[i].listener, listenerBoxes[i].scope);
+      }
+    }
+    return {
+      connect: connect,
+      connectOnce: connectOnce,
+      disconnect: disconnect,
+      disconnectAll: disconnectAll,
+      emit: emit
+    };
+  }
+  $__export("default", Signal);
+  return {
+    setters: [],
+    execute: function() {
+    }
+  };
+});
+
+System.register("src/org/core/display/Mediator", [], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/display/Mediator";
+  function Mediator(eventDispatcher, eventMap) {
+    var element;
+    var postDestroy = (function() {
+      return eventMap.unmapListeners();
+    });
+    var addContextListener = (function(eventString, listener, scope) {
+      return eventMap.mapListener(eventDispatcher, eventString, listener, scope);
+    });
+    var removeContextListener = (function(eventString, listener) {
+      return eventMap.unmapListener(eventDispatcher, eventString, listener);
+    });
+    var dispatch = (function(eventString, data) {
+      if (eventDispatcher.hasEventListener(eventString)) {
+        eventDispatcher.dispatchEvent(eventString, data);
+      }
+    });
+    var initialize = (function(node) {
+      return element = node;
+    });
+    return {
+      postDestroy: postDestroy,
+      addContextListener: addContextListener,
+      removeContextListener: removeContextListener,
+      dispatch: dispatch,
+      initialize: initialize
+    };
+  }
+  $__export("default", Mediator);
+  return {
+    setters: [],
+    execute: function() {
+    }
+  };
+});
+
+System.register("src/org/core/display/MediatorsBuilder", ["src/org/core/robojs", "src/org/core/events/Signal", "npm:ramda@0.13.0"], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/display/MediatorsBuilder";
+  var RoboJS,
+      Signal,
+      R;
+  function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
+    var onAdded = Signal(),
+        onRemoved = Signal();
+    var _handleNodesRemoved = R.compose(R.tap((function(mediators) {
+      return (mediators.length && onRemoved.emit());
+    })), R.forEach(mediatorHandler.destroy), R.flatten());
+    var findMediators = R.curryN(2, (function(definitions, node) {
+      var m = node.getAttribute("data-mediator");
+      var def = R.find(R.propEq('id', m), definitions);
+      return loader.load(def.mediator).then(mediatorHandler.create(node, def));
+    }));
+    var hasMediator = R.curryN(2, (function(definitions, node) {
+      var m = node.getAttribute("data-mediator");
+      return m && R.containsWith((function(a, b) {
+        return a.id === b.id;
+      }), {id: m}, definitions);
+    }));
+    var getMediators = R.compose(Promise.all.bind(Promise), R.map(findMediators(definitions)), R.filter(hasMediator(definitions)), R.flatten());
+    var _handleNodesAdded = (function(nodes) {
+      return getMediators(nodes).then((function(mediators) {
+        return (mediators.length && onAdded.emit(mediators));
+      }));
+    });
+    domWatcher.onAdded.connect(_handleNodesAdded);
+    domWatcher.onRemoved.connect(_handleNodesRemoved);
+    var _bootstrap = R.compose(getMediators, R.map((function(node) {
+      return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
+    })));
+    return {
+      onAdded: onAdded,
+      onRemoved: onRemoved,
+      bootstrap: (function() {
+        return _bootstrap([document.body]);
+      })
+    };
+  }
+  $__export("default", MediatorsBuilder);
+  return {
+    setters: [function($__m) {
+      RoboJS = $__m.default;
+    }, function($__m) {
+      Signal = $__m.default;
+    }, function($__m) {
+      R = $__m.default;
+    }],
+    execute: function() {
+    }
+  };
+});
+
+System.register("src/org/core/display/MediatorHandler", ["src/org/core/robojs", "src/org/core/events/EventDispatcher", "src/org/core/events/EventMap", "npm:ramda@0.13.0"], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/display/MediatorHandler";
+  var RoboJS,
+      EventDispatcher,
+      EventMap,
+      R;
+  return {
+    setters: [function($__m) {
+      RoboJS = $__m.default;
+    }, function($__m) {
+      EventDispatcher = $__m.default;
+    }, function($__m) {
+      EventMap = $__m.default;
+    }, function($__m) {
+      R = $__m.default;
+    }],
+    execute: function() {
+      $__export('default', {
+        create: R.curryN(3, function(node, def, Mediator) {
+          var mediatorId = RoboJS.utils.nextUid();
+          node.setAttribute('mediatorId', mediatorId);
+          var _mediator = Mediator(EventDispatcher, EventMap());
+          _mediator.id = mediatorId;
+          RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
+          _mediator.initialize(node);
+          return _mediator;
+        }),
+        destroy: function(node) {
+          var mediatorId = node.getAttribute("mediatorId");
+          var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
+          if (mediator) {
+            mediator.destroy && mediator.destroy(node);
+            mediator.postDestroy && mediator.postDestroy();
+            mediator.element && (mediator.element = null);
+            RoboJS.MEDIATORS_CACHE[mediatorId] = null;
+            mediator = null;
+            return true;
+          }
           return false;
-      }
-      return true;
-    }
-    function $reject(value) {
-      var record = this,
-          promise;
-      if (record.d)
-        return ;
-      record.d = true;
-      record = record.r || record;
-      record.v = value;
-      record.s = 2;
-      record.a = record.c.slice();
-      setTimeout(function() {
-        asap(function() {
-          if (isUnhandled(promise = record.p)) {
-            if (cof(process) == 'process') {
-              process.emit('unhandledRejection', value, promise);
-            } else if (global.console && isFunction(console.error)) {
-              console.error('Unhandled promise rejection', value);
-            }
-          }
-          record.a = undefined;
-        });
-      }, 1);
-      notify(record);
-    }
-    function $resolve(value) {
-      var record = this,
-          then,
-          wrapper;
-      if (record.d)
-        return ;
-      record.d = true;
-      record = record.r || record;
-      try {
-        if (then = isThenable(value)) {
-          wrapper = {
-            r: record,
-            d: false
-          };
-          then.call(value, ctx($resolve, wrapper, 1), ctx($reject, wrapper, 1));
-        } else {
-          record.v = value;
-          record.s = 1;
-          notify(record);
-        }
-      } catch (err) {
-        $reject.call(wrapper || {
-          r: record,
-          d: false
-        }, err);
-      }
-    }
-    if (!useNative) {
-      P = function Promise(executor) {
-        assertFunction(executor);
-        var record = {
-          p: assert.inst(this, P, PROMISE),
-          c: [],
-          a: undefined,
-          s: 0,
-          d: false,
-          v: undefined,
-          h: false
-        };
-        $.hide(this, RECORD, record);
-        try {
-          executor(ctx($resolve, record, 1), ctx($reject, record, 1));
-        } catch (err) {
-          $reject.call(record, err);
-        }
-      };
-      $.mix(P.prototype, {
-        then: function then(onFulfilled, onRejected) {
-          var S = assertObject(assertObject(this).constructor)[SPECIES];
-          var react = {
-            ok: isFunction(onFulfilled) ? onFulfilled : true,
-            fail: isFunction(onRejected) ? onRejected : false
-          };
-          var promise = react.P = new (S != undefined ? S : P)(function(res, rej) {
-            react.res = assertFunction(res);
-            react.rej = assertFunction(rej);
-          });
-          var record = this[RECORD];
-          record.c.push(react);
-          if (record.a)
-            record.a.push(react);
-          record.s && notify(record);
-          return promise;
-        },
-        'catch': function(onRejected) {
-          return this.then(undefined, onRejected);
         }
       });
     }
-    $def($def.G + $def.W + $def.F * !useNative, {Promise: P});
-    cof.set(P, PROMISE);
-    species(P);
-    species($.core[PROMISE]);
-    $def($def.S + $def.F * !useNative, PROMISE, {
-      reject: function reject(r) {
-        return new (getConstructor(this))(function(res, rej) {
-          rej(r);
-        });
-      },
-      resolve: function resolve(x) {
-        return isObject(x) && RECORD in x && $.getProto(x) === this.prototype ? x : new (getConstructor(this))(function(res) {
-          res(x);
-        });
-      }
-    });
-    $def($def.S + $def.F * !(useNative && require("npm:core-js@0.9.7/library/modules/$.iter-detect")(function(iter) {
-      P.all(iter)['catch'](function() {});
-    })), PROMISE, {
-      all: function all(iterable) {
-        var C = getConstructor(this),
-            values = [];
-        return new C(function(res, rej) {
-          forOf(iterable, false, values.push, values);
-          var remaining = values.length,
-              results = Array(remaining);
-          if (remaining)
-            $.each.call(values, function(promise, index) {
-              C.resolve(promise).then(function(value) {
-                results[index] = value;
-                --remaining || res(results);
-              }, rej);
-            });
-          else
-            res(results);
-        });
-      },
-      race: function race(iterable) {
-        var C = getConstructor(this);
-        return new C(function(res, rej) {
-          forOf(iterable, false, function(promise) {
-            C.resolve(promise).then(res, rej);
-          });
-        });
-      }
-    });
-  })(require("github:jspm/nodelibs-process@0.1.1"));
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:core-js@0.9.7/library/fn/promise", ["npm:core-js@0.9.7/library/modules/es6.object.to-string", "npm:core-js@0.9.7/library/modules/es6.string.iterator", "npm:core-js@0.9.7/library/modules/web.dom.iterable", "npm:core-js@0.9.7/library/modules/es6.promise", "npm:core-js@0.9.7/library/modules/$"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  require("npm:core-js@0.9.7/library/modules/es6.object.to-string");
-  require("npm:core-js@0.9.7/library/modules/es6.string.iterator");
-  require("npm:core-js@0.9.7/library/modules/web.dom.iterable");
-  require("npm:core-js@0.9.7/library/modules/es6.promise");
-  module.exports = require("npm:core-js@0.9.7/library/modules/$").core.Promise;
-  global.define = __define;
-  return module.exports;
-});
-
-System.register("npm:babel-runtime@5.2.17/core-js/promise", ["npm:core-js@0.9.7/library/fn/promise"], true, function(require, exports, module) {
-  var global = System.global,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = {
-    "default": require("npm:core-js@0.9.7/library/fn/promise"),
-    __esModule: true
   };
-  global.define = __define;
-  return module.exports;
 });
 
-System.register("src/org/core/net/AMDScriptLoader", ["npm:babel-runtime@5.2.17/core-js/promise"], function (_export) {
-    var _Promise;
-
-    return {
-        setters: [function (_npmBabelRuntime5217CoreJsPromise) {
-            _Promise = _npmBabelRuntime5217CoreJsPromise["default"];
-        }],
-        execute: function () {
-            //var System = require('es6-module-loader').System;
-            "use strict";
-
-            _export("default", {
-                load: function load(id) {
-                    return new _Promise(function (resolve, reject) {
-                        return window.require([id], resolve.bind(resolve));
-                    });
-                }
-            });
-        }
-    };
-});
-System.register("src/org/core/events/EventMap", [], function (_export) {
-    _export("default", EventMap);
-
-    function EventMap() {
-        var currentListeners = [];
-        return {
-
-            mapListener: function mapListener(dispatcher, eventString, listener, scope) {
-                var _this = this;
-
-                var config = undefined;
-                var i = currentListeners.length;
-                while (i--) {
-                    config = currentListeners[i];
-                    if (config.equalTo(dispatcher, eventString, listener)) {
-                        return;
-                    }
-                }
-                var callback = listener;
-
-                config = {
-                    dispatcher: dispatcher,
-                    eventString: eventString,
-                    listener: listener,
-                    callback: callback,
-                    scope: scope,
-                    equalTo: function equalTo(dispatcher, eventString, listener) {
-                        return _this.eventString == eventString && _this.dispatcher == dispatcher && _this.listener == listener;
-                    }
-                };
-
-                currentListeners.push(config);
-                dispatcher.addEventListener(eventString, callback, scope);
-            },
-
-            unmapListener: function unmapListener(dispatcher, eventString, listener) {
-
-                var i = currentListeners.length;
-                while (i--) {
-                    var config = currentListeners[i];
-                    if (config.equalTo(dispatcher, eventString, listener)) {
-
-                        dispatcher.removeEventListener(eventString, config.callback, config.scope);
-
-                        currentListeners.splice(i, 1);
-                        return;
-                    }
-                }
-            },
-
-            unmapListeners: function unmapListeners() {
-
-                var eventConfig = undefined;
-                var dispatcher = undefined;
-                while (eventConfig = currentListeners.pop()) {
-
-                    dispatcher = eventConfig.dispatcher;
-                    dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback, eventConfig.scope);
-                }
-            }
-        };
+System.register("src/org/core/display/bootstrap", ["src/org/core/display/MediatorsBuilder", "src/org/core/display/DomWatcher", "src/org/core/net/ScriptLoader", "src/org/core/display/MediatorHandler"], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/display/bootstrap";
+  var MediatorsBuilder,
+      DomWatcher,
+      ScriptLoader,
+      MediatorHandler;
+  function bootstrap(config) {
+    var $__1,
+        $__2,
+        $__3,
+        $__4;
+    var $__0 = config,
+        definitions = $__0.definitions,
+        autoplay = ($__1 = $__0.autoplay) === void 0 ? true : $__1,
+        domWatcher = ($__2 = $__0.domWatcher) === void 0 ? DomWatcher() : $__2,
+        scriptLoader = ($__3 = $__0.scriptLoader) === void 0 ? ScriptLoader : $__3,
+        mediatorHandler = ($__4 = $__0.mediatorHandler) === void 0 ? MediatorHandler : $__4;
+    var builder = MediatorsBuilder(domWatcher, scriptLoader, mediatorHandler, definitions);
+    return autoplay ? builder.bootstrap() : builder;
+  }
+  $__export("default", bootstrap);
+  return {
+    setters: [function($__m) {
+      MediatorsBuilder = $__m.default;
+    }, function($__m) {
+      DomWatcher = $__m.default;
+    }, function($__m) {
+      ScriptLoader = $__m.default;
+    }, function($__m) {
+      MediatorHandler = $__m.default;
+    }],
+    execute: function() {
+      ;
     }
-
-    return {
-        setters: [],
-        execute: function () {
-            "use strict";
-        }
-    };
+  };
 });
-System.register("src/org/core/events/EventDispatcher", [], function (_export) {
-    var _currentListeners, removeAllEventListeners, hasEventListener;
 
-    function addEventListener(type, callback, scope) {
-        var listener = {
-            type: type,
-            callback: callback,
-            scope: scope
-        };
-        if (!_currentListeners[type]) {
-            _currentListeners[type] = [];
-        }
-        _currentListeners[type].push(listener);
-        return listener;
+System.register("src/org/core/display/DomWatcher", ["src/org/core/events/Signal", "npm:ramda@0.13.0"], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/display/DomWatcher";
+  var Signal,
+      R;
+  function DomWatcher() {
+    var onAdded = Signal();
+    var onRemoved = Signal();
+    function makeChain(prop, emit) {
+      return R.compose(R.tap((function(nodes) {
+        return (nodes.length && emit(nodes));
+      })), R.map((function(node) {
+        return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
+      })), R.filter((function(node) {
+        return node.getElementsByTagName;
+      })), R.flatten(), R.pluck(prop));
     }
+    var getAdded = makeChain("addedNodes", onAdded.emit);
+    var getRemoved = makeChain("removedNodes", onRemoved.emit);
+    var handleMutations = (function(mutations) {
+      getAdded(mutations);
+      getRemoved(mutations);
+    });
+    var observer = new MutationObserver(handleMutations);
+    observer.observe(document.body, {
+      attributes: false,
+      childList: true,
+      characterData: false,
+      subtree: true
+    });
+    return {
+      onAdded: onAdded,
+      onRemoved: onRemoved
+    };
+  }
+  $__export("default", DomWatcher);
+  return {
+    setters: [function($__m) {
+      Signal = $__m.default;
+    }, function($__m) {
+      R = $__m.default;
+    }],
+    execute: function() {
+      ;
+    }
+  };
+});
 
-    function removeEventListener(eventName, callback, scope) {
-        var listeners = _currentListeners[eventName] || [];
-        _currentListeners[eventName] = listeners.filter(function (listener) {
-            var sameCB = listener.callback == callback;
-            var sameScope = listener.scope == scope;
-            return !(sameCB && sameScope);
+System.register("src/org/core/robojs", ["src/org/core/net/ScriptLoader", "src/org/core/net/AMDScriptLoader", "src/org/core/events/EventMap", "src/org/core/events/EventDispatcher", "src/org/core/events/Signal", "src/org/core/display/DomWatcher", "src/org/core/display/Mediator", "src/org/core/display/MediatorsBuilder", "src/org/core/display/bootstrap", "src/org/core/display/MediatorHandler"], function($__export) {
+  "use strict";
+  var __moduleName = "src/org/core/robojs";
+  var ScriptLoader,
+      AMDScriptLoader,
+      EventMap,
+      EventDispatcher,
+      Signal,
+      DomWatcher,
+      Mediator,
+      MediatorsBuilder,
+      bootstrap,
+      MediatorHandler,
+      uid,
+      flip,
+      robojs;
+  function nextUid() {
+    "use strict";
+    var index = uid.length;
+    var digit;
+    while (index) {
+      index--;
+      digit = uid[index].charCodeAt(0);
+      if (digit == 57) {
+        uid[index] = 'A';
+        return uid.join('');
+      }
+      if (digit == 90) {
+        uid[index] = '0';
+      } else {
+        uid[index] = String.fromCharCode(digit + 1);
+        return uid.join('');
+      }
+    }
+    uid.unshift('0');
+    return uid.join('');
+  }
+  return {
+    setters: [function($__m) {
+      ScriptLoader = $__m.default;
+    }, function($__m) {
+      AMDScriptLoader = $__m.default;
+    }, function($__m) {
+      EventMap = $__m.default;
+    }, function($__m) {
+      EventDispatcher = $__m.default;
+    }, function($__m) {
+      Signal = $__m.default;
+    }, function($__m) {
+      DomWatcher = $__m.default;
+    }, function($__m) {
+      Mediator = $__m.default;
+    }, function($__m) {
+      MediatorsBuilder = $__m.default;
+    }, function($__m) {
+      bootstrap = $__m.default;
+    }, function($__m) {
+      MediatorHandler = $__m.default;
+    }],
+    execute: function() {
+      var $__0 = this;
+      uid = ['0', '0', '0'];
+      flip = (function(f) {
+        return (function() {
+          for (var args = [],
+              $__1 = 0; $__1 < arguments.length; $__1++)
+            args[$__1] = arguments[$__1];
+          return f.apply($__0, args.reverse());
         });
-    }
-
-    function dispatchEvent(type, data) {
-        var listeners = _currentListeners[type] || [];
-        var length = listeners.length,
-            l = undefined,
-            c = undefined,
-            s = undefined;
-        for (var i = 0; i < length; i++) {
-            l = listeners[i];
-            c = l.callback;
-            s = l.scope;
-            c.call(s, data);
+      });
+      robojs = {
+        MEDIATORS_CACHE: {},
+        utils: {
+          uid: uid,
+          nextUid: nextUid,
+          flip: flip
+        },
+        display: {
+          DomWatcher: DomWatcher,
+          Mediator: Mediator,
+          bootstrap: bootstrap,
+          MediatorHandler: MediatorHandler,
+          MediatorsBuilder: MediatorsBuilder
+        },
+        events: {
+          EventDispatcher: EventDispatcher,
+          EventMap: EventMap,
+          Signal: Signal
+        },
+        net: {
+          AMDScriptLoader: AMDScriptLoader,
+          ScriptLoader: ScriptLoader
         }
-    }
-    return {
-        setters: [],
-        execute: function () {
-            "use strict";
-
-            _currentListeners = {};
-
-            removeAllEventListeners = function removeAllEventListeners(eventName) {
-                return _currentListeners[eventName] = null;
-            };
-
-            hasEventListener = function hasEventListener(eventName) {
-                return _currentListeners[eventName] && _currentListeners[eventName].length;
-            };
-
-            _export("default", {
-                addEventListener: addEventListener,
-                removeEventListener: removeEventListener,
-                removeAllEventListeners: removeAllEventListeners,
-                hasEventListener: hasEventListener,
-                dispatchEvent: dispatchEvent
-            });
-        }
-    };
-});
-System.register('src/org/core/events/Signal', [], function (_export) {
-    _export('default', Signal);
-
-    function Signal() {
-
-        var listenerBoxes = [];
-
-        function registerListener(listener, scope, once) {
-            for (var i = 0; i < listenerBoxes.length; i++) {
-                if (listenerBoxes[i].listener == listener && listenerBoxes[i].scope == scope) {
-                    if (listenerBoxes[i].once && !once) {
-                        throw new Error('You cannot addOnce() then try to add() the same listener ' + 'without removing the relationship first.');
-                    } else if (once && !listenerBoxes[i].once) {
-                        throw new Error('You cannot add() then addOnce() the same listener ' + 'without removing the relationship first.');
-                    }
-                    return;
-                }
-            }
-
-            listenerBoxes.push({ listener: listener, scope: scope, once: once });
-        }
-
-        function emit() {
-
-            // var listenerBoxes = listenerBoxes;
-            var len = listenerBoxes.length;
-            var listenerBox = undefined;
-
-            for (var i = 0; i < len; i++) {
-                listenerBox = listenerBoxes[i];
-                if (listenerBox.once) disconnect(listenerBox.listener, listenerBox.scope);
-
-                listenerBox.listener.apply(listenerBox.scope, arguments);
-            }
-        }
-
-        var connect = function connect(slot, scope) {
-            return registerListener(slot, scope, false);
-        };
-
-        var connectOnce = function connectOnce(slot, scope) {
-            return registerListener(slot, scope, true);
-        };
-
-        function disconnect(slot, scope) {
-
-            for (var i = listenerBoxes.length; i--;) {
-                if (listenerBoxes[i].listener == slot && listenerBoxes[i].scope == scope) {
-                    listenerBoxes.splice(i, 1);
-                    return;
-                }
-            }
-        }
-
-        function disconnectAll() {
-
-            for (var i = listenerBoxes.length; i--;) {
-                disconnect(listenerBoxes[i].listener, listenerBoxes[i].scope);
-            }
-        }
-
-        return {
-            connect: connect,
-            connectOnce: connectOnce,
-            disconnect: disconnect,
-            disconnectAll: disconnectAll,
-            emit: emit
-
-        };
-    }
-
-    return {
-        setters: [],
-        execute: function () {
-            'use strict';
-        }
-    };
-});
-System.register("src/org/core/display/Mediator", [], function (_export) {
-    _export("default", Mediator);
-
-    function Mediator(eventDispatcher, eventMap) {
-
-        var element = undefined;
-        var postDestroy = function postDestroy() {
-            return eventMap.unmapListeners();
-        };
-        var addContextListener = function addContextListener(eventString, listener, scope) {
-            return eventMap.mapListener(eventDispatcher, eventString, listener, scope);
-        };
-        var removeContextListener = function removeContextListener(eventString, listener) {
-            return eventMap.unmapListener(eventDispatcher, eventString, listener);
-        };
-        var dispatch = function dispatch(eventString, data) {
-            if (eventDispatcher.hasEventListener(eventString)) {
-                eventDispatcher.dispatchEvent(eventString, data);
-            }
-        };
-        var initialize = function initialize(node) {
-            return element = node;
-        };
-        return {
-
-            postDestroy: postDestroy,
-            addContextListener: addContextListener,
-            removeContextListener: removeContextListener,
-            dispatch: dispatch,
-            initialize: initialize
-
-        };
-    }
-
-    return {
-        setters: [],
-        execute: function () {
-            "use strict";
-        }
-    };
-});
-System.register("src/org/core/display/MediatorsBuilder", ["npm:babel-runtime@5.2.17/core-js/promise", "src/org/core/robojs", "src/org/core/events/Signal", "npm:ramda@0.13.0"], function (_export) {
-    var _Promise, RoboJS, Signal, R;
-
-    function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
-
-        var onAdded = Signal(),
-            onRemoved = Signal();
-
-        var _handleNodesRemoved = R.compose(R.tap(function (mediators) {
-            return mediators.length && onRemoved.emit();
-        }), R.forEach(mediatorHandler.destroy), R.flatten());
-
-        var findMediators = R.curryN(2, function (definitions, node) {
-            var m = node.getAttribute("data-mediator");
-            var def = R.find(R.propEq("id", m), definitions);
-            return loader.load(def.mediator).then(mediatorHandler.create(node, def));
+      };
+      if (typeof define === 'function' && define.amd) {
+        define('robojs', [], function() {
+          return robojs;
         });
-
-        var hasMediator = R.curryN(2, function (definitions, node) {
-            var m = node.getAttribute("data-mediator");
-            return m && R.containsWith(function (a, b) {
-                return a.id === b.id;
-            }, { id: m }, definitions);
-        });
-
-        var getMediators = R.compose(_Promise.all.bind(_Promise), R.map(findMediators(definitions)), R.filter(hasMediator(definitions)), R.flatten());
-        var _handleNodesAdded = function _handleNodesAdded(nodes) {
-            return getMediators(nodes).then(function (mediators) {
-                return mediators.length && onAdded.emit(mediators);
-            });
-        };
-
-        domWatcher.onAdded.connect(_handleNodesAdded);
-        domWatcher.onRemoved.connect(_handleNodesRemoved);
-
-        var _bootstrap = R.compose(getMediators, R.map(function (node) {
-            return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
-        }));
-
-        return {
-            onAdded: onAdded,
-            onRemoved: onRemoved,
-            bootstrap: function bootstrap() {
-                return _bootstrap([document.body]);
-            }
-        };
+      } else {
+        window.robojs = robojs;
+      }
+      $__export('default', robojs);
     }
-
-    return {
-        setters: [function (_npmBabelRuntime5217CoreJsPromise) {
-            _Promise = _npmBabelRuntime5217CoreJsPromise["default"];
-        }, function (_srcOrgCoreRobojs) {
-            RoboJS = _srcOrgCoreRobojs["default"];
-        }, function (_srcOrgCoreEventsSignal) {
-            Signal = _srcOrgCoreEventsSignal["default"];
-        }, function (_npmRamda0130) {
-            R = _npmRamda0130["default"];
-        }],
-        execute: function () {
-            "use strict";
-
-            _export("default", MediatorsBuilder);
-        }
-    };
+  };
 });
-System.register("src/org/core/display/MediatorHandler", ["src/org/core/robojs", "src/org/core/events/EventDispatcher", "src/org/core/events/EventMap", "npm:ramda@0.13.0"], function (_export) {
-    var RoboJS, EventDispatcher, EventMap, R;
-    return {
-        setters: [function (_srcOrgCoreRobojs) {
-            RoboJS = _srcOrgCoreRobojs["default"];
-        }, function (_srcOrgCoreEventsEventDispatcher) {
-            EventDispatcher = _srcOrgCoreEventsEventDispatcher["default"];
-        }, function (_srcOrgCoreEventsEventMap) {
-            EventMap = _srcOrgCoreEventsEventMap["default"];
-        }, function (_npmRamda0130) {
-            R = _npmRamda0130["default"];
-        }],
-        execute: function () {
-            /**
-             * Created by marco.gobbi on 21/01/2015.
-             */
-            "use strict";
 
-            _export("default", {
-                create: R.curryN(3, function (node, def, Mediator) {
-                    var mediatorId = RoboJS.utils.nextUid();
-                    //node.dataset = node.dataset || {};
-                    node.setAttribute("mediatorId", mediatorId);
-                    //node.dataset.mediatorId = mediatorId;
-                    //
-                    var _mediator = Mediator(EventDispatcher, EventMap());
-                    _mediator.id = mediatorId;
-                    RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
-                    _mediator.initialize(node);
-                    return _mediator;
-                }),
-                destroy: function destroy(node) {
-
-                    var mediatorId = node.getAttribute("mediatorId"); //&& node.dataset.mediatorId;
-                    var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
-                    if (mediator) {
-                        mediator.destroy && mediator.destroy(node);
-                        mediator.postDestroy && mediator.postDestroy();
-                        mediator.element && (mediator.element = null);
-                        RoboJS.MEDIATORS_CACHE[mediatorId] = null;
-                        mediator = null;
-                        return true;
-                    }
-                    return false;
-                }
-            });
-        }
-    };
-});
-System.register("src/org/core/display/bootstrap", ["src/org/core/display/MediatorsBuilder", "src/org/core/display/DomWatcher", "src/org/core/net/ScriptLoader", "src/org/core/display/MediatorHandler"], function (_export) {
-    var MediatorsBuilder, DomWatcher, ScriptLoader, MediatorHandler;
-
-    _export("default", bootstrap);
-
-    function bootstrap(config) {
-        var definitions = config.definitions;
-        var _config$autoplay = config.autoplay;
-        var autoplay = _config$autoplay === undefined ? true : _config$autoplay;
-        var _config$domWatcher = config.domWatcher;
-        var domWatcher = _config$domWatcher === undefined ? DomWatcher() : _config$domWatcher;
-        var _config$scriptLoader = config.scriptLoader;
-        var scriptLoader = _config$scriptLoader === undefined ? ScriptLoader : _config$scriptLoader;
-        var _config$mediatorHandler = config.mediatorHandler;
-        var mediatorHandler = _config$mediatorHandler === undefined ? MediatorHandler : _config$mediatorHandler;
-
-        var builder = MediatorsBuilder(domWatcher, scriptLoader, mediatorHandler, definitions);
-        return autoplay ? builder.bootstrap() : builder;
-    }
-
-    return {
-        setters: [function (_srcOrgCoreDisplayMediatorsBuilder) {
-            MediatorsBuilder = _srcOrgCoreDisplayMediatorsBuilder["default"];
-        }, function (_srcOrgCoreDisplayDomWatcher) {
-            DomWatcher = _srcOrgCoreDisplayDomWatcher["default"];
-        }, function (_srcOrgCoreNetScriptLoader) {
-            ScriptLoader = _srcOrgCoreNetScriptLoader["default"];
-        }, function (_srcOrgCoreDisplayMediatorHandler) {
-            MediatorHandler = _srcOrgCoreDisplayMediatorHandler["default"];
-        }],
-        execute: function () {
-            "use strict";
-
-            ;
-        }
-    };
-});
-/**
- * Created by marco.gobbi on 21/01/2015.
- */
-System.register("src/org/core/display/DomWatcher", ["src/org/core/events/Signal", "npm:ramda@0.13.0"], function (_export) {
-    var Signal, R;
-
-    _export("default", DomWatcher);
-
-    function DomWatcher() {
-        var onAdded = Signal();
-        var onRemoved = Signal();
-
-        function makeChain(prop, emit) {
-            return R.compose(R.tap(function (nodes) {
-                return nodes.length && emit(nodes);
-            }), //onAdded.emit,onRemoved.emit
-            R.map(function (node) {
-                return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
-            }), R.filter(function (node) {
-                return node.getElementsByTagName;
-            }), R.flatten(), R.pluck(prop) //"addedNodes","removedNodes"
-            );
-        }
-
-        var getAdded = makeChain("addedNodes", onAdded.emit);
-        var getRemoved = makeChain("removedNodes", onRemoved.emit);
-
-        var handleMutations = function handleMutations(mutations) {
-            getAdded(mutations);
-            getRemoved(mutations);
-        };
-        var observer = new MutationObserver(handleMutations);
-
-        /* <h3>Configuration of the observer.</h3>
-         <p>Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.</p>
-         */
-        observer.observe(document.body, {
-            attributes: false,
-            childList: true,
-            characterData: false,
-            subtree: true
-        });
-        return {
-            onAdded: onAdded,
-            onRemoved: onRemoved
-        };
-    }
-
-    return {
-        setters: [function (_srcOrgCoreEventsSignal) {
-            Signal = _srcOrgCoreEventsSignal["default"];
-        }, function (_npmRamda0130) {
-            R = _npmRamda0130["default"];
-        }],
-        execute: function () {
-            "use strict";
-
-            ;
-        }
-    };
-});
-System.register("src/org/core/net/ScriptLoader", ["npm:babel-runtime@5.2.17/core-js/promise"], function (_export) {
-    var _Promise;
-
-    function getPromise() {
-        if (System["import"]) {
-            return System["import"].bind(System);
-        } else {
-            return function (url) {
-                return _Promise.resolve(System.get(url));
-            };
-        }
-    }
-    return {
-        setters: [function (_npmBabelRuntime5217CoreJsPromise) {
-            _Promise = _npmBabelRuntime5217CoreJsPromise["default"];
-        }],
-        execute: function () {
-            "use strict";
-
-            _export("default", {
-                load: function load(id) {
-                    return getPromise()(id).then(function (e) {
-                        return e["default"];
-                    })["catch"](console.log.bind(console));
-                }
-            });
-        }
-    };
-});
-System.register("src/org/core/robojs", ["src/org/core/net/ScriptLoader", "src/org/core/net/AMDScriptLoader", "src/org/core/events/EventMap", "src/org/core/events/EventDispatcher", "src/org/core/events/Signal", "src/org/core/display/DomWatcher", "src/org/core/display/Mediator", "src/org/core/display/MediatorsBuilder", "src/org/core/display/bootstrap", "src/org/core/display/MediatorHandler"], function (_export) {
-    var ScriptLoader, AMDScriptLoader, EventMap, EventDispatcher, Signal, DomWatcher, Mediator, MediatorsBuilder, bootstrap, MediatorHandler, uid, flip, robojs;
-
-    function nextUid() {
-        "use strict";
-        var index = uid.length;
-        var digit = undefined;
-        while (index) {
-            index--;
-            digit = uid[index].charCodeAt(0);
-            if (digit == 57 /*'9'*/) {
-                uid[index] = "A";
-                return uid.join("");
-            }
-            if (digit == 90 /*'Z'*/) {
-                uid[index] = "0";
-            } else {
-                uid[index] = String.fromCharCode(digit + 1);
-                return uid.join("");
-            }
-        }
-        uid.unshift("0");
-        return uid.join("");
-    }
-    return {
-        setters: [function (_srcOrgCoreNetScriptLoader) {
-            ScriptLoader = _srcOrgCoreNetScriptLoader["default"];
-        }, function (_srcOrgCoreNetAMDScriptLoader) {
-            AMDScriptLoader = _srcOrgCoreNetAMDScriptLoader["default"];
-        }, function (_srcOrgCoreEventsEventMap) {
-            EventMap = _srcOrgCoreEventsEventMap["default"];
-        }, function (_srcOrgCoreEventsEventDispatcher) {
-            EventDispatcher = _srcOrgCoreEventsEventDispatcher["default"];
-        }, function (_srcOrgCoreEventsSignal) {
-            Signal = _srcOrgCoreEventsSignal["default"];
-        }, function (_srcOrgCoreDisplayDomWatcher) {
-            DomWatcher = _srcOrgCoreDisplayDomWatcher["default"];
-        }, function (_srcOrgCoreDisplayMediator) {
-            Mediator = _srcOrgCoreDisplayMediator["default"];
-        }, function (_srcOrgCoreDisplayMediatorsBuilder) {
-            MediatorsBuilder = _srcOrgCoreDisplayMediatorsBuilder["default"];
-        }, function (_srcOrgCoreDisplayBootstrap) {
-            bootstrap = _srcOrgCoreDisplayBootstrap["default"];
-        }, function (_srcOrgCoreDisplayMediatorHandler) {
-            MediatorHandler = _srcOrgCoreDisplayMediatorHandler["default"];
-        }],
-        execute: function () {
-            "use strict";
-
-            uid = ["0", "0", "0"];
-
-            flip = function flip(f) {
-                return function () {
-                    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                        args[_key] = arguments[_key];
-                    }
-
-                    return f.apply(undefined, args.reverse());
-                };
-            };
-
-            robojs = {
-                MEDIATORS_CACHE: {},
-                utils: {
-                    uid: uid,
-                    nextUid: nextUid,
-                    flip: flip
-                },
-                display: {
-                    DomWatcher: DomWatcher,
-                    Mediator: Mediator,
-                    bootstrap: bootstrap,
-                    MediatorHandler: MediatorHandler,
-                    MediatorsBuilder: MediatorsBuilder
-                },
-                events: {
-                    EventDispatcher: EventDispatcher,
-                    EventMap: EventMap,
-                    Signal: Signal
-                },
-                net: {
-                    AMDScriptLoader: AMDScriptLoader,
-                    ScriptLoader: ScriptLoader
-                }
-
-            };
-
-            if (typeof define === "function" && define.amd) {
-                // AMD. Register as an anonymous module.
-                define("robojs", [], function () {
-                    return robojs;
-                });
-            } else {
-                // Browser globals
-                window.robojs = robojs;
-            }
-
-            _export("default", robojs);
-        }
-    };
-});
 });
 //# sourceMappingURL=robojs.es6.js.map
