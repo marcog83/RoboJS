@@ -1,19 +1,18 @@
-
 export default function EventMap() {
-    let currentListeners = [];
+    var currentListeners = [];
     return {
 
         mapListener: function (dispatcher, eventString, listener, scope) {
 
-            let config;
-            let i = currentListeners.length;
+            var config;
+            var i = currentListeners.length;
             while (i--) {
                 config = currentListeners[i];
                 if (config.equalTo(dispatcher, eventString, listener)) {
                     return;
                 }
             }
-            let callback = listener;
+            var callback = listener;
 
             config = {
                 dispatcher,
@@ -22,19 +21,17 @@ export default function EventMap() {
                 callback,
                 scope,
                 equalTo: (dispatcher, eventString, listener)=> (this.eventString == eventString && this.dispatcher == dispatcher && this.listener == listener)
-             };
+            };
 
             currentListeners.push(config);
             dispatcher.addEventListener(eventString, callback, scope);
 
-        }
-        ,
-
+        },
         unmapListener: function (dispatcher, eventString, listener) {
 
-            let i = currentListeners.length;
+            var i = currentListeners.length;
             while (i--) {
-                let config = currentListeners[i];
+                var config = currentListeners[i];
                 if (config.equalTo(dispatcher, eventString, listener)) {
 
                     dispatcher.removeEventListener(eventString, config.callback, config.scope);
@@ -43,13 +40,11 @@ export default function EventMap() {
                     return;
                 }
             }
-        }
-        ,
-
+        },
         unmapListeners: function () {
 
-            let eventConfig;
-            let dispatcher;
+            var eventConfig;
+            var dispatcher;
             while (eventConfig = currentListeners.pop()) {
 
                 dispatcher = eventConfig.dispatcher;

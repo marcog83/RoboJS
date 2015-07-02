@@ -1,8 +1,8 @@
 import Signal from "../events/Signal";
 import R from "ramda";
 export default function DomWatcher() {
-    let onAdded = Signal();
-    let onRemoved = Signal();
+    var onAdded = Signal();
+    var onRemoved = Signal();
 
     function makeChain(prop, emit) {
         return R.compose(
@@ -15,15 +15,15 @@ export default function DomWatcher() {
 
     }
 
-    let getAdded = makeChain("addedNodes", onAdded.emit);
-    let getRemoved = makeChain("removedNodes", onRemoved.emit);
+    var getAdded = makeChain("addedNodes", onAdded.emit);
+    var getRemoved = makeChain("removedNodes", onRemoved.emit);
 
-    let handleMutations = mutations=> {
+    var handleMutations = mutations=> {
         getAdded(mutations);
         getRemoved(mutations);
 
     };
-    let observer = new MutationObserver(handleMutations);
+    var observer = new MutationObserver(handleMutations);
 
     /* <h3>Configuration of the observer.</h3>
      <p>Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.</p>

@@ -8,15 +8,15 @@ import Mediator from "./display/Mediator";
 import MediatorsBuilder from "./display/MediatorsBuilder";
 import bootstrap from "./display/bootstrap";
 import MediatorHandler from "./display/MediatorHandler";
-let uid = [
+var uid = [
     '0',
     '0',
     '0'
 ];
 function nextUid() {
     "use strict";
-    let index = uid.length;
-    let digit;
+    var index = uid.length;
+    var digit;
     while (index) {
         index--;
         digit = uid[index].charCodeAt(0);
@@ -37,7 +37,7 @@ function nextUid() {
 var flip = (f) => (...args) =>f.apply(this, args.reverse());
 
 
-let robojs = {
+var robojs = {
     MEDIATORS_CACHE: {},
     utils: {
         uid,
@@ -68,7 +68,7 @@ if (typeof define === 'function' && define.amd) {
     define('robojs',[], function(){return robojs});
 } else {
     // Browser globals
-    window.robojs = robojs;
+    //window.robojs = robojs;
 }
 
 export default robojs;

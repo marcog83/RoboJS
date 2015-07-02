@@ -2916,59 +2916,57 @@ System.register("src/org/core/events/EventMap", [], function($__export) {
 System.register("src/org/core/events/EventDispatcher", [], function($__export) {
   "use strict";
   var __moduleName = "src/org/core/events/EventDispatcher";
-  var _currentListeners,
-      removeAllEventListeners,
-      hasEventListener;
-  function addEventListener(type, callback, scope) {
-    var listener = {
-      type: type,
-      callback: callback,
-      scope: scope
-    };
-    if (!_currentListeners[type]) {
-      _currentListeners[type] = [];
-    }
-    _currentListeners[type].push(listener);
-    return listener;
-  }
-  function removeEventListener(eventName, callback, scope) {
-    var listeners = _currentListeners[eventName] || [];
-    _currentListeners[eventName] = listeners.filter(function(listener) {
-      var sameCB = listener.callback == callback;
-      var sameScope = listener.scope == scope;
-      return !(sameCB && sameScope);
-    });
-  }
-  function dispatchEvent(type, data) {
-    var listeners = _currentListeners[type] || [];
-    var length = listeners.length,
-        l,
-        c,
-        s;
-    for (var i = 0; i < length; i++) {
-      l = listeners[i];
-      c = l.callback;
-      s = l.scope;
-      c.call(s, data);
-    }
-  }
   return {
     setters: [],
     execute: function() {
-      _currentListeners = {};
-      removeAllEventListeners = (function(eventName) {
-        return _currentListeners[eventName] = null;
-      });
-      hasEventListener = (function(eventName) {
-        return _currentListeners[eventName] && _currentListeners[eventName].length;
-      });
-      $__export('default', {
-        addEventListener: addEventListener,
-        removeEventListener: removeEventListener,
-        removeAllEventListeners: removeAllEventListeners,
-        hasEventListener: hasEventListener,
-        dispatchEvent: dispatchEvent
-      });
+      $__export('default', !function() {
+        var _currentListeners = {};
+        function addEventListener(type, callback, scope) {
+          var listener = {
+            type: type,
+            callback: callback,
+            scope: scope
+          };
+          if (!_currentListeners[type]) {
+            _currentListeners[type] = [];
+          }
+          _currentListeners[type].push(listener);
+          return listener;
+        }
+        function removeEventListener(eventName, callback, scope) {
+          var listeners = _currentListeners[eventName] || [];
+          _currentListeners[eventName] = listeners.filter(function(listener) {
+            var sameCB = listener.callback == callback;
+            var sameScope = listener.scope == scope;
+            return !(sameCB && sameScope);
+          });
+        }
+        function dispatchEvent(type, data) {
+          var listeners = _currentListeners[type] || [];
+          var length = listeners.length,
+              l,
+              c,
+              s;
+          for (var i = 0; i < length; i++) {
+            l = listeners[i];
+            c = l.callback;
+            s = l.scope;
+            c.call(s, data);
+          }
+        }
+        ;
+        return {
+          addEventListener: addEventListener,
+          removeEventListener: removeEventListener,
+          removeAllEventListeners: (function(eventName) {
+            return _currentListeners[eventName] = null;
+          }),
+          hasEventListener: (function(eventName) {
+            return _currentListeners[eventName] && _currentListeners[eventName].length;
+          }),
+          dispatchEvent: dispatchEvent
+        };
+      }());
     }
   };
 });
@@ -3044,30 +3042,24 @@ System.register("src/org/core/display/Mediator", [], function($__export) {
   "use strict";
   var __moduleName = "src/org/core/display/Mediator";
   function Mediator(eventDispatcher, eventMap) {
-    var element;
-    var postDestroy = (function() {
-      return eventMap.unmapListeners();
-    });
-    var addContextListener = (function(eventString, listener, scope) {
-      return eventMap.mapListener(eventDispatcher, eventString, listener, scope);
-    });
-    var removeContextListener = (function(eventString, listener) {
-      return eventMap.unmapListener(eventDispatcher, eventString, listener);
-    });
-    var dispatch = (function(eventString, data) {
-      if (eventDispatcher.hasEventListener(eventString)) {
-        eventDispatcher.dispatchEvent(eventString, data);
-      }
-    });
-    var initialize = (function(node) {
-      return element = node;
-    });
     return {
-      postDestroy: postDestroy,
-      addContextListener: addContextListener,
-      removeContextListener: removeContextListener,
-      dispatch: dispatch,
-      initialize: initialize
+      postDestroy: (function() {
+        return eventMap.unmapListeners();
+      }),
+      addContextListener: (function(eventString, listener, scope) {
+        return eventMap.mapListener(eventDispatcher, eventString, listener, scope);
+      }),
+      removeContextListener: (function(eventString, listener) {
+        return eventMap.unmapListener(eventDispatcher, eventString, listener);
+      }),
+      dispatch: (function(eventString, data) {
+        if (eventDispatcher.hasEventListener(eventString)) {
+          eventDispatcher.dispatchEvent(eventString, data);
+        }
+      }),
+      initialize: (function(node) {
+        return node;
+      })
     };
   }
   $__export("default", Mediator);
@@ -3170,6 +3162,7 @@ System.register("src/org/core/display/MediatorHandler", ["src/org/core/robojs", 
             mediator.postDestroy && mediator.postDestroy();
             mediator.element && (mediator.element = null);
             RoboJS.MEDIATORS_CACHE[mediatorId] = null;
+            delete RoboJS.MEDIATORS_CACHE[mediatorId];
             mediator = null;
             return true;
           }
@@ -3364,9 +3357,7 @@ System.register("src/org/core/robojs", ["src/org/core/net/ScriptLoader", "src/or
         define('robojs', [], function() {
           return robojs;
         });
-      } else {
-        window.robojs = robojs;
-      }
+      } else {}
       $__export('default', robojs);
     }
   };

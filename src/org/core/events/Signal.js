@@ -1,9 +1,9 @@
 export default function Signal() {
 
-    let listenerBoxes = [];
+    var listenerBoxes = [];
 
     function registerListener(listener, scope, once) {
-        for (let i = 0; i < listenerBoxes.length; i++) {
+        for (var i = 0; i < listenerBoxes.length; i++) {
             if (listenerBoxes[i].listener == listener && listenerBoxes[i].scope == scope) {
                 if (listenerBoxes[i].once && !once) {
                     throw new Error('You cannot addOnce() then try to add() the same listener ' +
@@ -27,11 +27,11 @@ export default function Signal() {
 
 
         // var listenerBoxes = listenerBoxes;
-        let len = listenerBoxes.length;
-        let listenerBox;
+        var len = listenerBoxes.length;
+        var listenerBox;
 
 
-        for (let i = 0; i < len; i++) {
+        for (var i = 0; i < len; i++) {
             listenerBox = listenerBoxes[i];
             if (listenerBox.once)
                 disconnect(listenerBox.listener, listenerBox.scope);
@@ -42,14 +42,14 @@ export default function Signal() {
     }
 
 
-    let connect = (slot, scope) =>registerListener(slot, scope, false);
+    var connect = (slot, scope) =>registerListener(slot, scope, false);
 
-    let connectOnce = (slot, scope) => registerListener(slot, scope, true);
+    var connectOnce = (slot, scope) => registerListener(slot, scope, true);
 
     function disconnect(slot, scope) {
 
 
-        for (let i = listenerBoxes.length; i--;) {
+        for (var i = listenerBoxes.length; i--;) {
             if (listenerBoxes[i].listener == slot && listenerBoxes[i].scope == scope) {
                 listenerBoxes.splice(i, 1);
                 return;

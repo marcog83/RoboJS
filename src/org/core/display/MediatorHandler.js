@@ -28,6 +28,7 @@ export default  {
             mediator.postDestroy && mediator.postDestroy();
             mediator.element && (mediator.element = null);
             RoboJS.MEDIATORS_CACHE[mediatorId] = null;
+            delete RoboJS.MEDIATORS_CACHE[mediatorId];
             mediator = null;
             return true;
         }
