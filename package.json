@@ -1,6 +1,6 @@
 {
   "name": "robojs",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "license": "MIT",
   "main": "dist/robojs.es6.min.js",
   "jspm": {
@@ -8,12 +8,12 @@
     "format": "es6",
     "directories": {},
     "dependencies": {
-      "ramda": "npm:ramda@^0.13.0"
+      "ramda": "npm:ramda@^0.15.1"
     },
     "devDependencies": {
       "core-js": "npm:core-js@^0.9.4",
-      "traceur": "github:jmcriffey/bower-traceur@0.0.88",
-      "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.88"
+      "traceur": "github:jmcriffey/bower-traceur@0.0.90",
+      "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.90"
     }
   },
   "devDependencies": {

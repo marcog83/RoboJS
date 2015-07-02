@@ -1,7 +1,7 @@
-export default !function () {
-    var _currentListeners = {};
+var _currentListeners = {};
+export default {
 
-    function addEventListener(type, callback, scope) {
+    addEventListener: function (type, callback, scope) {
         var listener = {
             type: type,
             callback: callback,
@@ -12,20 +12,21 @@ export default !function () {
         }
         _currentListeners[type].push(listener);
         return listener;
-    }
-
-    function removeEventListener(eventName, callback, scope) {
+    },
+    removeEventListener: function (eventName, callback, scope) {
         var listeners = _currentListeners[eventName] || [];
         _currentListeners[eventName] = listeners.filter(function (listener) {
             var sameCB = listener.callback == callback;
             var sameScope = listener.scope == scope;
             return !(sameCB && sameScope);
         });
-    }
-
-
-
-    function dispatchEvent(type, data) {
+    },
+    removeAllEventListeners: eventName=> {
+        _currentListeners[eventName] = null;
+        delete _currentListeners[eventName];
+    },
+    hasEventListener: eventName => _currentListeners[eventName] && _currentListeners[eventName].length,
+    dispatchEvent: function (type, data) {
         var listeners = _currentListeners[type] || [];
         var length = listeners.length, l, c, s;
         for (var i = 0; i < length; i++) {
@@ -34,12 +35,5 @@ export default !function () {
             s = l.scope;
             c.call(s, data);
         }
-    };
-    return {
-        addEventListener,
-        removeEventListener,
-        removeAllEventListeners:eventName=> _currentListeners[eventName] = null,
-        hasEventListener: eventName => _currentListeners[eventName] && _currentListeners[eventName].length,
-        dispatchEvent
-    };
-}()
+    }
+}

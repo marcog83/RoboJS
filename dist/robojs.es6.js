@@ -18,30 +18,26 @@
     return newDeps;
   }
 
-  function register(name, deps, declare, execute) {
-    if (typeof name != 'string')
-      throw "System.register provided no module name";
+  function register(name, deps, declare) {
+    if (arguments.length === 4)
+      return registerDynamic.apply(this, arguments);
+    doRegister(name, {
+      declarative: true,
+      deps: deps,
+      declare: declare
+    });
+  }
 
-    var entry;
+  function registerDynamic(name, deps, executingRequire, execute) {
+    doRegister(name, {
+      declarative: false,
+      deps: deps,
+      executingRequire: executingRequire,
+      execute: execute
+    });
+  }
 
-    // dynamic
-    if (typeof declare == 'boolean') {
-      entry = {
-        declarative: false,
-        deps: deps,
-        execute: execute,
-        executingRequire: declare
-      };
-    }
-    else {
-      // ES6 declarative
-      entry = {
-        declarative: true,
-        deps: deps,
-        declare: declare
-      };
-    }
-
+  function doRegister(name, entry) {
     entry.name = name;
 
     // we never overwrite an existing define
@@ -55,6 +51,7 @@
     // entry.normalizedDeps = entry.deps.map(normalize);
     entry.normalizedDeps = entry.deps;
   }
+
 
   function buildGroups(entry, groups) {
     groups[entry.groupIndex] = groups[entry.groupIndex] || [];
@@ -157,9 +154,6 @@
     module.setters = declaration.setters;
     module.execute = declaration.execute;
 
-    if (!module.setters || !module.execute)
-      throw new TypeError("Invalid System.register form for " + entry.name);
-
     // now link all the module dependencies
     for (var i = 0, l = entry.normalizedDeps.length; i < l; i++) {
       var depName = entry.normalizedDeps[i];
@@ -173,10 +167,7 @@
         depExports = depModule.exports;
       }
       else if (depEntry && !depEntry.declarative) {
-        if (depEntry.module.exports && depEntry.module.exports.__esModule)
-          depExports = depEntry.module.exports;
-        else
-          depExports = { 'default': depEntry.module.exports, __useDefault: true };
+        depExports = depEntry.esModule;
       }
       // in the module registry
       else if (!depEntry) {
@@ -261,6 +252,23 @@
 
     if (output)
       module.exports = output;
+
+    // create the esModule object, which allows ES6 named imports of dynamics
+    exports = module.exports;
+ 
+    if (exports && exports.__esModule) {
+      entry.esModule = exports;
+    }
+    else {
+      var hasOwnProperty = exports && exports.hasOwnProperty;
+      entry.esModule = {};
+      for (var p in exports) {
+        if (!hasOwnProperty || exports.hasOwnProperty(p))
+          entry.esModule[p] = exports[p];
+      }
+      entry.esModule['default'] = exports;
+      entry.esModule.__useDefault = true;
+    }
   }
 
   /*
@@ -322,46 +330,56 @@
     // remove from the registry
     defined[name] = undefined;
 
-    var module = entry.module.exports;
-
-    if (!module || !entry.declarative && module.__esModule !== true)
-      module = { 'default': module, __useDefault: true };
-
     // return the defined module object
-    return modules[name] = module;
+    return modules[name] = entry.declarative ? entry.module.exports : entry.esModule;
   };
 
   return function(mains, declare) {
+    return function(formatDetect) {
+      formatDetect(function() {
+        var System = {
+          _nodeRequire: typeof require != 'undefined' && require.resolve && typeof process != 'undefined' && require,
+          register: register,
+          registerDynamic: registerDynamic,
+          get: load, 
+          set: function(name, module) {
+            modules[name] = module; 
+          },
+          newModule: function(module) {
+            return module;
+          },
+          'import': function() {
+            throw new TypeError('Dynamic System.import calls are not supported for SFX bundles. Rather use a named bundle.');
+          }
+        };
+        System.set('@empty', {});
 
-    var System;
-    var System = {
-      register: register, 
-      get: load, 
-      set: function(name, module) {
-        modules[name] = module; 
-      },
-      newModule: function(module) {
-        return module;
-      },
-      global: global 
+        declare(System);
+
+        var firstLoad = load(mains[0]);
+        if (mains.length > 1)
+          for (var i = 1; i < mains.length; i++)
+            load(mains[i]);
+
+        return firstLoad;
+      });
     };
-    System.set('@empty', {});
+  };
 
-    declare(System);
-
-    for (var i = 0; i < mains.length; i++)
-      load(mains[i]);
-  }
-
-})(typeof window != 'undefined' ? window : global)
+})(typeof self != 'undefined' ? self : global)
 /* (['mainModule'], function(System) {
   System.register(...);
-}); */
+})
+(function(factory) {
+  if (typeof define && define.amd)
+    define(factory);
+  // etc UMD / module pattern
+})*/
 
-(['src/org/core/robojs'], function(System) {
+(['src/org/core/robojs.js'], function(System) {
 
-System.register("npm:process@0.10.1/browser", [], true, function(require, exports, module) {
-  var global = System.global,
+System.registerDynamic("npm:process@0.10.1/browser.js", [], true, function(require, exports, module) {
+  var global = this,
       __define = global.define;
   global.define = undefined;
   var process = module.exports = {};
@@ -369,7 +387,7 @@ System.register("npm:process@0.10.1/browser", [], true, function(require, export
   var draining = false;
   function drainQueue() {
     if (draining) {
-      return ;
+      return;
     }
     draining = true;
     var currentQueue;
@@ -421,35 +439,35 @@ System.register("npm:process@0.10.1/browser", [], true, function(require, export
   return module.exports;
 });
 
-System.register("npm:process@0.10.1", ["npm:process@0.10.1/browser"], true, function(require, exports, module) {
-  var global = System.global,
+System.registerDynamic("npm:process@0.10.1.js", ["npm:process@0.10.1/browser.js"], true, function(require, exports, module) {
+  var global = this,
       __define = global.define;
   global.define = undefined;
-  module.exports = require("npm:process@0.10.1/browser");
+  module.exports = require("npm:process@0.10.1/browser.js");
   global.define = __define;
   return module.exports;
 });
 
-System.register("github:jspm/nodelibs-process@0.1.1/index", ["npm:process@0.10.1"], true, function(require, exports, module) {
-  var global = System.global,
+System.registerDynamic("github:jspm/nodelibs-process@0.1.1/index.js", ["npm:process@0.10.1.js"], true, function(require, exports, module) {
+  var global = this,
       __define = global.define;
   global.define = undefined;
-  module.exports = System._nodeRequire ? process : require("npm:process@0.10.1");
+  module.exports = System._nodeRequire ? process : require("npm:process@0.10.1.js");
   global.define = __define;
   return module.exports;
 });
 
-System.register("github:jspm/nodelibs-process@0.1.1", ["github:jspm/nodelibs-process@0.1.1/index"], true, function(require, exports, module) {
-  var global = System.global,
+System.registerDynamic("github:jspm/nodelibs-process@0.1.1.js", ["github:jspm/nodelibs-process@0.1.1/index.js"], true, function(require, exports, module) {
+  var global = this,
       __define = global.define;
   global.define = undefined;
-  module.exports = require("github:jspm/nodelibs-process@0.1.1/index");
+  module.exports = require("github:jspm/nodelibs-process@0.1.1/index.js");
   global.define = __define;
   return module.exports;
 });
 
-System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.1.1"], true, function(require, exports, module) {
-  var global = System.global,
+System.registerDynamic("npm:ramda@0.15.1/dist/ramda.js", ["github:jspm/nodelibs-process@0.1.1.js"], true, function(require, exports, module) {
+  var global = this,
       __define = global.define;
   global.define = undefined;
   "format cjs";
@@ -457,25 +475,27 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
     ;
     (function() {
       'use strict';
-      var __ = {ramda: 'placeholder'};
+      var __ = {'@@functional/placeholder': true};
       var _add = function _add(a, b) {
         return a + b;
       };
       var _all = function _all(fn, list) {
-        var idx = -1;
-        while (++idx < list.length) {
+        var idx = 0;
+        while (idx < list.length) {
           if (!fn(list[idx])) {
             return false;
           }
+          idx += 1;
         }
         return true;
       };
       var _any = function _any(fn, list) {
-        var idx = -1;
-        while (++idx < list.length) {
+        var idx = 0;
+        while (idx < list.length) {
           if (fn(list[idx])) {
             return true;
           }
+          idx += 1;
         }
         return false;
       };
@@ -507,23 +527,26 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         var len1 = set1.length;
         var len2 = set2.length;
         var result = [];
-        idx = -1;
-        while (++idx < len1) {
+        idx = 0;
+        while (idx < len1) {
           result[result.length] = set1[idx];
+          idx += 1;
         }
-        idx = -1;
-        while (++idx < len2) {
+        idx = 0;
+        while (idx < len2) {
           result[result.length] = set2[idx];
+          idx += 1;
         }
         return result;
       };
       var _containsWith = function _containsWith(pred, x, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length;
-        while (++idx < len) {
+        while (idx < len) {
           if (pred(x, list[idx])) {
             return true;
           }
+          idx += 1;
         }
         return false;
       };
@@ -535,18 +558,19 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var _createMaxMinBy = function _createMaxMinBy(comparator) {
         return function(valueComputer, list) {
           if (!(list && list.length > 0)) {
-            return ;
+            return;
           }
-          var idx = 0;
+          var idx = 1;
           var winner = list[idx];
           var computedWinner = valueComputer(winner);
           var computedCurrent;
-          while (++idx < list.length) {
+          while (idx < list.length) {
             computedCurrent = valueComputer(list[idx]);
             if (comparator(computedCurrent, computedWinner)) {
               computedWinner = computedCurrent;
               winner = list[idx];
             }
+            idx += 1;
           }
           return winner;
         };
@@ -555,7 +579,7 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return function f1(a) {
           if (arguments.length === 0) {
             return f1;
-          } else if (a === __) {
+          } else if (a != null && a['@@functional/placeholder'] === true) {
             return f1;
           } else {
             return fn(a);
@@ -567,19 +591,19 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           var n = arguments.length;
           if (n === 0) {
             return f2;
-          } else if (n === 1 && a === __) {
+          } else if (n === 1 && a != null && a['@@functional/placeholder'] === true) {
             return f2;
           } else if (n === 1) {
             return _curry1(function(b) {
               return fn(a, b);
             });
-          } else if (n === 2 && a === __ && b === __) {
+          } else if (n === 2 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
             return f2;
-          } else if (n === 2 && a === __) {
+          } else if (n === 2 && a != null && a['@@functional/placeholder'] === true) {
             return _curry1(function(a) {
               return fn(a, b);
             });
-          } else if (n === 2 && b === __) {
+          } else if (n === 2 && b != null && b['@@functional/placeholder'] === true) {
             return _curry1(function(b) {
               return fn(a, b);
             });
@@ -593,19 +617,19 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           var n = arguments.length;
           if (n === 0) {
             return f3;
-          } else if (n === 1 && a === __) {
+          } else if (n === 1 && a != null && a['@@functional/placeholder'] === true) {
             return f3;
           } else if (n === 1) {
             return _curry2(function(b, c) {
               return fn(a, b, c);
             });
-          } else if (n === 2 && a === __ && b === __) {
+          } else if (n === 2 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
             return f3;
-          } else if (n === 2 && a === __) {
+          } else if (n === 2 && a != null && a['@@functional/placeholder'] === true) {
             return _curry2(function(a, c) {
               return fn(a, b, c);
             });
-          } else if (n === 2 && b === __) {
+          } else if (n === 2 && b != null && b['@@functional/placeholder'] === true) {
             return _curry2(function(b, c) {
               return fn(a, b, c);
             });
@@ -613,29 +637,29 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
             return _curry1(function(c) {
               return fn(a, b, c);
             });
-          } else if (n === 3 && a === __ && b === __ && c === __) {
+          } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
             return f3;
-          } else if (n === 3 && a === __ && b === __) {
+          } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
             return _curry2(function(a, b) {
               return fn(a, b, c);
             });
-          } else if (n === 3 && a === __ && c === __) {
+          } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
             return _curry2(function(a, c) {
               return fn(a, b, c);
             });
-          } else if (n === 3 && b === __ && c === __) {
+          } else if (n === 3 && b != null && b['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
             return _curry2(function(b, c) {
               return fn(a, b, c);
             });
-          } else if (n === 3 && a === __) {
+          } else if (n === 3 && a != null && a['@@functional/placeholder'] === true) {
             return _curry1(function(a) {
               return fn(a, b, c);
             });
-          } else if (n === 3 && b === __) {
+          } else if (n === 3 && b != null && b['@@functional/placeholder'] === true) {
             return _curry1(function(b) {
               return fn(a, b, c);
             });
-          } else if (n === 3 && c === __) {
+          } else if (n === 3 && c != null && c['@@functional/placeholder'] === true) {
             return _curry1(function(c) {
               return fn(a, b, c);
             });
@@ -653,35 +677,51 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         }
         return result;
       };
+      var _eq = function _eq(x, y) {
+        if (x === y) {
+          return x !== 0 || 1 / x === 1 / y;
+        } else {
+          return x !== x && y !== y;
+        }
+      };
       var _filter = function _filter(fn, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length,
             result = [];
-        while (++idx < len) {
+        while (idx < len) {
           if (fn(list[idx])) {
             result[result.length] = list[idx];
           }
+          idx += 1;
         }
         return result;
       };
       var _filterIndexed = function _filterIndexed(fn, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length,
             result = [];
-        while (++idx < len) {
+        while (idx < len) {
           if (fn(list[idx], idx, list)) {
             result[result.length] = list[idx];
           }
+          idx += 1;
         }
         return result;
       };
       var _forEach = function _forEach(fn, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length;
-        while (++idx < len) {
+        while (idx < len) {
           fn(list[idx]);
+          idx += 1;
         }
         return list;
+      };
+      var _forceReduced = function _forceReduced(x) {
+        return {
+          '@@transducer/value': x,
+          '@@transducer/reduced': true
+        };
       };
       var _functionsWith = function _functionsWith(fn) {
         return function(obj) {
@@ -699,20 +739,6 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var _identity = function _identity(x) {
         return x;
       };
-      var _indexOf = function _indexOf(list, item, from) {
-        var idx = 0,
-            len = list.length;
-        if (typeof from == 'number') {
-          idx = from < 0 ? Math.max(0, len + from) : from;
-        }
-        while (idx < len) {
-          if (list[idx] === item) {
-            return idx;
-          }
-          ++idx;
-        }
-        return -1;
-      };
       var _isArray = Array.isArray || function _isArray(val) {
         return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
       };
@@ -723,29 +749,18 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return value != null && value === Object(value) && typeof value.then === 'function';
       };
       var _isTransformer = function _isTransformer(obj) {
-        return typeof obj.step === 'function' && typeof obj.result === 'function';
-      };
-      var _lastIndexOf = function _lastIndexOf(list, item, from) {
-        var idx = list.length;
-        if (typeof from == 'number') {
-          idx = from < 0 ? idx + from + 1 : Math.min(idx, from + 1);
-        }
-        while (--idx >= 0) {
-          if (list[idx] === item) {
-            return idx;
-          }
-        }
-        return -1;
+        return typeof obj['@@transducer/step'] === 'function';
       };
       var _lt = function _lt(a, b) {
         return a < b;
       };
       var _map = function _map(fn, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length,
             result = [];
-        while (++idx < len) {
+        while (idx < len) {
           result[idx] = fn(list[idx]);
+          idx += 1;
         }
         return result;
       };
@@ -756,8 +771,8 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return n < 0 ? list[list.length + n] : list[n];
       };
       var _path = function _path(paths, obj) {
-        if (obj == null || paths.length === 0) {
-          return ;
+        if (obj == null) {
+          return;
         } else {
           var val = obj;
           for (var idx = 0,
@@ -770,44 +785,14 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var _prepend = function _prepend(el, list) {
         return _concat([el], list);
       };
-      var _reduced = function(x) {
-        return x && x.__transducers_reduced__ ? x : {
-          value: x,
-          __transducers_reduced__: true
-        };
+      var _quote = function _quote(s) {
+        return '"' + s.replace(/"/g, '\\"') + '"';
       };
-      var _satisfiesSpec = function _satisfiesSpec(spec, parsedSpec, testObj) {
-        if (spec === testObj) {
-          return true;
-        }
-        if (testObj == null) {
-          return false;
-        }
-        parsedSpec.fn = parsedSpec.fn || [];
-        parsedSpec.obj = parsedSpec.obj || [];
-        var key,
-            val,
-            idx = -1,
-            fnLen = parsedSpec.fn.length,
-            j = -1,
-            objLen = parsedSpec.obj.length;
-        while (++idx < fnLen) {
-          key = parsedSpec.fn[idx];
-          val = spec[key];
-          if (!(key in testObj)) {
-            return false;
-          }
-          if (!val(testObj[key], testObj)) {
-            return false;
-          }
-        }
-        while (++j < objLen) {
-          key = parsedSpec.obj[j];
-          if (spec[key] !== testObj[key]) {
-            return false;
-          }
-        }
-        return true;
+      var _reduced = function _reduced(x) {
+        return x && x['@@transducer/reduced'] ? x : {
+          '@@transducer/value': x,
+          '@@transducer/reduced': true
+        };
       };
       var _slice = function _slice(args, from, to) {
         switch (arguments.length) {
@@ -816,126 +801,70 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           case 2:
             return _slice(args, from, args.length);
           default:
-            var length = Math.max(0, to - from),
-                list = [],
-                idx = -1;
-            while (++idx < length) {
+            var list = [];
+            var idx = 0;
+            var len = Math.max(0, Math.min(args.length, to) - from);
+            while (idx < len) {
               list[idx] = args[from + idx];
+              idx += 1;
             }
             return list;
         }
       };
-      var _xall = function() {
-        function XAll(f, xf) {
+      var _toISOString = function() {
+        var pad = function pad(n) {
+          return (n < 10 ? '0' : '') + n;
+        };
+        return typeof Date.prototype.toISOString === 'function' ? function _toISOString(d) {
+          return d.toISOString();
+        } : function _toISOString(d) {
+          return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()) + ':' + pad(d.getUTCSeconds()) + '.' + (d.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) + 'Z';
+        };
+      }();
+      var _xdropRepeatsWith = function() {
+        function XDropRepeatsWith(pred, xf) {
           this.xf = xf;
-          this.f = f;
-          this.all = true;
+          this.pred = pred;
+          this.lastValue = undefined;
+          this.seenFirstValue = false;
         }
-        XAll.prototype.init = function() {
-          return this.xf.init();
+        XDropRepeatsWith.prototype['@@transducer/init'] = function() {
+          return this.xf['@@transducer/init']();
         };
-        XAll.prototype.result = function(result) {
-          if (this.all) {
-            result = this.xf.step(result, true);
+        XDropRepeatsWith.prototype['@@transducer/result'] = function(result) {
+          return this.xf['@@transducer/result'](result);
+        };
+        XDropRepeatsWith.prototype['@@transducer/step'] = function(result, input) {
+          var sameAsLast = false;
+          if (!this.seenFirstValue) {
+            this.seenFirstValue = true;
+          } else if (this.pred(this.lastValue, input)) {
+            sameAsLast = true;
           }
-          return this.xf.result(result);
+          this.lastValue = input;
+          return sameAsLast ? result : this.xf['@@transducer/step'](result, input);
         };
-        XAll.prototype.step = function(result, input) {
-          if (!this.f(input)) {
-            this.all = false;
-            result = _reduced(this.xf.step(result, false));
-          }
-          return result;
-        };
-        return _curry2(function _xall(f, xf) {
-          return new XAll(f, xf);
+        return _curry2(function _xdropRepeatsWith(pred, xf) {
+          return new XDropRepeatsWith(pred, xf);
         });
       }();
-      var _xany = function() {
-        function XAny(f, xf) {
-          this.xf = xf;
-          this.f = f;
-          this.any = false;
+      var _xfBase = {
+        init: function() {
+          return this.xf['@@transducer/init']();
+        },
+        result: function(result) {
+          return this.xf['@@transducer/result'](result);
         }
-        XAny.prototype.init = function() {
-          return this.xf.init();
-        };
-        XAny.prototype.result = function(result) {
-          if (!this.any) {
-            result = this.xf.step(result, false);
-          }
-          return this.xf.result(result);
-        };
-        XAny.prototype.step = function(result, input) {
-          if (this.f(input)) {
-            this.any = true;
-            result = _reduced(this.xf.step(result, true));
-          }
-          return result;
-        };
-        return _curry2(function _xany(f, xf) {
-          return new XAny(f, xf);
-        });
-      }();
-      var _xdrop = function() {
-        function XDrop(n, xf) {
-          this.xf = xf;
-          this.n = n;
-        }
-        XDrop.prototype.init = function() {
-          return this.xf.init();
-        };
-        XDrop.prototype.result = function(result) {
-          return this.xf.result(result);
-        };
-        XDrop.prototype.step = function(result, input) {
-          if (this.n > 0) {
-            this.n -= 1;
-            return result;
-          }
-          return this.xf.step(result, input);
-        };
-        return _curry2(function _xdrop(n, xf) {
-          return new XDrop(n, xf);
-        });
-      }();
-      var _xdropWhile = function() {
-        function XDropWhile(f, xf) {
-          this.xf = xf;
-          this.f = f;
-        }
-        XDropWhile.prototype.init = function() {
-          return this.xf.init();
-        };
-        XDropWhile.prototype.result = function(result) {
-          return this.xf.result(result);
-        };
-        XDropWhile.prototype.step = function(result, input) {
-          if (this.f) {
-            if (this.f(input)) {
-              return result;
-            }
-            this.f = null;
-          }
-          return this.xf.step(result, input);
-        };
-        return _curry2(function _xdropWhile(f, xf) {
-          return new XDropWhile(f, xf);
-        });
-      }();
+      };
       var _xfilter = function() {
         function XFilter(f, xf) {
           this.xf = xf;
           this.f = f;
         }
-        XFilter.prototype.init = function() {
-          return this.xf.init();
-        };
-        XFilter.prototype.result = function(result) {
-          return this.xf.result(result);
-        };
-        XFilter.prototype.step = function(result, input) {
-          return this.f(input) ? this.xf.step(result, input) : result;
+        XFilter.prototype['@@transducer/init'] = _xfBase.init;
+        XFilter.prototype['@@transducer/result'] = _xfBase.result;
+        XFilter.prototype['@@transducer/step'] = function(result, input) {
+          return this.f(input) ? this.xf['@@transducer/step'](result, input) : result;
         };
         return _curry2(function _xfilter(f, xf) {
           return new XFilter(f, xf);
@@ -947,19 +876,17 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           this.f = f;
           this.found = false;
         }
-        XFind.prototype.init = function() {
-          return this.xf.init();
-        };
-        XFind.prototype.result = function(result) {
+        XFind.prototype['@@transducer/init'] = _xfBase.init;
+        XFind.prototype['@@transducer/result'] = function(result) {
           if (!this.found) {
-            result = this.xf.step(result, void 0);
+            result = this.xf['@@transducer/step'](result, void 0);
           }
-          return this.xf.result(result);
+          return this.xf['@@transducer/result'](result);
         };
-        XFind.prototype.step = function(result, input) {
+        XFind.prototype['@@transducer/step'] = function(result, input) {
           if (this.f(input)) {
             this.found = true;
-            result = _reduced(this.xf.step(result, input));
+            result = _reduced(this.xf['@@transducer/step'](result, input));
           }
           return result;
         };
@@ -974,20 +901,18 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           this.idx = -1;
           this.found = false;
         }
-        XFindIndex.prototype.init = function() {
-          return this.xf.init();
-        };
-        XFindIndex.prototype.result = function(result) {
+        XFindIndex.prototype['@@transducer/init'] = _xfBase.init;
+        XFindIndex.prototype['@@transducer/result'] = function(result) {
           if (!this.found) {
-            result = this.xf.step(result, -1);
+            result = this.xf['@@transducer/step'](result, -1);
           }
-          return this.xf.result(result);
+          return this.xf['@@transducer/result'](result);
         };
-        XFindIndex.prototype.step = function(result, input) {
+        XFindIndex.prototype['@@transducer/step'] = function(result, input) {
           this.idx += 1;
           if (this.f(input)) {
             this.found = true;
-            result = _reduced(this.xf.step(result, this.idx));
+            result = _reduced(this.xf['@@transducer/step'](result, this.idx));
           }
           return result;
         };
@@ -1000,13 +925,11 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           this.xf = xf;
           this.f = f;
         }
-        XFindLast.prototype.init = function() {
-          return this.xf.init();
+        XFindLast.prototype['@@transducer/init'] = _xfBase.init;
+        XFindLast.prototype['@@transducer/result'] = function(result) {
+          return this.xf['@@transducer/result'](this.xf['@@transducer/step'](result, this.last));
         };
-        XFindLast.prototype.result = function(result) {
-          return this.xf.result(this.xf.step(result, this.last));
-        };
-        XFindLast.prototype.step = function(result, input) {
+        XFindLast.prototype['@@transducer/step'] = function(result, input) {
           if (this.f(input)) {
             this.last = input;
           }
@@ -1023,13 +946,11 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           this.idx = -1;
           this.lastIdx = -1;
         }
-        XFindLastIndex.prototype.init = function() {
-          return this.xf.init();
+        XFindLastIndex.prototype['@@transducer/init'] = _xfBase.init;
+        XFindLastIndex.prototype['@@transducer/result'] = function(result) {
+          return this.xf['@@transducer/result'](this.xf['@@transducer/step'](result, this.lastIdx));
         };
-        XFindLastIndex.prototype.result = function(result) {
-          return this.xf.result(this.xf.step(result, this.lastIdx));
-        };
-        XFindLastIndex.prototype.step = function(result, input) {
+        XFindLastIndex.prototype['@@transducer/step'] = function(result, input) {
           this.idx += 1;
           if (this.f(input)) {
             this.lastIdx = this.idx;
@@ -1045,14 +966,10 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           this.xf = xf;
           this.f = f;
         }
-        XMap.prototype.init = function() {
-          return this.xf.init();
-        };
-        XMap.prototype.result = function(result) {
-          return this.xf.result(result);
-        };
-        XMap.prototype.step = function(result, input) {
-          return this.xf.step(result, this.f(input));
+        XMap.prototype['@@transducer/init'] = _xfBase.init;
+        XMap.prototype['@@transducer/result'] = _xfBase.result;
+        XMap.prototype['@@transducer/step'] = function(result, input) {
+          return this.xf['@@transducer/step'](result, this.f(input));
         };
         return _curry2(function _xmap(f, xf) {
           return new XMap(f, xf);
@@ -1063,15 +980,11 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           this.xf = xf;
           this.n = n;
         }
-        XTake.prototype.init = function() {
-          return this.xf.init();
-        };
-        XTake.prototype.result = function(result) {
-          return this.xf.result(result);
-        };
-        XTake.prototype.step = function(result, input) {
+        XTake.prototype['@@transducer/init'] = _xfBase.init;
+        XTake.prototype['@@transducer/result'] = _xfBase.result;
+        XTake.prototype['@@transducer/step'] = function(result, input) {
           this.n -= 1;
-          return this.n === 0 ? _reduced(this.xf.step(result, input)) : this.xf.step(result, input);
+          return this.n === 0 ? _reduced(this.xf['@@transducer/step'](result, input)) : this.xf['@@transducer/step'](result, input);
         };
         return _curry2(function _xtake(n, xf) {
           return new XTake(n, xf);
@@ -1082,14 +995,10 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           this.xf = xf;
           this.f = f;
         }
-        XTakeWhile.prototype.init = function() {
-          return this.xf.init();
-        };
-        XTakeWhile.prototype.result = function(result) {
-          return this.xf.result(result);
-        };
-        XTakeWhile.prototype.step = function(result, input) {
-          return this.f(input) ? this.xf.step(result, input) : _reduced(result);
+        XTakeWhile.prototype['@@transducer/init'] = _xfBase.init;
+        XTakeWhile.prototype['@@transducer/result'] = _xfBase.result;
+        XTakeWhile.prototype['@@transducer/step'] = function(result, input) {
+          return this.f(input) ? this.xf['@@transducer/step'](result, input) : _reduced(result);
         };
         return _curry2(function _xtakeWhile(f, xf) {
           return new XTakeWhile(f, xf);
@@ -1099,13 +1008,13 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         function XWrap(fn) {
           this.f = fn;
         }
-        XWrap.prototype.init = function() {
+        XWrap.prototype['@@transducer/init'] = function() {
           throw new Error('init not implemented on XWrap');
         };
-        XWrap.prototype.result = function(acc) {
+        XWrap.prototype['@@transducer/result'] = function(acc) {
           return acc;
         };
-        XWrap.prototype.step = function(acc, x) {
+        XWrap.prototype['@@transducer/step'] = function(acc, x) {
           return this.f(acc, x);
         };
         return function _xwrap(fn) {
@@ -1113,20 +1022,28 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         };
       }();
       var add = _curry2(_add);
+      var adjust = _curry3(function(fn, idx, list) {
+        if (idx >= list.length || idx < -list.length) {
+          return list;
+        }
+        var start = idx < 0 ? list.length : 0;
+        var _idx = start + idx;
+        var _list = _concat(list);
+        _list[_idx] = fn(list[_idx]);
+        return _list;
+      });
       var always = _curry1(function always(val) {
         return function() {
           return val;
         };
       });
-      var and = _curry2(function and(a, b) {
-        return a && b;
-      });
       var aperture = _curry2(function aperture(n, list) {
-        var idx = -1;
+        var idx = 0;
         var limit = list.length - (n - 1);
         var acc = new Array(limit >= 0 ? limit : 0);
-        while (++idx < limit) {
+        while (idx < limit) {
           acc[idx] = _slice(list, idx, idx + n);
+          idx += 1;
         }
         return acc;
       });
@@ -1141,52 +1058,42 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
             };
           case 1:
             return function(a0) {
-              void a0;
               return fn.apply(this, arguments);
             };
           case 2:
             return function(a0, a1) {
-              void a1;
               return fn.apply(this, arguments);
             };
           case 3:
             return function(a0, a1, a2) {
-              void a2;
               return fn.apply(this, arguments);
             };
           case 4:
             return function(a0, a1, a2, a3) {
-              void a3;
               return fn.apply(this, arguments);
             };
           case 5:
             return function(a0, a1, a2, a3, a4) {
-              void a4;
               return fn.apply(this, arguments);
             };
           case 6:
             return function(a0, a1, a2, a3, a4, a5) {
-              void a5;
               return fn.apply(this, arguments);
             };
           case 7:
             return function(a0, a1, a2, a3, a4, a5, a6) {
-              void a6;
               return fn.apply(this, arguments);
             };
           case 8:
             return function(a0, a1, a2, a3, a4, a5, a6, a7) {
-              void a7;
               return fn.apply(this, arguments);
             };
           case 9:
             return function(a0, a1, a2, a3, a4, a5, a6, a7, a8) {
-              void a8;
               return fn.apply(this, arguments);
             };
           case 10:
             return function(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
-              void a9;
               return fn.apply(this, arguments);
             };
           default:
@@ -1213,11 +1120,12 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var cond = function cond() {
         var pairs = arguments;
         return function() {
-          var idx = -1;
-          while (++idx < pairs.length) {
+          var idx = 0;
+          while (idx < pairs.length) {
             if (pairs[idx][0].apply(this, arguments)) {
               return pairs[idx][1].apply(this, arguments);
             }
+            idx += 1;
           }
         };
       };
@@ -1225,54 +1133,29 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var countBy = _curry2(function countBy(fn, list) {
         var counts = {};
         var len = list.length;
-        var idx = -1;
-        while (++idx < len) {
+        var idx = 0;
+        while (idx < len) {
           var key = fn(list[idx]);
           counts[key] = (_has(key, counts) ? counts[key] : 0) + 1;
+          idx += 1;
         }
         return counts;
       });
       var createMapEntry = _curry2(_createMapEntry);
-      var curryN = _curry2(function curryN(length, fn) {
-        return arity(length, function() {
-          var n = arguments.length;
-          var shortfall = length - n;
-          var idx = n;
-          while (--idx >= 0) {
-            if (arguments[idx] === __) {
-              shortfall += 1;
-            }
-          }
-          if (shortfall <= 0) {
-            return fn.apply(this, arguments);
-          } else {
-            var initialArgs = _slice(arguments);
-            return curryN(shortfall, function() {
-              var currentArgs = _slice(arguments);
-              var combinedArgs = [];
-              var idx = -1;
-              while (++idx < n) {
-                var val = initialArgs[idx];
-                combinedArgs[idx] = val === __ ? currentArgs.shift() : val;
-              }
-              return fn.apply(this, combinedArgs.concat(currentArgs));
-            });
-          }
-        });
-      });
       var dec = add(-1);
       var defaultTo = _curry2(function defaultTo(d, v) {
         return v == null ? d : v;
       });
       var differenceWith = _curry3(function differenceWith(pred, first, second) {
         var out = [];
-        var idx = -1;
+        var idx = 0;
         var firstLen = first.length;
         var containsPred = containsWith(pred);
-        while (++idx < firstLen) {
+        while (idx < firstLen) {
           if (!containsPred(first[idx], second) && !containsPred(first[idx], out)) {
-            out[idx] = first[idx];
+            out[out.length] = first[idx];
           }
+          idx += 1;
         }
         return out;
       });
@@ -1285,34 +1168,38 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           return f.apply(this, arguments) || g.apply(this, arguments);
         };
       });
-      var eq = _curry2(function eq(a, b) {
-        if (a === 0) {
-          return 1 / a === 1 / b;
-        } else {
-          return a === b || a !== a && b !== b;
+      var eq = _curry2(_eq);
+      var evolve = _curry2(function evolve(transformations, object) {
+        var transformation,
+            key,
+            type,
+            result = {};
+        for (key in object) {
+          transformation = transformations[key];
+          type = typeof transformation;
+          result[key] = type === 'function' ? transformation(object[key]) : type === 'object' ? evolve(transformations[key], object[key]) : object[key];
         }
-      });
-      var eqProps = _curry3(function eqProps(prop, obj1, obj2) {
-        return obj1[prop] === obj2[prop];
+        return result;
       });
       var filterIndexed = _curry2(_filterIndexed);
-      var forEach = _curry2(_forEach);
       var forEachIndexed = _curry2(function forEachIndexed(fn, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length;
-        while (++idx < len) {
+        while (idx < len) {
           fn(list[idx], idx, list);
+          idx += 1;
         }
         return list;
       });
       var fromPairs = _curry1(function fromPairs(pairs) {
-        var idx = -1,
+        var idx = 0,
             len = pairs.length,
             out = {};
-        while (++idx < len) {
+        while (idx < len) {
           if (_isArray(pairs[idx]) && pairs[idx].length) {
             out[pairs[idx][0]] = pairs[idx][1];
           }
+          idx += 1;
         }
         return out;
       });
@@ -1324,16 +1211,15 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var hasIn = _curry2(function(prop, obj) {
         return prop in obj;
       });
+      var identical = _curry2(function identical(a, b) {
+        if (a === b) {
+          return a !== 0 || 1 / a === 1 / b;
+        } else {
+          return a !== a && b !== b;
+        }
+      });
       var identity = _curry1(_identity);
-      var ifElse = _curry3(function ifElse(condition, onTrue, onFalse) {
-        return curryN(Math.max(condition.length, onTrue.length, onFalse.length), function _ifElse() {
-          return condition.apply(this, arguments) ? onTrue.apply(this, arguments) : onFalse.apply(this, arguments);
-        });
-      });
       var inc = add(1);
-      var indexOf = _curry2(function indexOf(target, list) {
-        return _indexOf(list, target);
-      });
       var insertAll = _curry3(function insertAll(idx, elts, list) {
         idx = idx < list.length && idx >= 0 ? idx : list.length;
         return _concat(_concat(_slice(list, 0, idx), elts), _slice(list, idx));
@@ -1368,22 +1254,49 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var isEmpty = _curry1(function isEmpty(list) {
         return Object(list).length === 0;
       });
-      var isNaN = _curry1(function isNaN(x) {
-        return typeof x === 'number' && x !== x;
-      });
       var isNil = _curry1(function isNil(x) {
         return x == null;
       });
-      var isSet = _curry1(function isSet(list) {
-        var len = list.length;
-        var idx = -1;
-        while (++idx < len) {
-          if (_indexOf(list, list[idx], idx + 1) >= 0) {
-            return false;
+      var keys = function() {
+        var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
+        var nonEnumerableProps = ['constructor', 'valueOf', 'isPrototypeOf', 'toString', 'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
+        var contains = function contains(list, item) {
+          var idx = 0;
+          while (idx < list.length) {
+            if (list[idx] === item) {
+              return true;
+            }
+            idx += 1;
           }
-        }
-        return true;
-      });
+          return false;
+        };
+        return typeof Object.keys === 'function' ? _curry1(function keys(obj) {
+          return Object(obj) !== obj ? [] : Object.keys(obj);
+        }) : _curry1(function keys(obj) {
+          if (Object(obj) !== obj) {
+            return [];
+          }
+          var prop,
+              ks = [],
+              nIdx;
+          for (prop in obj) {
+            if (_has(prop, obj)) {
+              ks[ks.length] = prop;
+            }
+          }
+          if (hasEnumBug) {
+            nIdx = nonEnumerableProps.length - 1;
+            while (nIdx >= 0) {
+              prop = nonEnumerableProps[nIdx];
+              if (_has(prop, obj) && !contains(ks, prop)) {
+                ks[ks.length] = prop;
+              }
+              nIdx -= 1;
+            }
+          }
+          return ks;
+        });
+      }();
       var keysIn = _curry1(function keysIn(obj) {
         var prop,
             ks = [];
@@ -1391,9 +1304,6 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           ks[ks.length] = prop;
         }
         return ks;
-      });
-      var lastIndexOf = _curry2(function lastIndexOf(target, list) {
-        return _lastIndexOf(list, target);
       });
       var length = _curry1(function length(list) {
         return list != null && is(Number, list.length) ? list.length : NaN;
@@ -1423,32 +1333,35 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return a <= b;
       });
       var mapAccum = _curry3(function mapAccum(fn, acc, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length,
             result = [],
             tuple = [acc];
-        while (++idx < len) {
+        while (idx < len) {
           tuple = fn(tuple[0], list[idx]);
           result[idx] = tuple[1];
+          idx += 1;
         }
         return [tuple[0], result];
       });
       var mapAccumRight = _curry3(function mapAccumRight(fn, acc, list) {
-        var idx = list.length,
+        var idx = list.length - 1,
             result = [],
             tuple = [acc];
-        while (--idx >= 0) {
+        while (idx >= 0) {
           tuple = fn(tuple[0], list[idx]);
           result[idx] = tuple[1];
+          idx -= 1;
         }
         return [tuple[0], result];
       });
       var mapIndexed = _curry2(function mapIndexed(fn, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length,
             result = [];
-        while (++idx < len) {
+        while (idx < len) {
           result[idx] = fn(list[idx], idx, list);
+          idx += 1;
         }
         return result;
       });
@@ -1462,24 +1375,6 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return (m % p + p) % p;
       });
       var maxBy = _curry2(_createMaxMinBy(_gt));
-      var memoize = function() {
-        var repr = function(x) {
-          return x + '::' + Object.prototype.toString.call(x);
-        };
-        var serialize = function(args) {
-          return args.length + ':{' + _map(repr, args).join(',') + '}';
-        };
-        return _curry1(function memoize(fn) {
-          var cache = {};
-          return function() {
-            var key = serialize(arguments);
-            if (!_has(key, cache)) {
-              cache[key] = fn.apply(this, arguments);
-            }
-            return cache[key];
-          };
-        });
-      }();
       var minBy = _curry2(_createMaxMinBy(_lt));
       var modulo = _curry2(function modulo(a, b) {
         return a % b;
@@ -1556,15 +1451,6 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var of = _curry1(function of(x) {
         return [x];
       });
-      var omit = _curry2(function omit(names, obj) {
-        var result = {};
-        for (var prop in obj) {
-          if (_indexOf(names, prop) < 0) {
-            result[prop] = obj[prop];
-          }
-        }
-        return result;
-      });
       var once = _curry1(function once(fn) {
         var called = false,
             result;
@@ -1577,29 +1463,26 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           return result;
         };
       });
-      var or = _curry2(function or(a, b) {
-        return a || b;
-      });
       var path = _curry2(_path);
-      var pathEq = _curry3(function pathEq(path, val, obj) {
-        return _path(path, obj) === val;
-      });
       var pick = _curry2(function pick(names, obj) {
         var result = {};
-        for (var prop in obj) {
-          if (_indexOf(names, prop) >= 0) {
-            result[prop] = obj[prop];
+        var idx = 0;
+        while (idx < names.length) {
+          if (names[idx] in obj) {
+            result[names[idx]] = obj[names[idx]];
           }
+          idx += 1;
         }
         return result;
       });
       var pickAll = _curry2(function pickAll(names, obj) {
         var result = {};
-        var idx = -1;
+        var idx = 0;
         var len = names.length;
-        while (++idx < len) {
+        while (idx < len) {
           var name = names[idx];
           result[name] = obj[name];
+          idx += 1;
         }
         return result;
       });
@@ -1616,18 +1499,16 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var prop = _curry2(function prop(p, obj) {
         return obj[p];
       });
-      var propEq = _curry3(function propEq(name, val, obj) {
-        return obj[name] === val;
-      });
       var propOr = _curry3(function propOr(val, p, obj) {
-        return _has(p, obj) ? obj[p] : val;
+        return obj != null && _has(p, obj) ? obj[p] : val;
       });
       var props = _curry2(function props(ps, obj) {
         var len = ps.length;
         var out = [];
-        var idx = -1;
-        while (++idx < len) {
+        var idx = 0;
+        while (idx < len) {
           out[idx] = obj[ps[idx]];
+          idx += 1;
         }
         return out;
       });
@@ -1641,27 +1522,31 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return result;
       });
       var reduceIndexed = _curry3(function reduceIndexed(fn, acc, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length;
-        while (++idx < len) {
+        while (idx < len) {
           acc = fn(acc, list[idx], idx, list);
+          idx += 1;
         }
         return acc;
       });
       var reduceRight = _curry3(function reduceRight(fn, acc, list) {
-        var idx = list.length;
-        while (--idx >= 0) {
+        var idx = list.length - 1;
+        while (idx >= 0) {
           acc = fn(acc, list[idx]);
+          idx -= 1;
         }
         return acc;
       });
       var reduceRightIndexed = _curry3(function reduceRightIndexed(fn, acc, list) {
-        var idx = list.length;
-        while (--idx >= 0) {
+        var idx = list.length - 1;
+        while (idx >= 0) {
           acc = fn(acc, list[idx], idx, list);
+          idx -= 1;
         }
         return acc;
       });
+      var reduced = _curry1(_reduced);
       var rejectIndexed = _curry2(function rejectIndexed(fn, list) {
         return _filterIndexed(_complement(fn), list);
       });
@@ -1676,13 +1561,17 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       });
       var scan = _curry3(function scan(fn, acc, list) {
         var idx = 0,
-            len = list.length + 1,
+            len = list.length,
             result = [acc];
-        while (++idx < len) {
-          acc = fn(acc, list[idx - 1]);
-          result[idx] = acc;
+        while (idx < len) {
+          acc = fn(acc, list[idx]);
+          result[idx + 1] = acc;
+          idx += 1;
         }
         return result;
+      });
+      var sort = _curry2(function sort(comparator, list) {
+        return _slice(list).sort(comparator);
       });
       var sortBy = _curry2(function sortBy(fn, list) {
         return _slice(list).sort(function(a, b) {
@@ -1770,17 +1659,32 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return result;
       });
       var uniqWith = _curry2(function uniqWith(pred, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length;
         var result = [],
             item;
-        while (++idx < len) {
+        while (idx < len) {
           item = list[idx];
           if (!_containsWith(pred, item, result)) {
             result[result.length] = item;
           }
+          idx += 1;
         }
         return result;
+      });
+      var update = _curry3(function(idx, x, list) {
+        return adjust(always(x), idx, list);
+      });
+      var values = _curry1(function values(obj) {
+        var props = keys(obj);
+        var len = props.length;
+        var vals = [];
+        var idx = 0;
+        while (idx < len) {
+          vals[idx] = obj[props[idx]];
+          idx += 1;
+        }
+        return vals;
       });
       var valuesIn = _curry1(function valuesIn(obj) {
         var prop,
@@ -1790,49 +1694,57 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         }
         return vs;
       });
-      var wrap = _curry2(function wrap(fn, wrapper) {
-        return curryN(fn.length, function() {
-          return wrapper.apply(this, _concat([fn], arguments));
-        });
+      var where = _curry2(function where(spec, testObj) {
+        for (var prop in spec) {
+          if (_has(prop, spec) && !spec[prop](testObj[prop])) {
+            return false;
+          }
+        }
+        return true;
       });
       var xprod = _curry2(function xprod(a, b) {
-        var idx = -1;
+        var idx = 0;
         var ilen = a.length;
         var j;
         var jlen = b.length;
         var result = [];
-        while (++idx < ilen) {
-          j = -1;
-          while (++j < jlen) {
+        while (idx < ilen) {
+          j = 0;
+          while (j < jlen) {
             result[result.length] = [a[idx], b[j]];
+            j += 1;
           }
+          idx += 1;
         }
         return result;
       });
       var zip = _curry2(function zip(a, b) {
         var rv = [];
-        var idx = -1;
+        var idx = 0;
         var len = Math.min(a.length, b.length);
-        while (++idx < len) {
+        while (idx < len) {
           rv[idx] = [a[idx], b[idx]];
+          idx += 1;
         }
         return rv;
       });
       var zipObj = _curry2(function zipObj(keys, values) {
-        var idx = -1,
+        var idx = 0,
             len = keys.length,
             out = {};
-        while (++idx < len) {
+        while (idx < len) {
           out[keys[idx]] = values[idx];
+          idx += 1;
         }
         return out;
       });
       var zipWith = _curry3(function zipWith(fn, a, b) {
         var rv = [],
-            idx = -1,
+            idx = 0,
             len = Math.min(a.length, b.length);
-        while (++idx < len) {
+        while (idx < len) {
           rv[idx] = fn(a[idx], b[idx]);
+          idx += 1;
         }
         return rv;
       });
@@ -1854,11 +1766,12 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var _baseCopy = function _baseCopy(value, refFrom, refTo) {
         var copy = function copy(copiedValue) {
           var len = refFrom.length;
-          var idx = -1;
-          while (++idx < len) {
+          var idx = 0;
+          while (idx < len) {
             if (value === refFrom[idx]) {
               return refTo[idx];
             }
+            idx += 1;
           }
           refFrom[idx + 1] = value;
           refTo[idx + 1] = copiedValue;
@@ -1890,6 +1803,12 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           return _isArray(obj) || typeof obj[methodname] !== 'function' ? fn.apply(this, arguments) : obj[methodname].apply(obj, _slice(arguments, 0, length - 1));
         };
       };
+      var _composeL = function _composeL(innerLens, outerLens) {
+        return lens(_compose(innerLens, outerLens), function(x, source) {
+          var newInnerValue = innerLens.set(x, outerLens(source));
+          return outerLens.set(newInnerValue, source);
+        });
+      };
       var _composeP = function _composeP(f, g) {
         return function() {
           var context = this;
@@ -1903,30 +1822,29 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           }
         };
       };
-      var _contains = function _contains(a, list) {
-        return _indexOf(list, a) >= 0;
-      };
       var _createComposer = function _createComposer(composeFunction) {
         return function() {
-          var idx = arguments.length - 1;
-          var fn = arguments[idx];
+          var fn = arguments[arguments.length - 1];
           var length = fn.length;
-          while (--idx >= 0) {
+          var idx = arguments.length - 2;
+          while (idx >= 0) {
             fn = composeFunction(arguments[idx], fn);
+            idx -= 1;
           }
           return arity(length, fn);
         };
       };
       var _createMaxMin = function _createMaxMin(comparator, initialVal) {
         return _curry1(function(list) {
-          var idx = -1,
+          var idx = 0,
               winner = initialVal,
               computed;
-          while (++idx < list.length) {
+          while (idx < list.length) {
             computed = +list[idx];
             if (comparator(computed, winner)) {
               winner = computed;
             }
+            idx += 1;
           }
           return winner;
         });
@@ -1937,6 +1855,29 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           return arity(Math.max(0, fn.length - args.length), function() {
             return fn.apply(this, concat(args, arguments));
           });
+        };
+      };
+      var _curryN = function _curryN(length, received, fn) {
+        return function() {
+          var combined = [];
+          var argsIdx = 0;
+          var left = length;
+          var combinedIdx = 0;
+          while (combinedIdx < received.length || argsIdx < arguments.length) {
+            var result;
+            if (combinedIdx < received.length && (received[combinedIdx] == null || received[combinedIdx]['@@functional/placeholder'] !== true || argsIdx >= arguments.length)) {
+              result = received[combinedIdx];
+            } else {
+              result = arguments[argsIdx];
+              argsIdx += 1;
+            }
+            combined[combinedIdx] = result;
+            if (result == null || result['@@functional/placeholder'] !== true) {
+              left -= 1;
+            }
+            combinedIdx += 1;
+          }
+          return left <= 0 ? fn.apply(this, combined) : arity(left, _curryN(length, combined, fn));
         };
       };
       var _dispatchable = function _dispatchable(methodname, xf, fn) {
@@ -1971,6 +1912,61 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
             return obj[head] == null ? obj : _assoc(head, _dissocPath(tail, obj[head]), obj);
         }
       };
+      var _equals = function _eqDeep(a, b, stackA, stackB) {
+        var typeA = type(a);
+        if (typeA !== type(b)) {
+          return false;
+        }
+        if (typeA === 'Boolean' || typeA === 'Number' || typeA === 'String') {
+          return typeof a === 'object' ? typeof b === 'object' && identical(a.valueOf(), b.valueOf()) : identical(a, b);
+        }
+        if (identical(a, b)) {
+          return true;
+        }
+        if (typeA === 'RegExp') {
+          return a.source === b.source && a.global === b.global && a.ignoreCase === b.ignoreCase && a.multiline === b.multiline && a.sticky === b.sticky && a.unicode === b.unicode;
+        }
+        if (Object(a) === a) {
+          if (typeA === 'Date' && a.getTime() !== b.getTime()) {
+            return false;
+          }
+          var keysA = keys(a);
+          if (keysA.length !== keys(b).length) {
+            return false;
+          }
+          var idx = stackA.length - 1;
+          while (idx >= 0) {
+            if (stackA[idx] === a) {
+              return stackB[idx] === b;
+            }
+            idx -= 1;
+          }
+          stackA[stackA.length] = a;
+          stackB[stackB.length] = b;
+          idx = keysA.length - 1;
+          while (idx >= 0) {
+            var key = keysA[idx];
+            if (!_has(key, b) || !_eqDeep(b[key], a[key], stackA, stackB)) {
+              return false;
+            }
+            idx -= 1;
+          }
+          stackA.pop();
+          stackB.pop();
+          return true;
+        }
+        return false;
+      };
+      var _extend = function _extend(destination, other) {
+        var props = keys(other);
+        var idx = 0,
+            length = props.length;
+        while (idx < length) {
+          destination[props[idx]] = other[props[idx]];
+          idx += 1;
+        }
+        return destination;
+      };
       var _hasMethod = function _hasMethod(methodName, obj) {
         return obj != null && !_isArray(obj) && typeof obj[methodName] === 'function';
       };
@@ -1978,55 +1974,55 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return function flatt(list) {
           var value,
               result = [],
-              idx = -1,
+              idx = 0,
               j,
               ilen = list.length,
               jlen;
-          while (++idx < ilen) {
+          while (idx < ilen) {
             if (isArrayLike(list[idx])) {
               value = recursive ? flatt(list[idx]) : list[idx];
-              j = -1;
+              j = 0;
               jlen = value.length;
-              while (++j < jlen) {
+              while (j < jlen) {
                 result[result.length] = value[j];
+                j += 1;
               }
             } else {
               result[result.length] = list[idx];
             }
+            idx += 1;
           }
           return result;
         };
       };
-      var _pluck = function _pluck(p, list) {
-        return _map(prop(p), list);
-      };
       var _reduce = function() {
         function _arrayReduce(xf, acc, list) {
-          var idx = -1,
+          var idx = 0,
               len = list.length;
-          while (++idx < len) {
-            acc = xf.step(acc, list[idx]);
-            if (acc && acc.__transducers_reduced__) {
-              acc = acc.value;
+          while (idx < len) {
+            acc = xf['@@transducer/step'](acc, list[idx]);
+            if (acc && acc['@@transducer/reduced']) {
+              acc = acc['@@transducer/value'];
               break;
             }
+            idx += 1;
           }
-          return xf.result(acc);
+          return xf['@@transducer/result'](acc);
         }
         function _iterableReduce(xf, acc, iter) {
           var step = iter.next();
           while (!step.done) {
-            acc = xf.step(acc, step.value);
-            if (acc && acc.__transducers_reduced__) {
-              acc = acc.value;
+            acc = xf['@@transducer/step'](acc, step.value);
+            if (acc && acc['@@transducer/reduced']) {
+              acc = acc['@@transducer/value'];
               break;
             }
             step = iter.next();
           }
-          return xf.result(acc);
+          return xf['@@transducer/result'](acc);
         }
         function _methodReduce(xf, acc, obj) {
-          return xf.result(obj.reduce(bind(xf.step, xf), acc));
+          return xf['@@transducer/result'](obj.reduce(bind(xf['@@transducer/step'], xf), acc));
         }
         var symIterator = typeof Symbol !== 'undefined' ? Symbol.iterator : '@@iterator';
         return function _reduce(fn, acc, list) {
@@ -2048,29 +2044,113 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           throw new TypeError('reduce: list must be array or iterable');
         };
       }();
+      var _xall = function() {
+        function XAll(f, xf) {
+          this.xf = xf;
+          this.f = f;
+          this.all = true;
+        }
+        XAll.prototype['@@transducer/init'] = _xfBase.init;
+        XAll.prototype['@@transducer/result'] = function(result) {
+          if (this.all) {
+            result = this.xf['@@transducer/step'](result, true);
+          }
+          return this.xf['@@transducer/result'](result);
+        };
+        XAll.prototype['@@transducer/step'] = function(result, input) {
+          if (!this.f(input)) {
+            this.all = false;
+            result = _reduced(this.xf['@@transducer/step'](result, false));
+          }
+          return result;
+        };
+        return _curry2(function _xall(f, xf) {
+          return new XAll(f, xf);
+        });
+      }();
+      var _xany = function() {
+        function XAny(f, xf) {
+          this.xf = xf;
+          this.f = f;
+          this.any = false;
+        }
+        XAny.prototype['@@transducer/init'] = _xfBase.init;
+        XAny.prototype['@@transducer/result'] = function(result) {
+          if (!this.any) {
+            result = this.xf['@@transducer/step'](result, false);
+          }
+          return this.xf['@@transducer/result'](result);
+        };
+        XAny.prototype['@@transducer/step'] = function(result, input) {
+          if (this.f(input)) {
+            this.any = true;
+            result = _reduced(this.xf['@@transducer/step'](result, true));
+          }
+          return result;
+        };
+        return _curry2(function _xany(f, xf) {
+          return new XAny(f, xf);
+        });
+      }();
+      var _xdrop = function() {
+        function XDrop(n, xf) {
+          this.xf = xf;
+          this.n = n;
+        }
+        XDrop.prototype['@@transducer/init'] = _xfBase.init;
+        XDrop.prototype['@@transducer/result'] = _xfBase.result;
+        XDrop.prototype.step = function(result, input) {
+          if (this.n > 0) {
+            this.n -= 1;
+            return result;
+          }
+          return this.xf['@@transducer/step'](result, input);
+        };
+        return _curry2(function _xdrop(n, xf) {
+          return new XDrop(n, xf);
+        });
+      }();
+      var _xdropWhile = function() {
+        function XDropWhile(f, xf) {
+          this.xf = xf;
+          this.f = f;
+        }
+        XDropWhile.prototype['@@transducer/init'] = _xfBase.init;
+        XDropWhile.prototype['@@transducer/result'] = _xfBase.result;
+        XDropWhile.prototype['@@transducer/step'] = function(result, input) {
+          if (this.f) {
+            if (this.f(input)) {
+              return result;
+            }
+            this.f = null;
+          }
+          return this.xf['@@transducer/step'](result, input);
+        };
+        return _curry2(function _xdropWhile(f, xf) {
+          return new XDropWhile(f, xf);
+        });
+      }();
       var _xgroupBy = function() {
         function XGroupBy(f, xf) {
           this.xf = xf;
           this.f = f;
           this.inputs = {};
         }
-        XGroupBy.prototype.init = function() {
-          return this.xf.init();
-        };
-        XGroupBy.prototype.result = function(result) {
+        XGroupBy.prototype['@@transducer/init'] = _xfBase.init;
+        XGroupBy.prototype['@@transducer/result'] = function(result) {
           var key;
           for (key in this.inputs) {
             if (_has(key, this.inputs)) {
-              result = this.xf.step(result, this.inputs[key]);
-              if (result.__transducers_reduced__) {
-                result = result.value;
+              result = this.xf['@@transducer/step'](result, this.inputs[key]);
+              if (result['@@transducer/reduced']) {
+                result = result['@@transducer/value'];
                 break;
               }
             }
           }
-          return this.xf.result(result);
+          return this.xf['@@transducer/result'](result);
         };
-        XGroupBy.prototype.step = function(result, input) {
+        XGroupBy.prototype['@@transducer/step'] = function(result, input) {
           var key = this.f(input);
           this.inputs[key] = this.inputs[key] || [key, []];
           this.inputs[key][1] = _append(input, this.inputs[key][1]);
@@ -2081,6 +2161,9 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         });
       }();
       var all = _curry2(_dispatchable('all', _xall, _all));
+      var and = _curry2(function and(a, b) {
+        return _hasMethod('and', a) ? a.and(b) : a && b;
+      });
       var any = _curry2(_dispatchable('any', _xany, _any));
       var append = _curry2(_append);
       var assocPath = _curry3(_assocPath);
@@ -2091,6 +2174,15 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         return _baseCopy(value, [], []);
       });
       var compose = _createComposer(_compose);
+      var composeL = function() {
+        var fn = arguments[arguments.length - 1];
+        var idx = arguments.length - 2;
+        while (idx >= 0) {
+          fn = _composeL(arguments[idx], fn);
+          idx -= 1;
+        }
+        return fn;
+      };
       var composeP = _createComposer(_composeP);
       var concat = _curry2(function(set1, set2) {
         if (_isArray(set2)) {
@@ -2101,92 +2193,70 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           throw new TypeError('can\'t concat ' + typeof set1);
         }
       });
-      var contains = _curry2(_contains);
-      var converge = curryN(3, function(after) {
-        var fns = _slice(arguments, 1);
-        return function() {
-          var args = arguments;
-          return after.apply(this, _map(function(fn) {
-            return fn.apply(this, args);
-          }, fns));
-        };
-      });
-      var curry = _curry1(function curry(fn) {
-        return curryN(fn.length, fn);
-      });
-      var difference = _curry2(function difference(first, second) {
-        var out = [];
-        var idx = -1;
-        var firstLen = first.length;
-        while (++idx < firstLen) {
-          if (!_contains(first[idx], second) && !_contains(first[idx], out)) {
-            out[out.length] = first[idx];
-          }
-        }
-        return out;
+      var curryN = _curry2(function curryN(length, fn) {
+        return arity(length, _curryN(length, [], fn));
       });
       var dissocPath = _curry2(_dissocPath);
-      var drop = _curry2(_dispatchable('drop', _xdrop, function drop(n, list) {
-        return n < list.length ? _slice(list, n) : [];
-      }));
       var dropWhile = _curry2(_dispatchable('dropWhile', _xdropWhile, function dropWhile(pred, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length;
-        while (++idx < len && pred(list[idx])) {}
+        while (idx < len && pred(list[idx])) {
+          idx += 1;
+        }
         return _slice(list, idx);
       }));
       var empty = _curry1(function empty(x) {
         return _hasMethod('empty', x) ? x.empty() : [];
       });
+      var equals = _curry2(function equals(a, b) {
+        return _hasMethod('equals', a) ? a.equals(b) : _hasMethod('equals', b) ? b.equals(a) : _equals(a, b, [], []);
+      });
       var filter = _curry2(_dispatchable('filter', _xfilter, _filter));
       var find = _curry2(_dispatchable('find', _xfind, function find(fn, list) {
-        var idx = -1;
+        var idx = 0;
         var len = list.length;
-        while (++idx < len) {
+        while (idx < len) {
           if (fn(list[idx])) {
             return list[idx];
           }
+          idx += 1;
         }
       }));
       var findIndex = _curry2(_dispatchable('findIndex', _xfindIndex, function findIndex(fn, list) {
-        var idx = -1;
+        var idx = 0;
         var len = list.length;
-        while (++idx < len) {
+        while (idx < len) {
           if (fn(list[idx])) {
             return idx;
           }
+          idx += 1;
         }
         return -1;
       }));
       var findLast = _curry2(_dispatchable('findLast', _xfindLast, function findLast(fn, list) {
-        var idx = list.length;
-        while (--idx >= 0) {
+        var idx = list.length - 1;
+        while (idx >= 0) {
           if (fn(list[idx])) {
             return list[idx];
           }
+          idx -= 1;
         }
       }));
       var findLastIndex = _curry2(_dispatchable('findLastIndex', _xfindLastIndex, function findLastIndex(fn, list) {
-        var idx = list.length;
-        while (--idx >= 0) {
+        var idx = list.length - 1;
+        while (idx >= 0) {
           if (fn(list[idx])) {
             return idx;
           }
+          idx -= 1;
         }
         return -1;
       }));
       var flatten = _curry1(_makeFlat(true));
-      var flip = _curry1(function flip(fn) {
-        return curry(function(a, b) {
-          var args = _slice(arguments);
-          args[0] = b;
-          args[1] = a;
-          return fn.apply(this, args);
-        });
+      var forEach = _curry2(function forEach(fn, list) {
+        return _hasMethod('forEach', list) ? list.forEach(fn) : _forEach(fn, list);
       });
-      var func = curry(function func(funcName, obj) {
-        return obj[funcName].apply(obj, _slice(arguments, 2));
-      });
+      var functions = _curry1(_functionsWith(keys));
       var functionsIn = _curry1(_functionsWith(keysIn));
       var groupBy = _curry2(_dispatchable('groupBy', _xgroupBy, function groupBy(fn, list) {
         return _reduce(function(acc, elt) {
@@ -2196,64 +2266,80 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         }, {}, list);
       }));
       var head = nth(0);
+      var ifElse = _curry3(function ifElse(condition, onTrue, onFalse) {
+        return curryN(Math.max(condition.length, onTrue.length, onFalse.length), function _ifElse() {
+          return condition.apply(this, arguments) ? onTrue.apply(this, arguments) : onFalse.apply(this, arguments);
+        });
+      });
       var insert = _curry3(function insert(idx, elt, list) {
         idx = idx < list.length && idx >= 0 ? idx : list.length;
         return _concat(_append(elt, _slice(list, 0, idx)), _slice(list, idx));
       });
       var intersectionWith = _curry3(function intersectionWith(pred, list1, list2) {
         var results = [],
-            idx = -1;
-        while (++idx < list1.length) {
+            idx = 0;
+        while (idx < list1.length) {
           if (_containsWith(pred, list1[idx], list2)) {
             results[results.length] = list1[idx];
           }
+          idx += 1;
         }
         return uniqWith(pred, results);
       });
-      var invoke = curry(function invoke(methodName, args, obj) {
-        return obj[methodName].apply(obj, args);
+      var intersperse = _curry2(_checkForMethod('intersperse', function intersperse(separator, list) {
+        var out = [];
+        var idx = 0;
+        var length = list.length;
+        while (idx < length) {
+          if (idx === length - 1) {
+            out.push(list[idx]);
+          } else {
+            out.push(list[idx], separator);
+          }
+          idx += 1;
+        }
+        return out;
+      }));
+      var invert = _curry1(function invert(obj) {
+        var props = keys(obj);
+        var len = props.length;
+        var idx = 0;
+        var out = {};
+        while (idx < len) {
+          var key = props[idx];
+          var val = obj[key];
+          var list = _has(val, out) ? out[val] : out[val] = [];
+          list[list.length] = key;
+          idx += 1;
+        }
+        return out;
       });
-      var invoker = curry(function invoker(arity, method) {
-        var initialArgs = _slice(arguments, 2);
-        var len = arity - initialArgs.length;
-        return curryN(len + 1, function() {
-          var target = arguments[len];
-          var args = initialArgs.concat(_slice(arguments, 0, len));
-          return target[method].apply(target, args);
+      var invertObj = _curry1(function invertObj(obj) {
+        var props = keys(obj);
+        var len = props.length;
+        var idx = 0;
+        var out = {};
+        while (idx < len) {
+          var key = props[idx];
+          out[obj[key]] = key;
+          idx += 1;
+        }
+        return out;
+      });
+      var invoker = _curry2(function invoker(arity, method) {
+        return curryN(arity + 1, function() {
+          var target = arguments[arity];
+          return target[method].apply(target, _slice(arguments, 0, arity));
         });
       });
       var join = invoker(1, 'join');
-      var keys = function() {
-        var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
-        var nonEnumerableProps = ['constructor', 'valueOf', 'isPrototypeOf', 'toString', 'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
-        return _curry1(function keys(obj) {
-          if (Object(obj) !== obj) {
-            return [];
-          }
-          if (Object.keys) {
-            return Object.keys(obj);
-          }
-          var prop,
-              ks = [],
-              nIdx;
-          for (prop in obj) {
-            if (_has(prop, obj)) {
-              ks[ks.length] = prop;
-            }
-          }
-          if (hasEnumBug) {
-            nIdx = nonEnumerableProps.length;
-            while (--nIdx >= 0) {
-              prop = nonEnumerableProps[nIdx];
-              if (_has(prop, obj) && !_contains(prop, ks)) {
-                ks[ks.length] = prop;
-              }
-            }
-          }
-          return ks;
-        });
-      }();
       var last = nth(-1);
+      var lensIndex = _curry1(function lensIndex(n) {
+        return lens(nth(n), update(n));
+      });
+      var lensProp = _curry1(function lensProp(k) {
+        return lens(prop(k), assoc(k));
+      });
       var map = _curry2(_dispatchable('map', _xmap, _map));
       var mapObj = _curry2(function mapObject(fn, obj) {
         return _reduce(function(acc, key) {
@@ -2269,10 +2355,14 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       });
       var match = invoker(1, 'match');
       var max = _createMaxMin(_gt, -Infinity);
+      var merge = _curry2(function merge(a, b) {
+        return _extend(_extend({}, a), b);
+      });
       var min = _createMaxMin(_lt, Infinity);
       var none = _curry2(_complement(_dispatchable('any', _xany, _any)));
-      var partial = curry(_createPartialApplicator(_concat));
-      var partialRight = curry(_createPartialApplicator(flip(_concat)));
+      var or = _curry2(function or(a, b) {
+        return _hasMethod('or', a) ? a.or(b) : a || b;
+      });
       var partition = _curry2(function partition(pred, list) {
         return _reduce(function(acc, elt) {
           var xs = acc[pred(elt) ? 0 : 1];
@@ -2280,13 +2370,19 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           return acc;
         }, [[], []], list);
       });
+      var pathEq = _curry3(function pathEq(path, val, obj) {
+        return equals(_path(path, obj), val);
+      });
       var pipe = function pipe() {
         return compose.apply(this, reverse(arguments));
       };
+      var pipeL = compose(apply(composeL), unapply(reverse));
       var pipeP = function pipeP() {
         return composeP.apply(this, reverse(arguments));
       };
-      var pluck = _curry2(_pluck);
+      var propEq = _curry3(function propEq(name, val, obj) {
+        return equals(obj[name], val);
+      });
       var reduce = _curry3(_reduce);
       var reject = _curry2(function reject(fn, list) {
         return filter(_complement(fn), list);
@@ -2297,9 +2393,6 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var slice = _curry3(_checkForMethod('slice', function slice(fromIndex, toIndex, xs) {
         return Array.prototype.slice.call(xs, fromIndex, toIndex);
       }));
-      var sort = _curry2(function sort(comparator, list) {
-        return clone(list).sort(comparator);
-      });
       var split = invoker(1, 'split');
       var substring = slice;
       var substringFrom = substring(__, Infinity);
@@ -2308,13 +2401,15 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var tail = _checkForMethod('tail', function(list) {
         return _slice(list, 1);
       });
-      var take = _curry2(_dispatchable('take', _xtake, function take(n, list) {
-        return _slice(list, 0, Math.min(n, list.length));
+      var take = _curry2(_dispatchable('take', _xtake, function take(n, xs) {
+        return slice(0, n < 0 ? Infinity : n, xs);
       }));
       var takeWhile = _curry2(_dispatchable('takeWhile', _xtakeWhile, function takeWhile(fn, list) {
-        var idx = -1,
+        var idx = 0,
             len = list.length;
-        while (++idx < len && fn(list[idx])) {}
+        while (idx < len && fn(list[idx])) {
+          idx += 1;
+        }
         return _slice(list, 0, idx);
       }));
       var toLower = invoker(0, 'toLowerCase');
@@ -2322,99 +2417,94 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
       var transduce = curryN(4, function(xf, fn, acc, list) {
         return _reduce(xf(typeof fn === 'function' ? _xwrap(fn) : fn), acc, list);
       });
+      var uncurryN = _curry2(function uncurryN(depth, fn) {
+        return curryN(depth, function() {
+          var currentDepth = 1;
+          var value = fn;
+          var idx = 0;
+          var endIdx;
+          while (currentDepth <= depth && typeof value === 'function') {
+            endIdx = currentDepth === depth ? arguments.length : idx + value.length;
+            value = value.apply(this, _slice(arguments, idx, endIdx));
+            currentDepth += 1;
+            idx = endIdx;
+          }
+          return value;
+        });
+      });
       var unionWith = _curry3(function unionWith(pred, list1, list2) {
         return uniqWith(pred, _concat(list1, list2));
       });
-      var uniq = _curry1(function uniq(list) {
-        var idx = -1,
-            len = list.length;
-        var result = [],
-            item;
-        while (++idx < len) {
-          item = list[idx];
-          if (!_contains(item, result)) {
-            result[result.length] = item;
-          }
-        }
-        return result;
-      });
+      var uniq = uniqWith(equals);
       var unnest = _curry1(_makeFlat(false));
-      var useWith = curry(function useWith(fn) {
-        var transformers = _slice(arguments, 1);
-        var tlen = transformers.length;
-        return curry(arity(tlen, function() {
-          var args = [],
-              idx = -1;
-          while (++idx < tlen) {
-            args[idx] = transformers[idx](arguments[idx]);
-          }
-          return fn.apply(this, args.concat(_slice(arguments, tlen)));
-        }));
+      var whereEq = _curry2(function whereEq(spec, testObj) {
+        return where(mapObj(equals, spec), testObj);
       });
-      var values = _curry1(function values(obj) {
-        var props = keys(obj);
-        var len = props.length;
-        var vals = [];
-        var idx = -1;
-        while (++idx < len) {
-          vals[idx] = obj[props[idx]];
-        }
-        return vals;
+      var wrap = _curry2(function wrap(fn, wrapper) {
+        return curryN(fn.length, function() {
+          return wrapper.apply(this, _concat([fn], arguments));
+        });
       });
-      var where = _curry2(function where(spec, testObj) {
-        var parsedSpec = groupBy(function(key) {
-          return typeof spec[key] === 'function' ? 'fn' : 'obj';
-        }, keys(spec));
-        return _satisfiesSpec(spec, parsedSpec, testObj);
+      var _chain = _curry2(function _chain(f, list) {
+        return unnest(map(f, list));
       });
-      var _eqDeep = function _eqDeep(a, b, stackA, stackB) {
-        var typeA = type(a);
-        if (typeA !== type(b)) {
-          return false;
-        }
-        if (eq(a, b)) {
-          return true;
-        }
-        if (typeA == 'RegExp') {
-          return a.source === b.source && a.global === b.global && a.ignoreCase === b.ignoreCase && a.multiline === b.multiline && a.sticky === b.sticky && a.unicode === b.unicode;
-        }
-        if (Object(a) === a) {
-          if (typeA === 'Date' && a.getTime() != b.getTime()) {
-            return false;
-          }
-          var keysA = keys(a);
-          if (keysA.length !== keys(b).length) {
-            return false;
-          }
-          var idx = stackA.length;
-          while (--idx >= 0) {
-            if (stackA[idx] === a) {
-              return stackB[idx] === b;
+      var _flatCat = function() {
+        var preservingReduced = function(xf) {
+          return {
+            '@@transducer/init': _xfBase.init,
+            '@@transducer/result': function(result) {
+              return xf['@@transducer/result'](result);
+            },
+            '@@transducer/step': function(result, input) {
+              var ret = xf['@@transducer/step'](result, input);
+              return ret['@@transducer/reduced'] ? _forceReduced(ret) : ret;
             }
-          }
-          stackA[stackA.length] = a;
-          stackB[stackB.length] = b;
-          idx = keysA.length;
-          while (--idx >= 0) {
-            var key = keysA[idx];
-            if (!_has(key, b) || !_eqDeep(b[key], a[key], stackA, stackB)) {
-              return false;
+          };
+        };
+        return function _xcat(xf) {
+          var rxf = preservingReduced(xf);
+          return {
+            '@@transducer/init': _xfBase.init,
+            '@@transducer/result': function(result) {
+              return rxf['@@transducer/result'](result);
+            },
+            '@@transducer/step': function(result, input) {
+              return !isArrayLike(input) ? _reduce(rxf, result, [input]) : _reduce(rxf, result, input);
             }
-          }
-          stackA.pop();
-          stackB.pop();
-          return true;
+          };
+        };
+      }();
+      var _indexOf = function _indexOf(list, item, from) {
+        var idx = 0,
+            len = list.length;
+        if (typeof from === 'number') {
+          idx = from < 0 ? Math.max(0, len + from) : from;
         }
-        return false;
+        while (idx < len) {
+          if (equals(list[idx], item)) {
+            return idx;
+          }
+          idx += 1;
+        }
+        return -1;
       };
-      var _extend = function _extend(destination, other) {
-        var props = keys(other);
-        var idx = -1,
-            length = props.length;
-        while (++idx < length) {
-          destination[props[idx]] = other[props[idx]];
+      var _lastIndexOf = function _lastIndexOf(list, item, from) {
+        var idx;
+        if (typeof from === 'number') {
+          idx = from < 0 ? list.length + from : Math.min(list.length - 1, from);
+        } else {
+          idx = list.length - 1;
         }
-        return destination;
+        while (idx >= 0) {
+          if (equals(list[idx], item)) {
+            return idx;
+          }
+          idx -= 1;
+        }
+        return -1;
+      };
+      var _pluck = function _pluck(p, list) {
+        return map(prop(p), list);
       };
       var _predicateWrap = function _predicateWrap(predPicker) {
         return function(preds) {
@@ -2427,27 +2517,217 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           return arguments.length > 1 ? predIterator.apply(null, _slice(arguments, 1)) : arity(max(_pluck('length', preds)), predIterator);
         };
       };
-      var allPass = curry(_predicateWrap(_all));
-      var anyPass = curry(_predicateWrap(_any));
+      var _stepCat = function() {
+        var _stepCatArray = {
+          '@@transducer/init': Array,
+          '@@transducer/step': function(xs, x) {
+            return _concat(xs, [x]);
+          },
+          '@@transducer/result': _identity
+        };
+        var _stepCatString = {
+          '@@transducer/init': String,
+          '@@transducer/step': _add,
+          '@@transducer/result': _identity
+        };
+        var _stepCatObject = {
+          '@@transducer/init': Object,
+          '@@transducer/step': function(result, input) {
+            return merge(result, isArrayLike(input) ? _createMapEntry(input[0], input[1]) : input);
+          },
+          '@@transducer/result': _identity
+        };
+        return function _stepCat(obj) {
+          if (_isTransformer(obj)) {
+            return obj;
+          }
+          if (isArrayLike(obj)) {
+            return _stepCatArray;
+          }
+          if (typeof obj === 'string') {
+            return _stepCatString;
+          }
+          if (typeof obj === 'object') {
+            return _stepCatObject;
+          }
+          throw new Error('Cannot create transformer for ' + obj);
+        };
+      }();
+      var _toString = function _toString(x, seen) {
+        var recur = function recur(y) {
+          var xs = seen.concat([x]);
+          return _indexOf(xs, y) >= 0 ? '<Circular>' : _toString(y, xs);
+        };
+        switch (Object.prototype.toString.call(x)) {
+          case '[object Arguments]':
+            return '(function() { return arguments; }(' + _map(recur, x).join(', ') + '))';
+          case '[object Array]':
+            return '[' + _map(recur, x).join(', ') + ']';
+          case '[object Boolean]':
+            return typeof x === 'object' ? 'new Boolean(' + recur(x.valueOf()) + ')' : x.toString();
+          case '[object Date]':
+            return 'new Date(' + _quote(_toISOString(x)) + ')';
+          case '[object Null]':
+            return 'null';
+          case '[object Number]':
+            return typeof x === 'object' ? 'new Number(' + recur(x.valueOf()) + ')' : 1 / x === -Infinity ? '-0' : x.toString(10);
+          case '[object String]':
+            return typeof x === 'object' ? 'new String(' + recur(x.valueOf()) + ')' : _quote(x);
+          case '[object Undefined]':
+            return 'undefined';
+          default:
+            return typeof x.constructor === 'function' && x.constructor.name !== 'Object' && typeof x.toString === 'function' && x.toString() !== '[object Object]' ? x.toString() : '{' + _map(function(k) {
+              return _quote(k) + ': ' + recur(x[k]);
+            }, keys(x).sort()).join(', ') + '}';
+        }
+      };
+      var _xchain = _curry2(function _xchain(f, xf) {
+        return map(f, _flatCat(xf));
+      });
+      var addIndex = _curry1(function(fn) {
+        return curryN(fn.length, function() {
+          var idx = 0;
+          var origFn = arguments[0];
+          var list = arguments[arguments.length - 1];
+          var indexedFn = function() {
+            var result = origFn.apply(this, _concat(arguments, [idx, list]));
+            idx += 1;
+            return result;
+          };
+          return fn.apply(this, _prepend(indexedFn, _slice(arguments, 1)));
+        });
+      });
       var ap = _curry2(function ap(fns, vs) {
         return _hasMethod('ap', fns) ? fns.ap(vs) : _reduce(function(acc, fn) {
           return _concat(acc, map(fn, vs));
         }, [], fns);
       });
-      var call = curry(function call(fn) {
-        return fn.apply(this, _slice(arguments, 1));
-      });
-      var chain = _curry2(_checkForMethod('chain', function chain(f, list) {
-        return unnest(_map(f, list));
-      }));
-      var charAt = invoker(1, 'charAt');
-      var charCodeAt = invoker(1, 'charCodeAt');
+      var chain = _curry2(_dispatchable('chain', _xchain, _chain));
       var commuteMap = _curry3(function commuteMap(fn, of, list) {
         function consF(acc, ftor) {
           return ap(map(append, fn(ftor)), acc);
         }
         return _reduce(consF, of([]), list);
       });
+      var curry = _curry1(function curry(fn) {
+        return curryN(fn.length, fn);
+      });
+      var drop = _curry2(_dispatchable('drop', _xdrop, function drop(n, xs) {
+        return slice(Math.max(0, n), Infinity, xs);
+      }));
+      var dropRepeatsWith = _curry2(_dispatchable('dropRepeatsWith', _xdropRepeatsWith, function dropRepeatsWith(pred, list) {
+        var result = [];
+        var idx = 1;
+        var len = list.length;
+        if (len !== 0) {
+          result[0] = list[0];
+          while (idx < len) {
+            if (!pred(last(result), list[idx])) {
+              result[result.length] = list[idx];
+            }
+            idx += 1;
+          }
+        }
+        return result;
+      }));
+      var eqDeep = equals;
+      var eqProps = _curry3(function eqProps(prop, obj1, obj2) {
+        return equals(obj1[prop], obj2[prop]);
+      });
+      var flip = _curry1(function flip(fn) {
+        return curry(function(a, b) {
+          var args = _slice(arguments);
+          args[0] = b;
+          args[1] = a;
+          return fn.apply(this, args);
+        });
+      });
+      var indexOf = _curry2(function indexOf(target, xs) {
+        return _hasMethod('indexOf', xs) ? xs.indexOf(target) : _indexOf(xs, target);
+      });
+      var init = slice(0, -1);
+      var into = _curry3(function into(acc, xf, list) {
+        return _isTransformer(acc) ? _reduce(xf(acc), acc['@@transducer/init'](), list) : _reduce(xf(_stepCat(acc)), acc, list);
+      });
+      var invoke = curry(function invoke(methodName, args, obj) {
+        return obj[methodName].apply(obj, args);
+      });
+      var isSet = _curry1(function isSet(list) {
+        var len = list.length;
+        var idx = 0;
+        while (idx < len) {
+          if (_indexOf(list, list[idx], idx + 1) >= 0) {
+            return false;
+          }
+          idx += 1;
+        }
+        return true;
+      });
+      var lastIndexOf = _curry2(function lastIndexOf(target, xs) {
+        return _hasMethod('lastIndexOf', xs) ? xs.lastIndexOf(target) : _lastIndexOf(xs, target);
+      });
+      var liftN = _curry2(function liftN(arity, fn) {
+        var lifted = curryN(arity, fn);
+        return curryN(arity, function() {
+          return _reduce(ap, map(lifted, arguments[0]), _slice(arguments, 1));
+        });
+      });
+      var mean = _curry1(function mean(list) {
+        return sum(list) / list.length;
+      });
+      var median = _curry1(function median(list) {
+        var len = list.length;
+        if (len === 0) {
+          return NaN;
+        }
+        var width = 2 - len % 2;
+        var idx = (len - width) / 2;
+        return mean(_slice(list).sort(function(a, b) {
+          return a < b ? -1 : a > b ? 1 : 0;
+        }).slice(idx, idx + width));
+      });
+      var mergeAll = _curry1(function mergeAll(list) {
+        return reduce(merge, {}, list);
+      });
+      var omit = _curry2(function omit(names, obj) {
+        var result = {};
+        for (var prop in obj) {
+          if (_indexOf(names, prop) < 0) {
+            result[prop] = obj[prop];
+          }
+        }
+        return result;
+      });
+      var partial = curry(_createPartialApplicator(_concat));
+      var partialRight = curry(_createPartialApplicator(flip(_concat)));
+      var pluck = _curry2(_pluck);
+      var product = reduce(_multiply, 1);
+      var toString = _curry1(function toString(val) {
+        return _toString(val, []);
+      });
+      var union = _curry2(compose(uniq, _concat));
+      var useWith = curry(function useWith(fn) {
+        var transformers = _slice(arguments, 1);
+        var tlen = transformers.length;
+        return curry(arity(tlen, function() {
+          var args = [],
+              idx = 0;
+          while (idx < tlen) {
+            args[idx] = transformers[idx](arguments[idx]);
+            idx += 1;
+          }
+          return fn.apply(this, args.concat(_slice(arguments, tlen)));
+        }));
+      });
+      var _contains = function _contains(a, list) {
+        return _indexOf(list, a) >= 0;
+      };
+      var allPass = curry(_predicateWrap(_all));
+      var anyPass = curry(_predicateWrap(_any));
+      var call = curry(function call(fn) {
+        return fn.apply(this, _slice(arguments, 1));
+      });
+      var commute = commuteMap(map(identity));
       var constructN = _curry2(function constructN(n, Fn) {
         if (n > 10) {
           throw new Error('Constructor with greater than ten arguments');
@@ -2482,109 +2762,57 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
           }
         }));
       });
-      var eqDeep = _curry2(function eqDeep(a, b) {
-        return _eqDeep(a, b, [], []);
+      var contains = _curry2(_contains);
+      var converge = curryN(3, function(after) {
+        var fns = _slice(arguments, 1);
+        return curryN(max(pluck('length', fns)), function() {
+          var args = arguments;
+          var context = this;
+          return after.apply(context, _map(function(fn) {
+            return fn.apply(context, args);
+          }, fns));
+        });
       });
-      var evolve = _curry2(function evolve(transformations, object) {
-        return _extend(_extend({}, object), mapObjIndexed(function(fn, key) {
-          return fn(object[key]);
-        }, transformations));
+      var difference = _curry2(function difference(first, second) {
+        var out = [];
+        var idx = 0;
+        var firstLen = first.length;
+        while (idx < firstLen) {
+          if (!_contains(first[idx], second) && !_contains(first[idx], out)) {
+            out[out.length] = first[idx];
+          }
+          idx += 1;
+        }
+        return out;
       });
-      var functions = _curry1(_functionsWith(keys));
-      var init = slice(0, -1);
+      var dropRepeats = _curry1(_dispatchable('dropRepeats', _xdropRepeatsWith(equals), dropRepeatsWith(equals)));
       var intersection = _curry2(function intersection(list1, list2) {
         return uniq(_filter(flip(_contains)(list1), list2));
       });
-      var invert = _curry1(function invert(obj) {
-        var props = keys(obj);
-        var len = props.length;
-        var idx = -1;
-        var out = {};
-        while (++idx < len) {
-          var key = props[idx];
-          var val = obj[key];
-          var list = _has(val, out) ? out[val] : out[val] = [];
-          list[list.length] = key;
-        }
-        return out;
-      });
-      var invertObj = _curry1(function invertObj(obj) {
-        var props = keys(obj);
-        var len = props.length;
-        var idx = -1;
-        var out = {};
-        while (++idx < len) {
-          var key = props[idx];
-          out[obj[key]] = key;
-        }
-        return out;
-      });
-      var liftN = _curry2(function liftN(arity, fn) {
-        var lifted = curryN(arity, fn);
-        return curryN(arity, function() {
-          return _reduce(ap, map(lifted, arguments[0]), _slice(arguments, 1));
-        });
-      });
-      var merge = _curry2(function merge(a, b) {
-        return _extend(_extend({}, a), b);
-      });
-      var mergeAll = _curry1(function mergeAll(list) {
-        return reduce(merge, {}, list);
-      });
-      var product = reduce(_multiply, 1);
-      var project = useWith(_map, pickAll, identity);
-      var union = _curry2(compose(uniq, _concat));
-      var _stepCat = function() {
-        var _stepCatArray = {
-          init: Array,
-          step: function(xs, x) {
-            return _concat(xs, [x]);
-          },
-          result: _identity
-        };
-        var _stepCatString = {
-          init: String,
-          step: _add,
-          result: _identity
-        };
-        var _stepCatObject = {
-          init: Object,
-          step: function(result, input) {
-            return merge(result, isArrayLike(input) ? _createMapEntry(input[0], input[1]) : input);
-          },
-          result: _identity
-        };
-        return function _stepCat(obj) {
-          if (_isTransformer(obj)) {
-            return obj;
-          }
-          if (isArrayLike(obj)) {
-            return _stepCatArray;
-          }
-          if (typeof obj === 'string') {
-            return _stepCatString;
-          }
-          if (typeof obj === 'object') {
-            return _stepCatObject;
-          }
-          throw new Error('Cannot create transformer for ' + obj);
-        };
-      }();
-      var commute = commuteMap(map(identity));
-      var construct = _curry1(function construct(Fn) {
-        return constructN(Fn.length, Fn);
-      });
-      var into = _curry3(function into(acc, xf, list) {
-        return _isTransformer(acc) ? _reduce(xf(acc), acc.init(), list) : _reduce(xf(_stepCat(acc)), acc, list);
-      });
       var lift = _curry1(function lift(fn) {
         return liftN(fn.length, fn);
+      });
+      var memoize = _curry1(function memoize(fn) {
+        var cache = {};
+        return function() {
+          var key = toString(arguments);
+          if (!_has(key, cache)) {
+            cache[key] = fn.apply(this, arguments);
+          }
+          return cache[key];
+        };
+      });
+      var project = useWith(_map, pickAll, identity);
+      var construct = _curry1(function construct(Fn) {
+        return constructN(Fn.length, Fn);
       });
       var R = {
         F: F,
         T: T,
         __: __,
         add: add,
+        addIndex: addIndex,
+        adjust: adjust,
         all: all,
         allPass: allPass,
         always: always,
@@ -2603,14 +2831,13 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         both: both,
         call: call,
         chain: chain,
-        charAt: charAt,
-        charCodeAt: charCodeAt,
         clone: clone,
         commute: commute,
         commuteMap: commuteMap,
         comparator: comparator,
         complement: complement,
         compose: compose,
+        composeL: composeL,
         composeP: composeP,
         concat: concat,
         cond: cond,
@@ -2631,12 +2858,15 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         dissocPath: dissocPath,
         divide: divide,
         drop: drop,
+        dropRepeats: dropRepeats,
+        dropRepeatsWith: dropRepeatsWith,
         dropWhile: dropWhile,
         either: either,
         empty: empty,
         eq: eq,
         eqDeep: eqDeep,
         eqProps: eqProps,
+        equals: equals,
         evolve: evolve,
         filter: filter,
         filterIndexed: filterIndexed,
@@ -2649,7 +2879,6 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         forEach: forEach,
         forEachIndexed: forEachIndexed,
         fromPairs: fromPairs,
-        func: func,
         functions: functions,
         functionsIn: functionsIn,
         groupBy: groupBy,
@@ -2658,6 +2887,7 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         has: has,
         hasIn: hasIn,
         head: head,
+        identical: identical,
         identity: identity,
         ifElse: ifElse,
         inc: inc,
@@ -2667,6 +2897,7 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         insertAll: insertAll,
         intersection: intersection,
         intersectionWith: intersectionWith,
+        intersperse: intersperse,
         into: into,
         invert: invert,
         invertObj: invertObj,
@@ -2675,7 +2906,6 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         is: is,
         isArrayLike: isArrayLike,
         isEmpty: isEmpty,
-        isNaN: isNaN,
         isNil: isNil,
         isSet: isSet,
         join: join,
@@ -2685,7 +2915,9 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         lastIndexOf: lastIndexOf,
         length: length,
         lens: lens,
+        lensIndex: lensIndex,
         lensOn: lensOn,
+        lensProp: lensProp,
         lift: lift,
         liftN: liftN,
         lt: lt,
@@ -2700,6 +2932,8 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         mathMod: mathMod,
         max: max,
         maxBy: maxBy,
+        mean: mean,
+        median: median,
         memoize: memoize,
         merge: merge,
         mergeAll: mergeAll,
@@ -2728,6 +2962,7 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         pickAll: pickAll,
         pickBy: pickBy,
         pipe: pipe,
+        pipeL: pipeL,
         pipeP: pipeP,
         pluck: pluck,
         prepend: prepend,
@@ -2742,6 +2977,7 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         reduceIndexed: reduceIndexed,
         reduceRight: reduceRight,
         reduceRightIndexed: reduceRightIndexed,
+        reduced: reduced,
         reject: reject,
         rejectIndexed: rejectIndexed,
         remove: remove,
@@ -2769,22 +3005,26 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         toLower: toLower,
         toPairs: toPairs,
         toPairsIn: toPairsIn,
+        toString: toString,
         toUpper: toUpper,
         transduce: transduce,
         trim: trim,
         type: type,
         unapply: unapply,
         unary: unary,
+        uncurryN: uncurryN,
         unfold: unfold,
         union: union,
         unionWith: unionWith,
         uniq: uniq,
         uniqWith: uniqWith,
         unnest: unnest,
+        update: update,
         useWith: useWith,
         values: values,
         valuesIn: valuesIn,
         where: where,
+        whereEq: whereEq,
         wrap: wrap,
         xprod: xprod,
         zip: zip,
@@ -2801,23 +3041,23 @@ System.register("npm:ramda@0.13.0/dist/ramda", ["github:jspm/nodelibs-process@0.
         this.R = R;
       }
     }.call(this));
-  })(require("github:jspm/nodelibs-process@0.1.1"));
+  })(require("github:jspm/nodelibs-process@0.1.1.js"));
   global.define = __define;
   return module.exports;
 });
 
-System.register("npm:ramda@0.13.0", ["npm:ramda@0.13.0/dist/ramda"], true, function(require, exports, module) {
-  var global = System.global,
+System.registerDynamic("npm:ramda@0.15.1.js", ["npm:ramda@0.15.1/dist/ramda.js"], true, function(require, exports, module) {
+  var global = this,
       __define = global.define;
   global.define = undefined;
-  module.exports = require("npm:ramda@0.13.0/dist/ramda");
+  module.exports = require("npm:ramda@0.15.1/dist/ramda.js");
   global.define = __define;
   return module.exports;
 });
 
-System.register("src/org/core/net/ScriptLoader", [], function($__export) {
+System.register("src/org/core/net/ScriptLoader.js", [], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/net/ScriptLoader";
+  var __moduleName = "src/org/core/net/ScriptLoader.js";
   function getPromise() {
     if (System.import) {
       return System.import.bind(System);
@@ -2830,33 +3070,33 @@ System.register("src/org/core/net/ScriptLoader", [], function($__export) {
   return {
     setters: [],
     execute: function() {
-      $__export('default', {load: (function(id) {
-          return getPromise()(id).then((function(e) {
+      $__export('default', {load: function(id) {
+          return getPromise()(id).then(function(e) {
             return e.default;
-          })).catch(console.log.bind(console));
-        })});
+          }).catch(console.log.bind(console));
+        }});
     }
   };
 });
 
-System.register("src/org/core/net/AMDScriptLoader", [], function($__export) {
+System.register("src/org/core/net/AMDScriptLoader.js", [], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/net/AMDScriptLoader";
+  var __moduleName = "src/org/core/net/AMDScriptLoader.js";
   return {
     setters: [],
     execute: function() {
-      $__export('default', {load: (function(id) {
-          return new Promise((function(resolve, reject) {
+      $__export('default', {load: function(id) {
+          return new Promise(function(resolve, reject) {
             return window.require([id], resolve.bind(resolve));
-          }));
-        })});
+          });
+        }});
     }
   };
 });
 
-System.register("src/org/core/events/EventMap", [], function($__export) {
+System.register("src/org/core/events/EventMap.js", [], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/events/EventMap";
+  var __moduleName = "src/org/core/events/EventMap.js";
   function EventMap() {
     var currentListeners = [];
     return {
@@ -2867,7 +3107,7 @@ System.register("src/org/core/events/EventMap", [], function($__export) {
         while (i--) {
           config = currentListeners[i];
           if (config.equalTo(dispatcher, eventString, listener)) {
-            return ;
+            return;
           }
         }
         var callback = listener;
@@ -2877,9 +3117,9 @@ System.register("src/org/core/events/EventMap", [], function($__export) {
           listener: listener,
           callback: callback,
           scope: scope,
-          equalTo: (function(dispatcher, eventString, listener) {
+          equalTo: function(dispatcher, eventString, listener) {
             return ($__0.eventString == eventString && $__0.dispatcher == dispatcher && $__0.listener == listener);
-          })
+          }
         };
         currentListeners.push(config);
         dispatcher.addEventListener(eventString, callback, scope);
@@ -2891,7 +3131,7 @@ System.register("src/org/core/events/EventMap", [], function($__export) {
           if (config.equalTo(dispatcher, eventString, listener)) {
             dispatcher.removeEventListener(eventString, config.callback, config.scope);
             currentListeners.splice(i, 1);
-            return ;
+            return;
           }
         }
       },
@@ -2913,15 +3153,16 @@ System.register("src/org/core/events/EventMap", [], function($__export) {
   };
 });
 
-System.register("src/org/core/events/EventDispatcher", [], function($__export) {
+System.register("src/org/core/events/EventDispatcher.js", [], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/events/EventDispatcher";
+  var __moduleName = "src/org/core/events/EventDispatcher.js";
+  var _currentListeners;
   return {
     setters: [],
     execute: function() {
-      $__export('default', !function() {
-        var _currentListeners = {};
-        function addEventListener(type, callback, scope) {
+      _currentListeners = {};
+      $__export('default', {
+        addEventListener: function(type, callback, scope) {
           var listener = {
             type: type,
             callback: callback,
@@ -2932,16 +3173,23 @@ System.register("src/org/core/events/EventDispatcher", [], function($__export) {
           }
           _currentListeners[type].push(listener);
           return listener;
-        }
-        function removeEventListener(eventName, callback, scope) {
+        },
+        removeEventListener: function(eventName, callback, scope) {
           var listeners = _currentListeners[eventName] || [];
           _currentListeners[eventName] = listeners.filter(function(listener) {
             var sameCB = listener.callback == callback;
             var sameScope = listener.scope == scope;
             return !(sameCB && sameScope);
           });
-        }
-        function dispatchEvent(type, data) {
+        },
+        removeAllEventListeners: function(eventName) {
+          _currentListeners[eventName] = null;
+          delete _currentListeners[eventName];
+        },
+        hasEventListener: function(eventName) {
+          return _currentListeners[eventName] && _currentListeners[eventName].length;
+        },
+        dispatchEvent: function(type, data) {
           var listeners = _currentListeners[type] || [];
           var length = listeners.length,
               l,
@@ -2954,26 +3202,14 @@ System.register("src/org/core/events/EventDispatcher", [], function($__export) {
             c.call(s, data);
           }
         }
-        ;
-        return {
-          addEventListener: addEventListener,
-          removeEventListener: removeEventListener,
-          removeAllEventListeners: (function(eventName) {
-            return _currentListeners[eventName] = null;
-          }),
-          hasEventListener: (function(eventName) {
-            return _currentListeners[eventName] && _currentListeners[eventName].length;
-          }),
-          dispatchEvent: dispatchEvent
-        };
-      }());
+      });
     }
   };
 });
 
-System.register("src/org/core/events/Signal", [], function($__export) {
+System.register("src/org/core/events/Signal.js", [], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/events/Signal";
+  var __moduleName = "src/org/core/events/Signal.js";
   function Signal() {
     var listenerBoxes = [];
     function registerListener(listener, scope, once) {
@@ -2984,7 +3220,7 @@ System.register("src/org/core/events/Signal", [], function($__export) {
           } else if (once && !listenerBoxes[i].once) {
             throw new Error('You cannot add() then addOnce() the same listener ' + 'without removing the relationship first.');
           }
-          return ;
+          return;
         }
       }
       listenerBoxes.push({
@@ -3003,17 +3239,17 @@ System.register("src/org/core/events/Signal", [], function($__export) {
         listenerBox.listener.apply(listenerBox.scope, arguments);
       }
     }
-    var connect = (function(slot, scope) {
+    var connect = function(slot, scope) {
       return registerListener(slot, scope, false);
-    });
-    var connectOnce = (function(slot, scope) {
+    };
+    var connectOnce = function(slot, scope) {
       return registerListener(slot, scope, true);
-    });
+    };
     function disconnect(slot, scope) {
       for (var i = listenerBoxes.length; i--; ) {
         if (listenerBoxes[i].listener == slot && listenerBoxes[i].scope == scope) {
           listenerBoxes.splice(i, 1);
-          return ;
+          return;
         }
       }
     }
@@ -3038,28 +3274,28 @@ System.register("src/org/core/events/Signal", [], function($__export) {
   };
 });
 
-System.register("src/org/core/display/Mediator", [], function($__export) {
+System.register("src/org/core/display/Mediator.js", [], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/display/Mediator";
+  var __moduleName = "src/org/core/display/Mediator.js";
   function Mediator(eventDispatcher, eventMap) {
     return {
-      postDestroy: (function() {
+      postDestroy: function() {
         return eventMap.unmapListeners();
-      }),
-      addContextListener: (function(eventString, listener, scope) {
+      },
+      addContextListener: function(eventString, listener, scope) {
         return eventMap.mapListener(eventDispatcher, eventString, listener, scope);
-      }),
-      removeContextListener: (function(eventString, listener) {
+      },
+      removeContextListener: function(eventString, listener) {
         return eventMap.unmapListener(eventDispatcher, eventString, listener);
-      }),
-      dispatch: (function(eventString, data) {
+      },
+      dispatch: function(eventString, data) {
         if (eventDispatcher.hasEventListener(eventString)) {
           eventDispatcher.dispatchEvent(eventString, data);
         }
-      }),
-      initialize: (function(node) {
+      },
+      initialize: function(node) {
         return node;
-      })
+      }
     };
   }
   $__export("default", Mediator);
@@ -3070,46 +3306,46 @@ System.register("src/org/core/display/Mediator", [], function($__export) {
   };
 });
 
-System.register("src/org/core/display/MediatorsBuilder", ["src/org/core/robojs", "src/org/core/events/Signal", "npm:ramda@0.13.0"], function($__export) {
+System.register("src/org/core/display/MediatorsBuilder.js", ["src/org/core/robojs.js", "src/org/core/events/Signal.js", "npm:ramda@0.15.1.js"], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/display/MediatorsBuilder";
+  var __moduleName = "src/org/core/display/MediatorsBuilder.js";
   var RoboJS,
       Signal,
       R;
   function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
     var onAdded = Signal(),
         onRemoved = Signal();
-    var _handleNodesRemoved = R.compose(R.tap((function(mediators) {
+    var _handleNodesRemoved = R.compose(R.tap(function(mediators) {
       return (mediators.length && onRemoved.emit());
-    })), R.forEach(mediatorHandler.destroy), R.flatten());
-    var findMediators = R.curryN(2, (function(definitions, node) {
+    }), R.forEach(mediatorHandler.destroy), R.flatten());
+    var findMediators = R.curryN(2, function(definitions, node) {
       var m = node.getAttribute("data-mediator");
       var def = R.find(R.propEq('id', m), definitions);
       return loader.load(def.mediator).then(mediatorHandler.create(node, def));
-    }));
-    var hasMediator = R.curryN(2, (function(definitions, node) {
-      var m = node.getAttribute("data-mediator");
-      return m && R.containsWith((function(a, b) {
-        return a.id === b.id;
-      }), {id: m}, definitions);
-    }));
-    var getMediators = R.compose(Promise.all.bind(Promise), R.map(findMediators(definitions)), R.filter(hasMediator(definitions)), R.flatten());
-    var _handleNodesAdded = (function(nodes) {
-      return getMediators(nodes).then((function(mediators) {
-        return (mediators.length && onAdded.emit(mediators));
-      }));
     });
+    var hasMediator = R.curryN(2, function(definitions, node) {
+      var m = node.getAttribute("data-mediator");
+      return m && R.containsWith(function(a, b) {
+        return a.id === b.id;
+      }, {id: m}, definitions);
+    });
+    var getMediators = R.compose(Promise.all.bind(Promise), R.map(findMediators(definitions)), R.filter(hasMediator(definitions)), R.flatten());
+    var _handleNodesAdded = function(nodes) {
+      return getMediators(nodes).then(function(mediators) {
+        return (mediators.length && onAdded.emit(mediators));
+      });
+    };
     domWatcher.onAdded.connect(_handleNodesAdded);
     domWatcher.onRemoved.connect(_handleNodesRemoved);
-    var _bootstrap = R.compose(getMediators, R.map((function(node) {
+    var _bootstrap = R.compose(getMediators, R.map(function(node) {
       return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
-    })));
+    }));
     return {
       onAdded: onAdded,
       onRemoved: onRemoved,
-      bootstrap: (function() {
+      bootstrap: function() {
         return _bootstrap([document.body]);
-      })
+      }
     };
   }
   $__export("default", MediatorsBuilder);
@@ -3126,9 +3362,9 @@ System.register("src/org/core/display/MediatorsBuilder", ["src/org/core/robojs",
   };
 });
 
-System.register("src/org/core/display/MediatorHandler", ["src/org/core/robojs", "src/org/core/events/EventDispatcher", "src/org/core/events/EventMap", "npm:ramda@0.13.0"], function($__export) {
+System.register("src/org/core/display/MediatorHandler.js", ["src/org/core/robojs.js", "src/org/core/events/EventDispatcher.js", "src/org/core/events/EventMap.js", "npm:ramda@0.15.1.js"], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/display/MediatorHandler";
+  var __moduleName = "src/org/core/display/MediatorHandler.js";
   var RoboJS,
       EventDispatcher,
       EventMap,
@@ -3173,9 +3409,9 @@ System.register("src/org/core/display/MediatorHandler", ["src/org/core/robojs", 
   };
 });
 
-System.register("src/org/core/display/bootstrap", ["src/org/core/display/MediatorsBuilder", "src/org/core/display/DomWatcher", "src/org/core/net/ScriptLoader", "src/org/core/display/MediatorHandler"], function($__export) {
+System.register("src/org/core/display/bootstrap.js", ["src/org/core/display/MediatorsBuilder.js", "src/org/core/display/DomWatcher.js", "src/org/core/net/ScriptLoader.js", "src/org/core/display/MediatorHandler.js"], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/display/bootstrap";
+  var __moduleName = "src/org/core/display/bootstrap.js";
   var MediatorsBuilder,
       DomWatcher,
       ScriptLoader,
@@ -3211,29 +3447,29 @@ System.register("src/org/core/display/bootstrap", ["src/org/core/display/Mediato
   };
 });
 
-System.register("src/org/core/display/DomWatcher", ["src/org/core/events/Signal", "npm:ramda@0.13.0"], function($__export) {
+System.register("src/org/core/display/DomWatcher.js", ["src/org/core/events/Signal.js", "npm:ramda@0.15.1.js"], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/display/DomWatcher";
+  var __moduleName = "src/org/core/display/DomWatcher.js";
   var Signal,
       R;
   function DomWatcher() {
     var onAdded = Signal();
     var onRemoved = Signal();
     function makeChain(prop, emit) {
-      return R.compose(R.tap((function(nodes) {
+      return R.compose(R.tap(function(nodes) {
         return (nodes.length && emit(nodes));
-      })), R.map((function(node) {
+      }), R.map(function(node) {
         return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
-      })), R.filter((function(node) {
+      }), R.filter(function(node) {
         return node.getElementsByTagName;
-      })), R.flatten(), R.pluck(prop));
+      }), R.flatten(), R.pluck(prop));
     }
     var getAdded = makeChain("addedNodes", onAdded.emit);
     var getRemoved = makeChain("removedNodes", onRemoved.emit);
-    var handleMutations = (function(mutations) {
+    var handleMutations = function(mutations) {
       getAdded(mutations);
       getRemoved(mutations);
-    });
+    };
     var observer = new MutationObserver(handleMutations);
     observer.observe(document.body, {
       attributes: false,
@@ -3259,9 +3495,9 @@ System.register("src/org/core/display/DomWatcher", ["src/org/core/events/Signal"
   };
 });
 
-System.register("src/org/core/robojs", ["src/org/core/net/ScriptLoader", "src/org/core/net/AMDScriptLoader", "src/org/core/events/EventMap", "src/org/core/events/EventDispatcher", "src/org/core/events/Signal", "src/org/core/display/DomWatcher", "src/org/core/display/Mediator", "src/org/core/display/MediatorsBuilder", "src/org/core/display/bootstrap", "src/org/core/display/MediatorHandler"], function($__export) {
+System.register("src/org/core/robojs.js", ["src/org/core/net/ScriptLoader.js", "src/org/core/net/AMDScriptLoader.js", "src/org/core/events/EventMap.js", "src/org/core/events/EventDispatcher.js", "src/org/core/events/Signal.js", "src/org/core/display/DomWatcher.js", "src/org/core/display/Mediator.js", "src/org/core/display/MediatorsBuilder.js", "src/org/core/display/bootstrap.js", "src/org/core/display/MediatorHandler.js"], function($__export) {
   "use strict";
-  var __moduleName = "src/org/core/robojs";
+  var __moduleName = "src/org/core/robojs.js";
   var ScriptLoader,
       AMDScriptLoader,
       EventMap,
@@ -3272,30 +3508,7 @@ System.register("src/org/core/robojs", ["src/org/core/net/ScriptLoader", "src/or
       MediatorsBuilder,
       bootstrap,
       MediatorHandler,
-      uid,
-      flip,
       robojs;
-  function nextUid() {
-    "use strict";
-    var index = uid.length;
-    var digit;
-    while (index) {
-      index--;
-      digit = uid[index].charCodeAt(0);
-      if (digit == 57) {
-        uid[index] = 'A';
-        return uid.join('');
-      }
-      if (digit == 90) {
-        uid[index] = '0';
-      } else {
-        uid[index] = String.fromCharCode(digit + 1);
-        return uid.join('');
-      }
-    }
-    uid.unshift('0');
-    return uid.join('');
-  }
   return {
     setters: [function($__m) {
       ScriptLoader = $__m.default;
@@ -3320,21 +3533,24 @@ System.register("src/org/core/robojs", ["src/org/core/net/ScriptLoader", "src/or
     }],
     execute: function() {
       var $__0 = this;
-      uid = ['0', '0', '0'];
-      flip = (function(f) {
-        return (function() {
-          for (var args = [],
-              $__1 = 0; $__1 < arguments.length; $__1++)
-            args[$__1] = arguments[$__1];
-          return f.apply($__0, args.reverse());
-        });
-      });
       robojs = {
         MEDIATORS_CACHE: {},
         utils: {
-          uid: uid,
-          nextUid: nextUid,
-          flip: flip
+          nextUid: function() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+              var r = Math.random() * 16 | 0,
+                  v = c == 'x' ? r : (r & 0x3 | 0x8);
+              return v.toString(16);
+            });
+          },
+          flip: function(f) {
+            return function() {
+              for (var args = [],
+                  $__1 = 0; $__1 < arguments.length; $__1++)
+                args[$__1] = arguments[$__1];
+              return f.apply($__0, args.reverse());
+            };
+          }
         },
         display: {
           DomWatcher: DomWatcher,
@@ -3353,15 +3569,19 @@ System.register("src/org/core/robojs", ["src/org/core/net/ScriptLoader", "src/or
           ScriptLoader: ScriptLoader
         }
       };
-      if (typeof define === 'function' && define.amd) {
-        define('robojs', [], function() {
-          return robojs;
-        });
-      } else {}
       $__export('default', robojs);
     }
   };
 });
 
+})
+(function(factory) {
+  if (typeof define == 'function' && define.amd)
+    define(["robojs"],function(){
+      "use strict";
+      return factory().default;
+    });
+  else
+    window.robojs=factory().default
 });
 //# sourceMappingURL=robojs.es6.js.map
