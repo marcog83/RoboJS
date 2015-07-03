@@ -8,12 +8,12 @@ import R from "ramda";
 
 export default  {
     create: R.curryN(3, function (node, def, Mediator) {
-        let mediatorId = RoboJS.utils.nextUid();
+        var mediatorId = RoboJS.utils.nextUid();
         //node.dataset = node.dataset || {};
         node.setAttribute('mediatorId', mediatorId);
         //node.dataset.mediatorId = mediatorId;
         //
-        let _mediator = Mediator(EventDispatcher, EventMap());
+        var _mediator = Mediator(EventDispatcher, EventMap());
         _mediator.id = mediatorId;
         RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
         _mediator.initialize(node);

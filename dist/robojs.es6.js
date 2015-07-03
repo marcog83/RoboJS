@@ -3459,7 +3459,7 @@ System.register("src/org/core/display/DomWatcher.js", ["src/org/core/events/Sign
       return R.compose(R.tap(function(nodes) {
         return (nodes.length && emit(nodes));
       }), R.map(function(node) {
-        return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
+        return [node].concat([].slice.call(node.getElementsByTagName("[data-mediator]"), 0));
       }), R.filter(function(node) {
         return node.getElementsByTagName;
       }), R.flatten(), R.pluck(prop));

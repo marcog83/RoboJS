@@ -7,7 +7,7 @@ export default function DomWatcher() {
     function makeChain(prop, emit) {
         return R.compose(
             R.tap(nodes=>(nodes.length && emit(nodes))),//onAdded.emit,onRemoved.emit
-            R.map(node=>[node].concat([].slice.call(node.getElementsByTagName("*"), 0))),
+            R.map(node=>[node].concat([].slice.call(node.getElementsByTagName("[data-mediator]"), 0))),
             R.filter(node=>node.getElementsByTagName),
             R.flatten(),
             R.pluck(prop)//"addedNodes","removedNodes"
