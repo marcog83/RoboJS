@@ -3460,6 +3460,8 @@ System.register("src/org/core/display/DomWatcher.js", ["src/org/core/events/Sign
         return (nodes.length && emit(nodes));
       }), R.map(function(node) {
         return [node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
+      }), R.filter(function(node) {
+        return node.querySelectorAll;
       }), R.flatten(), R.pluck(prop));
     }
     var getAdded = makeChain("addedNodes", onAdded.emit);

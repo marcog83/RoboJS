@@ -8,6 +8,7 @@ export default function DomWatcher() {
         return R.compose(
             R.tap(nodes=>(nodes.length && emit(nodes))),//onAdded.emit,onRemoved.emit
             R.map(node=>[node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0))),
+            R.filter(node=>node.querySelectorAll),
             R.flatten(),
             R.pluck(prop)//"addedNodes","removedNodes"
         )
