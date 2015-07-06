@@ -3316,8 +3316,8 @@ System.register("src/org/core/display/MediatorsBuilder.js", ["src/org/core/roboj
     var onAdded = Signal(),
         onRemoved = Signal();
     var _handleNodesRemoved = R.compose(R.tap(function(mediators) {
-      return (mediators.length && onRemoved.emit());
-    }), R.forEach(mediatorHandler.destroy), R.flatten());
+      return (mediators.length && onRemoved.emit(mediators));
+    }), R.filter(R.identity), R.map(mediatorHandler.destroy), R.flatten());
     var findMediators = R.curryN(2, function(definitions, node) {
       var m = node.getAttribute("data-mediator");
       var def = R.find(R.propEq('id', m), definitions);
@@ -3400,7 +3400,7 @@ System.register("src/org/core/display/MediatorHandler.js", ["src/org/core/robojs
             RoboJS.MEDIATORS_CACHE[mediatorId] = null;
             delete RoboJS.MEDIATORS_CACHE[mediatorId];
             mediator = null;
-            return true;
+            return node;
           }
           return false;
         }

@@ -8,8 +8,9 @@ export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, de
 
 
     var _handleNodesRemoved = R.compose(
-        R.tap(mediators=> (mediators.length && onRemoved.emit())),
-        R.forEach(mediatorHandler.destroy),
+        R.tap(mediators=> (mediators.length && onRemoved.emit(mediators))),
+        R.filter(R.identity),
+        R.map(mediatorHandler.destroy),
         R.flatten()
     );
 

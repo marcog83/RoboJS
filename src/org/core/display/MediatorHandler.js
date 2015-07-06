@@ -21,8 +21,8 @@ export default  {
     }),
     destroy: function (node) {
 
-        let mediatorId = node.getAttribute("mediatorId"); //&& node.dataset.mediatorId;
-        let mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
+        var mediatorId = node.getAttribute("mediatorId"); //&& node.dataset.mediatorId;
+        var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
         if (mediator) {
             mediator.destroy && mediator.destroy(node);
             mediator.postDestroy && mediator.postDestroy();
@@ -30,7 +30,7 @@ export default  {
             RoboJS.MEDIATORS_CACHE[mediatorId] = null;
             delete RoboJS.MEDIATORS_CACHE[mediatorId];
             mediator = null;
-            return true;
+            return node;
         }
         return false;
 
