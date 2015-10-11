@@ -1,30 +1,19 @@
 import RoboJS from '../robojs';
 import Signal from "../events/Signal";
 import R from "ramda";
-export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
+export default function MediatorsBuilder(domWatcher, loader, definitions) {
 
-    var onAdded = Signal(),
-        onRemoved = Signal();
-
-
-    var _handleNodesRemoved = R.compose(
-        R.tap(mediators=> (mediators.length && onRemoved.emit())),
-        R.forEach(mediatorHandler.destroy),
-        R.flatten()
-    );
-
+    var onAdded = Signal();
 
     var findMediators = R.curryN(2, (definitions, node) => {
-        var m = node.getAttribute("data-mediator");
-        var def = R.find(R.propEq('id', m), definitions);
-        return loader.load(def.mediator).then(mediatorHandler.create(node, def));
-
+        var def = R.find(R.propEq('id', node.tagName.toLowerCase()), definitions);
+        return loader.load(def.mediator).then(mediator=> {
+            mediator();
+            def.loaded = true;
+        });
     });
 
-    var hasMediator = R.curryN(2, (definitions, node)=> {
-        var m = node.getAttribute("data-mediator");
-        return m && R.containsWith((a, b)=>a.id === b.id, {id: m}, definitions);
-    });
+    var hasMediator = R.curryN(2, (definitions, node)=>  R.containsWith((name, b)=>  name === b.id.toLowerCase() && !b.loaded, node.tagName.toLowerCase(), definitions));
 
 
     var getMediators = R.compose(
@@ -36,16 +25,15 @@ export default function MediatorsBuilder(domWatcher, loader, mediatorHandler, de
     var _handleNodesAdded = nodes=> getMediators(nodes).then(mediators=>(mediators.length && onAdded.emit(mediators)));
 
     domWatcher.onAdded.connect(_handleNodesAdded);
-    domWatcher.onRemoved.connect(_handleNodesRemoved);
+
 
     var _bootstrap = R.compose(
         getMediators,
-        R.map(node=>[node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0)))
+        R.map(node=>[node].concat([].slice.call(node.getElementsByTagName("*"), 0)))
     );
 
     return {
         onAdded,
-        onRemoved,
         bootstrap: ()=> _bootstrap([document.body])
     }
 

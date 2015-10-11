@@ -10,18 +10,8 @@ define(function (require) {
      create an array of jQuery elements to append to the body on "click"
      */
     var elements = [];
-    elements.push("<div data-mediator='mediator-c'><ul><li>lista a caso</li></ul></div>");
-    elements.push('<div data-mediator="mediator-a">' +
-        '<div data-mediator="mediator-a">' +
-        ' <div data-mediator="mediator-b">aab' +
-        '</div>' +
-        ' </div>	' +
-        '</div>');
-    elements.push("" +
-        "<div data-mediator='mediator-a'><p>primo nodo</p><p>primo nodo 1 <strong>1.a</strong></p><p>primo nodo 2</p></div>" +
-        "<div data-mediator='mediator-a'>secondo nodo</div>" +
-        "<div data-mediator='mediator-c'>mediator c</div>" +
-        "<span data-mediator='mediator-b'></span>");
+    elements.push("<foo-element>foo! <bar-element>bar!</bar-element></foo-element>");
+
     /*
      helper function to get a random number from min to max
      */
@@ -70,13 +60,6 @@ define(function (require) {
             builder.onAdded.connect(function (mediators) {
                 console.log("Mediators added async", mediators);
             });
-            /**
-             * when new DOM nodes are removed from the document MutationObserver notify it, and a onRemoved Signal is dispatched.
-             * The Signal argument is an instances of Mediator.
-             */
-            builder.onRemoved.connect(function (mediator) {
-                console.log("Mediators onRemoved async", mediator);
-            });
 
             function cb(e) {
                 e.currentTarget.removeEventListener("click", cb);
@@ -92,7 +75,7 @@ define(function (require) {
                 // first removed from tree (and mediator is destroyed too)
                 // then attached to body again (and a new mediator is created)
                 var element = document.createElement("div");
-                element.innerHTML = elements[index];//.clone();
+                element.innerHTML = "<foo-element>foo! <bar-element>bar!</bar-element></foo-element>";//.clone();
                 /**
                  * when an element is clicked, it will be removed.
                  * Every Mediators will be removed too.

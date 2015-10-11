@@ -3094,65 +3094,6 @@ System.register("src/org/core/net/AMDScriptLoader.js", [], function($__export) {
   };
 });
 
-System.register("src/org/core/events/EventMap.js", [], function($__export) {
-  "use strict";
-  var __moduleName = "src/org/core/events/EventMap.js";
-  function EventMap() {
-    var currentListeners = [];
-    return {
-      mapListener: function(dispatcher, eventString, listener, scope) {
-        var $__0 = this;
-        var config;
-        var i = currentListeners.length;
-        while (i--) {
-          config = currentListeners[i];
-          if (config.equalTo(dispatcher, eventString, listener)) {
-            return;
-          }
-        }
-        var callback = listener;
-        config = {
-          dispatcher: dispatcher,
-          eventString: eventString,
-          listener: listener,
-          callback: callback,
-          scope: scope,
-          equalTo: function(dispatcher, eventString, listener) {
-            return ($__0.eventString == eventString && $__0.dispatcher == dispatcher && $__0.listener == listener);
-          }
-        };
-        currentListeners.push(config);
-        dispatcher.addEventListener(eventString, callback, scope);
-      },
-      unmapListener: function(dispatcher, eventString, listener) {
-        var i = currentListeners.length;
-        while (i--) {
-          var config = currentListeners[i];
-          if (config.equalTo(dispatcher, eventString, listener)) {
-            dispatcher.removeEventListener(eventString, config.callback, config.scope);
-            currentListeners.splice(i, 1);
-            return;
-          }
-        }
-      },
-      unmapListeners: function() {
-        var eventConfig;
-        var dispatcher;
-        while (eventConfig = currentListeners.pop()) {
-          dispatcher = eventConfig.dispatcher;
-          dispatcher.removeEventListener(eventConfig.eventString, eventConfig.callback, eventConfig.scope);
-        }
-      }
-    };
-  }
-  $__export("default", EventMap);
-  return {
-    setters: [],
-    execute: function() {
-    }
-  };
-});
-
 System.register("src/org/core/events/EventDispatcher.js", [], function($__export) {
   "use strict";
   var __moduleName = "src/org/core/events/EventDispatcher.js";
@@ -3274,60 +3215,25 @@ System.register("src/org/core/events/Signal.js", [], function($__export) {
   };
 });
 
-System.register("src/org/core/display/Mediator.js", [], function($__export) {
-  "use strict";
-  var __moduleName = "src/org/core/display/Mediator.js";
-  function Mediator(eventDispatcher, eventMap) {
-    return {
-      postDestroy: function() {
-        return eventMap.unmapListeners();
-      },
-      addContextListener: function(eventString, listener, scope) {
-        return eventMap.mapListener(eventDispatcher, eventString, listener, scope);
-      },
-      removeContextListener: function(eventString, listener) {
-        return eventMap.unmapListener(eventDispatcher, eventString, listener);
-      },
-      dispatch: function(eventString, data) {
-        if (eventDispatcher.hasEventListener(eventString)) {
-          eventDispatcher.dispatchEvent(eventString, data);
-        }
-      },
-      initialize: function(node) {
-        return node;
-      }
-    };
-  }
-  $__export("default", Mediator);
-  return {
-    setters: [],
-    execute: function() {
-    }
-  };
-});
-
 System.register("src/org/core/display/MediatorsBuilder.js", ["src/org/core/robojs.js", "src/org/core/events/Signal.js", "npm:ramda@0.15.1.js"], function($__export) {
   "use strict";
   var __moduleName = "src/org/core/display/MediatorsBuilder.js";
   var RoboJS,
       Signal,
       R;
-  function MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions) {
-    var onAdded = Signal(),
-        onRemoved = Signal();
-    var _handleNodesRemoved = R.compose(R.tap(function(mediators) {
-      return (mediators.length && onRemoved.emit());
-    }), R.forEach(mediatorHandler.destroy), R.flatten());
+  function MediatorsBuilder(domWatcher, loader, definitions) {
+    var onAdded = Signal();
     var findMediators = R.curryN(2, function(definitions, node) {
-      var m = node.getAttribute("data-mediator");
-      var def = R.find(R.propEq('id', m), definitions);
-      return loader.load(def.mediator).then(mediatorHandler.create(node, def));
+      var def = R.find(R.propEq('id', node.tagName.toLowerCase()), definitions);
+      return loader.load(def.mediator).then(function(mediator) {
+        mediator();
+        def.loaded = true;
+      });
     });
     var hasMediator = R.curryN(2, function(definitions, node) {
-      var m = node.getAttribute("data-mediator");
-      return m && R.containsWith(function(a, b) {
-        return a.id === b.id;
-      }, {id: m}, definitions);
+      return R.containsWith(function(name, b) {
+        return name === b.id.toLowerCase() && !b.loaded;
+      }, node.tagName.toLowerCase(), definitions);
     });
     var getMediators = R.compose(Promise.all.bind(Promise), R.map(findMediators(definitions)), R.filter(hasMediator(definitions)), R.flatten());
     var _handleNodesAdded = function(nodes) {
@@ -3336,13 +3242,11 @@ System.register("src/org/core/display/MediatorsBuilder.js", ["src/org/core/roboj
       });
     };
     domWatcher.onAdded.connect(_handleNodesAdded);
-    domWatcher.onRemoved.connect(_handleNodesRemoved);
     var _bootstrap = R.compose(getMediators, R.map(function(node) {
-      return [node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
+      return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
     }));
     return {
       onAdded: onAdded,
-      onRemoved: onRemoved,
       bootstrap: function() {
         return _bootstrap([document.body]);
       }
@@ -3362,72 +3266,22 @@ System.register("src/org/core/display/MediatorsBuilder.js", ["src/org/core/roboj
   };
 });
 
-System.register("src/org/core/display/MediatorHandler.js", ["src/org/core/robojs.js", "src/org/core/events/EventDispatcher.js", "src/org/core/events/EventMap.js", "npm:ramda@0.15.1.js"], function($__export) {
-  "use strict";
-  var __moduleName = "src/org/core/display/MediatorHandler.js";
-  var RoboJS,
-      EventDispatcher,
-      EventMap,
-      R;
-  return {
-    setters: [function($__m) {
-      RoboJS = $__m.default;
-    }, function($__m) {
-      EventDispatcher = $__m.default;
-    }, function($__m) {
-      EventMap = $__m.default;
-    }, function($__m) {
-      R = $__m.default;
-    }],
-    execute: function() {
-      $__export('default', {
-        create: R.curryN(3, function(node, def, Mediator) {
-          var mediatorId = RoboJS.utils.nextUid();
-          node.setAttribute('mediatorId', mediatorId);
-          var _mediator = Mediator(EventDispatcher, EventMap());
-          _mediator.id = mediatorId;
-          RoboJS.MEDIATORS_CACHE[mediatorId] = _mediator;
-          _mediator.initialize(node);
-          return _mediator;
-        }),
-        destroy: function(node) {
-          var mediatorId = node.getAttribute("mediatorId");
-          var mediator = RoboJS.MEDIATORS_CACHE[mediatorId];
-          if (mediator) {
-            mediator.destroy && mediator.destroy(node);
-            mediator.postDestroy && mediator.postDestroy();
-            mediator.element && (mediator.element = null);
-            RoboJS.MEDIATORS_CACHE[mediatorId] = null;
-            delete RoboJS.MEDIATORS_CACHE[mediatorId];
-            mediator = null;
-            return true;
-          }
-          return false;
-        }
-      });
-    }
-  };
-});
-
-System.register("src/org/core/display/bootstrap.js", ["src/org/core/display/MediatorsBuilder.js", "src/org/core/display/DomWatcher.js", "src/org/core/net/ScriptLoader.js", "src/org/core/display/MediatorHandler.js"], function($__export) {
+System.register("src/org/core/display/bootstrap.js", ["src/org/core/display/MediatorsBuilder.js", "src/org/core/display/DomWatcher.js", "src/org/core/net/ScriptLoader.js"], function($__export) {
   "use strict";
   var __moduleName = "src/org/core/display/bootstrap.js";
   var MediatorsBuilder,
       DomWatcher,
-      ScriptLoader,
-      MediatorHandler;
+      ScriptLoader;
   function bootstrap(config) {
     var $__1,
         $__2,
-        $__3,
-        $__4;
+        $__3;
     var $__0 = config,
         definitions = $__0.definitions,
         autoplay = ($__1 = $__0.autoplay) === void 0 ? true : $__1,
         domWatcher = ($__2 = $__0.domWatcher) === void 0 ? DomWatcher() : $__2,
-        scriptLoader = ($__3 = $__0.scriptLoader) === void 0 ? ScriptLoader : $__3,
-        mediatorHandler = ($__4 = $__0.mediatorHandler) === void 0 ? MediatorHandler : $__4;
-    var builder = MediatorsBuilder(domWatcher, scriptLoader, mediatorHandler, definitions);
+        scriptLoader = ($__3 = $__0.scriptLoader) === void 0 ? ScriptLoader : $__3;
+    var builder = MediatorsBuilder(domWatcher, scriptLoader, definitions);
     return autoplay ? builder.bootstrap() : builder;
   }
   $__export("default", bootstrap);
@@ -3438,8 +3292,6 @@ System.register("src/org/core/display/bootstrap.js", ["src/org/core/display/Medi
       DomWatcher = $__m.default;
     }, function($__m) {
       ScriptLoader = $__m.default;
-    }, function($__m) {
-      MediatorHandler = $__m.default;
     }],
     execute: function() {
       ;
@@ -3454,31 +3306,21 @@ System.register("src/org/core/display/DomWatcher.js", ["src/org/core/events/Sign
       R;
   function DomWatcher() {
     var onAdded = Signal();
-    var onRemoved = Signal();
     function makeChain(prop, emit) {
       return R.compose(R.tap(function(nodes) {
         return (nodes.length && emit(nodes));
       }), R.map(function(node) {
-        return [node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
+        return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
       }), R.flatten(), R.pluck(prop));
     }
-    var getAdded = makeChain("addedNodes", onAdded.emit);
-    var getRemoved = makeChain("removedNodes", onRemoved.emit);
-    var handleMutations = function(mutations) {
-      getAdded(mutations);
-      getRemoved(mutations);
-    };
-    var observer = new MutationObserver(handleMutations);
+    var observer = new MutationObserver(makeChain("addedNodes", onAdded.emit));
     observer.observe(document.body, {
       attributes: false,
       childList: true,
       characterData: false,
       subtree: true
     });
-    return {
-      onAdded: onAdded,
-      onRemoved: onRemoved
-    };
+    return {onAdded: onAdded};
   }
   $__export("default", DomWatcher);
   return {
@@ -3493,19 +3335,16 @@ System.register("src/org/core/display/DomWatcher.js", ["src/org/core/events/Sign
   };
 });
 
-System.register("src/org/core/robojs.js", ["src/org/core/net/ScriptLoader.js", "src/org/core/net/AMDScriptLoader.js", "src/org/core/events/EventMap.js", "src/org/core/events/EventDispatcher.js", "src/org/core/events/Signal.js", "src/org/core/display/DomWatcher.js", "src/org/core/display/Mediator.js", "src/org/core/display/MediatorsBuilder.js", "src/org/core/display/bootstrap.js", "src/org/core/display/MediatorHandler.js"], function($__export) {
+System.register("src/org/core/robojs.js", ["src/org/core/net/ScriptLoader.js", "src/org/core/net/AMDScriptLoader.js", "src/org/core/events/EventDispatcher.js", "src/org/core/events/Signal.js", "src/org/core/display/DomWatcher.js", "src/org/core/display/MediatorsBuilder.js", "src/org/core/display/bootstrap.js"], function($__export) {
   "use strict";
   var __moduleName = "src/org/core/robojs.js";
   var ScriptLoader,
       AMDScriptLoader,
-      EventMap,
       EventDispatcher,
       Signal,
       DomWatcher,
-      Mediator,
       MediatorsBuilder,
       bootstrap,
-      MediatorHandler,
       robojs;
   return {
     setters: [function($__m) {
@@ -3513,53 +3352,35 @@ System.register("src/org/core/robojs.js", ["src/org/core/net/ScriptLoader.js", "
     }, function($__m) {
       AMDScriptLoader = $__m.default;
     }, function($__m) {
-      EventMap = $__m.default;
-    }, function($__m) {
       EventDispatcher = $__m.default;
     }, function($__m) {
       Signal = $__m.default;
     }, function($__m) {
       DomWatcher = $__m.default;
     }, function($__m) {
-      Mediator = $__m.default;
-    }, function($__m) {
       MediatorsBuilder = $__m.default;
     }, function($__m) {
       bootstrap = $__m.default;
-    }, function($__m) {
-      MediatorHandler = $__m.default;
     }],
     execute: function() {
       var $__0 = this;
       robojs = {
         MEDIATORS_CACHE: {},
-        utils: {
-          nextUid: function() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-              var r = Math.random() * 16 | 0,
-                  v = c == 'x' ? r : (r & 0x3 | 0x8);
-              return v.toString(16);
-            });
-          },
-          flip: function(f) {
+        utils: {flip: function(f) {
             return function() {
               for (var args = [],
                   $__1 = 0; $__1 < arguments.length; $__1++)
                 args[$__1] = arguments[$__1];
               return f.apply($__0, args.reverse());
             };
-          }
-        },
+          }},
         display: {
           DomWatcher: DomWatcher,
-          Mediator: Mediator,
           bootstrap: bootstrap,
-          MediatorHandler: MediatorHandler,
           MediatorsBuilder: MediatorsBuilder
         },
         events: {
           EventDispatcher: EventDispatcher,
-          EventMap: EventMap,
           Signal: Signal
         },
         net: {

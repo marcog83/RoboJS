@@ -5,16 +5,17 @@ define(function (require) {
 	"use strict";
 	return [
 		{
-			"id": "mediator-a",
-			"mediator": "client/MediatorA"
+			"id": "my-custom-element",
+			"mediator": "client/my-custom-element"
+		},
+
+		{
+			"id": "foo-element",
+			"mediator": "client/foo-element"
 		},
 		{
-			"id": "mediator-b",
-			"mediator": "client/MediatorB"
-		},
-		{
-			"id": "mediator-c",
-			"mediator": "client/MediatorC"
+			"id": "bar-element",
+			"mediator": "client/bar-element"
 		}
 	];
 });

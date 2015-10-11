@@ -4,14 +4,12 @@
 import MediatorsBuilder from "./MediatorsBuilder"
 import DomWatcher from "./DomWatcher"
 import ScriptLoader from "../net/ScriptLoader"
-import MediatorHandler from "./MediatorHandler"
+
 
 export default function bootstrap(config) {
 
-    var {definitions,autoplay=true,domWatcher=DomWatcher(),scriptLoader=ScriptLoader,mediatorHandler=MediatorHandler}=config;
+    var {definitions,autoplay=true,domWatcher=DomWatcher(),scriptLoader=ScriptLoader}=config;
 
-
-
-    var builder = MediatorsBuilder(domWatcher, scriptLoader, mediatorHandler, definitions);
+    var builder = MediatorsBuilder(domWatcher, scriptLoader, definitions);
     return autoplay ? builder.bootstrap() : builder;
 };
