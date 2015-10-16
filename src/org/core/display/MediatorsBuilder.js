@@ -29,7 +29,7 @@ export default function MediatorsBuilder(domWatcher, loader, definitions) {
 
     var _bootstrap = R.compose(
         getMediators,
-        R.map(node=>[node].concat([].slice.call(node.getElementsByTagName("*"), 0)))
+        R.map(node=>[node].concat(R.slice(0,Infinity,node.getElementsByTagName("*"))))
     );
 
     return {

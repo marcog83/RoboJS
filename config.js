@@ -1,16 +1,13 @@
 System.config({
-  "baseURL": "./",
-  "transpiler": "traceur",
-  "paths": {
-    "github:*": "jspm_packages/github/*.js",
-    "npm:*": "jspm_packages/npm/*.js",
-    "*": "*.js"
+  baseURL: "./",
+  defaultJSExtensions: true,
+  transpiler: "traceur",
+  paths: {
+    "github:*": "jspm_packages/github/*",
+    "npm:*": "jspm_packages/npm/*"
   },
-  "defaultJSExtensions": true
-});
 
-System.config({
-  "map": {
+  map: {
     "core-js": "npm:core-js@0.9.18",
     "ramda": "npm:ramda@0.15.1",
     "traceur": "github:jmcriffey/bower-traceur@0.0.90",
@@ -28,4 +25,3 @@ System.config({
     }
   }
 });
-

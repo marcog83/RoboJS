@@ -6,7 +6,6 @@
   "jspm": {
     "main": "src/org/core/robojs",
     "format": "es6",
-    "directories": {},
     "dependencies": {
       "ramda": "npm:ramda@^0.15.1"
     },
