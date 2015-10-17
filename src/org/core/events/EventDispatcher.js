@@ -1,5 +1,5 @@
 var _currentListeners = {};
-export default {
+export default Object.freeze({
 
     addEventListener: function (type, callback, scope) {
         var listener = {
@@ -36,4 +36,4 @@ export default {
             c.call(s, data);
         }
     }
-}
+})

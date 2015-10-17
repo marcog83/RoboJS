@@ -7,25 +7,25 @@ import MediatorsBuilder from "./display/MediatorsBuilder";
 import bootstrap from "./display/bootstrap";
 
 
-var robojs = {
+var robojs = Object.freeze({
     MEDIATORS_CACHE: {},
     utils: {
         flip: f => (...args) =>f.apply(this, args.reverse())
     },
-    display: {
+    display: Object.freeze({
         DomWatcher,
         bootstrap,
         MediatorsBuilder
-    },
-    events: {
+    }),
+    events: Object.freeze({
         EventDispatcher,
         Signal
-    },
-    net: {
+    }),
+    net: Object.freeze({
         AMDScriptLoader,
         ScriptLoader
-    }
+    })
 
-};
+});
 
 export default robojs;

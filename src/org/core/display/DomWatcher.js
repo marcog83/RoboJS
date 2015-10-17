@@ -24,9 +24,9 @@ export default function DomWatcher() {
         characterData: false,
         subtree: true
     });
-    return {
+    return Object.freeze({
         onAdded
-    }
+    })
 };
 
 

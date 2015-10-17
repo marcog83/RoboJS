@@ -64,14 +64,14 @@ export default function Signal() {
         }
     }
 
-    return {
+    return Object.freeze({
         connect,
         connectOnce,
         disconnect,
         disconnectAll,
         emit
 
-    }
+    })
 }
 
 

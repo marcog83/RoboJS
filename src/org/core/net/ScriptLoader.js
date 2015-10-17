@@ -7,6 +7,6 @@ function getPromise(){
         }
     }
 }
-export default  {
+export default  Object.freeze({
     load: id=> getPromise()(id).then(e=>e.default).catch(console.log.bind(console))
-};
+});

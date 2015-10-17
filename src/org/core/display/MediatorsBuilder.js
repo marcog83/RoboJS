@@ -32,10 +32,10 @@ export default function MediatorsBuilder(domWatcher, loader, definitions) {
         R.map(node=>[node].concat(R.slice(0,Infinity,node.getElementsByTagName("*"))))
     );
 
-    return {
+    return Object.freeze({
         onAdded,
         bootstrap: ()=> _bootstrap([document.body])
-    }
+    })
 
 }
 
