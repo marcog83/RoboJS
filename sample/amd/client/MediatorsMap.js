@@ -1,21 +1,12 @@
 /**
  * Created by marco.gobbi on 09/12/2014.
  */
-define(function (require) {
-	"use strict";
-	return [
-		{
-			"id": "my-custom-element",
-			"mediator": "client/my-custom-element"
-		},
+define(function () {
+    "use strict";
+    return {
+        "my-custom-element": "client/my-custom-element",
+        "foo-element": "client/foo-element",
+        "bar-element": "client/bar-element"
+    }
 
-		{
-			"id": "foo-element",
-			"mediator": "client/foo-element"
-		},
-		{
-			"id": "bar-element",
-			"mediator": "client/bar-element"
-		}
-	];
 });

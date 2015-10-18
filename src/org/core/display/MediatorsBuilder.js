@@ -1,49 +1,45 @@
-import Signal from "../events/Signal";
 import curryN from "ramda/src/curryN";
 import find from "ramda/src/find";
-import propEq from "ramda/src/propEq";
-import containsWith from "ramda/src/containsWith";
 import compose from "ramda/src/compose";
 import map from "ramda/src/map";
 import filter from "ramda/src/filter";
 import flatten from "ramda/src/flatten";
-//import {curryN,find,propEq,containsWith,compose,map,filter,flatten} from "ramda";
 
-export default function MediatorsBuilder(domWatcher, loader, definitions) {
 
-    var onAdded = Signal();
+export default  (domWatcher, loader, definitions)=> {
 
-    var findMediators = curryN(2, (definitions, node) => {
-        var def = find(propEq('id', node.tagName.toLowerCase()), definitions);
-        return loader.load(def.mediator).then(mediator=> {
-            mediator();
-            def.loaded = true;
-        });
+
+    //make a copy of definitions map to mutate;
+    definitions = Object.create(definitions);
+
+
+    var findMediators = curryN(2, (definitions, tagName) => {
+        var url = definitions[tagName];
+        definitions[tagName] = undefined;
+        return loader.load(url).then(mediator=>mediator());
     });
 
-    var hasMediator = curryN(2, (definitions, node)=>  containsWith((name, b)=>  name === b.id.toLowerCase() && !b.loaded, node.tagName.toLowerCase(), definitions));
+    var hasMediator = curryN(2, (definitions, tagName)=> definitions[tagName] != undefined);
 
 
     var getMediators = compose(
         Promise.all.bind(Promise),
         map(findMediators(definitions)),
         filter(hasMediator(definitions)),
+        map(node=>node.tagName.toLowerCase()),
         flatten()
     );
-    var _handleNodesAdded = nodes=> getMediators(nodes).then(mediators=>(mediators.length && onAdded.emit(mediators)));
 
-    domWatcher.onAdded.connect(_handleNodesAdded);
+    domWatcher.onAdded.connect(getMediators);
 
 
-    var _bootstrap = compose(
+    var bootstrap = compose(
         getMediators,
-        map(node=>[node].concat(Array.prototype.slice.call(node.getElementsByTagName("*"),0)))
+        map(node=>[node].concat(Array.prototype.slice.call(node.getElementsByTagName("*"), 0))),
+        (root = document.body)=>[root]
     );
 
-    return Object.freeze({
-        onAdded,
-        bootstrap: ()=> _bootstrap([document.body])
-    })
+    return Object.freeze({bootstrap})
 
 };
 

@@ -6,9 +6,5 @@ import DomWatcher from "./DomWatcher";
 import ScriptLoader from "../net/ScriptLoader";
 
 
-export default function bootstrap(config) {
+export default ({definitions,domWatcher=DomWatcher(),loader=ScriptLoader})=>MediatorsBuilder(domWatcher, loader, definitions).bootstrap()
 
-    var {definitions,domWatcher=DomWatcher(),loader=ScriptLoader}=config;
-
-    return MediatorsBuilder(domWatcher, loader, definitions).bootstrap();
-}

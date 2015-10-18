@@ -8,13 +8,16 @@ define(function (require, exports, module) {
 		console.log("element foo creation")
 		var proto = Object.create(HTMLElement.prototype);
 		proto.createdCallback = function () {
-			console.log("created", this)
+			console.log("created", this);
+			this.addEventListener("click",function(e){
+				e.currentTarget.parentElement.removeChild(e.currentTarget);
+			})
 		};
 		proto.attachedCallback = function () {
 			console.log("attached", this)
 		};
 		proto.detachedCallback = function () {
-			console.log("deattached", this)
+			console.log("detachedCallback", this)
 		};
 		document.registerElement("foo-element", {prototype: proto})
 	}

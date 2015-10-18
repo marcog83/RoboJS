@@ -12,7 +12,7 @@ define(function (require, exports, module) {
             console.log("attached", this)
         };
         proto.detachedCallback = function () {
-            console.log("deattached", this)
+            console.log("detachedCallback", this)
         };
         document.registerElement("my-custom-element", {prototype: proto})
     }

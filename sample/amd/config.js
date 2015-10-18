@@ -8,9 +8,4 @@ requirejs.config({
 
     }
 });
-require([
-    "./client/Application"
-], function (Application) {
-    "use strict";
-    Application.main();
-});
+require(["./client/Application"], function () {});

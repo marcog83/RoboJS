@@ -4,14 +4,14 @@ import map from "ramda/src/map";
 import flatten from "ramda/src/flatten";
 import pluck from "ramda/src/pluck";
 import compose from "ramda/src/compose";
-//import {tap,map,flatten,pluck,compose} from "ramda";
-export default function DomWatcher() {
+
+export default  (root=document.body)=> {
     var onAdded = Signal();
 
     function makeChain(prop, emit) {
         return compose(
             tap(nodes=>(nodes.length && emit(nodes))),//onAdded.emit,onRemoved.emit
-            map(node=>[node].concat(Array.prototype.slice.call(node.getElementsByTagName("*"),0))),
+            map(node=>[node].concat(Array.prototype.slice.call(node.getElementsByTagName("*"), 0))),
             flatten(),
             pluck(prop)//"addedNodes","removedNodes"
         )
@@ -23,13 +23,13 @@ export default function DomWatcher() {
     /* <h3>Configuration of the observer.</h3>
      <p>Registers the MutationObserver instance to receive notifications of DOM mutations on the specified node.</p>
      */
-    observer.observe(document.body, {
+    observer.observe(root, {
         attributes: false,
         childList: true,
         characterData: false,
         subtree: true
     });
-    return Object.freeze({ onAdded })
+    return Object.freeze({onAdded})
 };
 
 

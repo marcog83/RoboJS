@@ -1,7 +1,7 @@
 RoboJS is a library that aims to dynamically load JS modules depending on how the DOM is composed.
 Add a node to the DOM and a JS will be loaded!
 Remove a node and the JS will be disposed!!
-Not further framework frontend , but a tool that lets you manage the association DOM and JS.
+Not further framework frontend , but a tool that lets you manage the association DOM and JS. (less than 6kb gzipped);
 
 
 
@@ -23,19 +23,14 @@ You set a custom tag in your markup
     <bar-element>b-1</bar-element>
 
 ```
-in `MediatorsMap.js` you define an Array that maps an ID and a Mediator path
+in `MediatorsMap.js` you define a Map where the key is the custom element tag name, and the value is the file to request in order to register the element.
 
 ```javascript
-[
-    {
-        "id": "foo-element",
-        "mediator": "client/foo-element"
-    },
-    {
-        "id": "bar-element",
-        "mediator": "client/bar-element"
+	{
+        "my-custom-element": "client/my-custom-element",
+        "foo-element": "client/foo-element",
+        "bar-element": "client/bar-element"
     }
-]
 ```
 
 For instance in this sample I mapped 2 different Custom Elements.
@@ -58,7 +53,7 @@ When a `tagName` matches an ID from MediatorsMap the `Mediator` constructor is c
    			console.log("attached", this)
    		};
    		proto.detachedCallback = function () {
-   			console.log("deattached", this)
+   			console.log("detached", this)
    		};
    		document.registerElement("bar-element", {prototype: proto})
    	}

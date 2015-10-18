@@ -4,7 +4,7 @@
 define(function (require) {
     "use strict";
     var rjs = require("robojs");
-    var MediatorsMap = require("./MediatorsMap");
+    var definitions = require("./MediatorsMap");
 
     function Application() {
         /**
@@ -12,13 +12,13 @@ define(function (require) {
          * @type {function}
          * bootstrap is a sugar function to hide internal dependencies.
          * A MediatorsBuilder is created.
-         * MediatorsBuilder will iterate the DOM trying to match MediatorsMap ids with data-mediator attribute.
+         * MediatorsBuilder will iterate the DOM trying to match MediatorsMap ids with custom elements tag name.
          * @return {Promise}.
          * Promise is meant to be resolved when every mediators are loaded.
          *
          */
         rjs.bootstrap({
-            definitions: MediatorsMap,
+            definitions: definitions,
             loader: rjs.AMDScriptLoader
         });
 
@@ -29,10 +29,10 @@ define(function (require) {
         document.querySelector(".add-button").addEventListener("click", function handler() {
             var element = document.createElement("div");
             element.innerHTML = "<foo-element>foo! <bar-element>bar!</bar-element></foo-element>";//.clone();
-            document.body.appendChild(element);
+            document.body.appendChild(element.firstElementChild);
         });
 
     }();
 
-    return new Application();
+    return  Application();
 });
