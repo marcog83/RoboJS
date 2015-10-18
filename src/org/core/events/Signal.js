@@ -4,7 +4,7 @@ export default function Signal() {
 
     function registerListener(listener, scope, once) {
         for (var i = 0; i < listenerBoxes.length; i++) {
-            if (listenerBoxes[i].listener == listener && listenerBoxes[i].scope == scope) {
+            if (listenerBoxes[i].listener === listener && listenerBoxes[i].scope === scope) {
                 if (listenerBoxes[i].once && !once) {
                     throw new Error('You cannot addOnce() then try to add() the same listener ' +
                     'without removing the relationship first.');
@@ -50,7 +50,7 @@ export default function Signal() {
 
 
         for (var i = listenerBoxes.length; i--;) {
-            if (listenerBoxes[i].listener == slot && listenerBoxes[i].scope == scope) {
+            if (listenerBoxes[i].listener === slot && listenerBoxes[i].scope === scope) {
                 listenerBoxes.splice(i, 1);
                 return;
             }

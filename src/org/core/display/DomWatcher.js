@@ -1,14 +1,19 @@
 import Signal from "../events/Signal";
-import R from "ramda";
+import tap from "ramda/src/tap";
+import map from "ramda/src/map";
+import flatten from "ramda/src/flatten";
+import pluck from "ramda/src/pluck";
+import compose from "ramda/src/compose";
+//import {tap,map,flatten,pluck,compose} from "ramda";
 export default function DomWatcher() {
     var onAdded = Signal();
 
     function makeChain(prop, emit) {
-        return R.compose(
-            R.tap(nodes=>(nodes.length && emit(nodes))),//onAdded.emit,onRemoved.emit
-            R.map(node=>[node].concat(R.slice(0,Infinity,node.getElementsByTagName("*")))),
-            R.flatten(),
-            R.pluck(prop)//"addedNodes","removedNodes"
+        return compose(
+            tap(nodes=>(nodes.length && emit(nodes))),//onAdded.emit,onRemoved.emit
+            map(node=>[node].concat(Array.prototype.slice.call(node.getElementsByTagName("*"),0))),
+            flatten(),
+            pluck(prop)//"addedNodes","removedNodes"
         )
 
     }
@@ -24,9 +29,7 @@ export default function DomWatcher() {
         characterData: false,
         subtree: true
     });
-    return Object.freeze({
-        onAdded
-    })
+    return Object.freeze({ onAdded })
 };
 
 

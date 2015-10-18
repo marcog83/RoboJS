@@ -3,97 +3,36 @@
  */
 define(function (require) {
     "use strict";
-    var RoboJS = require("robojs");
+    var rjs = require("robojs");
     var MediatorsMap = require("./MediatorsMap");
-
-    /*
-     create an array of jQuery elements to append to the body on "click"
-     */
-    var elements = [];
-    elements.push("<foo-element>foo! <bar-element>bar!</bar-element></foo-element>");
-
-    /*
-     helper function to get a random number from min to max
-     */
-    function getRandomArbitrary(min, max) {
-        return Math.round(Math.random() * (max - min) + min);
-    }
 
     function Application() {
         /**
-         * EventDispatcher is the Singleton that is used to dispatch and listen to the events
+         *
+         * @type {function}
+         * bootstrap is a sugar function to hide internal dependencies.
+         * A MediatorsBuilder is created.
+         * MediatorsBuilder will iterate the DOM trying to match MediatorsMap ids with data-mediator attribute.
+         * @return {Promise}.
+         * Promise is meant to be resolved when every mediators are loaded.
+         *
          */
-        this.eventDispatcher = RoboJS.events.EventDispatcher;
+        rjs.bootstrap({
+            definitions: MediatorsMap,
+            loader: rjs.AMDScriptLoader
+        });
+
+
     }
 
-    Application.prototype = {
-        main: function () {
-            /**
-             *
-             * @type {function}
-             * bootstrap is a sugar function to hide internal dependencies.
-             * A MediatorsBuilder is created.
-             * MediatorsBuilder will iterate the DOM trying to match MediatorsMap ids with data-mediator attribute.
-             * @return {RoboJS.display.MediatorsBuilder} if autoplay is false. By default autoplay is true and it returns a Promise.
-             * Promise is meant to be resolved when every mediators are loaded.
-             *
-             */
+    !function setHandlers() {
+        document.querySelector(".add-button").addEventListener("click", function handler() {
+            var element = document.createElement("div");
+            element.innerHTML = "<foo-element>foo! <bar-element>bar!</bar-element></foo-element>";//.clone();
+            document.body.appendChild(element);
+        });
 
-            var builder = RoboJS.display.bootstrap({
-                definitions: MediatorsMap,
-                autoplay: false,
-                scriptLoader: RoboJS.net.AMDScriptLoader
-            });
-            /**
-             * get the mediators and return a promise.
-             * The promise argument is an Array of Mediator instances
-             */
-            builder.bootstrap().then(function (mediators) {
-                console.log("Mediators loaded", mediators);
-            }).catch(function (e) {
-                console.log(e);
-            });
-            /**
-             * when new DOM nodes are added to the document MutationObserver notify it, and a onAdded Signal is dispatched.
-             * The Signal argument is an Array of Mediator instances
-             */
-            builder.onAdded.connect(function (mediators) {
-                console.log("Mediators added async", mediators);
-            });
+    }();
 
-            function cb(e) {
-                e.currentTarget.removeEventListener("click", cb);
-                document.body.removeChild(e.currentTarget);
-            }
-            /**
-             * on click a new random element is added to the DOM tree
-             */
-
-            function handler() {
-                var index = getRandomArbitrary(0, 2);
-                // NB if you don't clone the element, the same element will be
-                // first removed from tree (and mediator is destroyed too)
-                // then attached to body again (and a new mediator is created)
-                var element = document.createElement("div");
-                element.innerHTML = "<foo-element>foo! <bar-element>bar!</bar-element></foo-element>";//.clone();
-                /**
-                 * when an element is clicked, it will be removed.
-                 * Every Mediators will be removed too.
-                 */
-
-                element.addEventListener("click", cb);
-                document.body.appendChild(element);
-            }
-
-            document.querySelector(".add-button").addEventListener("click", handler);
-            /**
-             * this is an example of Event dispatching.
-             * MediatorB listens to it. When a new MediatorB instance is created, a new console.log is shown.
-             */
-           /* setInterval(function () {
-                this.eventDispatcher.dispatchEvent("evento", {name: "evento"});
-            }.bind(this), 4000);*/
-        }
-    };
     return new Application();
 });

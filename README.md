@@ -12,7 +12,7 @@ bower install robojs
 
 
 #How it works.
-robojs 2.0.0 changes a lot from 1.x.x. 2.0.0 is built on top of Custom Elements.
+robojs 2.x.x changes a lot from 1.x.x. 2.0.0 is built on top of Custom Elements.
 
 V2 is built on top of Custom Elements, so v1 `Mediators` now are real `Custom Elements`, with their lifecycle and logics.
 RoboJS now focuses on loading JS to register elements when they  appear for the first time in the project.
@@ -75,12 +75,12 @@ It's meant to be a Singleton in your application.
 
 RoboJS depends on
 
-**[RamdaJS](http://ramdajs.com/)** to deal with functional programming. Curry, reduce, map, filter etc... It is internally used. NO needs to import ramda library.
+**[RamdaJS](http://ramdajs.com/)** to deal with functional programming. Curry, reduce, map, filter etc... few of its functions are internally used. NO needs to import ramda library.
 
 **`AMDScriptLoader` Object** supposes that `require` function is in global space, so if your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Object
 
 ```javascript
-robojs.display.bootstrap({definitions: definitions,scriptLoader:robojs.net.AMDScriptLoader})
+rjs.bootstrap({definitions: definitions,loader:rjs.AMDScriptLoader})
 ```
 
 
@@ -107,7 +107,7 @@ or using Globals
 transpiling es6 sources to es5 is handled by AWESOME project [jspm](http://jspm.io/), that is a package manager for the SystemJS universal module loader, built on top of the dynamic ES6 module loader.
 
 ```
-jspm bundle-sfx src/org/core/robojs -o dist/robojs.es6.js --amd
+jspm bundle-sfx src/org/core/robojs dist/robojs.es6.js --format amd
 ```
 
 
@@ -118,6 +118,6 @@ A stand-alone working lightweight version of the W3C Custom Elements specificati
 MutationObserver: if you need a polyfill you can check the [Webcomponents](https://github.com/webcomponents) polyfill.
 
 ##Articles about Custom Elements##
-[HTML5 rocks](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/): Excellent article about custom elements, and WebComponents in general.
-[MDN Custom Elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements)
-[MDN Document.registerElement()](https://developer.mozilla.org/en-US/docs/Web/API/Document/registerElement)
+1. [HTML5 rocks](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/): Excellent article about custom elements, and WebComponents in general.
+2. [MDN Custom Elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements)
+3. [MDN Document.registerElement()](https://developer.mozilla.org/en-US/docs/Web/API/Document/registerElement)

@@ -1,3 +1,4 @@
+
 var _currentListeners = {};
 export default Object.freeze({
 
@@ -13,11 +14,11 @@ export default Object.freeze({
         _currentListeners[type].push(listener);
         return listener;
     },
-    removeEventListener: function (eventName, callback, scope) {
+    removeEventListener:  (eventName, callback, scope) =>{
         var listeners = _currentListeners[eventName] || [];
-        _currentListeners[eventName] = listeners.filter(function (listener) {
-            var sameCB = listener.callback == callback;
-            var sameScope = listener.scope == scope;
+        _currentListeners[eventName] = listeners.filter(listener=> {
+            var sameCB = listener.callback === callback;
+            var sameScope = listener.scope === scope;
             return !(sameCB && sameScope);
         });
     },
@@ -26,7 +27,7 @@ export default Object.freeze({
         delete _currentListeners[eventName];
     },
     hasEventListener: eventName => _currentListeners[eventName] && _currentListeners[eventName].length,
-    dispatchEvent: function (type, data) {
+    dispatchEvent:  (type, data) =>{
         var listeners = _currentListeners[type] || [];
         var length = listeners.length, l, c, s;
         for (var i = 0; i < length; i++) {
