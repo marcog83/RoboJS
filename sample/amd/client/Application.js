@@ -4,7 +4,7 @@
 define(function (require) {
     "use strict";
     var rjs = require("robojs");
-    var definitions = require("./MediatorsMap");
+    var definitions = require("./definitions");
 
     function Application() {
         /**
@@ -12,7 +12,7 @@ define(function (require) {
          * @type {function}
          * bootstrap is a sugar function to hide internal dependencies.
          * A MediatorsBuilder is created.
-         * MediatorsBuilder will iterate the DOM trying to match MediatorsMap ids with custom elements tag name.
+         * MediatorsBuilder will iterate the DOM trying to match definitions keys with custom elements tag name.
          * @return {Promise}.
          * Promise is meant to be resolved when every mediators are loaded.
          *

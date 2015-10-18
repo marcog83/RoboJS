@@ -15,7 +15,7 @@ bower install robojs
 robojs 2.x.x changes a lot from 1.x.x. 2.0.0 is built on top of Custom Elements.
 
 V2 is built on top of Custom Elements, so v1 `Mediators` now are real `Custom Elements`, with their lifecycle and logics.
-RoboJS now focuses on loading JS to register elements when they  appear for the first time in the project.
+RoboJS now focuses on loading JS to register elements when they  appear for the first time in the DOM.
 
 You set a custom tag in your markup
 ```html
@@ -23,7 +23,7 @@ You set a custom tag in your markup
     <bar-element>b-1</bar-element>
 
 ```
-in `MediatorsMap.js` you define a Map where the key is the custom element tag name, and the value is the file to request in order to register the element.
+in `definitions.js` you define a Map where the key is the custom element tag name, and the value is the file to request in order to register the element.
 
 ```javascript
 	{
@@ -38,8 +38,20 @@ For instance in this sample I mapped 2 different Custom Elements.
 When the builder finds a match between a `tagName`  and an ID from `MediatorsMap`, it will register the new found Element.
 Then Custom Element takes care of instantiate the right code for each element.
 
+#Usage
+
+```javascript
+rjs.bootstrap({definitions: definitions}) // [Object Promise]
+```
+
+#MediatorsBuilder
+`MediatorsBuilder` will iterate the DOM trying to match definitions.js **keys** with custom elements **tag name**.
+The first time it finds a match, a request is send to load the right script, where the element is defined and registered.
+`MutationObserver` is used to handle DOM changes, and when it happens MediatorsBuilder iterates over the new added nodes.
+
+
 #Mediator Object.
-Mediator is the context where your logic runs for a specific bunch of DOM.
+Mediator is the context where your logic runs for a specific Custom Element.
 When a `tagName` matches an ID from MediatorsMap the `Mediator` constructor is called and the element is registered.
 
 
@@ -59,18 +71,37 @@ When a `tagName` matches an ID from MediatorsMap the `Mediator` constructor is c
    	}
 ```
 
-#EventDispatcher Class.
+###EventDispatcher Class.
 The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
 It's meant to be a Singleton in your application.
 
 	
 	
-###Dependencies
+#Dependencies
 
 
-RoboJS depends on
+RoboJS depends on some **[RamdaJS](http://ramdajs.com/)** functions.
 
-**[RamdaJS](http://ramdajs.com/)** to deal with functional programming. Curry, reduce, map, filter etc... few of its functions are internally used. NO needs to import ramda library.
+```javascript
+	// DomWatcher.js
+	//
+   import tap from "ramda/src/tap";
+   import map from "ramda/src/map";
+   import flatten from "ramda/src/flatten";
+   import pluck from "ramda/src/pluck";
+   import compose from "ramda/src/compose";
+   //
+   // MediatorsBuilder.js
+   //
+   import curryN from "ramda/src/curryN";
+   import find from "ramda/src/find";
+   import compose from "ramda/src/compose";
+   import map from "ramda/src/map";
+   import filter from "ramda/src/filter";
+   import flatten from "ramda/src/flatten";
+```
+NO needs to import ramda library.
+
 
 **`AMDScriptLoader` Object** supposes that `require` function is in global space, so if your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Object
 
