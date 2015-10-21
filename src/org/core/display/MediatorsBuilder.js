@@ -4,6 +4,7 @@ import compose from "ramda/src/compose";
 import map from "ramda/src/map";
 import filter from "ramda/src/filter";
 import flatten from "ramda/src/flatten";
+import uniq from "ramda/src/uniq";
 
 
 export default  (domWatcher, loader, definitions)=> {
@@ -26,6 +27,7 @@ export default  (domWatcher, loader, definitions)=> {
         Promise.all.bind(Promise),
         map(findMediators(definitions)),
         filter(hasMediator(definitions)),
+        uniq,
         map(node=>node.tagName.toLowerCase()),
         flatten()
     );

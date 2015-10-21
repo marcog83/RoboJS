@@ -1619,15 +1619,229 @@ $__System.registerDynamic("2e", ["7", "c", "2c", "2d"], true, function(req, expo
   return module.exports;
 });
 
-$__System.register("2f", ["16", "2b", "27", "19", "2e", "1b"], function($__export) {
+$__System.registerDynamic("2f", [], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _arrayFromIterator(iter) {
+    var list = [];
+    var next;
+    while (!(next = iter.next()).done) {
+      list.push(next.value);
+    }
+    return list;
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("30", ["7"], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = req('7');
+  module.exports = _curry2(function identical(a, b) {
+    if (a === b) {
+      return a !== 0 || 1 / a === 1 / b;
+    } else {
+      return a !== a && b !== b;
+    }
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("31", ["6"], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry1 = req('6');
+  module.exports = _curry1(function type(val) {
+    return val === null ? 'Null' : val === undefined ? 'Undefined' : Object.prototype.toString.call(val).slice(8, -1);
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("32", ["2f", "17", "30", "18", "31"], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _arrayFromIterator = req('2f');
+  var _has = req('17');
+  var identical = req('30');
+  var keys = req('18');
+  var type = req('31');
+  module.exports = function _equals(a, b, stackA, stackB) {
+    if (identical(a, b)) {
+      return true;
+    }
+    if (type(a) !== type(b)) {
+      return false;
+    }
+    if (a == null || b == null) {
+      return false;
+    }
+    if (typeof a.equals === 'function' || typeof b.equals === 'function') {
+      return typeof a.equals === 'function' && a.equals(b) && typeof b.equals === 'function' && b.equals(a);
+    }
+    switch (type(a)) {
+      case 'Arguments':
+      case 'Array':
+      case 'Object':
+        break;
+      case 'Boolean':
+      case 'Number':
+      case 'String':
+        if (!(typeof a === typeof b && identical(a.valueOf(), b.valueOf()))) {
+          return false;
+        }
+        break;
+      case 'Date':
+        if (!identical(a.valueOf(), b.valueOf())) {
+          return false;
+        }
+        break;
+      case 'RegExp':
+        if (!(a.source === b.source && a.global === b.global && a.ignoreCase === b.ignoreCase && a.multiline === b.multiline && a.sticky === b.sticky && a.unicode === b.unicode)) {
+          return false;
+        }
+        break;
+      case 'Map':
+      case 'Set':
+        if (!_equals(_arrayFromIterator(a.entries()), _arrayFromIterator(b.entries()), stackA, stackB)) {
+          return false;
+        }
+        break;
+      case 'Int8Array':
+      case 'Uint8Array':
+      case 'Uint8ClampedArray':
+      case 'Int16Array':
+      case 'Uint16Array':
+      case 'Int32Array':
+      case 'Uint32Array':
+      case 'Float32Array':
+      case 'Float64Array':
+        break;
+      case 'ArrayBuffer':
+        break;
+      default:
+        return false;
+    }
+    var keysA = keys(a);
+    if (keysA.length !== keys(b).length) {
+      return false;
+    }
+    var idx = stackA.length - 1;
+    while (idx >= 0) {
+      if (stackA[idx] === a) {
+        return stackB[idx] === b;
+      }
+      idx -= 1;
+    }
+    stackA.push(a);
+    stackB.push(b);
+    idx = keysA.length - 1;
+    while (idx >= 0) {
+      var key = keysA[idx];
+      if (!(_has(key, b) && _equals(b[key], a[key], stackA, stackB))) {
+        return false;
+      }
+      idx -= 1;
+    }
+    stackA.pop();
+    stackB.pop();
+    return true;
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("33", ["7", "32"], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = req('7');
+  var _equals = req('32');
+  module.exports = _curry2(function equals(a, b) {
+    return _equals(a, b, [], []);
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("34", [], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _containsWith(pred, x, list) {
+    var idx = 0,
+        len = list.length;
+    while (idx < len) {
+      if (pred(x, list[idx])) {
+        return true;
+      }
+      idx += 1;
+    }
+    return false;
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("35", ["34", "7"], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _containsWith = req('34');
+  var _curry2 = req('7');
+  module.exports = _curry2(function uniqWith(pred, list) {
+    var idx = 0,
+        len = list.length;
+    var result = [],
+        item;
+    while (idx < len) {
+      item = list[idx];
+      if (!_containsWith(pred, item, result)) {
+        result[result.length] = item;
+      }
+      idx += 1;
+    }
+    return result;
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("36", ["33", "35"], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var equals = req('33');
+  var uniqWith = req('35');
+  module.exports = uniqWith(equals);
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.register("37", ["16", "2b", "27", "19", "2e", "1b", "36"], function($__export) {
   "use strict";
-  var __moduleName = "2f";
+  var __moduleName = "37";
   var curryN,
       find,
       compose,
       map,
       filter,
-      flatten;
+      flatten,
+      uniq;
   return {
     setters: [function($__m) {
       curryN = $__m.default;
@@ -1641,6 +1855,8 @@ $__System.register("2f", ["16", "2b", "27", "19", "2e", "1b"], function($__expor
       filter = $__m.default;
     }, function($__m) {
       flatten = $__m.default;
+    }, function($__m) {
+      uniq = $__m.default;
     }],
     execute: function() {
       $__export('default', function(domWatcher, loader, definitions) {
@@ -1655,7 +1871,7 @@ $__System.register("2f", ["16", "2b", "27", "19", "2e", "1b"], function($__expor
         var hasMediator = curryN(2, function(definitions, tagName) {
           return definitions[tagName] != undefined;
         });
-        var getMediators = compose(Promise.all.bind(Promise), map(findMediators(definitions)), filter(hasMediator(definitions)), map(function(node) {
+        var getMediators = compose(Promise.all.bind(Promise), map(findMediators(definitions)), filter(hasMediator(definitions)), uniq, map(function(node) {
           return node.tagName.toLowerCase();
         }), flatten());
         domWatcher.onAdded.connect(getMediators);
@@ -1671,9 +1887,9 @@ $__System.register("2f", ["16", "2b", "27", "19", "2e", "1b"], function($__expor
   };
 });
 
-$__System.register("30", ["2f", "28", "2"], function($__export) {
+$__System.register("38", ["37", "28", "2"], function($__export) {
   "use strict";
-  var __moduleName = "30";
+  var __moduleName = "38";
   var MediatorsBuilder,
       DomWatcher,
       ScriptLoader;
@@ -1699,7 +1915,7 @@ $__System.register("30", ["2f", "28", "2"], function($__export) {
   };
 });
 
-$__System.register("1", ["2", "3", "4", "5", "28", "2f", "30"], function($__export) {
+$__System.register("1", ["2", "3", "4", "5", "28", "37", "38"], function($__export) {
   "use strict";
   var __moduleName = "1";
   var ScriptLoader,
