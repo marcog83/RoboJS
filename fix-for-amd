@@ -1,6 +1,6 @@
 if (typeof define == 'function' && define.amd)
     define(["robojs"],function(){
-      "use strict";
+
       return factory().robojs;
     });
   else

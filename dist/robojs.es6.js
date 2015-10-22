@@ -1439,127 +1439,7 @@ $__System.registerDynamic("27", ["24", "26"], true, function(req, exports, modul
   return module.exports;
 });
 
-$__System.register("28", ["5", "8", "19", "1b", "1d", "27"], function($__export) {
-  "use strict";
-  var __moduleName = "28";
-  var Signal,
-      tap,
-      map,
-      flatten,
-      pluck,
-      compose;
-  return {
-    setters: [function($__m) {
-      Signal = $__m.default;
-    }, function($__m) {
-      tap = $__m.default;
-    }, function($__m) {
-      map = $__m.default;
-    }, function($__m) {
-      flatten = $__m.default;
-    }, function($__m) {
-      pluck = $__m.default;
-    }, function($__m) {
-      compose = $__m.default;
-    }],
-    execute: function() {
-      $__export('default', function() {
-        var root = arguments[0] !== (void 0) ? arguments[0] : document.body;
-        var onAdded = Signal();
-        function makeChain(prop, emit) {
-          return compose(tap(function(nodes) {
-            return (nodes.length && emit(nodes));
-          }), map(function(node) {
-            return [node].concat(Array.prototype.slice.call(node.getElementsByTagName("*"), 0));
-          }), flatten(), pluck(prop));
-        }
-        var observer = new MutationObserver(makeChain("addedNodes", onAdded.emit));
-        observer.observe(root, {
-          attributes: false,
-          childList: true,
-          characterData: false,
-          subtree: true
-        });
-        return Object.freeze({onAdded: onAdded});
-      });
-    }
-  };
-});
-
-$__System.registerDynamic("29", [], true, function(req, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _reduced(x) {
-    return x && x['@@transducer/reduced'] ? x : {
-      '@@transducer/value': x,
-      '@@transducer/reduced': true
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("2a", ["7", "29", "13"], true, function(req, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = req('7');
-  var _reduced = req('29');
-  var _xfBase = req('13');
-  module.exports = (function() {
-    function XFind(f, xf) {
-      this.xf = xf;
-      this.f = f;
-      this.found = false;
-    }
-    XFind.prototype['@@transducer/init'] = _xfBase.init;
-    XFind.prototype['@@transducer/result'] = function(result) {
-      if (!this.found) {
-        result = this.xf['@@transducer/step'](result, void 0);
-      }
-      return this.xf['@@transducer/result'](result);
-    };
-    XFind.prototype['@@transducer/step'] = function(result, input) {
-      if (this.f(input)) {
-        this.found = true;
-        result = _reduced(this.xf['@@transducer/step'](result, input));
-      }
-      return result;
-    };
-    return _curry2(function _xfind(f, xf) {
-      return new XFind(f, xf);
-    });
-  })();
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("2b", ["7", "c", "2a"], true, function(req, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = req('7');
-  var _dispatchable = req('c');
-  var _xfind = req('2a');
-  module.exports = _curry2(_dispatchable('find', _xfind, function find(fn, list) {
-    var idx = 0;
-    var len = list.length;
-    while (idx < len) {
-      if (fn(list[idx])) {
-        return list[idx];
-      }
-      idx += 1;
-    }
-  }));
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("2c", [], true, function(req, exports, module) {
+$__System.registerDynamic("28", [], true, function(req, exports, module) {
   ;
   var global = this,
       __define = global.define;
@@ -1580,7 +1460,7 @@ $__System.registerDynamic("2c", [], true, function(req, exports, module) {
   return module.exports;
 });
 
-$__System.registerDynamic("2d", ["7", "13"], true, function(req, exports, module) {
+$__System.registerDynamic("29", ["7", "13"], true, function(req, exports, module) {
   ;
   var global = this,
       __define = global.define;
@@ -1605,62 +1485,143 @@ $__System.registerDynamic("2d", ["7", "13"], true, function(req, exports, module
   return module.exports;
 });
 
-$__System.registerDynamic("2e", ["7", "c", "2c", "2d"], true, function(req, exports, module) {
+$__System.registerDynamic("2a", ["7", "c", "28", "29"], true, function(req, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
   var _curry2 = req('7');
   var _dispatchable = req('c');
-  var _filter = req('2c');
-  var _xfilter = req('2d');
+  var _filter = req('28');
+  var _xfilter = req('29');
   module.exports = _curry2(_dispatchable('filter', _xfilter, _filter));
   global.define = __define;
   return module.exports;
 });
 
-$__System.register("2f", ["16", "2b", "27", "19", "2e", "1b"], function($__export) {
+$__System.register("2b", ["5", "8", "19", "1b", "1d", "27", "2a"], function($__export) {
   "use strict";
-  var __moduleName = "2f";
-  var curryN,
-      find,
-      compose,
+  var __moduleName = "2b";
+  var Signal,
+      tap,
       map,
-      filter,
-      flatten;
+      flatten,
+      pluck,
+      compose,
+      filter;
   return {
     setters: [function($__m) {
-      curryN = $__m.default;
+      Signal = $__m.default;
     }, function($__m) {
-      find = $__m.default;
-    }, function($__m) {
-      compose = $__m.default;
+      tap = $__m.default;
     }, function($__m) {
       map = $__m.default;
     }, function($__m) {
-      filter = $__m.default;
-    }, function($__m) {
       flatten = $__m.default;
+    }, function($__m) {
+      pluck = $__m.default;
+    }, function($__m) {
+      compose = $__m.default;
+    }, function($__m) {
+      filter = $__m.default;
     }],
     execute: function() {
-      $__export('default', function(domWatcher, loader, definitions) {
-        definitions = Object.create(definitions);
-        var findMediators = curryN(2, function(definitions, tagName) {
-          var url = definitions[tagName];
-          definitions[tagName] = undefined;
-          return loader.load(url).then(function(mediator) {
-            return mediator();
-          });
+      $__export('default', function() {
+        var root = arguments[0] !== (void 0) ? arguments[0] : document.body;
+        var onAdded = Signal();
+        var onRemoved = Signal();
+        function makeChain(prop, emit) {
+          return compose(tap(function(nodes) {
+            return (nodes.length && emit(nodes));
+          }), map(function(node) {
+            return [node].concat(Array.prototype.slice.call(node.querySelectorAll("[data-mediator]"), 0));
+          }), filter(function(node) {
+            return node.querySelectorAll;
+          }), flatten(), pluck(prop));
+        }
+        var getAdded = makeChain("addedNodes", onAdded.emit);
+        var getRemoved = makeChain("removedNodes", onRemoved.emit);
+        var handleMutations = function(mutations) {
+          getAdded(mutations);
+          getRemoved(mutations);
+        };
+        var observer = new MutationObserver(handleMutations);
+        observer.observe(root, {
+          attributes: false,
+          childList: true,
+          characterData: false,
+          subtree: true
         });
-        var hasMediator = curryN(2, function(definitions, tagName) {
-          return definitions[tagName] != undefined;
+        return Object.freeze({
+          onAdded: onAdded,
+          onRemoved: onRemoved
         });
-        var getMediators = compose(Promise.all.bind(Promise), map(findMediators(definitions)), filter(hasMediator(definitions)), map(function(node) {
-          return node.tagName.toLowerCase();
-        }), flatten());
+      });
+    }
+  };
+});
+
+$__System.registerDynamic("2c", ["21", "7"], true, function(req, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _checkForMethod = req('21');
+  var _curry2 = req('7');
+  module.exports = _curry2(_checkForMethod('forEach', function forEach(fn, list) {
+    var len = list.length;
+    var idx = 0;
+    while (idx < len) {
+      fn(list[idx]);
+      idx += 1;
+    }
+    return list;
+  }));
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.register("2d", ["19", "8", "2c", "1b", "27", "2a"], function($__export) {
+  "use strict";
+  var __moduleName = "2d";
+  var map,
+      tap,
+      forEach,
+      flatten,
+      compose,
+      filter;
+  return {
+    setters: [function($__m) {
+      map = $__m.default;
+    }, function($__m) {
+      tap = $__m.default;
+    }, function($__m) {
+      forEach = $__m.default;
+    }, function($__m) {
+      flatten = $__m.default;
+    }, function($__m) {
+      compose = $__m.default;
+    }, function($__m) {
+      filter = $__m.default;
+    }],
+    execute: function() {
+      $__export('default', function(domWatcher, loader, mediatorHandler, definitions) {
+        var _handleNodesRemoved = compose(forEach(mediatorHandler.destroy), flatten());
+        var findMediators = function(definitions) {
+          return function(node) {
+            return loader.load(definitions[node.getAttribute("data-mediator")]).then(mediatorHandler.create(node));
+          };
+        };
+        var hasMediator = function(definitions) {
+          return function(node) {
+            return definitions[node.getAttribute("data-mediator")];
+          };
+        };
+        var getMediators = compose(Promise.all.bind(Promise), map(findMediators(definitions)), filter(hasMediator(definitions)), flatten());
         domWatcher.onAdded.connect(getMediators);
+        domWatcher.onRemoved.connect(_handleNodesRemoved);
         var bootstrap = compose(getMediators, map(function(node) {
-          return [node].concat(Array.prototype.slice.call(node.getElementsByTagName("*"), 0));
+          return [node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
         }), function() {
           var root = arguments[0] !== (void 0) ? arguments[0] : document.body;
           return [root];
@@ -1671,12 +1632,63 @@ $__System.register("2f", ["16", "2b", "27", "19", "2e", "1b"], function($__expor
   };
 });
 
-$__System.register("30", ["2f", "28", "2"], function($__export) {
+$__System.register("2e", ["4"], function($__export) {
   "use strict";
-  var __moduleName = "30";
+  var __moduleName = "2e";
+  var EventDispatcher;
+  return {
+    setters: [function($__m) {
+      EventDispatcher = $__m.default;
+    }],
+    execute: function() {
+      $__export('default', function() {
+        var nextUid = function() {
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        };
+        var MEDIATORS_CACHE = {};
+        return Object.freeze({
+          create: function(node) {
+            return function(Mediator) {
+              var mediatorId = nextUid();
+              node.setAttribute('mediatorId', mediatorId);
+              var _mediator = Mediator(EventDispatcher);
+              MEDIATORS_CACHE[mediatorId] = _mediator;
+              _mediator.initialize(node);
+              return _mediator;
+            };
+          },
+          destroy: function(node) {
+            var mediatorId = node.getAttribute("mediatorId");
+            var mediator = MEDIATORS_CACHE[mediatorId];
+            if (mediator) {
+              mediator.destroy && mediator.destroy(node);
+              mediator.postDestroy && mediator.postDestroy();
+              mediator.element && (mediator.element = null);
+              MEDIATORS_CACHE[mediatorId] = null;
+              delete MEDIATORS_CACHE[mediatorId];
+              mediator = null;
+              return true;
+            }
+            return false;
+          }
+        });
+      });
+      ;
+    }
+  };
+});
+
+$__System.register("2f", ["2d", "2b", "2", "2e"], function($__export) {
+  "use strict";
+  var __moduleName = "2f";
   var MediatorsBuilder,
       DomWatcher,
-      ScriptLoader;
+      ScriptLoader,
+      MediatorHandler;
   return {
     setters: [function($__m) {
       MediatorsBuilder = $__m.default;
@@ -1684,22 +1696,26 @@ $__System.register("30", ["2f", "28", "2"], function($__export) {
       DomWatcher = $__m.default;
     }, function($__m) {
       ScriptLoader = $__m.default;
+    }, function($__m) {
+      MediatorHandler = $__m.default;
     }],
     execute: function() {
       $__export('default', function($__1) {
         var $__3,
-            $__4;
+            $__4,
+            $__5;
         var $__2 = $__1,
             definitions = $__2.definitions,
             domWatcher = ($__3 = $__2.domWatcher) === void 0 ? DomWatcher() : $__3,
-            loader = ($__4 = $__2.loader) === void 0 ? ScriptLoader : $__4;
-        return MediatorsBuilder(domWatcher, loader, definitions).bootstrap();
+            loader = ($__4 = $__2.loader) === void 0 ? ScriptLoader : $__4,
+            mediatorHandler = ($__5 = $__2.mediatorHandler) === void 0 ? MediatorHandler() : $__5;
+        return MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions).bootstrap();
       });
     }
   };
 });
 
-$__System.register("1", ["2", "3", "4", "5", "28", "2f", "30"], function($__export) {
+$__System.register("1", ["2", "3", "4", "5", "2b", "2d", "2f"], function($__export) {
   "use strict";
   var __moduleName = "1";
   var ScriptLoader,
@@ -1709,7 +1725,6 @@ $__System.register("1", ["2", "3", "4", "5", "28", "2f", "30"], function($__expo
       DomWatcher,
       MediatorsBuilder,
       bootstrap,
-      _robojs,
       robojs;
   return {
     setters: [function($__m) {
@@ -1728,7 +1743,7 @@ $__System.register("1", ["2", "3", "4", "5", "28", "2f", "30"], function($__expo
       bootstrap = $__m.default;
     }],
     execute: function() {
-      _robojs = {
+      robojs = Object.freeze({
         ScriptLoader: ScriptLoader,
         AMDScriptLoader: AMDScriptLoader,
         EventDispatcher: EventDispatcher,
@@ -1736,8 +1751,7 @@ $__System.register("1", ["2", "3", "4", "5", "28", "2f", "30"], function($__expo
         DomWatcher: DomWatcher,
         MediatorsBuilder: MediatorsBuilder,
         bootstrap: bootstrap
-      };
-      robojs = Object.freeze(_robojs);
+      });
       $__export("robojs", robojs);
     }
   };
@@ -1747,7 +1761,7 @@ $__System.register("1", ["2", "3", "4", "5", "28", "2f", "30"], function($__expo
 (function(factory) {
   if (typeof define == 'function' && define.amd)
     define(["robojs"],function(){
-      "use strict";
+
       return factory().robojs;
     });
   else

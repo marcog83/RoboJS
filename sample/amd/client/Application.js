@@ -28,7 +28,7 @@ define(function (require) {
     !function setHandlers() {
         document.querySelector(".add-button").addEventListener("click", function handler() {
             var element = document.createElement("div");
-            element.innerHTML = "<foo-element>foo! <bar-element>bar!</bar-element></foo-element>";//.clone();
+            element.innerHTML = "<div data-mediator='foo-element'>foo! <div data-mediator='bar-element'>bar!</div></div>";//.clone();
             document.body.appendChild(element.firstElementChild);
         });
 

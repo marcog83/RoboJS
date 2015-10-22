@@ -6,7 +6,8 @@ import DomWatcher from "./display/DomWatcher";
 import MediatorsBuilder from "./display/MediatorsBuilder";
 import bootstrap from "./display/bootstrap";
 
-var _robojs = {
+
+export var robojs = Object.freeze({
     ScriptLoader,
     AMDScriptLoader,
     EventDispatcher,
@@ -14,5 +15,4 @@ var _robojs = {
     DomWatcher,
     MediatorsBuilder,
     bootstrap
-};
-export var robojs = Object.freeze(_robojs);
+});

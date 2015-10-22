@@ -4,22 +4,16 @@
 define(function (require, exports, module) {
 
 
-	function FooElement() {
-		console.log("element foo creation")
-		var proto = Object.create(HTMLElement.prototype);
-		proto.createdCallback = function () {
-			console.log("created", this);
-			this.addEventListener("click",function(e){
-				e.currentTarget.parentElement.removeChild(e.currentTarget);
-			})
-		};
-		proto.attachedCallback = function () {
-			console.log("attached", this)
-		};
-		proto.detachedCallback = function () {
-			console.log("detachedCallback", this)
-		};
-		document.registerElement("foo-element", {prototype: proto})
+	function FooElement(dispatcher) {
+		return {
+			initialize:function(node){
+				node.addEventListener("click",function(e){
+					e.currentTarget.parentElement.removeChild(e.currentTarget);
+					e.stopPropagation();
+				})
+			},
+			destroy:console.log.bind(console,"destroyed")
+		}
 	}
 
 

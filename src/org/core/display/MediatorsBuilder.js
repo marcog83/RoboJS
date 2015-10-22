@@ -1,46 +1,42 @@
-import curryN from "ramda/src/curryN";
-import find from "ramda/src/find";
-import compose from "ramda/src/compose";
 import map from "ramda/src/map";
-import filter from "ramda/src/filter";
+import tap from "ramda/src/tap";
+import forEach from "ramda/src/forEach";
 import flatten from "ramda/src/flatten";
+import compose from "ramda/src/compose";
+import filter from "ramda/src/filter";
+export default function (domWatcher, loader, mediatorHandler, definitions) {
 
 
-export default  (domWatcher, loader, definitions)=> {
+    var _handleNodesRemoved = compose(
+        forEach(mediatorHandler.destroy),
+        flatten()
+    );
 
 
-    //make a copy of definitions map to mutate;
-    definitions = Object.create(definitions);
+    var findMediators = definitions=>node=> loader.load(definitions[node.getAttribute("data-mediator")]).then(mediatorHandler.create(node));
 
-
-    var findMediators = curryN(2, (definitions, tagName) => {
-        var url = definitions[tagName];
-        definitions[tagName] = undefined;
-        return loader.load(url).then(mediator=>mediator());
-    });
-
-    var hasMediator = curryN(2, (definitions, tagName)=> definitions[tagName] != undefined);
+    var hasMediator = definitions=>node=>definitions[node.getAttribute("data-mediator")];
 
 
     var getMediators = compose(
         Promise.all.bind(Promise),
         map(findMediators(definitions)),
         filter(hasMediator(definitions)),
-        map(node=>node.tagName.toLowerCase()),
         flatten()
     );
 
-    domWatcher.onAdded.connect(getMediators);
 
+    domWatcher.onAdded.connect(getMediators);
+    domWatcher.onRemoved.connect(_handleNodesRemoved);
 
     var bootstrap = compose(
         getMediators,
-        map(node=>[node].concat(Array.prototype.slice.call(node.getElementsByTagName("*"), 0))),
-        (root = document.body)=>[root]
+        map(node=>[node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0))),
+        (root = document.body)=> [root]
     );
 
     return Object.freeze({bootstrap})
 
-};
+}
 
 
