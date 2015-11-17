@@ -12,18 +12,13 @@ bower install robojs
 
 
 #How it works.
-robojs 2.x.x changes a lot from 1.x.x. 2.0.0 is built on top of Custom Elements.
-
-V2 is built on top of Custom Elements, so v1 `Mediators` now are real `Custom Elements`, with their lifecycle and logics.
-RoboJS now focuses on loading JS to register elements when they  appear for the first time in the DOM.
-
-You set a custom tag in your markup
+You set a `data-mediator` attribute with an ID (whatever you want)
 ```html
-    <foo-element>a-2</foo-element>
-    <bar-element>b-1</bar-element>
-
+    <div data-mediator="mediator-a">a-2</div>
+    <div data-mediator="mediator-b">b-1</div>
+    <div data-mediator="mediator-c">c-1</div>
 ```
-in `definitions.js` you define a Map where the key is the custom element tag name, and the value is the file to request in order to register the element.
+in `definitions.js` you define a Map where the key is an ID , and the value is the file to request in order to register the element.
 
 ```javascript
 	{
@@ -33,10 +28,10 @@ in `definitions.js` you define a Map where the key is the custom element tag nam
     }
 ```
 
-For instance in this sample I mapped 2 different Custom Elements.
+For instance in this sample I mapped 3 different Mediators.
 
-When the builder finds a match between a `tagName`  and an ID from `MediatorsMap`, it will register the new found Element.
-Then Custom Element takes care of instantiate the right code for each element.
+When the builder finds a match between a `data-mediator` attribute and an ID from `MediatorsMap`,
+it will create a new instance of Mediator, storing the DOM Node into a property named `element` and executes `initialize` method
 
 #Usage
 
@@ -45,29 +40,28 @@ rjs.bootstrap({definitions: definitions}) // [Object Promise]
 ```
 
 #MediatorsBuilder
-`MediatorsBuilder` will iterate the DOM trying to match definitions.js **keys** with custom elements **tag name**.
-The first time it finds a match, a request is send to load the right script, where the element is defined and registered.
+`MediatorsBuilder` will iterate the DOM trying to match definitions.js **keys** with `data-mediator` attributes.
+Each time it finds a match, a request is send to load the right script.
+The first time the script is loaded from network, while the next one is retrived from cache.
 `MutationObserver` is used to handle DOM changes, and when it happens MediatorsBuilder iterates over the new added nodes.
 
 
 #Mediator Object.
-Mediator is the context where your logic runs for a specific Custom Element.
-When a `tagName` matches an ID from MediatorsMap the `Mediator` constructor is called and the element is registered.
+Mediator is the context where your logic runs for a specific Mediator.
+When a `data-mediator` attribute matches an ID from MediatorsMap the `Mediator` constructor is called, an instance is created and the `initialize` function is called.
 
 
 ```javascript
-   function MediatorBarElement() {
-   		var proto = Object.create(HTMLElement.prototype);
-   		proto.createdCallback = function () {
-   			console.log("created", this)
-   		};
-   		proto.attachedCallback = function () {
-   			console.log("attached", this)
-   		};
-   		proto.detachedCallback = function () {
-   			console.log("detached", this)
-   		};
-   		document.registerElement("bar-element", {prototype: proto})
+    function MediatorA(dispacther) {
+		return {
+			initialize:function(node){
+
+				// node is the DOM element
+			},
+			destroy:function(){
+			   // destroy everything
+			}
+		}
    	}
 ```
 
@@ -138,12 +132,6 @@ jspm bundle-sfx src/org/core/robojs dist/robojs.es6.js --format amd
 
 
 ###Polyfills###
-A stand-alone working lightweight version of the W3C Custom Elements specification.
-[document-register-element](https://github.com/WebReflection/document-register-element)
 
 MutationObserver: if you need a polyfill you can check the [Webcomponents](https://github.com/webcomponents) polyfill.
 
-##Articles about Custom Elements##
-1. [HTML5 rocks](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/): Excellent article about custom elements, and WebComponents in general.
-2. [MDN Custom Elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements)
-3. [MDN Document.registerElement()](https://developer.mozilla.org/en-US/docs/Web/API/Document/registerElement)
