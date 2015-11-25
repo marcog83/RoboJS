@@ -4,7 +4,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         uglify: {
             options: {
-                screwIE8: false,
+                screwIE8: true,
                 compress: {
                     cascade: true,
                     join_vars: true,
