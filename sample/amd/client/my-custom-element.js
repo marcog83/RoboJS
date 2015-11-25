@@ -5,8 +5,11 @@ define(function (require, exports, module) {
 
     function Mediator(dispatcher) {
         return {
-            initialize:console.log.bind(console,"initialized"),
-            destroy:console.log.bind(console,"destroyed")
+            initialize:function(n){
+                "use strict";
+                console.log("weee")
+            }
+            //destroy:console.log.bind(console,"destroyed")
         }
     }
 

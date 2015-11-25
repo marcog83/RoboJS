@@ -451,7 +451,9 @@ $__System.register("2", [], function($__export) {
   var __moduleName = "2";
   function getPromise() {
     if (System.import) {
-      return System.import.bind(System);
+      return function(url) {
+        return System.import(url);
+      };
     } else {
       return function(url) {
         return Promise.resolve(System.get(url));
@@ -464,7 +466,9 @@ $__System.register("2", [], function($__export) {
       $__export('default', Object.freeze({load: function(id) {
           return getPromise()(id).then(function(e) {
             return e.default;
-          }).catch(console.log.bind(console));
+          }).catch(function(e) {
+            console.log(e);
+          });
         }}));
     }
   };
@@ -478,7 +482,9 @@ $__System.register("3", [], function($__export) {
     execute: function() {
       $__export('default', Object.freeze({load: function(id) {
           return new Promise(function(resolve, reject) {
-            return window.require([id], resolve.bind(resolve));
+            return window.require([id], function(response) {
+              resolve(response);
+            });
           });
         }}));
     }
@@ -1617,7 +1623,9 @@ $__System.register("2d", ["19", "8", "2c", "1b", "27", "2a"], function($__export
             return definitions[node.getAttribute("data-mediator")];
           };
         };
-        var getMediators = compose(Promise.all.bind(Promise), map(findMediators(definitions)), filter(hasMediator(definitions)), flatten());
+        var getMediators = compose(function(promises) {
+          return Promise.all(promises);
+        }, map(findMediators(definitions)), filter(hasMediator(definitions)), flatten());
         domWatcher.onAdded.connect(getMediators);
         domWatcher.onRemoved.connect(_handleNodesRemoved);
         var bootstrap = compose(getMediators, map(function(node) {
@@ -1760,11 +1768,8 @@ $__System.register("1", ["2", "3", "4", "5", "2b", "2d", "2f"], function($__expo
 })
 (function(factory) {
   if (typeof define == 'function' && define.amd)
-    define(["robojs"],function(){
-
-      return factory().robojs;
-    });
+    define([], factory);
   else
-    window.robojs=factory().robojs
+    factory();
 });
 //# sourceMappingURL=robojs.es6.js.map

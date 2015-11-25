@@ -19,7 +19,10 @@ export default function (domWatcher, loader, mediatorHandler, definitions) {
 
 
     var getMediators = compose(
-        Promise.all.bind(Promise),
+        function(promises){
+
+            return Promise.all(promises)
+        },
         map(findMediators(definitions)),
         filter(hasMediator(definitions)),
         flatten()

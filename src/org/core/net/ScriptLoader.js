@@ -1,6 +1,9 @@
 function getPromise(){
     if (System.import){
-        return System.import.bind(System);
+        return function(url){
+
+            return System.import(url);
+        };
     }else{
         return function(url){
             return Promise.resolve(System.get(url));
@@ -8,5 +11,5 @@ function getPromise(){
     }
 }
 export default  Object.freeze({
-    load: id=> getPromise()(id).then(e=>e.default).catch(console.log.bind(console))
+    load: id=> getPromise()(id).then(e=>e.default).catch(function(e){console.log(e)})
 });

@@ -12,7 +12,10 @@ define(function (require, exports, module) {
 					e.stopPropagation();
 				})
 			},
-			destroy:console.log.bind(console,"destroyed")
+			destroy:function(n){
+				"use strict";
+				console.log("destroyed")
+			}
 		}
 	}
 
