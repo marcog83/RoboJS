@@ -133,5 +133,7 @@ jspm bundle-sfx src/org/core/robojs dist/robojs.es6.js --format amd
 
 ###Polyfills###
 
-MutationObserver: if you need a polyfill you can check the [Webcomponents](https://github.com/webcomponents) polyfill.
+MutationObserver: if you need a polyfill you can check the 
+*[Webcomponents](https://github.com/webcomponents) polyfill or
+*[MutationObserver](https://github.com/megawac/MutationObserver.js) by megawac.
 
