@@ -1,18 +1,16 @@
-import ScriptLoader from "./net/ScriptLoader";
-import AMDScriptLoader from "./net/AMDScriptLoader";
-import EventDispatcher from "./events/EventDispatcher";
-import Signal from "./events/Signal";
-import DomWatcher from "./display/DomWatcher";
-import MediatorsBuilder from "./display/MediatorsBuilder";
-import bootstrap from "./display/bootstrap";
+import sl from "./net/ScriptLoader";
+import amdl from "./net/AMDScriptLoader";
+import ed from "./events/EventDispatcher";
+import s from "./events/Signal";
+import dw from "./display/DomWatcher";
+import mb from "./display/MediatorsBuilder";
+import boot from "./display/bootstrap";
 
 
-export var robojs = Object.freeze({
-    ScriptLoader,
-    AMDScriptLoader,
-    EventDispatcher,
-    Signal,
-    DomWatcher,
-    MediatorsBuilder,
-    bootstrap
-});
+export var ScriptLoader = sl;
+export var AMDScriptLoader = amdl;
+export var EventDispatcher = ed;
+export var Signal = s;
+export var DomWatcher = dw;
+export var MediatorsBuilder = mb;
+export var bootstrap = boot;

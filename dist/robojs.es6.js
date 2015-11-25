@@ -1726,41 +1726,51 @@ $__System.register("2f", ["2d", "2b", "2", "2e"], function($__export) {
 $__System.register("1", ["2", "3", "4", "5", "2b", "2d", "2f"], function($__export) {
   "use strict";
   var __moduleName = "1";
-  var ScriptLoader,
+  var sl,
+      amdl,
+      ed,
+      s,
+      dw,
+      mb,
+      boot,
+      ScriptLoader,
       AMDScriptLoader,
       EventDispatcher,
       Signal,
       DomWatcher,
       MediatorsBuilder,
-      bootstrap,
-      robojs;
+      bootstrap;
   return {
     setters: [function($__m) {
-      ScriptLoader = $__m.default;
+      sl = $__m.default;
     }, function($__m) {
-      AMDScriptLoader = $__m.default;
+      amdl = $__m.default;
     }, function($__m) {
-      EventDispatcher = $__m.default;
+      ed = $__m.default;
     }, function($__m) {
-      Signal = $__m.default;
+      s = $__m.default;
     }, function($__m) {
-      DomWatcher = $__m.default;
+      dw = $__m.default;
     }, function($__m) {
-      MediatorsBuilder = $__m.default;
+      mb = $__m.default;
     }, function($__m) {
-      bootstrap = $__m.default;
+      boot = $__m.default;
     }],
     execute: function() {
-      robojs = Object.freeze({
-        ScriptLoader: ScriptLoader,
-        AMDScriptLoader: AMDScriptLoader,
-        EventDispatcher: EventDispatcher,
-        Signal: Signal,
-        DomWatcher: DomWatcher,
-        MediatorsBuilder: MediatorsBuilder,
-        bootstrap: bootstrap
-      });
-      $__export("robojs", robojs);
+      ScriptLoader = sl;
+      $__export("ScriptLoader", ScriptLoader);
+      AMDScriptLoader = amdl;
+      $__export("AMDScriptLoader", AMDScriptLoader);
+      EventDispatcher = ed;
+      $__export("EventDispatcher", EventDispatcher);
+      Signal = s;
+      $__export("Signal", Signal);
+      DomWatcher = dw;
+      $__export("DomWatcher", DomWatcher);
+      MediatorsBuilder = mb;
+      $__export("MediatorsBuilder", MediatorsBuilder);
+      bootstrap = boot;
+      $__export("bootstrap", bootstrap);
     }
   };
 });
@@ -1768,11 +1778,8 @@ $__System.register("1", ["2", "3", "4", "5", "2b", "2d", "2f"], function($__expo
 })
 (function(factory) {
   if (typeof define == 'function' && define.amd)
-    define(["robojs"],function(){
-
-      return factory().robojs;
-    });
+    define([], factory);
   else
-    window.robojs=factory().robojs
+    factory();
 });
 //# sourceMappingURL=robojs.es6.js.map

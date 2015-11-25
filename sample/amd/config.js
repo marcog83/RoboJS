@@ -4,7 +4,7 @@
 requirejs.config({
     paths: {
 
-        robojs: "../../dist/robojs.es6.min"
+        robojs: "../../dist/robojs.es6"
 
     }
 });
