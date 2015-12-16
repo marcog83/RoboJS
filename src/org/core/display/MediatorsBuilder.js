@@ -1,5 +1,5 @@
 import map from "ramda/src/map";
-import tap from "ramda/src/tap";
+
 import forEach from "ramda/src/forEach";
 import flatten from "ramda/src/flatten";
 import compose from "ramda/src/compose";
@@ -15,7 +15,7 @@ export default function (domWatcher, loader, mediatorHandler, definitions) {
 
     var findMediators = definitions=>node=> loader.load(definitions[node.getAttribute("data-mediator")]).then(mediatorHandler.create(node));
 
-    var hasMediator = definitions=>node=>definitions[node.getAttribute("data-mediator")];
+    var hasMediator = definitions=>node=>(definitions[node.getAttribute("data-mediator")] && !node.getAttribute("mediatorid"));
 
 
     var getMediators = compose(

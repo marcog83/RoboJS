@@ -15,8 +15,8 @@ export default  function(){
    return Object.freeze({
         create: node=>Mediator=> {
             var mediatorId = nextUid();
-            //node.dataset = node.dataset || {};
-            node.setAttribute('mediatorId', mediatorId);
+
+            node.setAttribute('mediatorid', mediatorId);
 
             var _mediator = Mediator(EventDispatcher);
 
@@ -27,11 +27,11 @@ export default  function(){
         },
         destroy: node=> {
 
-            let mediatorId = node.getAttribute("mediatorId"); //&& node.dataset.mediatorId;
+            let mediatorId = node.getAttribute("mediatorId");
             let mediator = MEDIATORS_CACHE[mediatorId];
             if (mediator) {
                 mediator.destroy && mediator.destroy(node);
-                mediator.postDestroy && mediator.postDestroy();
+
                 mediator.element && (mediator.element = null);
                 MEDIATORS_CACHE[mediatorId] = null;
                 delete MEDIATORS_CACHE[mediatorId];
