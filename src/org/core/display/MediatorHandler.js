@@ -27,7 +27,7 @@ export default  function(){
         },
         destroy: node=> {
 
-            let mediatorId = node.getAttribute("mediatorId");
+            let mediatorId = node.getAttribute("mediatorid");
             let mediator = MEDIATORS_CACHE[mediatorId];
             if (mediator) {
                 mediator.destroy && mediator.destroy(node);

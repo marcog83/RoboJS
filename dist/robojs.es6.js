@@ -476,7 +476,7 @@ $__System.register("2", ["3"], function($__export) {
             };
           },
           destroy: function(node) {
-            var mediatorId = node.getAttribute("mediatorId");
+            var mediatorId = node.getAttribute("mediatorid");
             var mediator = MEDIATORS_CACHE[mediatorId];
             if (mediator) {
               mediator.destroy && mediator.destroy(node);
