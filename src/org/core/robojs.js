@@ -4,6 +4,7 @@ import ed from "./events/EventDispatcher";
 import s from "./events/Signal";
 import dw from "./display/DomWatcher";
 import mb from "./display/MediatorsBuilder";
+import ceh from "./display/CustomElementHandler";
 import boot from "./display/bootstrap";
 
 
@@ -13,4 +14,5 @@ export var EventDispatcher = ed;
 export var Signal = s;
 export var DomWatcher = dw;
 export var MediatorsBuilder = mb;
+export var CustomElementHandler = ceh;
 export var bootstrap = boot;

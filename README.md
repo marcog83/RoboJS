@@ -65,6 +65,44 @@ When a `data-mediator` attribute matches an ID from MediatorsMap the `Mediator` 
    	}
 ```
 
+#CustomElementHandler
+This function constructor allow you to register and create your `Custom Elements`.
+By default your modules are handled by `data-mediator` mechanism, but you get set mediatorHandler in order to use custom elements.
+
+``` javascript
+ rjs.bootstrap({
+            definitions: definitions,
+            mediatorHandler:rjs.CustomElementHandler()
+        })
+```
+
+Your Custom Element should be defined in a function that returns an Object.
+
+``` javascript
+function FooElement() {
+		return {
+			createdCallback: function () {
+				console.log("created foo element", this);
+				this.addEventListener("click",function(e){
+					e.currentTarget.parentElement.removeChild(e.currentTarget);
+					e.stopPropagation();
+				})
+			},
+			attachedCallback: function () {
+				console.log("attached foo element", this)
+			},
+			detachedCallback: function () {
+				console.log("deattached foo element", this)
+			}
+		}
+	}
+```
+
+`CustomElementHandler` takes care registering the new element with `document.registerElement` API
+
+RoboJS recognizes new element added to DOM, if the new node `tagname` matches any in `definitions` map and the element is not registered yet, the right script will be requested and executed.
+Sample folder contains a demo.
+
 ###EventDispatcher Class.
 The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
 It's meant to be a Singleton in your application.

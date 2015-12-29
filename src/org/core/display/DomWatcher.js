@@ -5,15 +5,15 @@ import flatten from "ramda/src/flatten";
 import pluck from "ramda/src/pluck";
 import compose from "ramda/src/compose";
 import filter from "ramda/src/filter";
-
-export default  (root=document.body)=> {
+var defaultMapFn = node=>[node].concat(Array.prototype.slice.call(node.querySelectorAll("[data-mediator]"), 0));
+export default  (mapFn = defaultMapFn, root = document.body)=> {
     var onAdded = Signal();
     var onRemoved = Signal();
 
     function makeChain(prop, emit) {
         return compose(
             tap(nodes=>(nodes.length && emit(nodes))),//onAdded.emit,onRemoved.emit
-            map(node=>[node].concat(Array.prototype.slice.call(node.querySelectorAll("[data-mediator]"), 0))),
+            map(mapFn),
             filter(node=>node.querySelectorAll),
             flatten(),
             pluck(prop)//"addedNodes","removedNodes"
@@ -39,7 +39,7 @@ export default  (root=document.body)=> {
         characterData: false,
         subtree: true
     });
-    return Object.freeze({onAdded,onRemoved})
+    return Object.freeze({onAdded, onRemoved})
 };
 
 

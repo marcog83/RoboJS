@@ -4,27 +4,23 @@ import forEach from "ramda/src/forEach";
 import flatten from "ramda/src/flatten";
 import compose from "ramda/src/compose";
 import filter from "ramda/src/filter";
-export default function (domWatcher, loader, mediatorHandler, definitions) {
+export default function (domWatcher, loader, handler, definitions) {
 
 
     var _handleNodesRemoved = compose(
-        forEach(mediatorHandler.destroy),
+        forEach(handler.destroy),
         flatten()
     );
 
 
-    var findMediators = definitions=>node=> loader.load(definitions[node.getAttribute("data-mediator")]).then(mediatorHandler.create(node));
-
-    var hasMediator = definitions=>node=>(definitions[node.getAttribute("data-mediator")] && !node.getAttribute("mediatorid"));
 
 
     var getMediators = compose(
         function(promises){
-
             return Promise.all(promises)
         },
-        map(findMediators(definitions)),
-        filter(hasMediator(definitions)),
+        map(handler.findMediators(definitions,loader)),
+        filter(handler.hasMediator(definitions)),
         flatten()
     );
 
@@ -34,7 +30,7 @@ export default function (domWatcher, loader, mediatorHandler, definitions) {
 
     var bootstrap = compose(
         getMediators,
-        map(node=>[node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0))),
+        map(handler.getAllElements),
         (root = document.body)=> [root]
     );
 

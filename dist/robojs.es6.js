@@ -174,7 +174,7 @@
 
       module.locked = false;
       return value;
-    });
+    }, entry.name);
 
     module.setters = declaration.setters;
     module.execute = declaration.execute;
@@ -444,11 +444,69 @@
   // etc UMD / module pattern
 })*/
 
-(['1'], [], function($__System) {
+(["1"], [], function($__System) {
 
-$__System.register("2", ["3"], function($__export) {
+(function() {
+  var loader = $__System;
+  
+  if (typeof window != 'undefined' && typeof document != 'undefined' && window.location)
+    var windowOrigin = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+
+  loader.set('@@cjs-helpers', loader.newModule({
+    getPathVars: function(moduleId) {
+      // remove any plugin syntax
+      var pluginIndex = moduleId.lastIndexOf('!');
+      var filename;
+      if (pluginIndex != -1)
+        filename = moduleId.substr(0, pluginIndex);
+      else
+        filename = moduleId;
+
+      var dirname = filename.split('/');
+      dirname.pop();
+      dirname = dirname.join('/');
+
+      if (filename.substr(0, 8) == 'file:///') {
+        filename = filename.substr(7);
+        dirname = dirname.substr(7);
+
+        // on windows remove leading '/'
+        if (isWindows) {
+          filename = filename.substr(1);
+          dirname = dirname.substr(1);
+        }
+      }
+      else if (windowOrigin && filename.substr(0, windowOrigin.length) === windowOrigin) {
+        filename = filename.substr(windowOrigin.length);
+        dirname = dirname.substr(windowOrigin.length);
+      }
+
+      return {
+        filename: filename,
+        dirname: dirname
+      };
+    }
+  }));
+})();
+
+$__System.register("2", [], function($__export) {
   "use strict";
   var __moduleName = "2";
+  return {
+    setters: [],
+    execute: function() {
+      $__export('default', Object.freeze({load: function(id) {
+          return new Promise(function(resolve, reject) {
+            return window.require([id], resolve);
+          });
+        }}));
+    }
+  };
+});
+
+$__System.register("3", ["4"], function($__export) {
+  "use strict";
+  var __moduleName = "3";
   var EventDispatcher;
   return {
     setters: [function($__m) {
@@ -456,38 +514,42 @@ $__System.register("2", ["3"], function($__export) {
     }],
     execute: function() {
       $__export('default', function() {
-        var nextUid = function() {
-          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0,
-                v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-          });
-        };
-        var MEDIATORS_CACHE = {};
-        return Object.freeze({
-          create: function(node) {
-            return function(Mediator) {
-              var mediatorId = nextUid();
-              node.setAttribute('mediatorid', mediatorId);
-              var _mediator = Mediator(EventDispatcher);
-              MEDIATORS_CACHE[mediatorId] = _mediator;
-              _mediator.initialize(node);
-              return _mediator;
-            };
-          },
-          destroy: function(node) {
-            var mediatorId = node.getAttribute("mediatorid");
-            var mediator = MEDIATORS_CACHE[mediatorId];
-            if (mediator) {
-              mediator.destroy && mediator.destroy(node);
-              mediator.element && (mediator.element = null);
-              MEDIATORS_CACHE[mediatorId] = null;
-              delete MEDIATORS_CACHE[mediatorId];
-              mediator = null;
-              return true;
+        var REGISTERED_ELEMENTS = {};
+        function create(id) {
+          return function(Mediator) {
+            var customProto = Mediator();
+            var proto = Object.assign(Object.create(HTMLElement.prototype), customProto, {dispatcher: EventDispatcher});
+            document.registerElement(id, {prototype: proto});
+            return true;
+          };
+        }
+        function findMediators(definitions, loader) {
+          return function(node) {
+            var id = node.tagName.toLowerCase();
+            if (REGISTERED_ELEMENTS[id]) {
+              return Promise.resolve(true);
+            } else {
+              REGISTERED_ELEMENTS[id] = true;
+              return loader.load(definitions[id]).then(create(id));
             }
-            return false;
-          }
+          };
+        }
+        function hasMediator(definitions) {
+          return function(node) {
+            var id = node.tagName.toLowerCase();
+            return (definitions[id] && !REGISTERED_ELEMENTS[id]);
+          };
+        }
+        function getAllElements(node) {
+          return [node].concat([].slice.call(node.getElementsByTagName("*"), 0));
+        }
+        return Object.freeze({
+          destroy: function(_) {
+            return true;
+          },
+          findMediators: findMediators,
+          hasMediator: hasMediator,
+          getAllElements: getAllElements
         });
       });
       ;
@@ -495,46 +557,13 @@ $__System.register("2", ["3"], function($__export) {
   };
 });
 
-$__System.register("4", ["5", "6", "7", "2"], function($__export) {
-  "use strict";
-  var __moduleName = "4";
-  var MediatorsBuilder,
-      DomWatcher,
-      ScriptLoader,
-      MediatorHandler;
-  return {
-    setters: [function($__m) {
-      MediatorsBuilder = $__m.default;
-    }, function($__m) {
-      DomWatcher = $__m.default;
-    }, function($__m) {
-      ScriptLoader = $__m.default;
-    }, function($__m) {
-      MediatorHandler = $__m.default;
-    }],
-    execute: function() {
-      $__export('default', function($__1) {
-        var $__3,
-            $__4,
-            $__5;
-        var $__2 = $__1,
-            definitions = $__2.definitions,
-            domWatcher = ($__3 = $__2.domWatcher) === void 0 ? DomWatcher() : $__3,
-            loader = ($__4 = $__2.loader) === void 0 ? ScriptLoader : $__4,
-            mediatorHandler = ($__5 = $__2.mediatorHandler) === void 0 ? MediatorHandler() : $__5;
-        return MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions).bootstrap();
-      });
-    }
-  };
-});
-
-$__System.registerDynamic("8", ["9", "a"], true, function($__require, exports, module) {
+$__System.registerDynamic("5", ["6", "7"], true, function($__require, exports, module) {
   ;
   var global = this,
       __define = global.define;
   global.define = undefined;
-  var _checkForMethod = $__require('9');
-  var _curry2 = $__require('a');
+  var _checkForMethod = $__require('6');
+  var _curry2 = $__require('7');
   module.exports = _curry2(_checkForMethod('forEach', function forEach(fn, list) {
     var len = list.length;
     var idx = 0;
@@ -548,9 +577,9 @@ $__System.registerDynamic("8", ["9", "a"], true, function($__require, exports, m
   return module.exports;
 });
 
-$__System.register("5", ["b", "8", "c", "d", "e"], function($__export) {
+$__System.register("8", ["9", "5", "a", "b", "c"], function($__export) {
   "use strict";
-  var __moduleName = "5";
+  var __moduleName = "8";
   var map,
       forEach,
       flatten,
@@ -569,26 +598,14 @@ $__System.register("5", ["b", "8", "c", "d", "e"], function($__export) {
       filter = $__m.default;
     }],
     execute: function() {
-      $__export('default', function(domWatcher, loader, mediatorHandler, definitions) {
-        var _handleNodesRemoved = compose(forEach(mediatorHandler.destroy), flatten());
-        var findMediators = function(definitions) {
-          return function(node) {
-            return loader.load(definitions[node.getAttribute("data-mediator")]).then(mediatorHandler.create(node));
-          };
-        };
-        var hasMediator = function(definitions) {
-          return function(node) {
-            return (definitions[node.getAttribute("data-mediator")] && !node.getAttribute("mediatorid"));
-          };
-        };
+      $__export('default', function(domWatcher, loader, handler, definitions) {
+        var _handleNodesRemoved = compose(forEach(handler.destroy), flatten());
         var getMediators = compose(function(promises) {
           return Promise.all(promises);
-        }, map(findMediators(definitions)), filter(hasMediator(definitions)), flatten());
+        }, map(handler.findMediators(definitions, loader)), filter(handler.hasMediator(definitions)), flatten());
         domWatcher.onAdded.connect(getMediators);
         domWatcher.onRemoved.connect(_handleNodesRemoved);
-        var bootstrap = compose(getMediators, map(function(node) {
-          return [node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
-        }), function() {
+        var bootstrap = compose(getMediators, map(handler.getAllElements), function() {
           var root = arguments[0] !== (void 0) ? arguments[0] : document.body;
           return [root];
         });
@@ -598,965 +615,9 @@ $__System.register("5", ["b", "8", "c", "d", "e"], function($__export) {
   };
 });
 
-$__System.registerDynamic("f", ["a", "10"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = $__require('a');
-  var _xfBase = $__require('10');
-  module.exports = (function() {
-    function XFilter(f, xf) {
-      this.xf = xf;
-      this.f = f;
-    }
-    XFilter.prototype['@@transducer/init'] = _xfBase.init;
-    XFilter.prototype['@@transducer/result'] = _xfBase.result;
-    XFilter.prototype['@@transducer/step'] = function(result, input) {
-      return this.f(input) ? this.xf['@@transducer/step'](result, input) : result;
-    };
-    return _curry2(function _xfilter(f, xf) {
-      return new XFilter(f, xf);
-    });
-  })();
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("11", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _filter(fn, list) {
-    var idx = 0,
-        len = list.length,
-        result = [];
-    while (idx < len) {
-      if (fn(list[idx])) {
-        result[result.length] = list[idx];
-      }
-      idx += 1;
-    }
-    return result;
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("e", ["a", "12", "11", "f"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = $__require('a');
-  var _dispatchable = $__require('12');
-  var _filter = $__require('11');
-  var _xfilter = $__require('f');
-  module.exports = _curry2(_dispatchable('filter', _xfilter, _filter));
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("13", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _isString(x) {
-    return Object.prototype.toString.call(x) === '[object String]';
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("14", ["15", "13", "16"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry1 = $__require('15');
-  var _isString = $__require('13');
-  var _slice = $__require('16');
-  module.exports = _curry1(function reverse(list) {
-    return _isString(list) ? list.split('').reverse().join('') : _slice(list).reverse();
-  });
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("17", ["9", "18"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _checkForMethod = $__require('9');
-  var _curry3 = $__require('18');
-  module.exports = _curry3(_checkForMethod('slice', function slice(fromIndex, toIndex, list) {
-    return Array.prototype.slice.call(list, fromIndex, toIndex);
-  }));
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("9", ["19", "16"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _isArray = $__require('19');
-  var _slice = $__require('16');
-  module.exports = function _checkForMethod(methodname, fn) {
-    return function() {
-      var length = arguments.length;
-      if (length === 0) {
-        return fn();
-      }
-      var obj = arguments[length - 1];
-      return (_isArray(obj) || typeof obj[methodname] !== 'function') ? fn.apply(this, arguments) : obj[methodname].apply(obj, _slice(arguments, 0, length - 1));
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("1a", ["9", "17"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _checkForMethod = $__require('9');
-  var slice = $__require('17');
-  module.exports = _checkForMethod('tail', slice(1, Infinity));
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("18", ["15", "a"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry1 = $__require('15');
-  var _curry2 = $__require('a');
-  module.exports = function _curry3(fn) {
-    return function f3(a, b, c) {
-      var n = arguments.length;
-      if (n === 0) {
-        return f3;
-      } else if (n === 1 && a != null && a['@@functional/placeholder'] === true) {
-        return f3;
-      } else if (n === 1) {
-        return _curry2(function(b, c) {
-          return fn(a, b, c);
-        });
-      } else if (n === 2 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
-        return f3;
-      } else if (n === 2 && a != null && a['@@functional/placeholder'] === true) {
-        return _curry2(function(a, c) {
-          return fn(a, b, c);
-        });
-      } else if (n === 2 && b != null && b['@@functional/placeholder'] === true) {
-        return _curry2(function(b, c) {
-          return fn(a, b, c);
-        });
-      } else if (n === 2) {
-        return _curry1(function(c) {
-          return fn(a, b, c);
-        });
-      } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
-        return f3;
-      } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
-        return _curry2(function(a, b) {
-          return fn(a, b, c);
-        });
-      } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
-        return _curry2(function(a, c) {
-          return fn(a, b, c);
-        });
-      } else if (n === 3 && b != null && b['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
-        return _curry2(function(b, c) {
-          return fn(a, b, c);
-        });
-      } else if (n === 3 && a != null && a['@@functional/placeholder'] === true) {
-        return _curry1(function(a) {
-          return fn(a, b, c);
-        });
-      } else if (n === 3 && b != null && b['@@functional/placeholder'] === true) {
-        return _curry1(function(b) {
-          return fn(a, b, c);
-        });
-      } else if (n === 3 && c != null && c['@@functional/placeholder'] === true) {
-        return _curry1(function(c) {
-          return fn(a, b, c);
-        });
-      } else {
-        return fn(a, b, c);
-      }
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("1b", ["18", "1c"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry3 = $__require('18');
-  var _reduce = $__require('1c');
-  module.exports = _curry3(_reduce);
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("1d", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _pipe(f, g) {
-    return function() {
-      return g.call(this, f.apply(this, arguments));
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("1e", ["1f", "1d", "1b", "1a"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _arity = $__require('1f');
-  var _pipe = $__require('1d');
-  var reduce = $__require('1b');
-  var tail = $__require('1a');
-  module.exports = function pipe() {
-    if (arguments.length === 0) {
-      throw new Error('pipe requires at least one argument');
-    }
-    return _arity(arguments[0].length, reduce(_pipe, arguments[0], tail(arguments)));
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("d", ["1e", "14"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var pipe = $__require('1e');
-  var reverse = $__require('14');
-  module.exports = function compose() {
-    if (arguments.length === 0) {
-      throw new Error('compose requires at least one argument');
-    }
-    return pipe.apply(this, reverse(arguments));
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("20", ["a"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = $__require('a');
-  module.exports = _curry2(function prop(p, obj) {
-    return obj[p];
-  });
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("21", ["a", "b", "20"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = $__require('a');
-  var map = $__require('b');
-  var prop = $__require('20');
-  module.exports = _curry2(function pluck(p, list) {
-    return map(prop(p), list);
-  });
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("22", ["23"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var isArrayLike = $__require('23');
-  module.exports = function _makeFlat(recursive) {
-    return function flatt(list) {
-      var value,
-          result = [],
-          idx = 0,
-          j,
-          ilen = list.length,
-          jlen;
-      while (idx < ilen) {
-        if (isArrayLike(list[idx])) {
-          value = recursive ? flatt(list[idx]) : list[idx];
-          j = 0;
-          jlen = value.length;
-          while (j < jlen) {
-            result[result.length] = value[j];
-            j += 1;
-          }
-        } else {
-          result[result.length] = list[idx];
-        }
-        idx += 1;
-      }
-      return result;
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("c", ["15", "22"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry1 = $__require('15');
-  var _makeFlat = $__require('22');
-  module.exports = _curry1(_makeFlat(true));
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("24", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _has(prop, obj) {
-    return Object.prototype.hasOwnProperty.call(obj, prop);
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("25", ["15", "24"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry1 = $__require('15');
-  var _has = $__require('24');
-  module.exports = (function() {
-    var hasEnumBug = !({toString: null}).propertyIsEnumerable('toString');
-    var nonEnumerableProps = ['constructor', 'valueOf', 'isPrototypeOf', 'toString', 'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
-    var contains = function contains(list, item) {
-      var idx = 0;
-      while (idx < list.length) {
-        if (list[idx] === item) {
-          return true;
-        }
-        idx += 1;
-      }
-      return false;
-    };
-    return typeof Object.keys === 'function' ? _curry1(function keys(obj) {
-      return Object(obj) !== obj ? [] : Object.keys(obj);
-    }) : _curry1(function keys(obj) {
-      if (Object(obj) !== obj) {
-        return [];
-      }
-      var prop,
-          ks = [],
-          nIdx;
-      for (prop in obj) {
-        if (_has(prop, obj)) {
-          ks[ks.length] = prop;
-        }
-      }
-      if (hasEnumBug) {
-        nIdx = nonEnumerableProps.length - 1;
-        while (nIdx >= 0) {
-          prop = nonEnumerableProps[nIdx];
-          if (_has(prop, obj) && !contains(ks, prop)) {
-            ks[ks.length] = prop;
-          }
-          nIdx -= 1;
-        }
-      }
-      return ks;
-    });
-  }());
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("26", ["1f"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _arity = $__require('1f');
-  module.exports = function _curryN(length, received, fn) {
-    return function() {
-      var combined = [];
-      var argsIdx = 0;
-      var left = length;
-      var combinedIdx = 0;
-      while (combinedIdx < received.length || argsIdx < arguments.length) {
-        var result;
-        if (combinedIdx < received.length && (received[combinedIdx] == null || received[combinedIdx]['@@functional/placeholder'] !== true || argsIdx >= arguments.length)) {
-          result = received[combinedIdx];
-        } else {
-          result = arguments[argsIdx];
-          argsIdx += 1;
-        }
-        combined[combinedIdx] = result;
-        if (result == null || result['@@functional/placeholder'] !== true) {
-          left -= 1;
-        }
-        combinedIdx += 1;
-      }
-      return left <= 0 ? fn.apply(this, combined) : _arity(left, _curryN(length, combined, fn));
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("27", ["1f", "15", "a", "26"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _arity = $__require('1f');
-  var _curry1 = $__require('15');
-  var _curry2 = $__require('a');
-  var _curryN = $__require('26');
-  module.exports = _curry2(function curryN(length, fn) {
-    if (length === 1) {
-      return _curry1(fn);
-    }
-    return _arity(length, _curryN(length, [], fn));
-  });
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("10", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = {
-    init: function() {
-      return this.xf['@@transducer/init']();
-    },
-    result: function(result) {
-      return this.xf['@@transducer/result'](result);
-    }
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("28", ["a", "10"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = $__require('a');
-  var _xfBase = $__require('10');
-  module.exports = (function() {
-    function XMap(f, xf) {
-      this.xf = xf;
-      this.f = f;
-    }
-    XMap.prototype['@@transducer/init'] = _xfBase.init;
-    XMap.prototype['@@transducer/result'] = _xfBase.result;
-    XMap.prototype['@@transducer/step'] = function(result, input) {
-      return this.xf['@@transducer/step'](result, this.f(input));
-    };
-    return _curry2(function _xmap(f, xf) {
-      return new XMap(f, xf);
-    });
-  })();
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("23", ["15", "19"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry1 = $__require('15');
-  var _isArray = $__require('19');
-  module.exports = _curry1(function isArrayLike(x) {
-    if (_isArray(x)) {
-      return true;
-    }
-    if (!x) {
-      return false;
-    }
-    if (typeof x !== 'object') {
-      return false;
-    }
-    if (x instanceof String) {
-      return false;
-    }
-    if (x.nodeType === 1) {
-      return !!x.length;
-    }
-    if (x.length === 0) {
-      return true;
-    }
-    if (x.length > 0) {
-      return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
-    }
-    return false;
-  });
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("1f", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _arity(n, fn) {
-    switch (n) {
-      case 0:
-        return function() {
-          return fn.apply(this, arguments);
-        };
-      case 1:
-        return function(a0) {
-          return fn.apply(this, arguments);
-        };
-      case 2:
-        return function(a0, a1) {
-          return fn.apply(this, arguments);
-        };
-      case 3:
-        return function(a0, a1, a2) {
-          return fn.apply(this, arguments);
-        };
-      case 4:
-        return function(a0, a1, a2, a3) {
-          return fn.apply(this, arguments);
-        };
-      case 5:
-        return function(a0, a1, a2, a3, a4) {
-          return fn.apply(this, arguments);
-        };
-      case 6:
-        return function(a0, a1, a2, a3, a4, a5) {
-          return fn.apply(this, arguments);
-        };
-      case 7:
-        return function(a0, a1, a2, a3, a4, a5, a6) {
-          return fn.apply(this, arguments);
-        };
-      case 8:
-        return function(a0, a1, a2, a3, a4, a5, a6, a7) {
-          return fn.apply(this, arguments);
-        };
-      case 9:
-        return function(a0, a1, a2, a3, a4, a5, a6, a7, a8) {
-          return fn.apply(this, arguments);
-        };
-      case 10:
-        return function(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
-          return fn.apply(this, arguments);
-        };
-      default:
-        throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
-    }
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("29", ["1f", "a"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _arity = $__require('1f');
-  var _curry2 = $__require('a');
-  module.exports = _curry2(function bind(fn, thisObj) {
-    return _arity(fn.length, function() {
-      return fn.apply(thisObj, arguments);
-    });
-  });
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("2a", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = (function() {
-    function XWrap(fn) {
-      this.f = fn;
-    }
-    XWrap.prototype['@@transducer/init'] = function() {
-      throw new Error('init not implemented on XWrap');
-    };
-    XWrap.prototype['@@transducer/result'] = function(acc) {
-      return acc;
-    };
-    XWrap.prototype['@@transducer/step'] = function(acc, x) {
-      return this.f(acc, x);
-    };
-    return function _xwrap(fn) {
-      return new XWrap(fn);
-    };
-  }());
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("1c", ["2a", "29", "23"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _xwrap = $__require('2a');
-  var bind = $__require('29');
-  var isArrayLike = $__require('23');
-  module.exports = (function() {
-    function _arrayReduce(xf, acc, list) {
-      var idx = 0,
-          len = list.length;
-      while (idx < len) {
-        acc = xf['@@transducer/step'](acc, list[idx]);
-        if (acc && acc['@@transducer/reduced']) {
-          acc = acc['@@transducer/value'];
-          break;
-        }
-        idx += 1;
-      }
-      return xf['@@transducer/result'](acc);
-    }
-    function _iterableReduce(xf, acc, iter) {
-      var step = iter.next();
-      while (!step.done) {
-        acc = xf['@@transducer/step'](acc, step.value);
-        if (acc && acc['@@transducer/reduced']) {
-          acc = acc['@@transducer/value'];
-          break;
-        }
-        step = iter.next();
-      }
-      return xf['@@transducer/result'](acc);
-    }
-    function _methodReduce(xf, acc, obj) {
-      return xf['@@transducer/result'](obj.reduce(bind(xf['@@transducer/step'], xf), acc));
-    }
-    var symIterator = (typeof Symbol !== 'undefined') ? Symbol.iterator : '@@iterator';
-    return function _reduce(fn, acc, list) {
-      if (typeof fn === 'function') {
-        fn = _xwrap(fn);
-      }
-      if (isArrayLike(list)) {
-        return _arrayReduce(fn, acc, list);
-      }
-      if (typeof list.reduce === 'function') {
-        return _methodReduce(fn, acc, list);
-      }
-      if (list[symIterator] != null) {
-        return _iterableReduce(fn, acc, list[symIterator]());
-      }
-      if (typeof list.next === 'function') {
-        return _iterableReduce(fn, acc, list);
-      }
-      throw new TypeError('reduce: list must be array or iterable');
-    };
-  })();
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("2b", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _map(fn, functor) {
-    var idx = 0;
-    var len = functor.length;
-    var result = Array(len);
-    while (idx < len) {
-      result[idx] = fn(functor[idx]);
-      idx += 1;
-    }
-    return result;
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("16", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _slice(args, from, to) {
-    switch (arguments.length) {
-      case 1:
-        return _slice(args, 0, args.length);
-      case 2:
-        return _slice(args, from, args.length);
-      default:
-        var list = [];
-        var idx = 0;
-        var len = Math.max(0, Math.min(args.length, to) - from);
-        while (idx < len) {
-          list[idx] = args[from + idx];
-          idx += 1;
-        }
-        return list;
-    }
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("2c", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _isTransformer(obj) {
-    return typeof obj['@@transducer/step'] === 'function';
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("19", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = Array.isArray || function _isArray(val) {
-    return (val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]');
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("12", ["19", "2c", "16"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _isArray = $__require('19');
-  var _isTransformer = $__require('2c');
-  var _slice = $__require('16');
-  module.exports = function _dispatchable(methodname, xf, fn) {
-    return function() {
-      var length = arguments.length;
-      if (length === 0) {
-        return fn();
-      }
-      var obj = arguments[length - 1];
-      if (!_isArray(obj)) {
-        var args = _slice(arguments, 0, length - 1);
-        if (typeof obj[methodname] === 'function') {
-          return obj[methodname].apply(obj, args);
-        }
-        if (_isTransformer(obj)) {
-          var transducer = xf.apply(null, args);
-          return transducer(obj);
-        }
-      }
-      return fn.apply(this, arguments);
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("b", ["a", "12", "2b", "1c", "28", "27", "25"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = $__require('a');
-  var _dispatchable = $__require('12');
-  var _map = $__require('2b');
-  var _reduce = $__require('1c');
-  var _xmap = $__require('28');
-  var curryN = $__require('27');
-  var keys = $__require('25');
-  module.exports = _curry2(_dispatchable('map', _xmap, function map(fn, functor) {
-    switch (Object.prototype.toString.call(functor)) {
-      case '[object Function]':
-        return curryN(functor.length, function() {
-          return fn.call(this, functor.apply(this, arguments));
-        });
-      case '[object Object]':
-        return _reduce(function(acc, key) {
-          acc[key] = fn(functor[key]);
-          return acc;
-        }, {}, keys(functor));
-      default:
-        return _map(fn, functor);
-    }
-  }));
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("15", [], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  module.exports = function _curry1(fn) {
-    return function f1(a) {
-      if (arguments.length === 0) {
-        return f1;
-      } else if (a != null && a['@@functional/placeholder'] === true) {
-        return f1;
-      } else {
-        return fn.apply(this, arguments);
-      }
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("a", ["15"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry1 = $__require('15');
-  module.exports = function _curry2(fn) {
-    return function f2(a, b) {
-      var n = arguments.length;
-      if (n === 0) {
-        return f2;
-      } else if (n === 1 && a != null && a['@@functional/placeholder'] === true) {
-        return f2;
-      } else if (n === 1) {
-        return _curry1(function(b) {
-          return fn(a, b);
-        });
-      } else if (n === 2 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
-        return f2;
-      } else if (n === 2 && a != null && a['@@functional/placeholder'] === true) {
-        return _curry1(function(a) {
-          return fn(a, b);
-        });
-      } else if (n === 2 && b != null && b['@@functional/placeholder'] === true) {
-        return _curry1(function(b) {
-          return fn(a, b);
-        });
-      } else {
-        return fn(a, b);
-      }
-    };
-  };
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.registerDynamic("2d", ["a"], true, function($__require, exports, module) {
-  ;
-  var global = this,
-      __define = global.define;
-  global.define = undefined;
-  var _curry2 = $__require('a');
-  module.exports = _curry2(function tap(fn, x) {
-    fn(x);
-    return x;
-  });
-  global.define = __define;
-  return module.exports;
-});
-
-$__System.register("6", ["2e", "2d", "b", "c", "21", "d", "e"], function($__export) {
+$__System.register("d", [], function($__export) {
   "use strict";
-  var __moduleName = "6";
-  var Signal,
-      tap,
-      map,
-      flatten,
-      pluck,
-      compose,
-      filter;
-  return {
-    setters: [function($__m) {
-      Signal = $__m.default;
-    }, function($__m) {
-      tap = $__m.default;
-    }, function($__m) {
-      map = $__m.default;
-    }, function($__m) {
-      flatten = $__m.default;
-    }, function($__m) {
-      pluck = $__m.default;
-    }, function($__m) {
-      compose = $__m.default;
-    }, function($__m) {
-      filter = $__m.default;
-    }],
-    execute: function() {
-      $__export('default', function() {
-        var root = arguments[0] !== (void 0) ? arguments[0] : document.body;
-        var onAdded = Signal();
-        var onRemoved = Signal();
-        function makeChain(prop, emit) {
-          return compose(tap(function(nodes) {
-            return (nodes.length && emit(nodes));
-          }), map(function(node) {
-            return [node].concat(Array.prototype.slice.call(node.querySelectorAll("[data-mediator]"), 0));
-          }), filter(function(node) {
-            return node.querySelectorAll;
-          }), flatten(), pluck(prop));
-        }
-        var getAdded = makeChain("addedNodes", onAdded.emit);
-        var getRemoved = makeChain("removedNodes", onRemoved.emit);
-        var handleMutations = function(mutations) {
-          getAdded(mutations);
-          getRemoved(mutations);
-        };
-        var observer = new MutationObserver(handleMutations);
-        observer.observe(root, {
-          attributes: false,
-          childList: true,
-          characterData: false,
-          subtree: true
-        });
-        return Object.freeze({
-          onAdded: onAdded,
-          onRemoved: onRemoved
-        });
-      });
-    }
-  };
-});
-
-$__System.register("2e", [], function($__export) {
-  "use strict";
-  var __moduleName = "2e";
+  var __moduleName = "d";
   function Signal() {
     var listenerBoxes = [];
     function registerListener(listener, scope, once) {
@@ -1621,9 +682,996 @@ $__System.register("2e", [], function($__export) {
   };
 });
 
-$__System.register("3", [], function($__export) {
+$__System.registerDynamic("e", ["7"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = $__require('7');
+  module.exports = _curry2(function tap(fn, x) {
+    fn(x);
+    return x;
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("f", ["10"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var isArrayLike = $__require('10');
+  module.exports = function _makeFlat(recursive) {
+    return function flatt(list) {
+      var value,
+          result = [],
+          idx = 0,
+          j,
+          ilen = list.length,
+          jlen;
+      while (idx < ilen) {
+        if (isArrayLike(list[idx])) {
+          value = recursive ? flatt(list[idx]) : list[idx];
+          j = 0;
+          jlen = value.length;
+          while (j < jlen) {
+            result[result.length] = value[j];
+            j += 1;
+          }
+        } else {
+          result[result.length] = list[idx];
+        }
+        idx += 1;
+      }
+      return result;
+    };
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("a", ["11", "f"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry1 = $__require('11');
+  var _makeFlat = $__require('f');
+  module.exports = _curry1(_makeFlat(true));
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("12", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _map(fn, functor) {
+    var idx = 0;
+    var len = functor.length;
+    var result = Array(len);
+    while (idx < len) {
+      result[idx] = fn(functor[idx]);
+      idx += 1;
+    }
+    return result;
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("13", ["7", "14"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = $__require('7');
+  var _xfBase = $__require('14');
+  module.exports = (function() {
+    function XMap(f, xf) {
+      this.xf = xf;
+      this.f = f;
+    }
+    XMap.prototype['@@transducer/init'] = _xfBase.init;
+    XMap.prototype['@@transducer/result'] = _xfBase.result;
+    XMap.prototype['@@transducer/step'] = function(result, input) {
+      return this.xf['@@transducer/step'](result, this.f(input));
+    };
+    return _curry2(function _xmap(f, xf) {
+      return new XMap(f, xf);
+    });
+  })();
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("15", ["16"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _arity = $__require('16');
+  module.exports = function _curryN(length, received, fn) {
+    return function() {
+      var combined = [];
+      var argsIdx = 0;
+      var left = length;
+      var combinedIdx = 0;
+      while (combinedIdx < received.length || argsIdx < arguments.length) {
+        var result;
+        if (combinedIdx < received.length && (received[combinedIdx] == null || received[combinedIdx]['@@functional/placeholder'] !== true || argsIdx >= arguments.length)) {
+          result = received[combinedIdx];
+        } else {
+          result = arguments[argsIdx];
+          argsIdx += 1;
+        }
+        combined[combinedIdx] = result;
+        if (result == null || result['@@functional/placeholder'] !== true) {
+          left -= 1;
+        }
+        combinedIdx += 1;
+      }
+      return left <= 0 ? fn.apply(this, combined) : _arity(left, _curryN(length, combined, fn));
+    };
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("17", ["16", "11", "7", "15"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _arity = $__require('16');
+  var _curry1 = $__require('11');
+  var _curry2 = $__require('7');
+  var _curryN = $__require('15');
+  module.exports = _curry2(function curryN(length, fn) {
+    if (length === 1) {
+      return _curry1(fn);
+    }
+    return _arity(length, _curryN(length, [], fn));
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("18", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _has(prop, obj) {
+    return Object.prototype.hasOwnProperty.call(obj, prop);
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("19", ["11", "18"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry1 = $__require('11');
+  var _has = $__require('18');
+  module.exports = (function() {
+    var hasEnumBug = !({toString: null}).propertyIsEnumerable('toString');
+    var nonEnumerableProps = ['constructor', 'valueOf', 'isPrototypeOf', 'toString', 'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
+    var contains = function contains(list, item) {
+      var idx = 0;
+      while (idx < list.length) {
+        if (list[idx] === item) {
+          return true;
+        }
+        idx += 1;
+      }
+      return false;
+    };
+    return typeof Object.keys === 'function' ? _curry1(function keys(obj) {
+      return Object(obj) !== obj ? [] : Object.keys(obj);
+    }) : _curry1(function keys(obj) {
+      if (Object(obj) !== obj) {
+        return [];
+      }
+      var prop,
+          ks = [],
+          nIdx;
+      for (prop in obj) {
+        if (_has(prop, obj)) {
+          ks[ks.length] = prop;
+        }
+      }
+      if (hasEnumBug) {
+        nIdx = nonEnumerableProps.length - 1;
+        while (nIdx >= 0) {
+          prop = nonEnumerableProps[nIdx];
+          if (_has(prop, obj) && !contains(ks, prop)) {
+            ks[ks.length] = prop;
+          }
+          nIdx -= 1;
+        }
+      }
+      return ks;
+    });
+  }());
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("9", ["7", "1a", "12", "1b", "13", "17", "19"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = $__require('7');
+  var _dispatchable = $__require('1a');
+  var _map = $__require('12');
+  var _reduce = $__require('1b');
+  var _xmap = $__require('13');
+  var curryN = $__require('17');
+  var keys = $__require('19');
+  module.exports = _curry2(_dispatchable('map', _xmap, function map(fn, functor) {
+    switch (Object.prototype.toString.call(functor)) {
+      case '[object Function]':
+        return curryN(functor.length, function() {
+          return fn.call(this, functor.apply(this, arguments));
+        });
+      case '[object Object]':
+        return _reduce(function(acc, key) {
+          acc[key] = fn(functor[key]);
+          return acc;
+        }, {}, keys(functor));
+      default:
+        return _map(fn, functor);
+    }
+  }));
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("1c", ["7"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = $__require('7');
+  module.exports = _curry2(function prop(p, obj) {
+    return obj[p];
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("1d", ["7", "9", "1c"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = $__require('7');
+  var map = $__require('9');
+  var prop = $__require('1c');
+  module.exports = _curry2(function pluck(p, list) {
+    return map(prop(p), list);
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("1e", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _pipe(f, g) {
+    return function() {
+      return g.call(this, f.apply(this, arguments));
+    };
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("1f", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = (function() {
+    function XWrap(fn) {
+      this.f = fn;
+    }
+    XWrap.prototype['@@transducer/init'] = function() {
+      throw new Error('init not implemented on XWrap');
+    };
+    XWrap.prototype['@@transducer/result'] = function(acc) {
+      return acc;
+    };
+    XWrap.prototype['@@transducer/step'] = function(acc, x) {
+      return this.f(acc, x);
+    };
+    return function _xwrap(fn) {
+      return new XWrap(fn);
+    };
+  }());
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("16", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _arity(n, fn) {
+    switch (n) {
+      case 0:
+        return function() {
+          return fn.apply(this, arguments);
+        };
+      case 1:
+        return function(a0) {
+          return fn.apply(this, arguments);
+        };
+      case 2:
+        return function(a0, a1) {
+          return fn.apply(this, arguments);
+        };
+      case 3:
+        return function(a0, a1, a2) {
+          return fn.apply(this, arguments);
+        };
+      case 4:
+        return function(a0, a1, a2, a3) {
+          return fn.apply(this, arguments);
+        };
+      case 5:
+        return function(a0, a1, a2, a3, a4) {
+          return fn.apply(this, arguments);
+        };
+      case 6:
+        return function(a0, a1, a2, a3, a4, a5) {
+          return fn.apply(this, arguments);
+        };
+      case 7:
+        return function(a0, a1, a2, a3, a4, a5, a6) {
+          return fn.apply(this, arguments);
+        };
+      case 8:
+        return function(a0, a1, a2, a3, a4, a5, a6, a7) {
+          return fn.apply(this, arguments);
+        };
+      case 9:
+        return function(a0, a1, a2, a3, a4, a5, a6, a7, a8) {
+          return fn.apply(this, arguments);
+        };
+      case 10:
+        return function(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
+          return fn.apply(this, arguments);
+        };
+      default:
+        throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
+    }
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("20", ["16", "7"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _arity = $__require('16');
+  var _curry2 = $__require('7');
+  module.exports = _curry2(function bind(fn, thisObj) {
+    return _arity(fn.length, function() {
+      return fn.apply(thisObj, arguments);
+    });
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("10", ["11", "21"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry1 = $__require('11');
+  var _isArray = $__require('21');
+  module.exports = _curry1(function isArrayLike(x) {
+    if (_isArray(x)) {
+      return true;
+    }
+    if (!x) {
+      return false;
+    }
+    if (typeof x !== 'object') {
+      return false;
+    }
+    if (x instanceof String) {
+      return false;
+    }
+    if (x.nodeType === 1) {
+      return !!x.length;
+    }
+    if (x.length === 0) {
+      return true;
+    }
+    if (x.length > 0) {
+      return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
+    }
+    return false;
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("1b", ["1f", "20", "10"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _xwrap = $__require('1f');
+  var bind = $__require('20');
+  var isArrayLike = $__require('10');
+  module.exports = (function() {
+    function _arrayReduce(xf, acc, list) {
+      var idx = 0,
+          len = list.length;
+      while (idx < len) {
+        acc = xf['@@transducer/step'](acc, list[idx]);
+        if (acc && acc['@@transducer/reduced']) {
+          acc = acc['@@transducer/value'];
+          break;
+        }
+        idx += 1;
+      }
+      return xf['@@transducer/result'](acc);
+    }
+    function _iterableReduce(xf, acc, iter) {
+      var step = iter.next();
+      while (!step.done) {
+        acc = xf['@@transducer/step'](acc, step.value);
+        if (acc && acc['@@transducer/reduced']) {
+          acc = acc['@@transducer/value'];
+          break;
+        }
+        step = iter.next();
+      }
+      return xf['@@transducer/result'](acc);
+    }
+    function _methodReduce(xf, acc, obj) {
+      return xf['@@transducer/result'](obj.reduce(bind(xf['@@transducer/step'], xf), acc));
+    }
+    var symIterator = (typeof Symbol !== 'undefined') ? Symbol.iterator : '@@iterator';
+    return function _reduce(fn, acc, list) {
+      if (typeof fn === 'function') {
+        fn = _xwrap(fn);
+      }
+      if (isArrayLike(list)) {
+        return _arrayReduce(fn, acc, list);
+      }
+      if (typeof list.reduce === 'function') {
+        return _methodReduce(fn, acc, list);
+      }
+      if (list[symIterator] != null) {
+        return _iterableReduce(fn, acc, list[symIterator]());
+      }
+      if (typeof list.next === 'function') {
+        return _iterableReduce(fn, acc, list);
+      }
+      throw new TypeError('reduce: list must be array or iterable');
+    };
+  })();
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("22", ["23", "1b"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry3 = $__require('23');
+  var _reduce = $__require('1b');
+  module.exports = _curry3(_reduce);
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("6", ["21", "24"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _isArray = $__require('21');
+  var _slice = $__require('24');
+  module.exports = function _checkForMethod(methodname, fn) {
+    return function() {
+      var length = arguments.length;
+      if (length === 0) {
+        return fn();
+      }
+      var obj = arguments[length - 1];
+      return (_isArray(obj) || typeof obj[methodname] !== 'function') ? fn.apply(this, arguments) : obj[methodname].apply(obj, _slice(arguments, 0, length - 1));
+    };
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("23", ["11", "7"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry1 = $__require('11');
+  var _curry2 = $__require('7');
+  module.exports = function _curry3(fn) {
+    return function f3(a, b, c) {
+      var n = arguments.length;
+      if (n === 0) {
+        return f3;
+      } else if (n === 1 && a != null && a['@@functional/placeholder'] === true) {
+        return f3;
+      } else if (n === 1) {
+        return _curry2(function(b, c) {
+          return fn(a, b, c);
+        });
+      } else if (n === 2 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
+        return f3;
+      } else if (n === 2 && a != null && a['@@functional/placeholder'] === true) {
+        return _curry2(function(a, c) {
+          return fn(a, b, c);
+        });
+      } else if (n === 2 && b != null && b['@@functional/placeholder'] === true) {
+        return _curry2(function(b, c) {
+          return fn(a, b, c);
+        });
+      } else if (n === 2) {
+        return _curry1(function(c) {
+          return fn(a, b, c);
+        });
+      } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
+        return f3;
+      } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
+        return _curry2(function(a, b) {
+          return fn(a, b, c);
+        });
+      } else if (n === 3 && a != null && a['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
+        return _curry2(function(a, c) {
+          return fn(a, b, c);
+        });
+      } else if (n === 3 && b != null && b['@@functional/placeholder'] === true && c != null && c['@@functional/placeholder'] === true) {
+        return _curry2(function(b, c) {
+          return fn(a, b, c);
+        });
+      } else if (n === 3 && a != null && a['@@functional/placeholder'] === true) {
+        return _curry1(function(a) {
+          return fn(a, b, c);
+        });
+      } else if (n === 3 && b != null && b['@@functional/placeholder'] === true) {
+        return _curry1(function(b) {
+          return fn(a, b, c);
+        });
+      } else if (n === 3 && c != null && c['@@functional/placeholder'] === true) {
+        return _curry1(function(c) {
+          return fn(a, b, c);
+        });
+      } else {
+        return fn(a, b, c);
+      }
+    };
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("25", ["6", "23"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _checkForMethod = $__require('6');
+  var _curry3 = $__require('23');
+  module.exports = _curry3(_checkForMethod('slice', function slice(fromIndex, toIndex, list) {
+    return Array.prototype.slice.call(list, fromIndex, toIndex);
+  }));
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("26", ["6", "25"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _checkForMethod = $__require('6');
+  var slice = $__require('25');
+  module.exports = _checkForMethod('tail', slice(1, Infinity));
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("27", ["16", "1e", "22", "26"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _arity = $__require('16');
+  var _pipe = $__require('1e');
+  var reduce = $__require('22');
+  var tail = $__require('26');
+  module.exports = function pipe() {
+    if (arguments.length === 0) {
+      throw new Error('pipe requires at least one argument');
+    }
+    return _arity(arguments[0].length, reduce(_pipe, arguments[0], tail(arguments)));
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("28", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _isString(x) {
+    return Object.prototype.toString.call(x) === '[object String]';
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("29", ["11", "28", "24"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry1 = $__require('11');
+  var _isString = $__require('28');
+  var _slice = $__require('24');
+  module.exports = _curry1(function reverse(list) {
+    return _isString(list) ? list.split('').reverse().join('') : _slice(list).reverse();
+  });
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("b", ["27", "29"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var pipe = $__require('27');
+  var reverse = $__require('29');
+  module.exports = function compose() {
+    if (arguments.length === 0) {
+      throw new Error('compose requires at least one argument');
+    }
+    return pipe.apply(this, reverse(arguments));
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("21", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = Array.isArray || function _isArray(val) {
+    return (val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]');
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("2a", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _isTransformer(obj) {
+    return typeof obj['@@transducer/step'] === 'function';
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("24", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _slice(args, from, to) {
+    switch (arguments.length) {
+      case 1:
+        return _slice(args, 0, args.length);
+      case 2:
+        return _slice(args, from, args.length);
+      default:
+        var list = [];
+        var idx = 0;
+        var len = Math.max(0, Math.min(args.length, to) - from);
+        while (idx < len) {
+          list[idx] = args[from + idx];
+          idx += 1;
+        }
+        return list;
+    }
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("1a", ["21", "2a", "24"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _isArray = $__require('21');
+  var _isTransformer = $__require('2a');
+  var _slice = $__require('24');
+  module.exports = function _dispatchable(methodname, xf, fn) {
+    return function() {
+      var length = arguments.length;
+      if (length === 0) {
+        return fn();
+      }
+      var obj = arguments[length - 1];
+      if (!_isArray(obj)) {
+        var args = _slice(arguments, 0, length - 1);
+        if (typeof obj[methodname] === 'function') {
+          return obj[methodname].apply(obj, args);
+        }
+        if (_isTransformer(obj)) {
+          var transducer = xf.apply(null, args);
+          return transducer(obj);
+        }
+      }
+      return fn.apply(this, arguments);
+    };
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("2b", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _filter(fn, list) {
+    var idx = 0,
+        len = list.length,
+        result = [];
+    while (idx < len) {
+      if (fn(list[idx])) {
+        result[result.length] = list[idx];
+      }
+      idx += 1;
+    }
+    return result;
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("11", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = function _curry1(fn) {
+    return function f1(a) {
+      if (arguments.length === 0) {
+        return f1;
+      } else if (a != null && a['@@functional/placeholder'] === true) {
+        return f1;
+      } else {
+        return fn.apply(this, arguments);
+      }
+    };
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("7", ["11"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry1 = $__require('11');
+  module.exports = function _curry2(fn) {
+    return function f2(a, b) {
+      var n = arguments.length;
+      if (n === 0) {
+        return f2;
+      } else if (n === 1 && a != null && a['@@functional/placeholder'] === true) {
+        return f2;
+      } else if (n === 1) {
+        return _curry1(function(b) {
+          return fn(a, b);
+        });
+      } else if (n === 2 && a != null && a['@@functional/placeholder'] === true && b != null && b['@@functional/placeholder'] === true) {
+        return f2;
+      } else if (n === 2 && a != null && a['@@functional/placeholder'] === true) {
+        return _curry1(function(a) {
+          return fn(a, b);
+        });
+      } else if (n === 2 && b != null && b['@@functional/placeholder'] === true) {
+        return _curry1(function(b) {
+          return fn(a, b);
+        });
+      } else {
+        return fn(a, b);
+      }
+    };
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("14", [], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  module.exports = {
+    init: function() {
+      return this.xf['@@transducer/init']();
+    },
+    result: function(result) {
+      return this.xf['@@transducer/result'](result);
+    }
+  };
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("2c", ["7", "14"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = $__require('7');
+  var _xfBase = $__require('14');
+  module.exports = (function() {
+    function XFilter(f, xf) {
+      this.xf = xf;
+      this.f = f;
+    }
+    XFilter.prototype['@@transducer/init'] = _xfBase.init;
+    XFilter.prototype['@@transducer/result'] = _xfBase.result;
+    XFilter.prototype['@@transducer/step'] = function(result, input) {
+      return this.f(input) ? this.xf['@@transducer/step'](result, input) : result;
+    };
+    return _curry2(function _xfilter(f, xf) {
+      return new XFilter(f, xf);
+    });
+  })();
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.registerDynamic("c", ["7", "1a", "2b", "2c"], true, function($__require, exports, module) {
+  ;
+  var global = this,
+      __define = global.define;
+  global.define = undefined;
+  var _curry2 = $__require('7');
+  var _dispatchable = $__require('1a');
+  var _filter = $__require('2b');
+  var _xfilter = $__require('2c');
+  module.exports = _curry2(_dispatchable('filter', _xfilter, _filter));
+  global.define = __define;
+  return module.exports;
+});
+
+$__System.register("2d", ["d", "e", "9", "a", "1d", "b", "c"], function($__export) {
   "use strict";
-  var __moduleName = "3";
+  var __moduleName = "2d";
+  var Signal,
+      tap,
+      map,
+      flatten,
+      pluck,
+      compose,
+      filter,
+      defaultMapFn;
+  return {
+    setters: [function($__m) {
+      Signal = $__m.default;
+    }, function($__m) {
+      tap = $__m.default;
+    }, function($__m) {
+      map = $__m.default;
+    }, function($__m) {
+      flatten = $__m.default;
+    }, function($__m) {
+      pluck = $__m.default;
+    }, function($__m) {
+      compose = $__m.default;
+    }, function($__m) {
+      filter = $__m.default;
+    }],
+    execute: function() {
+      defaultMapFn = function(node) {
+        return [node].concat(Array.prototype.slice.call(node.querySelectorAll("[data-mediator]"), 0));
+      };
+      $__export('default', function() {
+        var mapFn = arguments[0] !== (void 0) ? arguments[0] : defaultMapFn;
+        var root = arguments[1] !== (void 0) ? arguments[1] : document.body;
+        var onAdded = Signal();
+        var onRemoved = Signal();
+        function makeChain(prop, emit) {
+          return compose(tap(function(nodes) {
+            return (nodes.length && emit(nodes));
+          }), map(mapFn), filter(function(node) {
+            return node.querySelectorAll;
+          }), flatten(), pluck(prop));
+        }
+        var getAdded = makeChain("addedNodes", onAdded.emit);
+        var getRemoved = makeChain("removedNodes", onRemoved.emit);
+        var handleMutations = function(mutations) {
+          getAdded(mutations);
+          getRemoved(mutations);
+        };
+        var observer = new MutationObserver(handleMutations);
+        observer.observe(root, {
+          attributes: false,
+          childList: true,
+          characterData: false,
+          subtree: true
+        });
+        return Object.freeze({
+          onAdded: onAdded,
+          onRemoved: onRemoved
+        });
+      });
+    }
+  };
+});
+
+$__System.register("2e", [], function($__export) {
+  "use strict";
+  var __moduleName = "2e";
+  function getPromise() {
+    if (System.import) {
+      return function(url) {
+        return System.import(url);
+      };
+    } else {
+      return function(url) {
+        return Promise.resolve(System.get(url));
+      };
+    }
+  }
+  return {
+    setters: [],
+    execute: function() {
+      $__export('default', Object.freeze({load: function(id) {
+          return getPromise()(id).then(function(e) {
+            return e.default;
+          }).catch(function(e) {
+            console.log(e);
+          });
+        }}));
+    }
+  };
+});
+
+$__System.register("4", [], function($__export) {
+  "use strict";
+  var __moduleName = "4";
   var _currentListeners;
   return {
     setters: [],
@@ -1667,50 +1715,106 @@ $__System.register("3", [], function($__export) {
   };
 });
 
-$__System.register("2f", [], function($__export) {
+$__System.register("2f", ["4"], function($__export) {
   "use strict";
   var __moduleName = "2f";
+  var EventDispatcher;
   return {
-    setters: [],
+    setters: [function($__m) {
+      EventDispatcher = $__m.default;
+    }],
     execute: function() {
-      $__export('default', Object.freeze({load: function(id) {
-          return new Promise(function(resolve, reject) {
-            return window.require([id], resolve);
+      $__export('default', function() {
+        var nextUid = function() {
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
           });
-        }}));
+        };
+        var MEDIATORS_CACHE = {};
+        function create(node) {
+          return function(Mediator) {
+            var mediatorId = nextUid();
+            node.setAttribute('mediatorid', mediatorId);
+            var _mediator = Mediator(EventDispatcher);
+            MEDIATORS_CACHE[mediatorId] = _mediator;
+            _mediator.initialize(node);
+            return _mediator;
+          };
+        }
+        function destroy(node) {
+          var mediatorId = node.getAttribute("mediatorid");
+          var mediator = MEDIATORS_CACHE[mediatorId];
+          if (mediator) {
+            mediator.destroy && mediator.destroy(node);
+            mediator.element && (mediator.element = null);
+            MEDIATORS_CACHE[mediatorId] = null;
+            delete MEDIATORS_CACHE[mediatorId];
+            mediator = null;
+            return true;
+          }
+          return false;
+        }
+        var findMediators = function(definitions, loader) {
+          return function(node) {
+            return loader.load(definitions[node.getAttribute("data-mediator")]).then(create(node));
+          };
+        };
+        var hasMediator = function(definitions) {
+          return function(node) {
+            return (definitions[node.getAttribute("data-mediator")] && !node.getAttribute("mediatorid"));
+          };
+        };
+        var getAllElements = function(node) {
+          return [node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
+        };
+        return Object.freeze({
+          destroy: destroy,
+          findMediators: findMediators,
+          hasMediator: hasMediator,
+          getAllElements: getAllElements
+        });
+      });
+      ;
     }
   };
 });
 
-$__System.register("7", [], function($__export) {
+$__System.register("30", ["8", "2d", "2e", "2f"], function($__export) {
   "use strict";
-  var __moduleName = "7";
-  function getPromise() {
-    if (System.import) {
-      return function(url) {
-        return System.import(url);
-      };
-    } else {
-      return function(url) {
-        return Promise.resolve(System.get(url));
-      };
-    }
-  }
+  var __moduleName = "30";
+  var MediatorsBuilder,
+      DomWatcher,
+      ScriptLoader,
+      MediatorHandler;
   return {
-    setters: [],
+    setters: [function($__m) {
+      MediatorsBuilder = $__m.default;
+    }, function($__m) {
+      DomWatcher = $__m.default;
+    }, function($__m) {
+      ScriptLoader = $__m.default;
+    }, function($__m) {
+      MediatorHandler = $__m.default;
+    }],
     execute: function() {
-      $__export('default', Object.freeze({load: function(id) {
-          return getPromise()(id).then(function(e) {
-            return e.default;
-          }).catch(function(e) {
-            console.log(e);
-          });
-        }}));
+      $__export('default', function($__1) {
+        var $__3,
+            $__4,
+            $__5;
+        var $__2 = $__1,
+            definitions = $__2.definitions,
+            domWatcher = ($__3 = $__2.domWatcher) === void 0 ? DomWatcher : $__3,
+            loader = ($__4 = $__2.loader) === void 0 ? ScriptLoader : $__4,
+            mediatorHandler = ($__5 = $__2.mediatorHandler) === void 0 ? MediatorHandler() : $__5;
+        return MediatorsBuilder(domWatcher(mediatorHandler.getAllElements), loader, mediatorHandler, definitions).bootstrap();
+      });
     }
   };
 });
 
-$__System.register("1", ["7", "2f", "3", "2e", "6", "5", "4"], function($__export) {
+$__System.register("1", ["2e", "2", "4", "d", "2d", "8", "3", "30"], function($__export) {
   "use strict";
   var __moduleName = "1";
   var sl,
@@ -1719,6 +1823,7 @@ $__System.register("1", ["7", "2f", "3", "2e", "6", "5", "4"], function($__expor
       s,
       dw,
       mb,
+      ceh,
       boot,
       ScriptLoader,
       AMDScriptLoader,
@@ -1726,6 +1831,7 @@ $__System.register("1", ["7", "2f", "3", "2e", "6", "5", "4"], function($__expor
       Signal,
       DomWatcher,
       MediatorsBuilder,
+      CustomElementHandler,
       bootstrap;
   return {
     setters: [function($__m) {
@@ -1740,6 +1846,8 @@ $__System.register("1", ["7", "2f", "3", "2e", "6", "5", "4"], function($__expor
       dw = $__m.default;
     }, function($__m) {
       mb = $__m.default;
+    }, function($__m) {
+      ceh = $__m.default;
     }, function($__m) {
       boot = $__m.default;
     }],
@@ -1756,6 +1864,8 @@ $__System.register("1", ["7", "2f", "3", "2e", "6", "5", "4"], function($__expor
       $__export("DomWatcher", DomWatcher);
       MediatorsBuilder = mb;
       $__export("MediatorsBuilder", MediatorsBuilder);
+      CustomElementHandler = ceh;
+      $__export("CustomElementHandler", CustomElementHandler);
       bootstrap = boot;
       $__export("bootstrap", bootstrap);
     }
