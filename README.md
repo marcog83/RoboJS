@@ -14,9 +14,9 @@ bower install robojs
 #How it works.
 You set a `data-mediator` attribute with an ID (whatever you want)
 ```html
-    <div data-mediator="mediator-a">a-2</div>
-    <div data-mediator="mediator-b">b-1</div>
-    <div data-mediator="mediator-c">c-1</div>
+    <div data-mediator="my-custom-element">a-2</div>
+    <div data-mediator="foo-element">b-1</div>
+    <div data-mediator="bar-element">c-1</div>
 ```
 in `definitions.js` you define a Map where the key is an ID , and the value is the file to request in order to register the element.
 
@@ -65,9 +65,13 @@ When a `data-mediator` attribute matches an ID from MediatorsMap the `Mediator` 
    	}
 ```
 
-#CustomElementHandler
+#Custom Elements
+RoboJS is a composable library that allow you to change the way you create modules and add logics to your application.
+**data-mediator mechanism** is my first solution to the problem, but moving on, custom elements is an easy, native way to  deal with it.
+This is why a decided to add `CustomElementHandler` Object
 This function constructor allow you to register and create your `Custom Elements`.
-By default your modules are handled by `data-mediator` mechanism, but you get set mediatorHandler in order to use custom elements.
+
+By default your modules are handled by `data-mediator` mechanism, but you can set mediatorHandler in order to use custom elements.
 
 ``` javascript
  rjs.bootstrap({
@@ -75,6 +79,15 @@ By default your modules are handled by `data-mediator` mechanism, but you get se
             mediatorHandler:rjs.CustomElementHandler()
         })
 ```
+
+HTML markup looks like the following
+
+```html
+    <my-custom-element>a-2</my-custom-element>
+    <foo-element>b-1</foo-element>
+    <bar-element>c-1</bar-element>
+```
+
 
 Your Custom Element should be defined in a function that returns an Object.
 
@@ -98,9 +111,17 @@ function FooElement() {
 	}
 ```
 
-`CustomElementHandler` takes care registering the new element with `document.registerElement` API
+Behind the scene CustomElementHandler creates a new Object extending HTMLElement prototype. Then it assigns your implementation to it.
+Finally RoboJS registers the new element with `document.registerElement` API
 
-RoboJS recognizes new element added to DOM, if the new node `tagname` matches any in `definitions` map and the element is not registered yet, the right script will be requested and executed.
+``` javascript
+ var customProto = FooElement();// your function constructor
+ var proto = Object.assign(Object.create(HTMLElement.prototype), customProto);
+ document.registerElement(id, {prototype: proto});
+```
+
+
+RoboJS recognizes new element added to DOM, if the new node `tagname` matches any id in `definitions.js` map and the element is not registered yet, the right script will be requested and executed.
 Sample folder contains a demo.
 
 ###EventDispatcher Class.
@@ -159,7 +180,17 @@ or using Globals
 
 ```html
 <script src="../../dist/robojs.es6.js"></script>
+<script>
+var definitions={
+                    "my-custom-element": "client/my-custom-element",
+                    "foo-element": "client/foo-element",
+                    "bar-element": "client/bar-element"
+                }
+robojs.bootstrap({definitions:definitions})
+</script>
 ```
+
+
 
 ###Build project###
 transpiling es6 sources to es5 is handled by AWESOME project [jspm](http://jspm.io/), that is a package manager for the SystemJS universal module loader, built on top of the dynamic ES6 module loader.
@@ -170,8 +201,14 @@ jspm bundle-sfx src/org/core/robojs dist/robojs.es6.js --format amd
 
 
 ###Polyfills###
+1. A stand-alone working lightweight version of the W3C Custom Elements specification.[document-register-element](https://github.com/WebReflection/document-register-element)
 
-MutationObserver: if you need a polyfill you can check the 
-*[Webcomponents](https://github.com/webcomponents) polyfill or
-*[MutationObserver](https://github.com/megawac/MutationObserver.js) by megawac.
+**MutationObserver**: if you need a polyfill you can check
+1. [Webcomponents](https://github.com/webcomponents) polyfill.
+2. [MutationObserver](https://github.com/megawac/MutationObserver.js) by megawac.
+
+##Articles about Custom Elements##
+1. [HTML5 rocks](http://www.html5rocks.com/en/tutorials/webcomponents/customelements/): Excellent article about custom elements, and WebComponents in general.
+2. [MDN Custom Elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements)
+3. [MDN Document.registerElement()](https://developer.mozilla.org/en-US/docs/Web/API/Document/registerElement)
 

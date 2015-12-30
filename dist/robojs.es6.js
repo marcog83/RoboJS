@@ -1875,8 +1875,8 @@ $__System.register("1", ["2e", "2", "4", "d", "2d", "8", "3", "30"], function($_
 })
 (function(factory) {
   if (typeof define == 'function' && define.amd)
-    define([], factory);
+    define("robojs",[], factory);
   else
-    factory();
+    window.robojs=factory();
 });
 //# sourceMappingURL=robojs.es6.js.map
