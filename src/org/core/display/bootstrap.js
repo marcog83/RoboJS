@@ -6,5 +6,5 @@ import DomWatcher from "./DomWatcher";
 import ScriptLoader from "../net/ScriptLoader";
 import MediatorHandler from "./MediatorHandler";
 
-export default ({definitions,domWatcher=DomWatcher,loader=ScriptLoader,mediatorHandler=MediatorHandler()})=>MediatorsBuilder(domWatcher(mediatorHandler.getAllElements), loader,mediatorHandler, definitions).bootstrap()
+export default ({definitions,domWatcher=DomWatcher,loader=ScriptLoader,mediatorHandler=MediatorHandler()})=>MediatorsBuilder(domWatcher, loader,mediatorHandler, definitions).bootstrap()
 

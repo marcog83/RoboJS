@@ -4,8 +4,8 @@ import forEach from "ramda/src/forEach";
 import flatten from "ramda/src/flatten";
 import compose from "ramda/src/compose";
 import filter from "ramda/src/filter";
-export default function (domWatcher, loader, handler, definitions) {
-
+export default function (DomWatcher, loader, handler, definitions) {
+    var domWatcher = DomWatcher(handler.getAllElements);
 
     var _handleNodesRemoved = compose(
         forEach(handler.destroy),
@@ -13,13 +13,11 @@ export default function (domWatcher, loader, handler, definitions) {
     );
 
 
-
-
     var getMediators = compose(
-        function(promises){
+        function (promises) {
             return Promise.all(promises)
         },
-        map(handler.findMediators(definitions,loader)),
+        map(handler.findMediators(definitions, loader)),
         filter(handler.hasMediator(definitions)),
         flatten()
     );
