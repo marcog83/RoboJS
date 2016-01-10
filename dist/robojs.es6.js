@@ -1839,8 +1839,8 @@ $__System.register("1", ["7", "30", "3", "2f", "6", "5", "8", "4"], function($__
 })
 (function(factory) {
   if (typeof define == 'function' && define.amd)
-    define([], factory);
+    define("robojs",[], factory);
   else
-    factory();
+    window.robojs=factory();
 });
 //# sourceMappingURL=robojs.es6.js.map
