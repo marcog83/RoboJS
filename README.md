@@ -124,12 +124,95 @@ Finally RoboJS registers the new element with `document.registerElement` API
 RoboJS recognizes new element added to DOM, if the new node `tagname` matches any id in `definitions.js` map and the element is not registered yet, the right script will be requested and executed.
 Sample folder contains a demo.
 
-###EventDispatcher Class.
-The `EventDispatcher` is your messaging System. It dispatches and listens to `Events` from your Application. 
+#Loader Object
+Default loader is `SystemJS` based.
+
+```html
+<script src="system.js"></script>
+<script>
+	System.config({
+		defaultJSExtensions: true,
+		paths:{
+			robojs:"../../dist/robojs.es6"
+		}
+	});
+
+	System.import("./client/Application");
+</script>
+```
+and inside `Application.js` you invoke `bootstrap` function
+
+```javascript
+rjs.bootstrap({definitions: definitions})
+```
+An example can be found in sample/systemjs folder.
+
+
+
+
+##AMDScriptLoader Object
+
+If your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Object. `AMDScriptLoader` supposes that `require` function is in global space
+
+```javascript
+rjs.bootstrap({definitions: definitions,loader:rjs.AMDScriptLoader})
+```
+
+
+###EventDispatcher Object.
+The `EventDispatcher` can be your messaging System. It dispatches and listens to `Events` from your Application. 
 It's meant to be a Singleton in your application.
 
 	
 	
+
+
+
+
+##RequireJS configuration
+
+This is an example how you can set dependencies using `RequireJS`
+
+```javascript
+
+requirejs.config({
+	paths: {		
+        robojs: "../../dist/robojs.es6"
+	}
+});
+
+```
+##SystemJS configuration
+
+This is an example how you can set dependencies using `SystemJS`
+
+```javascript
+
+System.config({
+		defaultJSExtensions: true,
+		paths:{
+			robojs:"../../dist/robojs.es6"
+		}
+	});
+
+```
+
+or using **Globals**
+ 
+> **NB**. If you use robojs as global, you need some kind of script loader. If your project has SystemJS or RequireJS, please don't use global.
+
+```html
+<script src="../../dist/robojs.es6.js"></script>
+<script>
+var definitions={
+                    "my-custom-element": "client/my-custom-element",
+                    "foo-element": "client/foo-element",
+                    "bar-element": "client/bar-element"
+                }
+robojs.bootstrap({definitions:definitions})
+</script>
+```
+
 #Dependencies
 
 
@@ -153,46 +236,9 @@ RoboJS depends on some **[RamdaJS](http://ramdajs.com/)** functions.
    import filter from "ramda/src/filter";
    import flatten from "ramda/src/flatten";
 ```
-NO needs to import ramda library.
+>**NO** needs to import ramda library.
 
-
-**`AMDScriptLoader` Object** supposes that `require` function is in global space, so if your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Object
-
-```javascript
-rjs.bootstrap({definitions: definitions,loader:rjs.AMDScriptLoader})
-```
-
-
-This is an example how you can set dependencies in AMD with RequireJS
-
-```javascript
-
-requirejs.config({
-	paths: {
-		
-        robojs: "../../dist/robojs.es6"
-	}
-});
-
-```
-
-or using Globals
-
-```html
-<script src="../../dist/robojs.es6.js"></script>
-<script>
-var definitions={
-                    "my-custom-element": "client/my-custom-element",
-                    "foo-element": "client/foo-element",
-                    "bar-element": "client/bar-element"
-                }
-robojs.bootstrap({definitions:definitions})
-</script>
-```
-
-
-
-###Build project###
+###Build project
 transpiling es6 sources to es5 is handled by AWESOME project [jspm](http://jspm.io/), that is a package manager for the SystemJS universal module loader, built on top of the dynamic ES6 module loader.
 
 ```

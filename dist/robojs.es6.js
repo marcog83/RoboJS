@@ -1769,7 +1769,7 @@ $__System.register("7", [], function($__export) {
     execute: function() {
       $__export('default', Object.freeze({load: function(id) {
           return getPromise()(id).then(function(e) {
-            return e.default;
+            return e.default ? e.default : e;
           }).catch(function(e) {
             console.log(e);
           });
@@ -1839,8 +1839,8 @@ $__System.register("1", ["7", "30", "3", "2f", "6", "5", "8", "4"], function($__
 })
 (function(factory) {
   if (typeof define == 'function' && define.amd)
-    define("robojs",[], factory);
+    define([], factory);
   else
-    window.robojs=factory();
+    factory();
 });
 //# sourceMappingURL=robojs.es6.js.map

@@ -1,10 +1,14 @@
-function getPromise(){
-    if (System.import){
+function getPromise() {
+    if (System.import) {
         return url=> System.import(url);
-    }else{
+    } else {
         return url=> Promise.resolve(System.get(url));
     }
 }
 export default  Object.freeze({
-    load: id=> getPromise()(id).then(e=>e.default).catch(e=>{console.log(e)})
+    load: id=> getPromise()(id).then(e=> {
+        return e.default ? e.default : e;
+    }).catch(e=> {
+        console.log(e)
+    })
 });
