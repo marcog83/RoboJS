@@ -19,10 +19,10 @@ export default  function () {
 
             node.setAttribute('mediatorid', mediatorId);
 
-            var _mediator = Mediator(EventDispatcher);
+            var _mediator = Mediator(node,EventDispatcher);
 
             MEDIATORS_CACHE[mediatorId] = _mediator;
-            _mediator.initialize(node);
+            _mediator.initialize();
             return _mediator;
 
         }
@@ -32,9 +32,9 @@ export default  function () {
         var mediatorId = node.getAttribute("mediatorid");
         var mediator = MEDIATORS_CACHE[mediatorId];
         if (mediator) {
-            mediator.destroy && mediator.destroy(node);
+            mediator.destroy && mediator.destroy();
 
-            mediator.element && (mediator.element = null);
+
             MEDIATORS_CACHE[mediatorId] = null;
             delete MEDIATORS_CACHE[mediatorId];
             mediator = null;

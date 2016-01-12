@@ -49,12 +49,12 @@ The first time the script is loaded from network, while the next one is retrived
 #Mediator Object.
 Mediator is the context where your logic runs for a specific Mediator.
 When a `data-mediator` attribute matches an ID from MediatorsMap the `Mediator` constructor is called, an instance is created and the `initialize` function is called.
-
+`Mediator` constructor takes two parameters, `node` and `dispatcher`. `node` is a reference to DOM element, `dispatcher` is a reference to `EventDispatcher` Object
 
 ```javascript
-    function MediatorA(dispacther) {
+    function MediatorA(node,dispacther) {
 		return {
-			initialize:function(node){
+			initialize:function(){
 
 				// node is the DOM element
 			},

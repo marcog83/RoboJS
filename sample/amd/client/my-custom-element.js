@@ -3,9 +3,9 @@
  */
 define(function (require, exports, module) {
 
-    function Mediator(dispatcher) {
+    function Mediator(node,dispatcher) {
         return {
-            initialize:function(n){
+            initialize:function(){
                 "use strict";
                 console.log("weee")
             }

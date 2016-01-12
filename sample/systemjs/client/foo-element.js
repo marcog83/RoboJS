@@ -4,15 +4,15 @@
 define(function (require, exports, module) {
 
 
-	function FooElement(dispatcher) {
+	function FooElement(node,dispatcher) {
 		return {
-			initialize:function(node){
+			initialize:function(){
 				node.addEventListener("click",function(e){
 					e.currentTarget.parentElement.removeChild(e.currentTarget);
 					e.stopPropagation();
 				})
 			},
-			destroy:function(n){
+			destroy:function(){
 				"use strict";
 				console.log("destroyed")
 			}
