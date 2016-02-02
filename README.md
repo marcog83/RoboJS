@@ -3,7 +3,8 @@ Add a node to the DOM and a JS will be loaded!
 Remove a node and the JS will be disposed!!
 Not further framework frontend , but a tool that lets you manage the association DOM and JS. (less than 6kb gzipped);
 
-
+#The idea behind the code
+To understand how and why I decided to write this tool, please read this [post](https://github.com/marcog83/RoboJS/wiki/RoboJS-::-the-idea-behind-the-code)
 
 #Installation
 ```javascript
