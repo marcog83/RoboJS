@@ -19,25 +19,25 @@ export default  function () {
 
             node.setAttribute('mediatorid', mediatorId);
 
-            var _mediator = Mediator(node,EventDispatcher);
+            var disposeFunction = Mediator(node,EventDispatcher);
 
-            MEDIATORS_CACHE[mediatorId] = _mediator;
-            _mediator.initialize();
-            return _mediator;
+            MEDIATORS_CACHE[mediatorId] = disposeFunction;
+
+            return true;
 
         }
     }
 
     function destroy(node) {
         var mediatorId = node.getAttribute("mediatorid");
-        var mediator = MEDIATORS_CACHE[mediatorId];
-        if (mediator) {
-            mediator.destroy && mediator.destroy();
+        var disposeFunction = MEDIATORS_CACHE[mediatorId];
+        if (disposeFunction) {
+            disposeFunction();
 
 
             MEDIATORS_CACHE[mediatorId] = null;
             delete MEDIATORS_CACHE[mediatorId];
-            mediator = null;
+
             return true;
         }
         return false;

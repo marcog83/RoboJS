@@ -4,21 +4,18 @@
 define(function (require, exports, module) {
 
 
-	function FooElement(node,dispatcher) {
-		return {
-			initialize:function(){
-				node.addEventListener("click",function(e){
-					e.currentTarget.parentElement.removeChild(e.currentTarget);
-					e.stopPropagation();
-				})
-			},
-			destroy:function(){
-				"use strict";
-				console.log("destroyed")
-			}
-		}
-	}
+    function FooElement(node, dispatcher) {
+        function handler(e) {
+            e.currentTarget.parentElement.removeChild(e.currentTarget);
+            e.stopPropagation();
+        }
+        node.addEventListener("click", handler);
+        return function () {
+            node.removeEventListener("click", handler);
+            console.log("destroyed")
+        }
+    }
 
 
-	module.exports = FooElement;
+    module.exports = FooElement;
 });

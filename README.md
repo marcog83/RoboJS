@@ -48,27 +48,21 @@ The first time the script is loaded from network, while the next one is retrived
 
 #Mediator Object.
 Mediator is the context where your logic runs for a specific Mediator.
-When a `data-mediator` attribute matches an ID from MediatorsMap the `Mediator` constructor is called, an instance is created and the `initialize` function is called.
+When a `data-mediator` attribute matches an ID from MediatorsMap the `Mediator` constructor is called and a function returns. The returned function is called later when the module will be disposed.
 `Mediator` constructor takes two parameters, `node` and `dispatcher`. `node` is a reference to DOM element, `dispatcher` is a reference to `EventDispatcher` Object
 
 ```javascript
     function MediatorA(node,dispacther) {
-		return {
-			initialize:function(){
-
-				// node is the DOM element
-			},
-			destroy:function(){
-			   // destroy everything
-			}
-		}
+		return function(){
+           // destroy everything, es. handlers
+        }
    	}
 ```
 
 #Custom Elements
 RoboJS is a composable library that allow you to change the way you create modules and add logics to your application.
-**data-mediator mechanism** is my first solution to the problem, but moving on, custom elements is an easy, native way to  deal with it.
-This is why a decided to add `CustomElementHandler` Object
+**data-mediator mechanism** is my first solution to the problem, but moving on, custom elements are an easy, native way to  deal with it.
+This is why I decided to add `CustomElementHandler` Object
 This function constructor allow you to register and create your `Custom Elements`.
 
 By default your modules are handled by `data-mediator` mechanism, but you can set mediatorHandler in order to use custom elements.
@@ -221,7 +215,7 @@ RoboJS depends on some **[RamdaJS](http://ramdajs.com/)** functions.
 ```javascript
 	// DomWatcher.js
 	//
-   import tap from "ramda/src/tap";
+
    import map from "ramda/src/map";
    import flatten from "ramda/src/flatten";
    import pluck from "ramda/src/pluck";

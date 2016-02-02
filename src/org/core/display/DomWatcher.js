@@ -1,5 +1,5 @@
 import Signal from "../events/Signal";
-import tap from "ramda/src/tap";
+
 import map from "ramda/src/map";
 import flatten from "ramda/src/flatten";
 import pluck from "ramda/src/pluck";
@@ -12,7 +12,9 @@ export default  (mapFn = defaultMapFn, root = document.body)=> {
 
     function makeChain(prop, emit) {
         return compose(
-            tap(nodes=>(nodes.length && emit(nodes))),//onAdded.emit,onRemoved.emit
+
+            emit,
+            filter(nodes=>nodes.length>0),
             map(mapFn),
             filter(node=>node.querySelectorAll),
             flatten(),

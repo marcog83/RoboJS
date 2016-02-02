@@ -3,14 +3,8 @@
  */
 define(function (require, exports, module) {
 
-    function Mediator(node,dispatcher) {
-        return {
-            initialize:function(){
-                "use strict";
-                console.log("weee")
-            }
-            //destroy:console.log.bind(console,"destroyed")
-        }
+    function Mediator(node, dispatcher) {
+        console.log(node);
     }
 
 
