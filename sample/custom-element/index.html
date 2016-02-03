@@ -6,18 +6,44 @@
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 
     <style>
+        html, body {
+            font-family: Arial;
+        }
 
+        .wrapper {
+            width: 100%;
+        }
+
+        .wrapper-CNT {
+            width: 1000px;
+            margin:auto;
+        }
+
+        .library-CTR {
+            background: #19d1ff;
+            padding: 20px 30px 20px 20px;
+            width: 260px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .library-CTR h3 {
+            padding: 0;
+            margin: 0 0 10px;
+            color: #fff;
+        }
 
         my-thumbnail {
             position: relative;
-            display: inline-block;
+            display: block;
             padding: 10px;
-            margin: 15px 10px;
+            margin: 15px 0;
             border: 1px solid #000;
             border-radius: 8px;
             box-sizing: border-box;
             text-align: center;
             cursor: pointer;
+            background: #fff;
         }
 
         my-counter {
@@ -34,40 +60,56 @@
         }
 
         autocomplete-element {
-            display: inline-block;
+            display: block;
             vertical-align: top;
             box-sizing: border-box;
             background: #ffcc00;
         }
-        autocomplete-element input{
-            padding:10px;
+
+        autocomplete-element input {
+            padding: 10px;
+            box-sizing: border-box;
+            width:100%;
         }
 
         bar-element {
             vertical-align: top;
             display: inline-block;
-            width: 300px;
-            height: 300px;
+            width: 342px;
+            height: 280px;
             background: #12ff83;
         }
 
         maps-element {
             vertical-align: top;
             display: inline-block;
-            width: 400px;
-            height: 300px;
+            width: 342px;
+            height: 280px;
         }
-        my-template{
-            display: block;
+
+        my-template {
+            width: 685px;
+            min-height: 286px;
+            display: inline-block;
+            vertical-align: top;
+            background: rgba(255,204,0,0.3);
         }
 
     </style>
 </head>
 <body>
+<div class="wrapper">
+    <div class="wrapper-CNT">
 
+        <p>Click on a button to select, from the library, the module you would like to add in your page</p>
+        <div class="library-CTR">
+            <h3>This is the library of all your available modules. Modules list is loaded via ajax.</h3>
+            <components-library></components-library>
+        </div>
 
-<components-library></components-library>
-<my-template></my-template>
+        <my-template></my-template>
+    </div>
+</div>
 
 
 <!-- THIS ARE OPTIONAL POLYFILLS TO CROSS BROWSER SUPPORT begin -->
