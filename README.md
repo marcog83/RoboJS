@@ -6,6 +6,9 @@ Not further framework frontend , but a tool that lets you manage the association
 #The idea behind the code
 To understand how and why I decided to write this tool, please read this [post](https://github.com/marcog83/RoboJS/wiki/RoboJS-::-the-idea-behind-the-code)
 
+#Quick Demo
+A quick demo can be found [HERE](http://marcog83.github.io/RoboJS/). It simulate a bunch of modules loaded from server and a page where to place them (on the right). 
+
 #Installation
 ```javascript
 bower install robojs
