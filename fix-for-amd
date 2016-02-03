@@ -1,4 +1,0 @@
- if (typeof define == 'function' && define.amd)
-    define("robojs",[], factory);
-  else
-    window.robojs=factory();
