@@ -1,17 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-	<meta charset="UTF-8">
-	<title></title>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+
+    <style>
 
 
+        my-thumbnail {
+            position: relative;
+            display: inline-block;
+            padding: 10px;
+            margin: 15px 10px;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-sizing: border-box;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        my-counter {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            background: #111;
+            padding: 10px 10px;
+            border-radius: 50%;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+        }
+
+        autocomplete-element {
+            display: inline-block;
+            vertical-align: top;
+            box-sizing: border-box;
+            background: #ffcc00;
+        }
+        autocomplete-element input{
+            padding:10px;
+        }
+
+        bar-element {
+            vertical-align: top;
+            display: inline-block;
+            width: 300px;
+            height: 300px;
+            background: #12ff83;
+        }
+
+        maps-element {
+            vertical-align: top;
+            display: inline-block;
+            width: 400px;
+            height: 300px;
+        }
+        my-template{
+            display: block;
+        }
+
+    </style>
 </head>
 <body>
-<button class="add-button">ADD</button>
-
-<my-custom-element>a-2</my-custom-element>
 
 
+<components-library></components-library>
+<my-template></my-template>
 
 
 <!-- THIS ARE OPTIONAL POLYFILLS TO CROSS BROWSER SUPPORT begin -->

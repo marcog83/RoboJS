@@ -1523,7 +1523,7 @@ $__System.register("2a", ["5", "18", "1a", "1c", "26", "29"], function($__export
             return nodes.length > 0;
           }), map(mapFn), filter(function(node) {
             return node.querySelectorAll;
-          }), flatten(), pluck(prop));
+          }), flatten, pluck(prop));
         }
         var getAdded = makeChain("addedNodes", onAdded.emit);
         var getRemoved = makeChain("removedNodes", onRemoved.emit);

@@ -4,9 +4,13 @@
 define(function () {
     "use strict";
     return {
-        "my-custom-element": "client/my-custom-element",
-        "foo-element": "client/foo-element",
-        "bar-element": "client/bar-element"
+        "components-library": "client/components-library",
+        "my-thumbnail": "client/my-thumbnail",
+        "my-template": "client/my-template",
+        "my-counter": "client/my-counter",
+        "autocomplete-element": "client/autocomplete-element",
+        "bar-element": "client/bar-element",
+        "maps-element": "client/maps-element"
     }
 
 });

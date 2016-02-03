@@ -17,7 +17,7 @@ export default  (mapFn = defaultMapFn, root = document.body)=> {
             filter(nodes=>nodes.length>0),
             map(mapFn),
             filter(node=>node.querySelectorAll),
-            flatten(),
+            flatten,
             pluck(prop)//"addedNodes","removedNodes"
         )
 
