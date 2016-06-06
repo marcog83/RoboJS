@@ -5,6 +5,9 @@ define(function (require, exports, module) {
 
     function Mediator(node, dispatcher) {
         console.log(node);
+        return function(){
+            console.log("removed",node);
+        }
     }
 
 

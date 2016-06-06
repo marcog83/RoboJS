@@ -9,7 +9,7 @@ export default function (DomWatcher, loader, handler, definitions) {
 
     var _handleNodesRemoved = compose(
         forEach(handler.destroy),
-        flatten()
+        flatten
     );
 
 
@@ -19,7 +19,7 @@ export default function (DomWatcher, loader, handler, definitions) {
         },
         map(handler.findMediators(definitions, loader)),
         filter(handler.hasMediator(definitions)),
-        flatten()
+        flatten
     );
 
 

@@ -3,7 +3,8 @@
  */
 
 import EventDispatcher from "../events/EventDispatcher";
-
+import find from "ramda/src/find";
+import filter from "ramda/src/filter";
 
 export default  function () {
     var nextUid = ()=>'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -11,7 +12,7 @@ export default  function () {
             v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
-    var MEDIATORS_CACHE = {};
+    var MEDIATORS_CACHE = [];
 
     function create(node) {
         return function (Mediator) {
@@ -21,7 +22,11 @@ export default  function () {
 
             var disposeFunction = Mediator(node,EventDispatcher);
 
-            MEDIATORS_CACHE[mediatorId] = disposeFunction;
+            MEDIATORS_CACHE.push({
+                mediatorId:mediatorId,
+                node:node,
+                disposeFunction:disposeFunction
+            });//[mediatorId] = disposeFunction;
 
             return true;
 
@@ -30,16 +35,19 @@ export default  function () {
 
     function destroy(node) {
         var mediatorId = node.getAttribute("mediatorid");
-        var disposeFunction = MEDIATORS_CACHE[mediatorId];
-        if (disposeFunction) {
-            disposeFunction();
+        var mediator=find(mediator=>mediator.node==node,MEDIATORS_CACHE);
+        //var disposeFunction = MEDIATORS_CACHE[mediatorId];
+        console.log(node,mediator);
+        if (mediator.disposeFunction) {
+            mediator.disposeFunction();
 
 
-            MEDIATORS_CACHE[mediatorId] = null;
-            delete MEDIATORS_CACHE[mediatorId];
+           // MEDIATORS_CACHE[mediatorId] = null;
+           // delete MEDIATORS_CACHE[mediatorId];
 
             return true;
         }
+        MEDIATORS_CACHE= filter(_mediator=>mediator==mediator,MEDIATORS_CACHE);
         return false;
 
     }
