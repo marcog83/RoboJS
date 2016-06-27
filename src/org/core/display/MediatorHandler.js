@@ -20,12 +20,12 @@ export default  function () {
 
             node.setAttribute('mediatorid', mediatorId);
 
-            var disposeFunction = Mediator(node,EventDispatcher);
+            var disposeFunction = Mediator(node, EventDispatcher);
 
             MEDIATORS_CACHE.push({
-                mediatorId:mediatorId,
-                node:node,
-                disposeFunction:disposeFunction
+                mediatorId: mediatorId,
+                node: node,
+                disposeFunction: disposeFunction
             });//[mediatorId] = disposeFunction;
 
             return true;
@@ -35,19 +35,18 @@ export default  function () {
 
     function destroy(node) {
         var mediatorId = node.getAttribute("mediatorid");
-        var mediator=find(mediator=>mediator.node==node,MEDIATORS_CACHE);
+        var mediator = find(mediator=>mediator.node == node, MEDIATORS_CACHE);
         //var disposeFunction = MEDIATORS_CACHE[mediatorId];
-        console.log(node,mediator);
-        if (mediator.disposeFunction) {
-            mediator.disposeFunction();
-
-
-           // MEDIATORS_CACHE[mediatorId] = null;
-           // delete MEDIATORS_CACHE[mediatorId];
-
+        if (mediator) {
+            if (mediator.disposeFunction) {
+                mediator.disposeFunction();
+                // MEDIATORS_CACHE[mediatorId] = null;
+                // delete MEDIATORS_CACHE[mediatorId];
+            }
+            MEDIATORS_CACHE = filter(_mediator=>_mediator != mediator, MEDIATORS_CACHE);
             return true;
         }
-        MEDIATORS_CACHE= filter(_mediator=>mediator==mediator,MEDIATORS_CACHE);
+
         return false;
 
     }

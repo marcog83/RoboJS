@@ -1328,14 +1328,15 @@ $__System.register("34", ["4", "2b", "c"], function($__export) {
           var mediator = find(function(mediator) {
             return mediator.node == node;
           }, MEDIATORS_CACHE);
-          console.log(node, mediator);
-          if (mediator.disposeFunction) {
-            mediator.disposeFunction();
+          if (mediator) {
+            if (mediator.disposeFunction) {
+              mediator.disposeFunction();
+            }
+            MEDIATORS_CACHE = filter(function(_mediator) {
+              return _mediator != mediator;
+            }, MEDIATORS_CACHE);
             return true;
           }
-          MEDIATORS_CACHE = filter(function(_mediator) {
-            return mediator == mediator;
-          }, MEDIATORS_CACHE);
           return false;
         }
         var findMediators = function(definitions, loader) {
@@ -1454,10 +1455,11 @@ $__System.register("1", ["28", "2", "4", "d", "27", "8", "3", "35"], function($_
 
 })
 (function(factory) {
-
   if (typeof define == 'function' && define.amd)
-    define("robojs",[], factory);
+    define([], factory);
+  else if (typeof module == 'object' && module.exports && typeof require == 'function')
+    module.exports = factory();
   else
-    window.robojs=factory();
+    factory();
 });
 //# sourceMappingURL=robojs.es6.js.map
