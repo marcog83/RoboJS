@@ -5064,11 +5064,12 @@ $__System.register("36", ["8", "27", "28", "35"], function($__export) {
   };
 });
 
-$__System.register("1", ["28", "2", "4", "d", "27", "8", "3", "36"], function($__export) {
+$__System.register("1", ["28", "2", "4", "29", "d", "27", "8", "3", "36"], function($__export) {
   "use strict";
   var _ScriptLoader,
       _AMDScriptLoader,
       _EventDispatcher,
+      _RJSEvent,
       _Signal,
       _DomWatcher,
       _MediatorsBuilder,
@@ -5077,6 +5078,7 @@ $__System.register("1", ["28", "2", "4", "d", "27", "8", "3", "36"], function($_
       ScriptLoader,
       AMDScriptLoader,
       EventDispatcher,
+      RJSEvent,
       Signal,
       DomWatcher,
       MediatorsBuilder,
@@ -5089,6 +5091,8 @@ $__System.register("1", ["28", "2", "4", "d", "27", "8", "3", "36"], function($_
       _AMDScriptLoader = $__m.default;
     }, function($__m) {
       _EventDispatcher = $__m.default;
+    }, function($__m) {
+      _RJSEvent = $__m.default;
     }, function($__m) {
       _Signal = $__m.default;
     }, function($__m) {
@@ -5107,6 +5111,8 @@ $__System.register("1", ["28", "2", "4", "d", "27", "8", "3", "36"], function($_
       $__export("AMDScriptLoader", AMDScriptLoader);
       EventDispatcher = _EventDispatcher;
       $__export("EventDispatcher", EventDispatcher);
+      RJSEvent = _RJSEvent;
+      $__export("RJSEvent", RJSEvent);
       Signal = _Signal;
       $__export("Signal", Signal);
       DomWatcher = _DomWatcher;
