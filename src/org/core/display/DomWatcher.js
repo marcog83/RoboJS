@@ -5,8 +5,8 @@ import flatten from "ramda/src/flatten";
 import pluck from "ramda/src/pluck";
 import compose from "ramda/src/compose";
 import filter from "ramda/src/filter";
-var defaultMapFn = node=>[node].concat(Array.prototype.slice.call(node.querySelectorAll("[data-mediator]"), 0));
-export default  (mapFn = defaultMapFn, root = document.body)=> {
+
+export default  (getAllElements, root = document.body)=> {
     var onAdded = Signal();
     var onRemoved = Signal();
 
@@ -14,7 +14,7 @@ export default  (mapFn = defaultMapFn, root = document.body)=> {
         return compose(
             emit,
             filter(nodes=>nodes.length>0),
-            map(mapFn),
+            map(getAllElements),
             filter(node=>node.querySelectorAll),
             flatten,
             pluck(prop)//"addedNodes","removedNodes"

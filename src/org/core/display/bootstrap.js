@@ -6,5 +6,11 @@ import DomWatcher from "./DomWatcher";
 import ScriptLoader from "../net/ScriptLoader";
 import MediatorHandler from "./MediatorHandler";
 
-export default ({definitions,domWatcher=DomWatcher,loader=ScriptLoader,mediatorHandler=MediatorHandler()})=>MediatorsBuilder(domWatcher, loader,mediatorHandler, definitions).bootstrap()
+export default ({definitions,domWatcher=DomWatcher,loader=ScriptLoader,mediatorHandler=MediatorHandler(),root=document.body})=> {
+    var domWatcher = DomWatcher(mediatorHandler.getAllElements);
+    var builder = MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions);
+    return builder.bootstrap(root);
+
+}
+
 

@@ -4,8 +4,8 @@ import forEach from "ramda/src/forEach";
 import flatten from "ramda/src/flatten";
 import compose from "ramda/src/compose";
 import filter from "ramda/src/filter";
-export default function (DomWatcher, loader, handler, definitions) {
-    var domWatcher = DomWatcher(handler.getAllElements);
+export default function (domWatcher, loader, handler, definitions) {
+
 
     var _handleNodesRemoved = compose(
         forEach(handler.destroy),
