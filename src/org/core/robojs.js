@@ -1,18 +1,18 @@
-import sl from "./net/ScriptLoader";
-import amdl from "./net/AMDScriptLoader";
-import ed from "./events/EventDispatcher";
-import s from "./events/Signal";
-import dw from "./display/DomWatcher";
-import mb from "./display/MediatorsBuilder";
-import ceh from "./display/CustomElementHandler";
-import boot from "./display/bootstrap";
+import _ScriptLoader from "./net/ScriptLoader";
+import _AMDScriptLoader from "./net/AMDScriptLoader";
+import _EventDispatcher from "./events/EventDispatcher";
+import _Signal from "./events/Signal";
+import _DomWatcher from "./display/DomWatcher";
+import _MediatorsBuilder from "./display/MediatorsBuilder";
+import _CustomElementHandler from "./display/CustomElementHandler";
+import _bootstrap from "./display/bootstrap";
 
 
-export var ScriptLoader = sl;
-export var AMDScriptLoader = amdl;
-export var EventDispatcher = ed;
-export var Signal = s;
-export var DomWatcher = dw;
-export var MediatorsBuilder = mb;
-export var CustomElementHandler = ceh;
-export var bootstrap = boot;
+export var ScriptLoader = _ScriptLoader;
+export var AMDScriptLoader = _AMDScriptLoader;
+export var EventDispatcher = _EventDispatcher;
+export var Signal = _Signal;
+export var DomWatcher = _DomWatcher;
+export var MediatorsBuilder = _MediatorsBuilder;
+export var CustomElementHandler = _CustomElementHandler;
+export var bootstrap = _bootstrap;

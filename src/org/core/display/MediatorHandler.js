@@ -2,58 +2,79 @@
  * Created by marco.gobbi on 21/01/2015.
  */
 
-import EventDispatcher from "../events/EventDispatcher";
+import {makeDispatcher} from "../events/EventDispatcher";
 import find from "ramda/src/find";
 import filter from "ramda/src/filter";
-
+const noop = ()=> {
+};
+const nextUid = ()=>'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    var r = Math.random() * 16 | 0,
+        v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+});
 export default  function () {
-    var nextUid = ()=>'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-        var r = Math.random() * 16 | 0,
-            v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-    var MEDIATORS_CACHE = [];
 
+    //inizializza la cache dei mediatori registrati
+    var MEDIATORS_CACHE = [];
+    //crea un'istanza dell'EventDispatcher
+    const eventDispatcher = makeDispatcher();
+//
+    /**
+     *
+     * @param node {HTMLElement}
+     * crea un nuovo mediator passandogli l'elemento HTML
+     * @returns {Function}
+     */
     function create(node) {
+        /**
+         * @param Mediator{Function}
+         *
+         * è la funzione costruttrice per ogni mediator
+         */
         return function (Mediator) {
-            var mediatorId = nextUid();
+            const mediatorId = nextUid();
 
             node.setAttribute('mediatorid', mediatorId);
 
-            var disposeFunction = Mediator(node, EventDispatcher);
-
-            MEDIATORS_CACHE.push({
+            const disposeFunction = Mediator(node, eventDispatcher) || noop;
+            const disposable = {
                 mediatorId: mediatorId,
                 node: node,
-                disposeFunction: disposeFunction
-            });//[mediatorId] = disposeFunction;
+                dispose: disposeFunction
+            };
+            MEDIATORS_CACHE.push(disposable);//[mediatorId] = disposeFunction;
 
-            return true;
+            return disposable;
 
         }
     }
 
+    /**
+     *
+     * @param node {HTMLElement} l'elemento rimosso dal DOM
+     * @returns {boolean} ritorna true se ha trovato un mediatore da eliminare
+     */
     function destroy(node) {
-        var mediatorId = node.getAttribute("mediatorid");
-        var mediator = find(mediator=>mediator.node == node, MEDIATORS_CACHE);
+
+        const disposable = find(mediator=>mediator.node == node, MEDIATORS_CACHE);
         //var disposeFunction = MEDIATORS_CACHE[mediatorId];
-        if (mediator) {
-            if (mediator.disposeFunction) {
-                mediator.disposeFunction();
-                // MEDIATORS_CACHE[mediatorId] = null;
-                // delete MEDIATORS_CACHE[mediatorId];
-            }
-            MEDIATORS_CACHE = filter(_mediator=>_mediator != mediator, MEDIATORS_CACHE);
+        if (disposable) {
+            disposable.dispose();
+
+            MEDIATORS_CACHE = filter(_disposable=>_disposable != disposable, MEDIATORS_CACHE);
+            disposable.node=null;
+
             return true;
         }
 
 
     }
 
-    var findMediators = (definitions, loader)=>node=> loader.load(definitions[node.getAttribute("data-mediator")]).then(create(node));
+    const DATA_MEDIATOR="data-mediator";
+    const findMediators = (definitions, loader)=>node=> loader.load(definitions[node.getAttribute(DATA_MEDIATOR)]).then(create(node));
 
-    var hasMediator = definitions=>node=>(definitions[node.getAttribute("data-mediator")] && !node.getAttribute("mediatorid"));
-    var getAllElements = node=>[node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
+    const hasMediator = definitions=>node=>(definitions[node.getAttribute(DATA_MEDIATOR)] && !node.getAttribute("mediatorid"));
+    const getAllElements = node=>[node].concat([].slice.call(node.querySelectorAll("["+DATA_MEDIATOR+"]"), 0));
 
     return Object.freeze({
 
