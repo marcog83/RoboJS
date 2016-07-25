@@ -1,7 +1,8 @@
 "use strict";
 
 export default class RJSEvent {
-    constructor(type, bubbles=false, cancelable=false) {
+    constructor(type, data = null, bubbles = false, cancelable = false) {
+        this.data = data;
         this.type = type;
         this.bubbles = bubbles;
         this.cancelable = cancelable;
@@ -33,6 +34,6 @@ export default class RJSEvent {
     }
 
     clone() {
-        return new RJSEvent(this.type, this.bubbles, this.cancelable);
+        return new RJSEvent(this.type, this.data, this.bubbles, this.cancelable);
     }
 }
