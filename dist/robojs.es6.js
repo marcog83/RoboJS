@@ -5257,6 +5257,7 @@ $__System.register("1", ["28", "2", "4", "29", "d", "27", "8", "3", "36"], funct
   var _ScriptLoader,
       _AMDScriptLoader,
       _EventDispatcher,
+      makeDispatcher,
       _RJSEvent,
       _Signal,
       _DomWatcher,
@@ -5271,7 +5272,8 @@ $__System.register("1", ["28", "2", "4", "29", "d", "27", "8", "3", "36"], funct
       DomWatcher,
       MediatorsBuilder,
       CustomElementHandler,
-      bootstrap;
+      bootstrap,
+      getEventDispatcher;
   return {
     setters: [function($__m) {
       _ScriptLoader = $__m.default;
@@ -5279,6 +5281,7 @@ $__System.register("1", ["28", "2", "4", "29", "d", "27", "8", "3", "36"], funct
       _AMDScriptLoader = $__m.default;
     }, function($__m) {
       _EventDispatcher = $__m.default;
+      makeDispatcher = $__m.makeDispatcher;
     }, function($__m) {
       _RJSEvent = $__m.default;
     }, function($__m) {
@@ -5311,6 +5314,8 @@ $__System.register("1", ["28", "2", "4", "29", "d", "27", "8", "3", "36"], funct
       $__export("CustomElementHandler", CustomElementHandler);
       bootstrap = _bootstrap;
       $__export("bootstrap", bootstrap);
+      getEventDispatcher = makeDispatcher;
+      $__export("getEventDispatcher", getEventDispatcher);
     }
   };
 });

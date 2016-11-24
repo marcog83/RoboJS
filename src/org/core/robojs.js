@@ -1,6 +1,7 @@
 import _ScriptLoader from "./net/ScriptLoader";
 import _AMDScriptLoader from "./net/AMDScriptLoader";
 import _EventDispatcher from "./events/EventDispatcher";
+import {makeDispatcher} from "./events/EventDispatcher";
 import _RJSEvent from "./events/RJSEvent";
 import _Signal from "./events/Signal";
 import _DomWatcher from "./display/DomWatcher";
@@ -18,3 +19,4 @@ export var DomWatcher = _DomWatcher;
 export var MediatorsBuilder = _MediatorsBuilder;
 export var CustomElementHandler = _CustomElementHandler;
 export var bootstrap = _bootstrap;
+export var getEventDispatcher = makeDispatcher;

@@ -150,18 +150,32 @@ An example can be found in sample/systemjs folder.
 
 ##AMDScriptLoader Object
 
-If your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Object. `AMDScriptLoader` supposes that `require` function is in global space
+If your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Object. `AMDScriptLoader` supposes that `require` function is in global space.
+
 
 ```javascript
-rjs.bootstrap({definitions: definitions,loader:rjs.AMDScriptLoader})
+
+rjs.bootstrap({definitions: definitions,loader:rjs.AMDScriptLoader()})
 ```
 
+You can customize script loading strategy passing a function to `AMDScriptLoader`.
+
+```javascript
+function loadWithRequire(id,resolve,reject){
+    require([id],resolve,reject);
+}
+rjs.bootstrap({definitions: definitions,loader:rjs.AMDScriptLoader(loadWithRequire)})
+```
 
 ###EventDispatcher Object.
 The `EventDispatcher` can be your messaging System. It dispatches and listens to `Events` from your Application. 
 It's meant to be a Singleton in your application.
 
-	
+You can get a new instance of EventDispatcher by calling `getEventDispatcher` function
+
+```javascript
+var myNewEventDispatcher=rjs.getEventDispatcher();
+```
 	
 
 
