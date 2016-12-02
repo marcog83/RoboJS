@@ -1,7 +1,8 @@
 /**
  * Created by mgobbi on 03/02/2016.
  */
-define(function () {
+define(function (require) {
+    var rjs=require("robojs");
     function Module() {
         return {
             createdCallback: function () {
@@ -10,7 +11,7 @@ define(function () {
 
 
                 this.addEventListener("click", function () {
-                    this.dispatcher.dispatchEvent("create-element", this.id);
+                    this.dispatcher.dispatchEvent(new rjs.RJSEvent("create-element", this.id));
                 }.bind(this));
 
             },

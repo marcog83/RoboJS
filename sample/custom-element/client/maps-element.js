@@ -16,7 +16,8 @@ define(function (require, exports, module) {
 					zoom: 8,
 					center: {lat: -34.397, lng: 150.644}
 				});
-				this.dispatcher.addEventListener("place-changed",function(center){
+				this.dispatcher.addEventListener("place-changed",function(e){
+					var center=e.data;
 					map.setCenter(center);
 				})
 			},

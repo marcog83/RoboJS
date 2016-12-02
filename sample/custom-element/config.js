@@ -8,4 +8,4 @@ requirejs.config({
 
     }
 });
-require(["./client/Application"], function () {});
+require(["./application"], function (app) {app()});

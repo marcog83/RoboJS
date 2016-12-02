@@ -6,7 +6,8 @@ define(function () {
         return {
             createdCallback: function () {
                 this.count = 0;
-                this.dispatcher.addEventListener("create-element", function (thumb_id) {
+                this.dispatcher.addEventListener("create-element", function (e) {
+                    var thumb_id=e.data;
                     var id = this.getAttribute("data-id");
                     if (thumb_id === id) {
                         this.update();
