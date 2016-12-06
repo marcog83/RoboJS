@@ -3473,11 +3473,11 @@ $__System.register("1", ["2", "12", "13", "17", "36", "73", "80", "6b", "1c"], f
 });
 })
 (function(factory) {
-  if (typeof define == 'function' && define.amd)
-    define("robojs",[], factory);
-  else if (typeof module == 'object' && module.exports && typeof require == 'function')
-    module.exports = factory();
-  else
-    window.robojs=factory();
+    if (typeof define == 'function' && define.amd)
+        define("robojs",[], factory);
+    else if (typeof module == 'object' && module.exports && typeof require == 'function')
+        module.exports = factory();
+    else
+        window.robojs=factory();
 });
 //# sourceMappingURL=robojs.es6.js.map

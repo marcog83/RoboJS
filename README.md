@@ -254,7 +254,7 @@ RoboJS depends on some **[RamdaJS](http://ramdajs.com/)** functions.
 transpiling es6 sources to es5 is handled by AWESOME project [jspm](http://jspm.io/), that is a package manager for the SystemJS universal module loader, built on top of the dynamic ES6 module loader.
 
 ```
-jspm bundle-sfx src/org/core/robojs dist/robojs.es6.js --format amd
+jspm bundle-sfx src/org/core/robojs dist/robojs.es6.js --format umd
 ```
 
 
