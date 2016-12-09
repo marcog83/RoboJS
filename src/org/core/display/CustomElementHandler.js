@@ -55,6 +55,7 @@ export default  function () {
         findMediators,
         hasMediator,
         getAllElements
+        , dispose: _=>_
 
     })
 };

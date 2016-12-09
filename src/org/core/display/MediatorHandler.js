@@ -12,7 +12,7 @@ const nextUid = ()=>'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c =>
         v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
 });
-export default  function () {
+export default  function (params={}) {
 
     //inizializza la cache dei mediatori registrati
     var MEDIATORS_CACHE = [];
@@ -29,7 +29,7 @@ export default  function () {
         /**
          * @param Mediator{Function}
          *
-         * è la funzione costruttrice per ogni mediator
+         * ï¿½ la funzione costruttrice per ogni mediator
          */
         return function (Mediator) {
             const mediatorId = nextUid();
@@ -62,7 +62,7 @@ export default  function () {
             disposable.dispose();
 
             MEDIATORS_CACHE = filter(_disposable=>_disposable != disposable, MEDIATORS_CACHE);
-            disposable.node=null;
+            disposable.node = null;
 
             return true;
         }
@@ -70,14 +70,28 @@ export default  function () {
 
     }
 
-    const DATA_MEDIATOR="data-mediator";
-    const findMediators = (definitions, loader)=>node=> loader.load(definitions[node.getAttribute(DATA_MEDIATOR)]).then(create(node));
+    function dispose() {
+        MEDIATORS_CACHE.forEach(function (disposable) {
+            if (disposable) {
+                disposable.dispose();
+                disposable.node = null;
 
-    const hasMediator = definitions=>node=>(definitions[node.getAttribute(DATA_MEDIATOR)] && !node.getAttribute("mediatorid"));
-    const getAllElements = node=>[node].concat([].slice.call(node.querySelectorAll("["+DATA_MEDIATOR+"]"), 0));
+            }
+        });
+        MEDIATORS_CACHE = [];
+        eventDispatcher.removeAllEventListeners();
+    }
+
+    const {selector = "data-mediator"}=params;
+
+    const findMediators = (definitions, loader)=>node=> loader.load(definitions[node.getAttribute(selector)]).then(create(node));
+
+    const hasMediator = definitions=>node=>(definitions[node.getAttribute(selector)] && !node.getAttribute("mediatorid"));
+    const getAllElements = node=>[node].concat([].slice.call(node.querySelectorAll("[" + selector + "]"), 0));
 
     return Object.freeze({
 
+        dispose,
         destroy,
         findMediators,
         hasMediator,

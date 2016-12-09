@@ -202,7 +202,10 @@ $__System.register("12", ["3", "4", "11", "13", "f"], function (_export) {
                     },
                     findMediators: findMediators,
                     hasMediator: hasMediator,
-                    getAllElements: getAllElements
+                    getAllElements: getAllElements,
+                    dispose: function dispose(_) {
+                        return _;
+                    }
 
                 });
             });
@@ -266,8 +269,12 @@ $__System.register("17", ["3", "4", "14", "18", "19", "1a", "1b"], function (_ex
                     var root = arguments.length <= 0 || arguments[0] === undefined ? document.body : arguments[0];
                     return [root];
                 });
+                function dispose() {
+                    domWatcher.dispose();
+                    handler.dispose();
+                }
 
-                return _Object$freeze({ bootstrap: bootstrap });
+                return _Object$freeze({ bootstrap: bootstrap, dispose: dispose });
             });
         }
     };
@@ -756,7 +763,12 @@ $__System.register("36", ["3", "18", "19", "1c", "2b", "1a", "1b"], function (_e
                     characterData: false,
                     subtree: true
                 });
-                return _Object$freeze({ onAdded: onAdded, onRemoved: onRemoved });
+                function dispose() {
+                    observer.disconnect();
+                    onAdded.disconnectAll();
+                    onRemoved.disconnectAll();
+                }
+                return _Object$freeze({ onAdded: onAdded, onRemoved: onRemoved, dispose: dispose });
             });
         }
     };
@@ -3278,6 +3290,7 @@ $__System.register("7f", ["3", "13", "76", "1b"], function (_export) {
             };
 
             _export("default", function () {
+                var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
                 //inizializza la cache dei mediatori registrati
                 var MEDIATORS_CACHE = [];
@@ -3336,24 +3349,38 @@ $__System.register("7f", ["3", "13", "76", "1b"], function (_export) {
                     }
                 }
 
-                var DATA_MEDIATOR = "data-mediator";
+                function dispose() {
+                    MEDIATORS_CACHE.forEach(function (disposable) {
+                        if (disposable) {
+                            disposable.dispose();
+                            disposable.node = null;
+                        }
+                    });
+                    MEDIATORS_CACHE = [];
+                    eventDispatcher.removeAllEventListeners();
+                }
+
+                var _params$selector = params.selector;
+                var selector = _params$selector === undefined ? "data-mediator" : _params$selector;
+
                 var findMediators = function findMediators(definitions, loader) {
                     return function (node) {
-                        return loader.load(definitions[node.getAttribute(DATA_MEDIATOR)]).then(create(node));
+                        return loader.load(definitions[node.getAttribute(selector)]).then(create(node));
                     };
                 };
 
                 var hasMediator = function hasMediator(definitions) {
                     return function (node) {
-                        return definitions[node.getAttribute(DATA_MEDIATOR)] && !node.getAttribute("mediatorid");
+                        return definitions[node.getAttribute(selector)] && !node.getAttribute("mediatorid");
                     };
                 };
                 var getAllElements = function getAllElements(node) {
-                    return [node].concat([].slice.call(node.querySelectorAll("[" + DATA_MEDIATOR + "]"), 0));
+                    return [node].concat([].slice.call(node.querySelectorAll("[" + selector + "]"), 0));
                 };
 
                 return _Object$freeze({
 
+                    dispose: dispose,
                     destroy: destroy,
                     findMediators: findMediators,
                     hasMediator: hasMediator,
@@ -3397,15 +3424,19 @@ $__System.register("80", ["17", "36", "6b", "7f"], function (_export) {
                 var DomWatcher = options.domWatcher || _DomWatcher;
                 var domWatcher = DomWatcher(mediatorHandler.getAllElements);
                 var builder = MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions);
-                return builder.bootstrap(root);
+
+                return {
+                    promise: builder.bootstrap(root),
+                    dispose: builder.dispose
+                };
             });
         }
     };
 });
-$__System.register("1", ["2", "12", "13", "17", "36", "73", "80", "6b", "1c"], function (_export) {
+$__System.register("1", ["2", "12", "13", "17", "36", "73", "80", "6b", "1c", "7f"], function (_export) {
   "use strict";
 
-  var _AMDScriptLoader, _CustomElementHandler, _EventDispatcher, makeDispatcher, _MediatorsBuilder, _DomWatcher, _RJSEvent, _bootstrap, _ScriptLoader, _Signal, ScriptLoader, AMDScriptLoader, EventDispatcher, RJSEvent, Signal, DomWatcher, MediatorsBuilder, CustomElementHandler, bootstrap, getEventDispatcher;
+  var _AMDScriptLoader, _CustomElementHandler, _EventDispatcher, makeDispatcher, _MediatorsBuilder, _DomWatcher, _RJSEvent, _bootstrap, _ScriptLoader, _Signal, _MediatorHandler, ScriptLoader, AMDScriptLoader, EventDispatcher, RJSEvent, Signal, DomWatcher, MediatorsBuilder, CustomElementHandler, MediatorHandler, bootstrap, getEventDispatcher;
 
   return {
     setters: [function (_) {
@@ -3427,6 +3458,8 @@ $__System.register("1", ["2", "12", "13", "17", "36", "73", "80", "6b", "1c"], f
       _ScriptLoader = _b["default"];
     }, function (_c) {
       _Signal = _c["default"];
+    }, function (_f) {
+      _MediatorHandler = _f["default"];
     }],
     execute: function () {
       ScriptLoader = _ScriptLoader;
@@ -3461,6 +3494,10 @@ $__System.register("1", ["2", "12", "13", "17", "36", "73", "80", "6b", "1c"], f
 
       _export("CustomElementHandler", CustomElementHandler);
 
+      MediatorHandler = _MediatorHandler;
+
+      _export("MediatorHandler", MediatorHandler);
+
       bootstrap = _bootstrap;
 
       _export("bootstrap", bootstrap);
@@ -3473,11 +3510,11 @@ $__System.register("1", ["2", "12", "13", "17", "36", "73", "80", "6b", "1c"], f
 });
 })
 (function(factory) {
-    if (typeof define == 'function' && define.amd)
-        define("robojs",[], factory);
-    else if (typeof module == 'object' && module.exports && typeof require == 'function')
-        module.exports = factory();
-    else
-        window.robojs=factory();
+  if (typeof define == 'function' && define.amd)
+    define([], factory);
+  else if (typeof module == 'object' && module.exports && typeof require == 'function')
+    module.exports = factory();
+  else
+    factory();
 });
 //# sourceMappingURL=robojs.es6.js.map

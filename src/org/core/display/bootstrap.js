@@ -11,7 +11,11 @@ export default (options)=> {
     var DomWatcher = options.domWatcher || _DomWatcher;
     var domWatcher = DomWatcher(mediatorHandler.getAllElements);
     var builder = MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions);
-    return builder.bootstrap(root);
+
+    return {
+        promise: builder.bootstrap(root)
+        , dispose: builder.dispose
+    }
 
 }
 

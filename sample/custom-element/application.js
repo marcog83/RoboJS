@@ -12,7 +12,7 @@ define(function (require) {
             definitions: definitions,
             loader: rjs.AMDScriptLoader(),
             mediatorHandler:rjs.CustomElementHandler()
-        }).catch(function (e) {
+        }).promise.catch(function (e) {
             console.log(e);
         })
 

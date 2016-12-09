@@ -7,6 +7,7 @@ import _Signal from "./events/Signal";
 import _DomWatcher from "./display/DomWatcher";
 import _MediatorsBuilder from "./display/MediatorsBuilder";
 import _CustomElementHandler from "./display/CustomElementHandler";
+import _MediatorHandler from "./display/MediatorHandler";
 import _bootstrap from "./display/bootstrap";
 
 
@@ -18,5 +19,6 @@ export var Signal = _Signal;
 export var DomWatcher = _DomWatcher;
 export var MediatorsBuilder = _MediatorsBuilder;
 export var CustomElementHandler = _CustomElementHandler;
+export var MediatorHandler = _MediatorHandler;
 export var bootstrap = _bootstrap;
 export var getEventDispatcher = makeDispatcher;

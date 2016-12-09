@@ -50,7 +50,12 @@ export default  (getAllElements, root = document.body)=> {
         characterData: false,
         subtree: true
     });
-    return Object.freeze({onAdded, onRemoved})
+    function dispose(){
+        observer.disconnect();
+        onAdded.disconnectAll();
+        onRemoved.disconnectAll();
+    }
+    return Object.freeze({onAdded, onRemoved,dispose})
 };
 
 

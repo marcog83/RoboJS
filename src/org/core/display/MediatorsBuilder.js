@@ -31,8 +31,12 @@ export default function (domWatcher, loader, handler, definitions) {
         map(handler.getAllElements),
         (root = document.body)=> [root]
     );
+    function dispose(){
+        domWatcher.dispose();
+        handler.dispose();
+    }
 
-    return Object.freeze({bootstrap})
+    return Object.freeze({bootstrap,dispose})
 
 }
 
