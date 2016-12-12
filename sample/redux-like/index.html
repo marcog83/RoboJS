@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCbQ3qhoF6ThhzfikRb454ZEKe6QvHRIfE"></script>
+    <style>
+        .completed, .completed a {
+            color: silver;
+        }
+
+        input[type=radio], label {
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+<!--IT IS A META BECAUSE IT'S NOT A VISUAL ELEMENT-->
+<meta data-mediator="todo-app">
+
+<div data-mediator="todo-list"></div>
+<div data-mediator="todo-add">
+    <input value="">
+    <button>ADD TODO</button>
+</div>
+<div>
+    <div>
+        <input type="radio" checked name="visibility" value="SHOW_ALL" id="all" data-mediator="todo-filter">
+        <label for="all">ALL</label>
+    </div>
+    <div>
+        <input type="radio" name="visibility" value="SHOW_COMPLETED" id="completed_radio" data-mediator="todo-filter">
+        <label for="completed_radio">TODO COMPLETED</label>
+    </div>
+    <div>
+        <input type="radio" name="visibility" value="SHOW_ACTIVE" id="not_completed" data-mediator="todo-filter">
+        <label for="not_completed">TODO NOT COMPLETED</label>
+    </div>
+
+
+</div>
+
+
+<!-- THIS ARE OPTIONAL POLYFILLS TO CROSS BROWSER SUPPORT begin -->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.3.1/es5-shim.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.3.1/es5-sham.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/bluebird/latest/bluebird.min.js"></script>-->
+<!--<script src="../../node_modules/mutationobserver-shim/dist/mutationobserver.min.js"></script>-->
+
+<!-- end -->
+
+
+<script src="require.js" data-main="config"></script>
+
+</body>
+</html>

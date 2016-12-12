@@ -1,16 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-	<meta charset="UTF-8">
-	<title></title>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCbQ3qhoF6ThhzfikRb454ZEKe6QvHRIfE"></script>
+    <style>
+        body {
+            font-size: 0;
+        }
 
+        .map {
+            width: 100%;
+            height: 400px;
 
+        }
+        .autocomplete {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            margin: 10px 0;
+        }
+        .search-map {
+            width: 31%;
+            height: 400px;
+            display: inline-block;
+            vertical-align: top;
+            margin-right:3%
+        }
+        .search-map:nth-child(3n){
+            margin-right: 0;
+        }
+
+    </style>
 </head>
 <body>
-<button class="add-button">ADD</button>
 
-<div data-mediator="my-custom-element">a-2</div>
 
+<div data-mediator="search-map" class="search-map">
+    <input class="autocomplete" data-mediator="autocomplete-bar">
+    <div class="map" data-mediator="map-panel"></div>
+    <button data-mediator="button-dispose">DISPOSE</button>
+</div>
+<div data-mediator="search-map" class="search-map">
+    <input class="autocomplete" data-mediator="autocomplete-bar">
+    <div class="map" data-mediator="map-panel"></div>
+    <button data-mediator="button-dispose">DISPOSE</button>
+</div>
+<div data-mediator="search-map" class="search-map">
+    <input class="autocomplete" data-mediator="autocomplete-bar">
+    <div class="map" data-mediator="map-panel"></div>
+    <button data-mediator="button-dispose">DISPOSE</button>
+</div>
 
 <!-- THIS ARE OPTIONAL POLYFILLS TO CROSS BROWSER SUPPORT begin -->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.3.1/es5-shim.min.js"></script>-->
@@ -19,6 +60,7 @@
 <!--<script src="../../node_modules/mutationobserver-shim/dist/mutationobserver.min.js"></script>-->
 
 <!-- end -->
+
 
 <script src="require.js" data-main="config"></script>
 

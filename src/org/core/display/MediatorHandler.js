@@ -12,12 +12,13 @@ const nextUid = ()=>'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c =>
         v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
 });
-export default  function (params={}) {
-
+export default  function (params = {}) {
+    //crea un'istanza dell'EventDispatcher se non viene passata
+    const {selector = "data-mediator", dispatcher = makeDispatcher()}=params;
     //inizializza la cache dei mediatori registrati
     var MEDIATORS_CACHE = [];
-    //crea un'istanza dell'EventDispatcher
-    const eventDispatcher = makeDispatcher();
+
+
 //
     /**
      *
@@ -36,7 +37,7 @@ export default  function (params={}) {
 
             node.setAttribute('mediatorid', mediatorId);
 
-            const disposeFunction = Mediator(node, eventDispatcher) || noop;
+            const disposeFunction = Mediator(node, dispatcher) || noop;
             const disposable = {
                 mediatorId: mediatorId,
                 node: node,
@@ -79,10 +80,9 @@ export default  function (params={}) {
             }
         });
         MEDIATORS_CACHE = [];
-        eventDispatcher.removeAllEventListeners();
+        dispatcher.removeAllEventListeners();
     }
 
-    const {selector = "data-mediator"}=params;
 
     const findMediators = (definitions, loader)=>node=> loader.load(definitions[node.getAttribute(selector)]).then(create(node));
 
@@ -90,7 +90,6 @@ export default  function (params={}) {
     const getAllElements = node=>[node].concat([].slice.call(node.querySelectorAll("[" + selector + "]"), 0));
 
     return Object.freeze({
-
         dispose,
         destroy,
         findMediators,

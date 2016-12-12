@@ -3292,10 +3292,15 @@ $__System.register("7f", ["3", "13", "76", "1b"], function (_export) {
             _export("default", function () {
                 var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
+                //crea un'istanza dell'EventDispatcher se non viene passata
+                var _params$selector = params.selector;
+                var selector = _params$selector === undefined ? "data-mediator" : _params$selector;
+                var _params$dispatcher = params.dispatcher;
+                var dispatcher = _params$dispatcher === undefined ? makeDispatcher() : _params$dispatcher;
+
                 //inizializza la cache dei mediatori registrati
                 var MEDIATORS_CACHE = [];
-                //crea un'istanza dell'EventDispatcher
-                var eventDispatcher = makeDispatcher();
+
                 //
                 /**
                  *
@@ -3314,7 +3319,7 @@ $__System.register("7f", ["3", "13", "76", "1b"], function (_export) {
 
                         node.setAttribute('mediatorid', mediatorId);
 
-                        var disposeFunction = Mediator(node, eventDispatcher) || noop;
+                        var disposeFunction = Mediator(node, dispatcher) || noop;
                         var disposable = {
                             mediatorId: mediatorId,
                             node: node,
@@ -3357,11 +3362,8 @@ $__System.register("7f", ["3", "13", "76", "1b"], function (_export) {
                         }
                     });
                     MEDIATORS_CACHE = [];
-                    eventDispatcher.removeAllEventListeners();
+                    dispatcher.removeAllEventListeners();
                 }
-
-                var _params$selector = params.selector;
-                var selector = _params$selector === undefined ? "data-mediator" : _params$selector;
 
                 var findMediators = function findMediators(definitions, loader) {
                     return function (node) {
@@ -3379,7 +3381,6 @@ $__System.register("7f", ["3", "13", "76", "1b"], function (_export) {
                 };
 
                 return _Object$freeze({
-
                     dispose: dispose,
                     destroy: destroy,
                     findMediators: findMediators,
@@ -3510,11 +3511,11 @@ $__System.register("1", ["2", "12", "13", "17", "36", "73", "80", "6b", "1c", "7
 });
 })
 (function(factory) {
-  if (typeof define == 'function' && define.amd)
-    define([], factory);
-  else if (typeof module == 'object' && module.exports && typeof require == 'function')
-    module.exports = factory();
-  else
-    factory();
+    if (typeof define == 'function' && define.amd)
+        define("robojs",[], factory);
+    else if (typeof module == 'object' && module.exports && typeof require == 'function')
+        module.exports = factory();
+    else
+        window.robojs=factory();
 });
 //# sourceMappingURL=robojs.es6.js.map
