@@ -9,7 +9,7 @@ import MediatorHandler from "./MediatorHandler";
 export default (options)=> {
     var {definitions, loader = ScriptLoader(), mediatorHandler = MediatorHandler(), root = document.body}=options;
     var DomWatcher = options.domWatcher || _DomWatcher;
-    var domWatcher = DomWatcher(mediatorHandler.getAllElements);
+    var domWatcher = DomWatcher(mediatorHandler.getAllElements,root);
     var builder = MediatorsBuilder(domWatcher, loader, mediatorHandler, definitions);
 
     return {
