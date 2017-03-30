@@ -7,17 +7,15 @@ import filter from "ramda/src/filter";
 export default function (domWatcher, loader, handler, definitions) {
 
 
-    var _handleNodesRemoved = compose(
+    let _handleNodesRemoved = compose(
         forEach(handler.destroy),
         flatten
     );
 
 
-    var getMediators = compose(
-        function (promises) {
-            return Promise.all(promises)
-        },
-        map(handler.findMediators(definitions, loader)),
+    let getMediators = compose(
+        promises => Promise.all(promises)
+        , map(handler.findMediators(definitions, loader)),
         filter(handler.hasMediator(definitions)),
         flatten
     );
@@ -26,17 +24,18 @@ export default function (domWatcher, loader, handler, definitions) {
     domWatcher.onAdded.connect(getMediators);
     domWatcher.onRemoved.connect(_handleNodesRemoved);
 
-    var bootstrap = compose(
+    let bootstrap = compose(
         getMediators,
         map(handler.getAllElements),
-        (root = document.body)=> [root]
+        (root = document.body) => [root]
     );
-    function dispose(){
+
+    function dispose() {
         domWatcher.dispose();
         handler.dispose();
     }
 
-    return Object.freeze({bootstrap,dispose})
+    return Object.freeze({bootstrap, dispose})
 
 }
 

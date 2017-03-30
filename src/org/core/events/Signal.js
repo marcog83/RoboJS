@@ -13,11 +13,10 @@ export default function Signal() {
     }
 
 
-    function emit() {
-        var args = arguments;
+    function emit(value) {
         listenerBoxes.forEach(({listener,scope,once})=> {
             once && disconnect(listener, scope);
-            listener.apply(scope, args);
+            listener.call(scope, value);
         });
     }
 
