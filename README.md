@@ -40,14 +40,15 @@ it will create a new instance of Mediator, storing the DOM Node into a property 
 # Usage
 
 ```javascript
+import {bootstrap} from "robojs"
 //basic usage
-rjs.bootstrap({definitions: definitions}) // return {dispose,promise}
+bootstrap({definitions: definitions}) // return {dispose,promise}
 
 ```
 you can store, and use later, the returned Object from bootstrap function. 
 ```javascript
-
-var application=rjs.bootstrap({definitions: definitions}) // return {dispose,promise}
+import {bootstrap} from "robojs"
+var application=bootstrap({definitions: definitions}) // return {dispose,promise}
 
 //you can handle when every Mediators in page are executed
 application.promise.then(function(){
@@ -89,9 +90,10 @@ This function constructor allow you to register and create your `Custom Elements
 By default your modules are handled by `data-mediator` mechanism, but you can set mediatorHandler in order to use custom elements.
 
 ``` javascript
- rjs.bootstrap({
+import {bootstrap,CustomElementHandler} from "robojs"
+ bootstrap({
             definitions: definitions,
-            mediatorHandler:rjs.CustomElementHandler()
+            mediatorHandler:CustomElementHandler()
         })
 ```
 
@@ -158,7 +160,8 @@ Default loader is `SystemJS` based.
 and inside `Application.js` you invoke `bootstrap` function
 
 ```javascript
-rjs.bootstrap({definitions: definitions})
+import {bootstrap} from "robojs"
+bootstrap({definitions: definitions})
 ```
 An example can be found in sample/systemjs folder.
 
@@ -171,17 +174,18 @@ If your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Ob
 
 
 ```javascript
-
-rjs.bootstrap({definitions: definitions,loader:rjs.AMDScriptLoader()})
+import {bootstrap,AMDScriptLoader} from "robojs"
+bootstrap({definitions: definitions,loader:AMDScriptLoader()})
 ```
 
 You can customize script loading strategy passing a function to `AMDScriptLoader`.
 
 ```javascript
+import {bootstrap,AMDScriptLoader} from "robojs"
 function loadWithRequire(id,resolve,reject){
     require([id],resolve,reject);
 }
-rjs.bootstrap({definitions: definitions,loader:rjs.AMDScriptLoader(loadWithRequire)})
+bootstrap({definitions: definitions,loader:AMDScriptLoader(loadWithRequire)})
 ```
 
 ### EventDispatcher Object.
@@ -191,7 +195,8 @@ It's meant to be a Singleton in your application.
 You can get a new instance of EventDispatcher by calling `getEventDispatcher` function
 
 ```javascript
-var myNewEventDispatcher=rjs.getEventDispatcher();
+import {getEventDispatcher} from "robojs"
+var myNewEventDispatcher=getEventDispatcher();
 ```
 	
 
