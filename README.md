@@ -1,3 +1,4 @@
+#### 2017-04-01 ... v5.0.0 doesn't support custom element, because of big refactor.
 RoboJS is a library that aims to dynamically load JS modules depending on how the DOM is composed.
 Add a node to the DOM and a JS will be loaded!
 Remove a node and the JS will be disposed!!
@@ -82,6 +83,7 @@ When a `data-mediator` attribute matches an ID from MediatorsMap the `Mediator` 
 ```
 
 # Custom Elements
+
 RoboJS is a composable library that allow you to change the way you create modules and add logics to your application.
 **data-mediator mechanism** is my first solution to the problem, but moving on, custom elements are an easy, native way to  deal with it.
 This is why I decided to add `CustomElementHandler` Object
@@ -168,24 +170,24 @@ An example can be found in sample/systemjs folder.
 
 
 
-## AMDScriptLoader Object
+## AmdLoader Object
 
-If your project is AMD-style you can pass `AMDScriptLoader` to bootstrap spec Object. `AMDScriptLoader` supposes that `require` function is in global space.
+If your project is AMD-style you can pass `AmdLoader` to bootstrap spec Object. `AmdLoader` supposes that `require` function is in global space.
 
 
 ```javascript
-import {bootstrap,AMDScriptLoader} from "robojs"
-bootstrap({definitions: definitions,loader:AMDScriptLoader()})
+import {bootstrap,AmdLoader} from "robojs"
+bootstrap({definitions: definitions,loader:AmdLoader()})
 ```
 
-You can customize script loading strategy passing a function to `AMDScriptLoader`.
+You can customize script loading strategy passing a function to `AmdLoader`.
 
 ```javascript
-import {bootstrap,AMDScriptLoader} from "robojs"
+import {bootstrap,AmdLoader} from "robojs"
 function loadWithRequire(id,resolve,reject){
     require([id],resolve,reject);
 }
-bootstrap({definitions: definitions,loader:AMDScriptLoader(loadWithRequire)})
+bootstrap({definitions: definitions,loader:AmdLoader(loadWithRequire)})
 ```
 
 ### EventDispatcher Object.
@@ -277,7 +279,7 @@ transpiling es6 sources to es5 is handled by AWESOME project [jspm](http://jspm.
 You can run npm script named `build` or you can run it from command line.
 
 ```
-jspm bundle-sfx src/org/core/robojs dist/robojs.es6.js --format umd
+jspm bundle-sfx src/core/robojs dist/robojs.es6.js --format umd
 ```
 
 

@@ -1,30 +1,10 @@
-import Signal from "../events/Signal";
+import Signal from "../events/signal";
 
-import map from "ramda/src/map";
-import flatten from "ramda/src/flatten";
-import pluck from "ramda/src/pluck";
-import compose from "ramda/src/compose";
-import filter from "ramda/src/filter";
 
-export default  (getAllElements, root = document.body) => {
+import makeChain from "./make-chain";
+export default  (root = document.body) => {
     let onAdded = Signal();
     let onRemoved = Signal();
-
-    function makeChain(prop, emit) {
-        return compose(
-            nodes => {
-                if (nodes.length > 0) {
-                    emit(nodes);
-                }
-            },
-            filter(nodes => nodes.length > 0),
-            map(getAllElements),
-            filter(node => node.querySelectorAll),
-            flatten,
-            pluck(prop)//"addedNodes","removedNodes"
-        )
-
-    }
 
     let getAdded = makeChain("addedNodes", onAdded.emit);
     let getRemoved = makeChain("removedNodes", onRemoved.emit);

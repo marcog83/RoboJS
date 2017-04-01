@@ -2,7 +2,7 @@
  * Created by mgobbi on 31/03/2017.
  */
 import curryN from "ramda/src/curryN";
-import nextUid from "../nextUid";
+import nextUid from "./next-uid";
 const noop = _ => _;
 function create(node,dispatcher,Mediator) {
     const mediatorId = nextUid();

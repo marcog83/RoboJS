@@ -14,11 +14,11 @@ define(function (require) {
         // create a new EventDispatcher for each search-map component.
         // By default a new instance of EventDispatcher is created when MediatorHandler is invoked.
         // In this case we need a reference of dispatcher which listen to 'dispose-component' event.
-        var componentDispatcher = rjs.getEventDispatcher();
+        var componentDispatcher = rjs.makeDispatcher();
         var robojs = rjs.bootstrap({
-            definitions: definitions,
-            loader: rjs.AMDScriptLoader()
-            , mediatorHandler: rjs.MediatorHandler({dispatcher: componentDispatcher})
+
+            loader: rjs.AmdLoader()
+            , mediatorHandler: rjs.MediatorHandler({definitions:definitions,dispatcher: componentDispatcher})
             , root: node
         });
         componentDispatcher.addEventListener("dispose-component", function () {

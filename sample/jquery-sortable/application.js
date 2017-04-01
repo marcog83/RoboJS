@@ -20,7 +20,7 @@ define(function (require) {
             definitions: {
                 "sortable-item":"./sortable-item"
             },
-            loader: rjs.AMDScriptLoader()
+            loader: rjs.AmdLoader()
         }).promise.catch(function(e){
             console.log(e);
         })

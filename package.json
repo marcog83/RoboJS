@@ -1,13 +1,13 @@
 {
   "name": "robojs",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "license": "MIT",
   "main": "dist/robojs.es6.min.js",
   "scripts": {
-    "build": "jspm bundle-sfx src/org/core/robojs dist/robojs.es6.js --format umd"
+    "build": "jspm bundle-sfx src/core/robojs dist/robojs.es6.js --format umd"
   },
   "jspm": {
-    "main": "src/org/core/robojs",
+    "main": "src/core/robojs",
     "format": "es6",
     "dependencies": {
       "ramda": "npm:ramda@^0.21.0"

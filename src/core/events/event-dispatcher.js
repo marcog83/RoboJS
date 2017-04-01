@@ -1,4 +1,4 @@
-import RJSEvent from "./RJSEvent";
+import RJSEvent from "./rjs-event";
 class EventDispatcher {
     constructor() {
         this._listeners = {};

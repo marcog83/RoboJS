@@ -19,7 +19,7 @@ define(function (require) {
          */
         rjs.bootstrap({
             definitions: definitions,
-            loader: rjs.AMDScriptLoader()
+            loader: rjs.AmdLoader()
         }).promise.catch(function(e){
             console.log(e);
         })
