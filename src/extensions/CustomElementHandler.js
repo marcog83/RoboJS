@@ -2,7 +2,7 @@
  * Created by marco.gobbi on 21/01/2015.
  */
 
-import EventDispatcher from "../events/event-dispatcher";
+import EventDispatcher from "../core/events/event-dispatcher";
 
 
 export default  function () {

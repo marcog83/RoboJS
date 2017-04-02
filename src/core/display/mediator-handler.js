@@ -8,6 +8,7 @@ import {makeDispatcher} from "../events/event-dispatcher";
 import create from "./create";
 import inCache from "./in-cache";
 import getAllElements from "./get-all-elements";
+import FindMediators from "./find-mediators";
 
 import curryN from "ramda/src/curryN";
 
@@ -15,7 +16,7 @@ const GetDefinition = curryN(2, function (definitions, node) {
     return definitions[node.getAttribute("data-mediator")];
 });
 
-export default  function (params = {}) {
+export default  function (params) {
     //crea un'istanza dell'EventDispatcher se non viene passata
     const {definitions = {}, dispatcher = makeDispatcher()} = params;
     //inizializza la cache dei mediatori registrati
@@ -50,13 +51,12 @@ export default  function (params = {}) {
         MEDIATORS_CACHE.push(disposable);//[mediatorId] = disposeFunction;
     }
 
-    function findMediators(load) {
-        return node => {
-            return load(getDefinition(node))
-                .then(create(node, dispatcher))
-                .then(updateCache);
-        }
-    }
+    var _findMediators = FindMediators(getDefinition, create, updateCache);
+    // var findMediators = curryN(2, function (load, node) {
+    //     return load(getDefinition(node))
+    //         .then(create(node, dispatcher))
+    //         .then(updateCache);
+    // });
 
     function hasMediator(node) {
         return !!getDefinition(node) && !inCache(MEDIATORS_CACHE, node)
@@ -65,7 +65,7 @@ export default  function (params = {}) {
     return Object.freeze({
         dispose,
         destroy,
-        findMediators,
+        findMediators:_findMediators(dispatcher),
         hasMediator,
         getAllElements
 

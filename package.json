@@ -23,6 +23,11 @@
     }
   },
   "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.24.0",
+    "babel-plugin-module-alias": "^1.6.0",
+    "babel-preset-import-export": "^1.0.2",
+    "babel-preset-latest": "^6.24.0",
     "grunt": "^0.4.5",
     "grunt-contrib-uglify": "^0.9.1",
     "jspm": "^0.16.19"
