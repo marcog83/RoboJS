@@ -6,3 +6,4 @@ docs
 jspm_packages
 grunt-tasks
 fix-for-amd
+mochawesome-reports

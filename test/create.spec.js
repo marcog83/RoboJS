@@ -5,34 +5,54 @@ import create from "../src/core/display/create";
 var assert = require("chai").assert;
 var jsdom = require('mocha-jsdom');
 
-describe('inCache', function () {
+describe('create', function () {
     jsdom();
+    var node;
+    var dispatcher = {};
+    var disposable;
+    function disposeFn() {
+    }
 
+    function Mediator(node, dispatcher) {
+        return disposeFn
+    }
 
+    beforeEach(function () {
+        node = document.createElement("div");
+        disposable = create(node, dispatcher, Mediator);
+    });
     it('it is a function', function () {
-
         assert.isFunction(create);
     });
     it('arity 3', function () {
         assert.equal(create.length, 3);
     });
-    it('ritorna true se tova il mediator', function () {
-        var div = document.createElement("div");
-        var MEDIATOR_CACHE = [{
-            node: div
-            , dispose: _ => _
-            , mediatorId: 1
-        }];
-        assert.equal(inCache(MEDIATOR_CACHE, div),true);
+
+    it('ritorna un oggetto con il mediatorId', function () {
+
+        assert.isDefined(disposable.mediatorId, "mediator id defined");
+
     });
-    it('ritorna false se non tova il mediator', function () {
-        var div = document.createElement("div");
-        var node = document.createElement("div");
-        var MEDIATOR_CACHE = [{
-            node: div
-            , dispose: _ => _
-            , mediatorId: 1
-        }];
-        assert.equal(inCache(MEDIATOR_CACHE, node),false);
+    it("setta l'attributo mediatorid nel nodo DOM", function () {
+
+
+        assert.isDefined(node.getAttribute("mediatorid"), "l'attributo mediatorid non è stato aggiunto al nodo");
+
     });
+    it("l'attributo mediatorid è uguale alla proprietà del disposable", function () {
+
+
+        assert.equal(node.getAttribute("mediatorid"), disposable.mediatorId, "l'attributo mediatorid non è lo stesso di quello generato");
+
+    });
+    it("il disposable ha una funzione di dispose ritornata da Mediator", function () {
+
+        assert.equal(disposable.dispose, disposeFn, "la funzione di dispose non è ritornata correttamente");
+
+    });
+    it('il node del disposable è lo stesso passato al Mediator', function () {
+
+        assert.equal(disposable.node, node, "il nodo del dom non è corretto");
+    });
+
 });
