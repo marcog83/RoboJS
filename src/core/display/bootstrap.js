@@ -13,7 +13,7 @@ export default (options) => {
     let handler = options.mediatorHandler || MediatorHandler({definitions});
     let domWatcher = options.domWatcher || DomWatcher(root);
     //
-    let getMediators = GetMediators(handler.findMediators(loader.load), handler.hasMediator);
+    let getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);
 
     domWatcher.onAdded.connect(getMediators);
     domWatcher.onRemoved.connect(HandleNodesRemoved(handler.destroy));

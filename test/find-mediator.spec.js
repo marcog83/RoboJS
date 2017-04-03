@@ -1,12 +1,12 @@
 /**
  * Created by marcogobbi on 02/04/2017.
  */
-import FindMediators from "../src/core/display/find-mediators";
+import FindMediator from "../src/core/display/find-mediator";
 import curryN from "ramda/src/curryN";
 var assert = require("chai").assert;
 var jsdom = require('mocha-jsdom');
 
-describe('FindMediators', function () {
+describe('FindMediator', function () {
     var dispatcher = {};
     var disposable = {
         mediatorId: 1,
@@ -32,22 +32,22 @@ describe('FindMediators', function () {
     };
 
 
-    it('FindMediators is a function', function () {
+    it('FindMediator is a function', function () {
 
-        assert.isFunction(FindMediators);
+        assert.isFunction(FindMediator);
     });
     it('arity 3', function () {
-        assert.equal(FindMediators.length, 3);
+        assert.equal(FindMediator.length, 3);
     });
     it('returns a function', function () {
-        var findMediators = FindMediators(getDefinition, create, updateCache);
+        var findMediator = FindMediator(getDefinition, create, updateCache);
 
-        assert.isFunction(findMediators);
+        assert.isFunction(findMediator);
     });
-    it("trova i mediators", function (done) {
-        var findMediators = FindMediators(getDefinition, create, updateCache);
+    it("trova il mediator", function (done) {
+        var findMediator = FindMediator(getDefinition, create, updateCache);
         var node = {};
-        findMediators(dispatcher, load, node).then(_disposable => {
+        findMediator(dispatcher, load, node).then(_disposable => {
             assert.equal(_disposable, disposable,"Non è fa correttamente la catena!!!");
             done();
         });

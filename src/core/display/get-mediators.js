@@ -6,10 +6,10 @@ import map from "ramda/src/map";
 import flatten from "ramda/src/flatten";
 import compose from "ramda/src/compose";
 import filter from "ramda/src/filter";
-export default function (findMediators, hasMediator) {
+export default function (findMediator, hasMediator) {
     return compose(
         promises => Promise.all(promises)
-        , map(findMediators),
+        , map(findMediator),
         filter(hasMediator),
         flatten
     );
