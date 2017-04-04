@@ -20,9 +20,15 @@ describe('getAllElements', function () {
         document.body.innerHTML = '<div data-mediator="a"></div>';
         assert.isArray(getAllElements(document.body));
     });
-    it("trova i nodi", function () {
+    it("trova i nodi - solo figli", function () {
         document.body.innerHTML = '<div data-mediator="a"></div>';
-        var nodes = [document.body, document.querySelector("[data-mediator]")];
-        assert.deepEqual(getAllElements(document.body), nodes);
+        var nodes = [document.querySelector("[data-mediator]")];
+        assert.deepEqual(getAllElements(document.body), nodes,"non ci sono i nodi che mi aspetto che ci siano");
+    });
+    it("trova i nodi - il nodo ha un data-mediator associato", function () {
+        document.body.innerHTML = '<div data-mediator="a"></div>';
+        document.body.setAttribute("data-mediator","b");
+        var nodes = [document.body,document.body.querySelector("[data-mediator]")];
+        assert.deepEqual(getAllElements(document.body), nodes,"non ci sono i nodi che mi aspetto che ci siano");
     })
 });

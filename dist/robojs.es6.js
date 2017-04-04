@@ -1,4 +1,4 @@
-!function(e){function r(e,r,o){return 4===arguments.length?t.apply(this,arguments):void n(e,{declarative:!0,deps:r,declare:o})}function t(e,r,t,o){n(e,{declarative:!1,deps:r,executingRequire:t,execute:o})}function n(e,r){r.name=e,e in v||(v[e]=r),r.normalizedDeps=r.deps}function o(e,r){if(r[e.groupIndex]=r[e.groupIndex]||[],-1==g.call(r[e.groupIndex],e)){r[e.groupIndex].push(e);for(var t=0,n=e.normalizedDeps.length;n>t;t++){var a=e.normalizedDeps[t],u=v[a];if(u&&!u.evaluated){var d=e.groupIndex+(u.declarative!=e.declarative);if(void 0===u.groupIndex||u.groupIndex<d){if(void 0!==u.groupIndex&&(r[u.groupIndex].splice(g.call(r[u.groupIndex],u),1),0==r[u.groupIndex].length))throw new TypeError("Mixed dependency cycle detected");u.groupIndex=d}o(u,r)}}}}function a(e){var r=v[e];r.groupIndex=0;var t=[];o(r,t);for(var n=!!r.declarative==t.length%2,a=t.length-1;a>=0;a--){for(var u=t[a],i=0;i<u.length;i++){var s=u[i];n?d(s):l(s)}n=!n}}function u(e){return y[e]||(y[e]={name:e,dependencies:[],exports:{},importers:[]})}function d(r){if(!r.module){var t=r.module=u(r.name),n=r.module.exports,o=r.declare.call(e,function(e,r){if(t.locked=!0,"object"==typeof e)for(var o in e)n[o]=e[o];else n[e]=r;for(var a=0,u=t.importers.length;u>a;a++){var d=t.importers[a];if(!d.locked)for(var i=0;i<d.dependencies.length;++i)d.dependencies[i]===t&&d.setters[i](n)}return t.locked=!1,r},{id:r.name});t.setters=o.setters,t.execute=o.execute;for(var a=0,i=r.normalizedDeps.length;i>a;a++){var l,s=r.normalizedDeps[a],c=v[s],f=y[s];f?l=f.exports:c&&!c.declarative?l=c.esModule:c?(d(c),f=c.module,l=f.exports):l=p(s),f&&f.importers?(f.importers.push(t),t.dependencies.push(f)):t.dependencies.push(null),t.setters[a]&&t.setters[a](l)}}}function i(e){var r,t=v[e];if(t)t.declarative?f(e,[]):t.evaluated||l(t),r=t.module.exports;else if(r=p(e),!r)throw new Error("Unable to load dependency "+e+".");return(!t||t.declarative)&&r&&r.__useDefault?r["default"]:r}function l(r){if(!r.module){var t={},n=r.module={exports:t,id:r.name};if(!r.executingRequire)for(var o=0,a=r.normalizedDeps.length;a>o;o++){var u=r.normalizedDeps[o],d=v[u];d&&l(d)}r.evaluated=!0;var c=r.execute.call(e,function(e){for(var t=0,n=r.deps.length;n>t;t++)if(r.deps[t]==e)return i(r.normalizedDeps[t]);throw new TypeError("Module "+e+" not declared as a dependency.")},t,n);void 0!==c&&(n.exports=c),t=n.exports,t&&t.__esModule?r.esModule=t:r.esModule=s(t)}}function s(r){var t={};if(("object"==typeof r||"function"==typeof r)&&r!==e)if(m)for(var n in r)"default"!==n&&c(t,r,n);else{var o=r&&r.hasOwnProperty;for(var n in r)"default"===n||o&&!r.hasOwnProperty(n)||(t[n]=r[n])}return t["default"]=r,x(t,"__useDefault",{value:!0}),t}function c(e,r,t){try{var n;(n=Object.getOwnPropertyDescriptor(r,t))&&x(e,t,n)}catch(o){return e[t]=r[t],!1}}function f(r,t){var n=v[r];if(n&&!n.evaluated&&n.declarative){t.push(r);for(var o=0,a=n.normalizedDeps.length;a>o;o++){var u=n.normalizedDeps[o];-1==g.call(t,u)&&(v[u]?f(u,t):p(u))}n.evaluated||(n.evaluated=!0,n.module.execute.call(e))}}function p(e){if(I[e])return I[e];if("@node/"==e.substr(0,6))return I[e]=s(D(e.substr(6)));var r=v[e];if(!r)throw"Module "+e+" not present.";return a(e),f(e,[]),v[e]=void 0,r.declarative&&x(r.module.exports,"__esModule",{value:!0}),I[e]=r.declarative?r.module.exports:r.esModule}var v={},g=Array.prototype.indexOf||function(e){for(var r=0,t=this.length;t>r;r++)if(this[r]===e)return r;return-1},m=!0;try{Object.getOwnPropertyDescriptor({a:0},"a")}catch(h){m=!1}var x;!function(){try{Object.defineProperty({},"a",{})&&(x=Object.defineProperty)}catch(e){x=function(e,r,t){try{e[r]=t.value||t.get.call(e)}catch(n){}}}}();var y={},D="undefined"!=typeof System&&System._nodeRequire||"undefined"!=typeof require&&"undefined"!=typeof require.resolve&&"undefined"!=typeof process&&process.platform&&require,I={"@empty":{}};return function(e,n,o,a){return function(u){u(function(u){for(var d={_nodeRequire:D,register:r,registerDynamic:t,get:p,set:function(e,r){I[e]=r},newModule:function(e){return e}},i=0;i<n.length;i++)(function(e,r){r&&r.__esModule?I[e]=r:I[e]=s(r)})(n[i],arguments[i]);a(d);var l=p(e[0]);if(e.length>1)for(var i=1;i<e.length;i++)p(e[i]);return o?l["default"]:l})}}}("undefined"!=typeof self?self:global)
+!function(e){function r(e,r,o){return 4===arguments.length?t.apply(this,arguments):void n(e,{declarative:!0,deps:r,declare:o})}function t(e,r,t,o){n(e,{declarative:!1,deps:r,executingRequire:t,execute:o})}function n(e,r){r.name=e,e in v||(v[e]=r),r.normalizedDeps=r.deps}function o(e,r){if(r[e.groupIndex]=r[e.groupIndex]||[],-1==g.call(r[e.groupIndex],e)){r[e.groupIndex].push(e);for(var t=0,n=e.normalizedDeps.length;n>t;t++){var a=e.normalizedDeps[t],u=v[a];if(u&&!u.evaluated){var d=e.groupIndex+(u.declarative!=e.declarative);if(void 0===u.groupIndex||u.groupIndex<d){if(void 0!==u.groupIndex&&(r[u.groupIndex].splice(g.call(r[u.groupIndex],u),1),0==r[u.groupIndex].length))throw new TypeError("Mixed dependency cycle detected");u.groupIndex=d}o(u,r)}}}}function a(e){var r=v[e];r.groupIndex=0;var t=[];o(r,t);for(var n=!!r.declarative==t.length%2,a=t.length-1;a>=0;a--){for(var u=t[a],i=0;i<u.length;i++){var s=u[i];n?d(s):l(s)}n=!n}}function u(e){return y[e]||(y[e]={name:e,dependencies:[],exports:{},importers:[]})}function d(r){if(!r.module){var t=r.module=u(r.name),n=r.module.exports,o=r.declare.call(e,function(e,r){if(t.locked=!0,"object"==typeof e)for(var o in e)n[o]=e[o];else n[e]=r;for(var a=0,u=t.importers.length;u>a;a++){var d=t.importers[a];if(!d.locked)for(var i=0;i<d.dependencies.length;++i)d.dependencies[i]===t&&d.setters[i](n)}return t.locked=!1,r},{id:r.name});t.setters=o.setters,t.execute=o.execute;for(var a=0,i=r.normalizedDeps.length;i>a;a++){var l,s=r.normalizedDeps[a],c=v[s],f=y[s];f?l=f.exports:c&&!c.declarative?l=c.esModule:c?(d(c),f=c.module,l=f.exports):l=p(s),f&&f.importers?(f.importers.push(t),t.dependencies.push(f)):t.dependencies.push(null),t.setters[a]&&t.setters[a](l)}}}function i(e){var r,t=v[e];if(t)t.declarative?f(e,[]):t.evaluated||l(t),r=t.module.exports;else if(r=p(e),!r)throw new Error("Unable to load dependency "+e+".");return(!t||t.declarative)&&r&&r.__useDefault?r["default"]:r}function l(r){if(!r.module){var t={},n=r.module={exports:t,id:r.name};if(!r.executingRequire)for(var o=0,a=r.normalizedDeps.length;a>o;o++){var u=r.normalizedDeps[o],d=v[u];d&&l(d)}r.evaluated=!0;var c=r.execute.call(e,function(e){for(var t=0,n=r.deps.length;n>t;t++)if(r.deps[t]==e)return i(r.normalizedDeps[t]);throw new TypeError("Module "+e+" not declared as a dependency.")},t,n);void 0!==typeof c&&(n.exports=c),t=n.exports,t&&t.__esModule?r.esModule=t:r.esModule=s(t)}}function s(r){var t={};if(("object"==typeof r||"function"==typeof r)&&r!==e)if(m)for(var n in r)"default"!==n&&c(t,r,n);else{var o=r&&r.hasOwnProperty;for(var n in r)"default"===n||o&&!r.hasOwnProperty(n)||(t[n]=r[n])}return t["default"]=r,x(t,"__useDefault",{value:!0}),t}function c(e,r,t){try{var n;(n=Object.getOwnPropertyDescriptor(r,t))&&x(e,t,n)}catch(o){return e[t]=r[t],!1}}function f(r,t){var n=v[r];if(n&&!n.evaluated&&n.declarative){t.push(r);for(var o=0,a=n.normalizedDeps.length;a>o;o++){var u=n.normalizedDeps[o];-1==g.call(t,u)&&(v[u]?f(u,t):p(u))}n.evaluated||(n.evaluated=!0,n.module.execute.call(e))}}function p(e){if(I[e])return I[e];if("@node/"==e.substr(0,6))return I[e]=s(D(e.substr(6)));var r=v[e];if(!r)throw"Module "+e+" not present.";return a(e),f(e,[]),v[e]=void 0,r.declarative&&x(r.module.exports,"__esModule",{value:!0}),I[e]=r.declarative?r.module.exports:r.esModule}var v={},g=Array.prototype.indexOf||function(e){for(var r=0,t=this.length;t>r;r++)if(this[r]===e)return r;return-1},m=!0;try{Object.getOwnPropertyDescriptor({a:0},"a")}catch(h){m=!1}var x;!function(){try{Object.defineProperty({},"a",{})&&(x=Object.defineProperty)}catch(e){x=function(e,r,t){try{e[r]=t.value||t.get.call(e)}catch(n){}}}}();var y={},D="undefined"!=typeof System&&System._nodeRequire||"undefined"!=typeof require&&require.resolve&&"undefined"!=typeof process&&require,I={"@empty":{}};return function(e,n,o,a){return function(u){u(function(u){for(var d={_nodeRequire:D,register:r,registerDynamic:t,get:p,set:function(e,r){I[e]=r},newModule:function(e){return e}},i=0;i<n.length;i++)(function(e,r){r&&r.__esModule?I[e]=r:I[e]=s(r)})(n[i],arguments[i]);a(d);var l=p(e[0]);if(e.length>1)for(var i=1;i<e.length;i++)p(e[i]);return o?l["default"]:l})}}}("undefined"!=typeof self?self:global)
 
 (["1"], [], false, function($__System) {
 var require = this.require, exports = this.exports, module = this.module;
@@ -110,16 +110,19 @@ $__System.register('5', ['3'], function (_export) {
     };
 });
 $__System.registerDynamic('6', ['7'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry2 = $__require('7');
   module.exports = _curry2(function prop(p, obj) {
     return obj[p];
   });
+  return module.exports;
 });
 $__System.registerDynamic('8', ['7', '9', '6'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry2 = $__require('7');
@@ -128,6 +131,7 @@ $__System.registerDynamic('8', ['7', '9', '6'], true, function ($__require, expo
   module.exports = _curry2(function pluck(p, list) {
     return map(prop(p), list);
   });
+  return module.exports;
 });
 $__System.register("a", ["8", "9", "c", "d", "e", "b"], function (_export) {
     /**
@@ -142,7 +146,9 @@ $__System.register("a", ["8", "9", "c", "d", "e", "b"], function (_export) {
     function makeChain(prop, emit) {
         return compose(function (nodes) {
             if (nodes.length > 0) {
-                emit(nodes);
+                return emit(nodes);
+            } else {
+                return [];
             }
         }, filter(function (nodes) {
             return nodes.length > 0;
@@ -259,7 +265,8 @@ $__System.register("10", ["3", "4"], function (_export) {
     };
 });
 $__System.registerDynamic('11', ['12', '13', '14'], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     /* */
     var $export = $__require('12'),
@@ -273,9 +280,11 @@ $__System.registerDynamic('11', ['12', '13', '14'], true, function ($__require, 
             fn(1);
         }), 'Object', exp);
     };
+    return module.exports;
 });
 $__System.registerDynamic('15', ['16', '11'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var isObject = $__require('16');
@@ -284,40 +293,50 @@ $__System.registerDynamic('15', ['16', '11'], true, function ($__require, export
       return $freeze && isObject(it) ? $freeze(it) : it;
     };
   });
+  return module.exports;
 });
 $__System.registerDynamic('17', ['15', '13'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   $__require('15');
   module.exports = $__require('13').Object.freeze;
+  return module.exports;
 });
 $__System.registerDynamic("3", ["17"], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = { "default": $__require("17"), __esModule: true };
+  return module.exports;
 });
 $__System.registerDynamic('18', ['19'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var $ = $__require('19');
   module.exports = function defineProperty(it, key, desc) {
     return $.setDesc(it, key, desc);
   };
+  return module.exports;
 });
 $__System.registerDynamic("1a", ["18"], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = { "default": $__require("18"), __esModule: true };
+  return module.exports;
 });
 $__System.registerDynamic("1b", ["1a"], true, function ($__require, exports, module) {
   /* */
   "use strict";
 
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   var _Object$defineProperty = $__require("1a")["default"];
   exports["default"] = function () {
@@ -337,12 +356,14 @@ $__System.registerDynamic("1b", ["1a"], true, function ($__require, exports, mod
     };
   }();
   exports.__esModule = true;
+  return module.exports;
 });
 $__System.registerDynamic("1c", [], true, function ($__require, exports, module) {
   /* */
   "use strict";
 
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   exports["default"] = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -351,6 +372,7 @@ $__System.registerDynamic("1c", [], true, function ($__require, exports, module)
   };
 
   exports.__esModule = true;
+  return module.exports;
 });
 $__System.register("1d", ["1b", "1c"], function (_export) {
     var _createClass, _classCallCheck, RJSEvent;
@@ -651,7 +673,8 @@ $__System.register("20", ["21", "1f"], function (_export) {
     };
 });
 $__System.registerDynamic('22', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _reduced(x) {
@@ -660,9 +683,11 @@ $__System.registerDynamic('22', [], true, function ($__require, exports, module)
       '@@transducer/reduced': true
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('23', ['7', '22', '24'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry2 = $__require('7');
@@ -692,9 +717,11 @@ $__System.registerDynamic('23', ['7', '22', '24'], true, function ($__require, e
       return new XFind(f, xf);
     });
   }();
+  return module.exports;
 });
 $__System.registerDynamic('25', ['7', '26', '23'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry2 = $__require('7');
@@ -710,6 +737,7 @@ $__System.registerDynamic('25', ['7', '26', '23'], true, function ($__require, e
       idx += 1;
     }
   }));
+  return module.exports;
 });
 $__System.register("27", ["25"], function (_export) {
   /**
@@ -853,11 +881,14 @@ $__System.registerDynamic("2a", [], true, function ($__require, exports, module)
   /* */
   "format cjs";
 
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
+  return module.exports;
 });
 $__System.registerDynamic('2b', ['2c', '2d'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var toInteger = $__require('2c'),
@@ -874,12 +905,14 @@ $__System.registerDynamic('2b', ['2c', '2d'], true, function ($__require, export
       return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff ? TO_STRING ? s.charAt(i) : a : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('2e', ['2b', '2f'], true, function ($__require, exports, module) {
   /* */
   'use strict';
 
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   var $at = $__require('2b')(true);
   $__require('2f')(String, 'String', function (iterated) {
@@ -900,41 +933,51 @@ $__System.registerDynamic('2e', ['2b', '2f'], true, function ($__require, export
       done: false
     };
   });
+  return module.exports;
 });
 $__System.registerDynamic("30", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function () {/* empty */};
+  return module.exports;
 });
 $__System.registerDynamic("31", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function (done, value) {
     return { value: value, done: !!done };
   };
+  return module.exports;
 });
 $__System.registerDynamic('32', ['33'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var cof = $__require('33');
   module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
     return cof(it) == 'String' ? it.split('') : Object(it);
   };
+  return module.exports;
 });
 $__System.registerDynamic("2d", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   // 7.2.1 RequireObjectCoercible(argument)
   module.exports = function (it) {
     if (it == undefined) throw TypeError("Can't call method on  " + it);
     return it;
   };
+  return module.exports;
 });
 $__System.registerDynamic('34', ['32', '2d'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var IObject = $__require('32'),
@@ -942,12 +985,14 @@ $__System.registerDynamic('34', ['32', '2d'], true, function ($__require, export
   module.exports = function (it) {
     return IObject(defined(it));
   };
+  return module.exports;
 });
 $__System.registerDynamic('35', ['19', '36', '37', '38', '39'], true, function ($__require, exports, module) {
   /* */
   'use strict';
 
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   var $ = $__require('19'),
       descriptor = $__require('36'),
@@ -960,12 +1005,14 @@ $__System.registerDynamic('35', ['19', '36', '37', '38', '39'], true, function (
     Constructor.prototype = $.create(IteratorPrototype, { next: descriptor(1, next) });
     setToStringTag(Constructor, NAME + ' Iterator');
   };
+  return module.exports;
 });
 $__System.registerDynamic('2f', ['3a', '12', '3b', '38', '3c', '3d', '35', '37', '19', '39'], true, function ($__require, exports, module) {
   /* */
   'use strict';
 
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   var LIBRARY = $__require('3a'),
       $export = $__require('12'),
@@ -1038,12 +1085,14 @@ $__System.registerDynamic('2f', ['3a', '12', '3b', '38', '3c', '3d', '35', '37',
     }
     return methods;
   };
+  return module.exports;
 });
 $__System.registerDynamic('3e', ['30', '31', '3d', '34', '2f'], true, function ($__require, exports, module) {
   /* */
   'use strict';
 
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   var addToUnscopables = $__require('30'),
       step = $__require('31'),
@@ -1069,23 +1118,29 @@ $__System.registerDynamic('3e', ['30', '31', '3d', '34', '2f'], true, function (
   addToUnscopables('keys');
   addToUnscopables('values');
   addToUnscopables('entries');
+  return module.exports;
 });
 $__System.registerDynamic('3f', ['3e', '3d'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   $__require('3e');
   var Iterators = $__require('3d');
   Iterators.NodeList = Iterators.HTMLCollection = Iterators.Array;
+  return module.exports;
 });
 $__System.registerDynamic("3a", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = true;
+  return module.exports;
 });
 $__System.registerDynamic('12', ['40', '13', '41'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var global = $__require('40'),
@@ -1126,18 +1181,22 @@ $__System.registerDynamic('12', ['40', '13', '41'], true, function ($__require, 
   $export.B = 16;
   $export.W = 32;
   module.exports = $export;
+  return module.exports;
 });
 $__System.registerDynamic("42", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function (it, Constructor, name) {
     if (!(it instanceof Constructor)) throw TypeError(name + ": use the 'new' operator!");
     return it;
   };
+  return module.exports;
 });
 $__System.registerDynamic('43', ['44'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var anObject = $__require('44');
@@ -1150,9 +1209,11 @@ $__System.registerDynamic('43', ['44'], true, function ($__require, exports, mod
       throw e;
     }
   };
+  return module.exports;
 });
 $__System.registerDynamic('45', ['3d', '39'], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     /* */
     var Iterators = $__require('3d'),
@@ -1161,9 +1222,11 @@ $__System.registerDynamic('45', ['3d', '39'], true, function ($__require, export
     module.exports = function (it) {
         return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
     };
+    return module.exports;
 });
 $__System.registerDynamic("2c", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   // 7.1.4 ToInteger
   var ceil = Math.ceil,
@@ -1171,9 +1234,11 @@ $__System.registerDynamic("2c", [], true, function ($__require, exports, module)
   module.exports = function (it) {
     return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
   };
+  return module.exports;
 });
 $__System.registerDynamic('46', ['2c'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var toInteger = $__require('2c'),
@@ -1181,9 +1246,11 @@ $__System.registerDynamic('46', ['2c'], true, function ($__require, exports, mod
   module.exports = function (it) {
     return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0;
   };
+  return module.exports;
 });
 $__System.registerDynamic('47', ['33', '39'], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     /* */
     var cof = $__require('33'),
@@ -1195,15 +1262,19 @@ $__System.registerDynamic('47', ['33', '39'], true, function ($__require, export
         var O, T, B;
         return it === undefined ? 'Undefined' : it === null ? 'Null' : typeof (T = (O = Object(it))[TAG]) == 'string' ? T : ARG ? cof(O) : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
     };
+    return module.exports;
 });
 $__System.registerDynamic("3d", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = {};
+  return module.exports;
 });
 $__System.registerDynamic('48', ['47', '39', '3d', '13'], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     /* */
     var classof = $__require('47'),
@@ -1212,9 +1283,11 @@ $__System.registerDynamic('48', ['47', '39', '3d', '13'], true, function ($__req
     module.exports = $__require('13').getIteratorMethod = function (it) {
         if (it != undefined) return it[ITERATOR] || it['@@iterator'] || Iterators[classof(it)];
     };
+    return module.exports;
 });
 $__System.registerDynamic('49', ['41', '43', '45', '44', '46', '48'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var ctx = $__require('41'),
@@ -1237,9 +1310,11 @@ $__System.registerDynamic('49', ['41', '43', '45', '44', '46', '48'], true, func
       call(iterator, f, step.value, entries);
     }
   };
+  return module.exports;
 });
 $__System.registerDynamic('4a', ['19', '16', '44', '41'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var getDesc = $__require('19').getDesc,
@@ -1266,17 +1341,21 @@ $__System.registerDynamic('4a', ['19', '16', '44', '41'], true, function ($__req
     }({}, false) : undefined),
     check: check
   };
+  return module.exports;
 });
 $__System.registerDynamic("4b", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   // 7.2.9 SameValue(x, y)
   module.exports = Object.is || function is(x, y) {
     return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
   };
+  return module.exports;
 });
 $__System.registerDynamic('44', ['16'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var isObject = $__require('16');
@@ -1284,9 +1363,11 @@ $__System.registerDynamic('44', ['16'], true, function ($__require, exports, mod
     if (!isObject(it)) throw TypeError(it + ' is not an object!');
     return it;
   };
+  return module.exports;
 });
 $__System.registerDynamic('4c', ['44', '4d', '39'], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     /* */
     var anObject = $__require('44'),
@@ -1297,18 +1378,22 @@ $__System.registerDynamic('4c', ['44', '4d', '39'], true, function ($__require, 
             S;
         return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
     };
+    return module.exports;
 });
 $__System.registerDynamic('4d', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function (it) {
     if (typeof it != 'function') throw TypeError(it + ' is not a function!');
     return it;
   };
+  return module.exports;
 });
 $__System.registerDynamic('41', ['4d'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var aFunction = $__require('4d');
@@ -1333,9 +1418,11 @@ $__System.registerDynamic('41', ['4d'], true, function ($__require, exports, mod
       return fn.apply(that, arguments);
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic("4e", [], true, function ($__require, exports, module) {
-                  var global = this || self,
+                  var define,
+                      global = this || self,
                       GLOBAL = global;
                   // fast apply, http://jsperf.lnkit.com/fast-apply/5
                   module.exports = function (fn, args, that) {
@@ -1353,23 +1440,29 @@ $__System.registerDynamic("4e", [], true, function ($__require, exports, module)
                                                                         return un ? fn(args[0], args[1], args[2], args[3]) : fn.call(that, args[0], args[1], args[2], args[3]);
                                     }return fn.apply(that, args);
                   };
+                  return module.exports;
 });
 $__System.registerDynamic('4f', ['40'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = $__require('40').document && document.documentElement;
+  return module.exports;
 });
 $__System.registerDynamic('16', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function (it) {
     return typeof it === 'object' ? it !== null : typeof it === 'function';
   };
+  return module.exports;
 });
 $__System.registerDynamic('50', ['16', '40'], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     /* */
     var isObject = $__require('16'),
@@ -1378,9 +1471,11 @@ $__System.registerDynamic('50', ['16', '40'], true, function ($__require, export
     module.exports = function (it) {
         return is ? document.createElement(it) : {};
     };
+    return module.exports;
 });
 $__System.registerDynamic('51', ['41', '4e', '4f', '50', '40', '33', '52'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   (function (process) {
@@ -1456,9 +1551,11 @@ $__System.registerDynamic('51', ['41', '4e', '4f', '50', '40', '33', '52'], true
       clear: clearTask
     };
   })($__require('52'));
+  return module.exports;
 });
 $__System.registerDynamic("33", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var toString = {}.toString;
@@ -1466,9 +1563,11 @@ $__System.registerDynamic("33", [], true, function ($__require, exports, module)
   module.exports = function (it) {
     return toString.call(it).slice(8, -1);
   };
+  return module.exports;
 });
 $__System.registerDynamic('53', ['40', '51', '33', '52'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   (function (process) {
@@ -1532,9 +1631,11 @@ $__System.registerDynamic('53', ['40', '51', '33', '52'], true, function ($__req
       last = task;
     };
   })($__require('52'));
+  return module.exports;
 });
 $__System.registerDynamic("36", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function (bitmap, value) {
@@ -1545,9 +1646,11 @@ $__System.registerDynamic("36", [], true, function ($__require, exports, module)
       value: value
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('38', ['19', '36', '54'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var $ = $__require('19'),
@@ -1558,15 +1661,19 @@ $__System.registerDynamic('38', ['19', '36', '54'], true, function ($__require, 
     object[key] = value;
     return object;
   };
+  return module.exports;
 });
 $__System.registerDynamic('3b', ['38'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = $__require('38');
+  return module.exports;
 });
 $__System.registerDynamic('55', ['3b'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var redefine = $__require('3b');
@@ -1574,18 +1681,22 @@ $__System.registerDynamic('55', ['3b'], true, function ($__require, exports, mod
     for (var key in src) redefine(target, key, src[key]);
     return target;
   };
+  return module.exports;
 });
 $__System.registerDynamic("3c", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var hasOwnProperty = {}.hasOwnProperty;
   module.exports = function (it, key) {
     return hasOwnProperty.call(it, key);
   };
+  return module.exports;
 });
 $__System.registerDynamic('37', ['19', '3c', '39'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var def = $__require('19').setDesc,
@@ -1597,9 +1708,11 @@ $__System.registerDynamic('37', ['19', '3c', '39'], true, function ($__require, 
       value: tag
     });
   };
+  return module.exports;
 });
 $__System.registerDynamic("19", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var $Object = Object;
@@ -1615,9 +1728,11 @@ $__System.registerDynamic("19", [], true, function ($__require, exports, module)
     getSymbols: $Object.getOwnPropertySymbols,
     each: [].forEach
   };
+  return module.exports;
 });
 $__System.registerDynamic("14", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function (exec) {
@@ -1627,9 +1742,11 @@ $__System.registerDynamic("14", [], true, function ($__require, exports, module)
       return true;
     }
   };
+  return module.exports;
 });
 $__System.registerDynamic('54', ['14'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = !$__require('14')(function () {
@@ -1637,12 +1754,14 @@ $__System.registerDynamic('54', ['14'], true, function ($__require, exports, mod
         return 7;
       } }).a != 7;
   });
+  return module.exports;
 });
 $__System.registerDynamic('56', ['13', '19', '54', '39'], true, function ($__require, exports, module) {
   /* */
   'use strict';
 
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   var core = $__require('13'),
       $ = $__require('19'),
@@ -1657,9 +1776,11 @@ $__System.registerDynamic('56', ['13', '19', '54', '39'], true, function ($__req
       }
     });
   };
+  return module.exports;
 });
 $__System.registerDynamic('57', ['40'], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     /* */
     var global = $__require('40'),
@@ -1668,9 +1789,11 @@ $__System.registerDynamic('57', ['40'], true, function ($__require, exports, mod
     module.exports = function (key) {
         return store[key] || (store[key] = {});
     };
+    return module.exports;
 });
 $__System.registerDynamic('58', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var id = 0,
@@ -1678,16 +1801,21 @@ $__System.registerDynamic('58', [], true, function ($__require, exports, module)
   module.exports = function (key) {
     return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
   };
+  return module.exports;
 });
 $__System.registerDynamic('40', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
   var global = module.exports = typeof window != 'undefined' && window.Math == Math ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
   if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+
+  return module.exports;
 });
 $__System.registerDynamic('39', ['57', '58', '40'], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     /* */
     var store = $__require('57')('wks'),
@@ -1696,9 +1824,11 @@ $__System.registerDynamic('39', ['57', '58', '40'], true, function ($__require, 
     module.exports = function (name) {
         return store[name] || (store[name] = Symbol && Symbol[name] || (Symbol || uid)('Symbol.' + name));
     };
+    return module.exports;
 });
 $__System.registerDynamic('59', ['39'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var ITERATOR = $__require('39')('iterator'),
@@ -1728,9 +1858,11 @@ $__System.registerDynamic('59', ['39'], true, function ($__require, exports, mod
     } catch (e) {}
     return safe;
   };
+  return module.exports;
 });
 $__System.registerDynamic('5a', [], true, function ($__require, exports, module) {
-    var global = this || self,
+    var define,
+        global = this || self,
         GLOBAL = global;
     // shim for using process in browser
     var process = module.exports = {};
@@ -1911,24 +2043,32 @@ $__System.registerDynamic('5a', [], true, function ($__require, exports, module)
     process.umask = function () {
         return 0;
     };
+    return module.exports;
 });
 $__System.registerDynamic("5b", ["5a"], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   module.exports = $__require("5a");
+  return module.exports;
 });
 $__System.registerDynamic('5c', ['5b'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   module.exports = $__System._nodeRequire ? process : $__require('5b');
+  return module.exports;
 });
 $__System.registerDynamic("52", ["5c"], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   module.exports = $__require("5c");
+  return module.exports;
 });
 $__System.registerDynamic('5d', ['19', '3a', '40', '41', '47', '12', '16', '44', '4d', '42', '49', '4a', '4b', '39', '4c', '53', '54', '55', '37', '56', '13', '59', '52'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   (function (process) {
@@ -2217,16 +2357,21 @@ $__System.registerDynamic('5d', ['19', '3a', '40', '41', '47', '12', '16', '44',
       }
     });
   })($__require('52'));
+  return module.exports;
 });
 $__System.registerDynamic('13', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var core = module.exports = { version: '1.2.6' };
   if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+
+  return module.exports;
 });
 $__System.registerDynamic('5e', ['2a', '2e', '3f', '5d', '13'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   $__require('2a');
@@ -2234,15 +2379,19 @@ $__System.registerDynamic('5e', ['2a', '2e', '3f', '5d', '13'], true, function (
   $__require('3f');
   $__require('5d');
   module.exports = $__require('13').Promise;
+  return module.exports;
 });
 $__System.registerDynamic("4", ["5e"], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = { "default": $__require("5e"), __esModule: true };
+  return module.exports;
 });
 $__System.registerDynamic("5f", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _filter(fn, list) {
@@ -2258,17 +2407,21 @@ $__System.registerDynamic("5f", [], true, function ($__require, exports, module)
     }
     return result;
   };
+  return module.exports;
 });
 $__System.registerDynamic('60', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _isObject(x) {
     return Object.prototype.toString.call(x) === '[object Object]';
   };
+  return module.exports;
 });
 $__System.registerDynamic('61', ['7', '24'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry2 = $__require('7');
@@ -2287,9 +2440,11 @@ $__System.registerDynamic('61', ['7', '24'], true, function ($__require, exports
       return new XFilter(f, xf);
     });
   }();
+  return module.exports;
 });
 $__System.registerDynamic('e', ['7', '26', '5f', '60', '62', '61', '63'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry2 = $__require('7');
@@ -2307,6 +2462,7 @@ $__System.registerDynamic('e', ['7', '26', '5f', '60', '62', '61', '63'], true, 
       return acc;
     }, {}, keys(filterable)) : _filter(pred, filterable);
   }));
+  return module.exports;
 });
 $__System.register("64", ["4", "9", "c", "d", "e"], function (_export) {
     var _Promise, map, flatten, compose, filter;
@@ -2338,7 +2494,8 @@ $__System.register("64", ["4", "9", "c", "d", "e"], function (_export) {
     };
 });
 $__System.registerDynamic('65', ['66', '7'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _checkForMethod = $__require('66');
@@ -2352,9 +2509,11 @@ $__System.registerDynamic('65', ['66', '7'], true, function ($__require, exports
     }
     return list;
   }));
+  return module.exports;
 });
 $__System.registerDynamic('67', ['68'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var isArrayLike = $__require('68');
@@ -2381,14 +2540,17 @@ $__System.registerDynamic('67', ['68'], true, function ($__require, exports, mod
       return result;
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('c', ['69', '67'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry1 = $__require('69');
   var _makeFlat = $__require('67');
   module.exports = _curry1(_makeFlat(true));
+  return module.exports;
 });
 $__System.register("6a", ["65", "c", "d"], function (_export) {
     /**
@@ -2413,15 +2575,18 @@ $__System.register("6a", ["65", "c", "d"], function (_export) {
     };
 });
 $__System.registerDynamic('6b', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _isTransformer(obj) {
     return typeof obj['@@transducer/step'] === 'function';
   };
+  return module.exports;
 });
 $__System.registerDynamic('26', ['6c', '6b', '6d'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _isArray = $__require('6c');
@@ -2447,9 +2612,11 @@ $__System.registerDynamic('26', ['6c', '6b', '6d'], true, function ($__require, 
       return fn.apply(this, arguments);
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic("6e", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _map(fn, functor) {
@@ -2462,9 +2629,11 @@ $__System.registerDynamic("6e", [], true, function ($__require, exports, module)
     }
     return result;
   };
+  return module.exports;
 });
 $__System.registerDynamic('24', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = {
@@ -2475,9 +2644,11 @@ $__System.registerDynamic('24', [], true, function ($__require, exports, module)
       return this.xf['@@transducer/result'](result);
     }
   };
+  return module.exports;
 });
 $__System.registerDynamic('6f', ['7', '24'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry2 = $__require('7');
@@ -2496,9 +2667,11 @@ $__System.registerDynamic('6f', ['7', '24'], true, function ($__require, exports
       return new XMap(f, xf);
     });
   }();
+  return module.exports;
 });
 $__System.registerDynamic('70', ['71', '72'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _arity = $__require('71');
@@ -2526,9 +2699,11 @@ $__System.registerDynamic('70', ['71', '72'], true, function ($__require, export
       return left <= 0 ? fn.apply(this, combined) : _arity(left, _curryN(length, combined, fn));
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('21', ['71', '69', '7', '70'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _arity = $__require('71');
@@ -2541,17 +2716,21 @@ $__System.registerDynamic('21', ['71', '69', '7', '70'], true, function ($__requ
     }
     return _arity(length, _curryN(length, [], fn));
   });
+  return module.exports;
 });
 $__System.registerDynamic("73", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _has(prop, obj) {
     return Object.prototype.hasOwnProperty.call(obj, prop);
   };
+  return module.exports;
 });
 $__System.registerDynamic('74', ['73'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _has = $__require('73');
@@ -2563,9 +2742,11 @@ $__System.registerDynamic('74', ['73'], true, function ($__require, exports, mod
       return _has('callee', x);
     };
   }();
+  return module.exports;
 });
 $__System.registerDynamic('63', ['69', '73', '74'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry1 = $__require('69');
@@ -2616,9 +2797,11 @@ $__System.registerDynamic('63', ['69', '73', '74'], true, function ($__require, 
       return ks;
     });
   }();
+  return module.exports;
 });
 $__System.registerDynamic('9', ['7', '26', '6e', '62', '6f', '21', '63'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry2 = $__require('7');
@@ -2643,9 +2826,11 @@ $__System.registerDynamic('9', ['7', '26', '6e', '62', '6f', '21', '63'], true, 
         return _map(fn, functor);
     }
   }));
+  return module.exports;
 });
 $__System.registerDynamic("75", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _pipe(f, g) {
@@ -2653,9 +2838,11 @@ $__System.registerDynamic("75", [], true, function ($__require, exports, module)
       return g.call(this, f.apply(this, arguments));
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('76', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function () {
@@ -2676,9 +2863,11 @@ $__System.registerDynamic('76', [], true, function ($__require, exports, module)
       return new XWrap(fn);
     };
   }();
+  return module.exports;
 });
 $__System.registerDynamic('71', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _arity(n, fn) {
@@ -2732,9 +2921,11 @@ $__System.registerDynamic('71', [], true, function ($__require, exports, module)
         throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
     }
   };
+  return module.exports;
 });
 $__System.registerDynamic('77', ['71', '7'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _arity = $__require('71');
@@ -2744,9 +2935,11 @@ $__System.registerDynamic('77', ['71', '7'], true, function ($__require, exports
       return fn.apply(thisObj, arguments);
     });
   });
+  return module.exports;
 });
 $__System.registerDynamic('68', ['69', '6c'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry1 = $__require('69');
@@ -2775,9 +2968,11 @@ $__System.registerDynamic('68', ['69', '6c'], true, function ($__require, export
     }
     return false;
   });
+  return module.exports;
 });
 $__System.registerDynamic('62', ['76', '77', '68'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _xwrap = $__require('76');
@@ -2832,17 +3027,21 @@ $__System.registerDynamic('62', ['76', '77', '68'], true, function ($__require, 
       throw new TypeError('reduce: list must be array or iterable');
     };
   }();
+  return module.exports;
 });
 $__System.registerDynamic('78', ['79', '62'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry3 = $__require('79');
   var _reduce = $__require('62');
   module.exports = _curry3(_reduce);
+  return module.exports;
 });
 $__System.registerDynamic('6c', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /**
    * Tests whether or not an object is an array.
@@ -2859,9 +3058,11 @@ $__System.registerDynamic('6c', [], true, function ($__require, exports, module)
   module.exports = Array.isArray || function _isArray(val) {
     return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
   };
+  return module.exports;
 });
 $__System.registerDynamic('66', ['6c', '6d'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _isArray = $__require('6c');
@@ -2876,9 +3077,11 @@ $__System.registerDynamic('66', ['6c', '6d'], true, function ($__require, export
       return _isArray(obj) || typeof obj[methodname] !== 'function' ? fn.apply(this, arguments) : obj[methodname].apply(obj, _slice(arguments, 0, length - 1));
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('7', ['69', '72'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry1 = $__require('69');
@@ -2901,9 +3104,11 @@ $__System.registerDynamic('7', ['69', '72'], true, function ($__require, exports
       }
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('79', ['69', '7', '72'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry1 = $__require('69');
@@ -2943,9 +3148,11 @@ $__System.registerDynamic('79', ['69', '7', '72'], true, function ($__require, e
       }
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('7a', ['66', '79'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _checkForMethod = $__require('66');
@@ -2953,17 +3160,21 @@ $__System.registerDynamic('7a', ['66', '79'], true, function ($__require, export
   module.exports = _curry3(_checkForMethod('slice', function slice(fromIndex, toIndex, list) {
     return Array.prototype.slice.call(list, fromIndex, toIndex);
   }));
+  return module.exports;
 });
 $__System.registerDynamic('7b', ['66', '7a'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _checkForMethod = $__require('66');
   var slice = $__require('7a');
   module.exports = _checkForMethod('tail', slice(1, Infinity));
+  return module.exports;
 });
 $__System.registerDynamic('7c', ['71', '75', '78', '7b'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _arity = $__require('71');
@@ -2976,17 +3187,21 @@ $__System.registerDynamic('7c', ['71', '75', '78', '7b'], true, function ($__req
     }
     return _arity(arguments[0].length, reduce(_pipe, arguments[0], tail(arguments)));
   };
+  return module.exports;
 });
 $__System.registerDynamic('72', [], true, function ($__require, exports, module) {
-       var global = this || self,
+       var define,
+           global = this || self,
            GLOBAL = global;
        /* */
        module.exports = function _isPlaceholder(a) {
               return a != null && typeof a === 'object' && a['@@functional/placeholder'] === true;
        };
+       return module.exports;
 });
 $__System.registerDynamic('69', ['72'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _isPlaceholder = $__require('72');
@@ -2999,17 +3214,21 @@ $__System.registerDynamic('69', ['72'], true, function ($__require, exports, mod
       }
     };
   };
+  return module.exports;
 });
 $__System.registerDynamic('7d', [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   module.exports = function _isString(x) {
     return Object.prototype.toString.call(x) === '[object String]';
   };
+  return module.exports;
 });
 $__System.registerDynamic("6d", [], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /**
    * An optimized, private array `slice` implementation.
@@ -3045,9 +3264,11 @@ $__System.registerDynamic("6d", [], true, function ($__require, exports, module)
         return list;
     }
   };
+  return module.exports;
 });
 $__System.registerDynamic('7e', ['69', '7d', '6d'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var _curry1 = $__require('69');
@@ -3056,9 +3277,11 @@ $__System.registerDynamic('7e', ['69', '7d', '6d'], true, function ($__require, 
   module.exports = _curry1(function reverse(list) {
     return _isString(list) ? list.split('').reverse().join('') : _slice(list).reverse();
   });
+  return module.exports;
 });
 $__System.registerDynamic('d', ['7c', '7e'], true, function ($__require, exports, module) {
-  var global = this || self,
+  var define,
+      global = this || self,
       GLOBAL = global;
   /* */
   var pipe = $__require('7c');
@@ -3069,22 +3292,27 @@ $__System.registerDynamic('d', ['7c', '7e'], true, function ($__require, exports
     }
     return pipe.apply(this, reverse(arguments));
   };
+  return module.exports;
 });
 $__System.register("b", [], function (_export) {
-  /**
-   * Created by marcogobbi on 01/04/2017.
-   */
+    /**
+     * Created by marcogobbi on 01/04/2017.
+     */
 
-  "use strict";
+    "use strict";
 
-  return {
-    setters: [],
-    execute: function () {
-      _export("default", function (node) {
-        return [node].concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
-      });
-    }
-  };
+    return {
+        setters: [],
+        execute: function () {
+            _export("default", function (node) {
+                var result = [];
+                if (!!node.getAttribute("data-mediator")) {
+                    result.push(node);
+                }
+                return result.concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
+            });
+        }
+    };
 });
 $__System.register("7f", ["9", "d", "b"], function (_export) {
     /**

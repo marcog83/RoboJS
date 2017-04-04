@@ -11,7 +11,9 @@ export default function makeChain(prop, emit) {
     return compose(
         nodes => {
             if (nodes.length > 0) {
-                emit(nodes);
+                return emit(nodes);
+            } else {
+                return []
             }
         },
         filter(nodes => nodes.length > 0),
