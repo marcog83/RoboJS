@@ -39,53 +39,77 @@ $__System.register('5', ['3'], function (_export) {
 
     function Signal() {
 
-        var listenerBoxes = [];
+        var slots = [];
 
-        function registerListener(listener, scope, once) {
+        function registrationPossible(listener, once, scope) {
+            if (slots.length === 0) return true;
+            var existingSlot = undefined;
+            for (var i = 0; i < slots.length; i++) {
+                var slot = slots[i];
+                if (slot.listener === listener && slot.scope === scope) {
+                    existingSlot = slot;
+                    break;
+                }
+            }
 
-            listenerBoxes.filter(function (box) {
-                return box.listener === listener && box.scope === scope && function (box) {
-                    return box.once && !once || once && !box.once;
-                };
-            }).forEach(function (_) {
-                throw new Error('You cannot addOnce() then try to add() the same listener without removing the relationship first.');
-            });
-            listenerBoxes = listenerBoxes.concat([{ listener: listener, scope: scope, once: once }]);
+            if (!existingSlot) return true;
+
+            if (existingSlot.once !== once) {
+                // If the listener was previously added, definitely don't add it again.
+                // But throw an exception if their once values differ.
+                throw new Error('You cannot addOnce() then add() the same listener without removing the relationship first.');
+            }
+
+            return false; // Listener was already registered.
+        }
+
+        function registerListener(listener, once, scope) {
+
+            if (registrationPossible(listener, once, scope)) {
+                var newSlot = { listener: listener, scope: scope, once: once };
+                slots = slots.concat([newSlot]);
+            }
+            return slots;
         }
 
         function emit(value) {
-            listenerBoxes.forEach(function (_ref) {
-                var listener = _ref.listener;
-                var scope = _ref.scope;
-                var once = _ref.once;
+            var length = slots.length;
+            for (var i = 0; i < length; i++) {
+                var _slots$i = slots[i];
+                var listener = _slots$i.listener;
+                var scope = _slots$i.scope;
+                var once = _slots$i.once;
 
                 once && disconnect(listener, scope);
                 listener.call(scope, value);
-            });
+            }
         }
 
-        var connect = function connect(slot, scope) {
-            return registerListener(slot, scope, false);
+        var connect = function connect(listener, scope) {
+            return registerListener(listener, false, scope);
         };
 
-        var connectOnce = function connectOnce(slot, scope) {
-            return registerListener(slot, scope, true);
+        var connectOnce = function connectOnce(listener, scope) {
+            return registerListener(listener, true, scope);
         };
 
-        function disconnect(slot, _scope) {
-            listenerBoxes = listenerBoxes.filter(function (_ref2) {
-                var listener = _ref2.listener;
-                var scope = _ref2.scope;
-                return listener !== slot && scope !== _scope;
-            });
+        function disconnect(listener, scope) {
+            var filtered = [];
+            for (var i = 0; i < slots.length; i++) {
+                var slot = slots[i];
+                if (slot.listener === listener && slot.scope === scope) {
+                    //
+                } else {
+                        filtered.push(slot);
+                    }
+            }
+            slots = filtered;
+            return slots;
         }
 
         function disconnectAll() {
-            listenerBoxes.forEach(function (_ref3) {
-                var listener = _ref3.listener;
-                var scope = _ref3.scope;
-                return disconnect(listener, scope);
-            });
+            slots = [];
+            return slots;
         }
 
         return _Object$freeze({
@@ -99,8 +123,8 @@ $__System.register('5', ['3'], function (_export) {
     }
 
     return {
-        setters: [function (_2) {
-            _Object$freeze = _2['default'];
+        setters: [function (_) {
+            _Object$freeze = _['default'];
         }],
         execute: function () {
             'use strict';
