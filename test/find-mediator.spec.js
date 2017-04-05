@@ -37,7 +37,7 @@ describe('FindMediator', function () {
         assert.isFunction(FindMediator);
     });
     it('arity 3', function () {
-        assert.equal(FindMediator.length, 3);
+        assert.lengthOf(FindMediator, 3);
     });
     it('returns a function', function () {
         var findMediator = FindMediator(getDefinition, create, updateCache);

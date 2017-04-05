@@ -37,7 +37,7 @@ describe('MediatorHandler', function () {
         assert.isFunction(MediatorHandler);
     });
     it('arity 1', function () {
-        assert.equal(MediatorHandler.length, 1);
+        assert.lengthOf(MediatorHandler, 1);
     });
     /*
      dispose,
@@ -59,7 +59,7 @@ describe('MediatorHandler', function () {
             , handler.findMediator(load, newDIV)
         ]).then(newCache => {
             var emptyCache = handler.destroy(node);
-            assert.equal(emptyCache.length, 1, "non ha eliminato correttamente l'elemento e la cache non è quella che mi aspettavo");
+            assert.lengthOf(emptyCache, 1, "non ha eliminato correttamente l'elemento e la cache non è quella che mi aspettavo");
             assert.equal(emptyCache[0].node, newDIV, "non è il nodo che mi aspettavo rimanesse");
 
             done();
@@ -67,7 +67,7 @@ describe('MediatorHandler', function () {
     });
     it("findMediator", function (done) {
         handler.findMediator(load, node).then(newCache => {
-            assert.equal(newCache.length, 1,"non ha inserito correttamente in cache");
+            assert.lengthOf(newCache, 1,"non ha inserito correttamente in cache");
             done();
         }).catch(done)
     });
@@ -84,19 +84,19 @@ describe('MediatorHandler', function () {
         }).catch(done)
     });
     it("hasMediator, il nodo deve avere una definizione e non deve essere in cache", function () {
-       assert.equal(handler.hasMediator(node),true);
+       assert.isTrue(handler.hasMediator(node));
     });
     it("hasMediator,il nodo deve avere una definizione", function (done) {
         var newDIV = document.createElement("div");
         newDIV.setAttribute("data-mediator", "non-esiste");
         handler.findMediator(load, newDIV).then(newCache => {
-            assert.equal(handler.hasMediator(newDIV),false);
+            assert.isFalse(handler.hasMediator(newDIV));
             done();
         }).catch(done);
     });
     it("hasMediator non deve essere presente in cache", function (done) {
         handler.findMediator(load, node).then(newCache => {
-            assert.equal(handler.hasMediator(node),false);
+            assert.isFalse(handler.hasMediator(node));
             done();
         }).catch(done);
     });

@@ -1,36 +1,71 @@
 export default function Signal() {
 
-    var listenerBoxes = [];
+    let slots = [];
 
-    function registerListener(listener, scope, once) {
+    function registrationPossible(listener, once, scope) {
+        if (slots.length === 0)return true;
+        let existingSlot;
+        for (let i = 0; i < slots.length; i++) {
+            let slot = slots[i];
+            if (slot.listener === listener && slot.scope === scope) {
+                existingSlot = slot;
+                break;
+            }
+        }
 
-        listenerBoxes
-            .filter(box=>(box.listener === listener && box.scope === scope) && (box=>(box.once && !once) || (once && !box.once)))
-            .forEach(_=> {
-                throw new Error('You cannot addOnce() then try to add() the same listener without removing the relationship first.');
-            });
-        listenerBoxes = listenerBoxes.concat([{listener, scope, once}]);
+        if (!existingSlot) return true;
+
+        if (existingSlot.once !== once) {
+            // If the listener was previously added, definitely don't add it again.
+            // But throw an exception if their once values differ.
+            throw new Error('You cannot addOnce() then add() the same listener without removing the relationship first.');
+        }
+
+        return false; // Listener was already registered.
+    }
+
+    function registerListener(listener, once, scope) {
+
+        if (registrationPossible(listener, once, scope)) {
+            const newSlot = {listener, scope, once};
+            slots = slots.concat([newSlot]);
+        }
+        return slots;
     }
 
 
     function emit(value) {
-        listenerBoxes.forEach(({listener,scope,once})=> {
+        const length = slots.length;
+        for (let i = 0; i < length; i++) {
+            let {listener, scope, once} = slots[i];
             once && disconnect(listener, scope);
             listener.call(scope, value);
-        });
+        }
+
     }
 
 
-    var connect = (slot, scope) =>registerListener(slot, scope, false);
+    const connect = (listener, scope) => registerListener(listener, false, scope);
 
-    var connectOnce = (slot, scope) => registerListener(slot, scope, true);
+    const connectOnce = (listener, scope) => registerListener(listener, true, scope);
 
-    function disconnect(slot, _scope) {
-        listenerBoxes = listenerBoxes.filter(({listener,scope})=>listener !== slot && scope !== _scope);
+    function disconnect(listener, scope) {
+        let filtered = [];
+        for (let i = 0; i < slots.length; i++) {
+            let slot = slots[i];
+            if (slot.listener === listener && slot.scope === scope) {
+                //
+            } else {
+                filtered.push(slot);
+            }
+        }
+        slots = filtered;
+        return slots;
     }
 
     function disconnectAll() {
-        listenerBoxes.forEach(({listener,scope})=>disconnect(listener, scope));
+        slots = [];
+        return slots;
     }
 
     return Object.freeze({

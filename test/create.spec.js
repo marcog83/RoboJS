@@ -25,7 +25,7 @@ describe('create', function () {
         assert.isFunction(create);
     });
     it('arity 3', function () {
-        assert.equal(create.length, 3);
+        assert.lengthOf(create, 3);
     });
 
     it('ritorna un oggetto con il mediatorId', function () {

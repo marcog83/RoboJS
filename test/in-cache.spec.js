@@ -14,7 +14,7 @@ describe('inCache', function () {
         assert.isFunction(inCache);
     });
     it('arity 2', function () {
-        assert.equal(inCache.length, 2);
+        assert.lengthOf(inCache, 2);
     });
     it('ritorna true se tova il mediator', function () {
         var div = document.createElement("div");
@@ -23,7 +23,7 @@ describe('inCache', function () {
             , dispose: _ => _
             , mediatorId: 1
         }];
-        assert.equal(inCache(MEDIATOR_CACHE, div),true);
+        assert.isTrue(inCache(MEDIATOR_CACHE, div));
     });
     it('ritorna false se non tova il mediator', function () {
         var div = document.createElement("div");
@@ -33,6 +33,6 @@ describe('inCache', function () {
             , dispose: _ => _
             , mediatorId: 1
         }];
-        assert.equal(inCache(MEDIATOR_CACHE, node),false);
+        assert.isFalse(inCache(MEDIATOR_CACHE, node));
     });
 });

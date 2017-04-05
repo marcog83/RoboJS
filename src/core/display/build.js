@@ -9,6 +9,6 @@ export default function (getMediators) {
     return compose(
         getMediators,
         map(getAllElements),
-        (root = document.body) => [root]
+        root => [root]
     );
 }

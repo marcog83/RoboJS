@@ -189,9 +189,7 @@ $__System.register("f", ["3", "5", "a"], function (_export) {
         execute: function () {
             "use strict";
 
-            _export("default", function () {
-                var root = arguments.length <= 0 || arguments[0] === undefined ? document.body : arguments[0];
-
+            _export("default", function (root) {
                 var onAdded = Signal();
                 var onRemoved = Signal();
 
@@ -3331,8 +3329,7 @@ $__System.register("7f", ["9", "d", "b"], function (_export) {
         }],
         execute: function () {
             _export("default", function (getMediators) {
-                return compose(getMediators, map(getAllElements), function () {
-                    var root = arguments.length <= 0 || arguments[0] === undefined ? document.body : arguments[0];
+                return compose(getMediators, map(getAllElements), function (root) {
                     return [root];
                 });
             });

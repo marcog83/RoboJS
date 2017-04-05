@@ -2,7 +2,7 @@ import Signal from "../events/signal";
 
 
 import makeChain from "./make-chain";
-export default  (root = document.body) => {
+export default  root => {
     let onAdded = Signal();
     let onRemoved = Signal();
 

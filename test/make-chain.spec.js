@@ -15,7 +15,7 @@ describe('make chain', function () {
         assert.isFunction(makeChain);
     });
     it('arity 2', function () {
-        assert.equal(makeChain.length, 2);
+        assert.lengthOf(makeChain, 2);
     });
     it('ritorna una funzione', function () {
         var _makeChain = makeChain("addedNodes", _ => _);
@@ -28,7 +28,7 @@ describe('make chain', function () {
         var mutations = [{
             addedNodes: [document.createElement("div"), document.createElement("p"), document.createElement("nav")]
         }];
-        assert.equal(getAdded(mutations).length, 0, "non dovrebbe trovare nulla");
+        assert.lengthOf(getAdded(mutations), 0, "non dovrebbe trovare nulla");
     });
     it('ritorna i nodi aggiunti che hanno il data-mediator', function () {
         let getAdded = makeChain("addedNodes", emit);
@@ -37,14 +37,14 @@ describe('make chain', function () {
         var mutations = [{
             addedNodes: [document.createElement("div"), p, document.createElement("nav")]
         }];
-        assert.deepEqual(getAdded(mutations)[0], [p], "dovrebbe trovare solo il p");
+        assert.sameDeepMembers(getAdded(mutations)[0], [p], "dovrebbe trovare solo il p");
     });
     it('I nodi rimossi senza data-mediator non vengono considerati', function () {
         let getRemoved = makeChain("removedNodes", emit);
         var mutations = [{
             removedNodes: [document.createElement("div"), document.createElement("p"), document.createElement("nav")]
         }];
-        assert.equal(getRemoved(mutations).length, 0, "non dovrebbe trovare nulla");
+        assert.lengthOf(getRemoved(mutations), 0, "non dovrebbe trovare nulla");
     });
     it('ritorna soli i nodi rimossi che hanno il data-mediator', function () {
         let getRemoved = makeChain("removedNodes", emit);
@@ -53,6 +53,6 @@ describe('make chain', function () {
         var mutations = [{
             removedNodes: [document.createElement("div"), p, document.createElement("nav")]
         }];
-        assert.deepEqual(getRemoved(mutations)[0], [p], "dovrebbe trovare solo il p");
+        assert.sameDeepMembers(getRemoved(mutations)[0], [p], "dovrebbe trovare solo il p");
     });
 });
