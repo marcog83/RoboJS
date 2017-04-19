@@ -4,7 +4,9 @@
   "license": "MIT",
   "main": "dist/robojs.es6.min.js",
   "scripts": {
-    "build": "jspm bundle-sfx src/core/robojs dist/robojs.es6.js --format umd"
+    "bundle": "jspm bundle-sfx src/core/robojs dist/robojs.js --format umd"
+    ,"uglify": "uglifyjs --compress cascade,join_vars,if_return,unused,loops,booleans,evaluate,comparisons,conditionals,drop_debugger,sequences,properties,dead_code --mangle -o dist/robojs.min.js dist/robojs.js"
+,"build": "npm run bundle && npm run uglify"
   },
   "jspm": {
     "main": "src/core/robojs",
