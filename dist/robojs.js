@@ -69,59 +69,6 @@ var _createClass = (function () {
   };
 })();
 
-var RJSEvent = function () {
-    function RJSEvent(type) {
-        var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var bubbles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-        var cancelable = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-        _classCallCheck(this, RJSEvent);
-
-        this.data = data;
-        this.type = type;
-        this.bubbles = bubbles;
-        this.cancelable = cancelable;
-        this.timeStamp = new Date().getTime();
-        //
-        this.defaultPrevented = false;
-        this.propagationStopped = false;
-        this.immediatePropagationStopped = false;
-        this.removed = false;
-        this.target;
-        this.currentTarget;
-        this.eventPhase = 0;
-    }
-
-    _createClass(RJSEvent, [{
-        key: "preventDefault",
-        value: function preventDefault() {
-            this.defaultPrevented = true;
-        }
-    }, {
-        key: "stopPropagation",
-        value: function stopPropagation() {
-            this.propagationStopped = true;
-        }
-    }, {
-        key: "stopImmediatePropagation",
-        value: function stopImmediatePropagation() {
-            this.immediatePropagationStopped = this.propagationStopped = true;
-        }
-    }, {
-        key: "remove",
-        value: function remove() {
-            this.removed = true;
-        }
-    }, {
-        key: "clone",
-        value: function clone() {
-            return new RJSEvent(this.type, this.data, this.bubbles, this.cancelable);
-        }
-    }]);
-
-    return RJSEvent;
-}();
-
 var EventDispatcher = function () {
     function EventDispatcher() {
         _classCallCheck(this, EventDispatcher);
@@ -196,7 +143,7 @@ var EventDispatcher = function () {
                 if (!listeners || !listeners[eventObj]) {
                     return false;
                 }
-                eventObj = new RJSEvent(eventObj);
+                eventObj = new Event(eventObj);
             } else if (eventObj.target && eventObj.clone) {
                 // redispatching an active event object, so clone it:
                 eventObj = eventObj.clone();
@@ -275,6 +222,59 @@ var eventDispatcher = new EventDispatcher();
 var makeDispatcher = function makeDispatcher() {
     return new EventDispatcher();
 };
+
+var RJSEvent = function () {
+    function RJSEvent(type) {
+        var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var bubbles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+        var cancelable = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+        _classCallCheck(this, RJSEvent);
+
+        this.data = data;
+        this.type = type;
+        this.bubbles = bubbles;
+        this.cancelable = cancelable;
+        this.timeStamp = new Date().getTime();
+        //
+        this.defaultPrevented = false;
+        this.propagationStopped = false;
+        this.immediatePropagationStopped = false;
+        this.removed = false;
+        this.target;
+        this.currentTarget;
+        this.eventPhase = 0;
+    }
+
+    _createClass(RJSEvent, [{
+        key: "preventDefault",
+        value: function preventDefault() {
+            this.defaultPrevented = true;
+        }
+    }, {
+        key: "stopPropagation",
+        value: function stopPropagation() {
+            this.propagationStopped = true;
+        }
+    }, {
+        key: "stopImmediatePropagation",
+        value: function stopImmediatePropagation() {
+            this.immediatePropagationStopped = this.propagationStopped = true;
+        }
+    }, {
+        key: "remove",
+        value: function remove() {
+            this.removed = true;
+        }
+    }, {
+        key: "clone",
+        value: function clone() {
+            return new RJSEvent(this.type, this.data, this.bubbles, this.cancelable);
+        }
+    }]);
+
+    return RJSEvent;
+}();
 
 function Signal() {
 
@@ -364,7 +364,7 @@ function Signal() {
 /**
  * Created by mgobbi on 20/04/2017.
  */
-function _arity(n, fn) {
+var _arity = function (n, fn) {
     /* eslint-disable no-unused-vars */
     switch (n) {
         case 0:
@@ -414,7 +414,7 @@ function _arity(n, fn) {
         default:
             throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
     }
-}
+};
 
 /**
  * Created by mgobbi on 20/04/2017.
@@ -446,7 +446,7 @@ function _curryN(length, received, fn) {
 /**
  * Created by mgobbi on 20/04/2017.
  */
-function _curry1(fn) {
+var _curry1 = function (fn) {
     return function f1(a) {
         if (arguments.length === 0) {
             return f1;
@@ -454,42 +454,76 @@ function _curry1(fn) {
             return fn.apply(this, arguments);
         }
     };
-}
+};
 
 /**
  * Created by mgobbi on 14/03/2017.
  */
-function curry(fn) {
+var curry = function (fn) {
     var length = fn.length;
     if (length === 1) {
         return _curry1(fn);
     }
     return _arity(length, _curryN(length, [], fn));
-}
+};
 
 /**
  * Created by mgobbi on 20/04/2017.
  */
 var map = curry(function (fn, list) {
-  return Array.from(list).map(fn);
+    //  return Array.from(list).map(fn);
+    var idx = 0;
+    var length = list.length;
+    var result = [];
+    for (idx; idx < length; idx++) {
+        result[idx] = fn(list[idx]);
+    }
+
+    return result;
 });
 
 /**
  * Created by mgobbi on 20/04/2017.
  */
-var pluck$1 = curry(function pluck(p, list) {
+var pluck = curry(function (p, list) {
     return map(function (obj) {
         return obj[p];
     }, list);
 });
 
 /**
+ * Created by marcogobbi on 20/04/2017.
+ */
+var reduce = curry(function (xf, acc, list) {
+    var idx = 0;
+    var len = list.length;
+    while (idx < len) {
+        acc = xf(acc, list[idx]);
+
+        idx += 1;
+    }
+    return acc;
+
+    /* var result=head.apply(ctx, args);
+     var idx = 0;
+     var len = tail.length;
+     while (idx < len){
+           result=tail[i].call(ctx, result);
+         i--;
+     }
+     return result;*/
+});
+
+/**
  * Created by mgobbi on 17/03/2017.
  */
 // Performs left-to-right composition of one or more  functions.
+function _pipe(f, g) {
+    return function () {
+        return g.call(this, f.apply(this, arguments));
+    };
+}
 var compose = function () {
-    var ctx = this;
-
     for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
         fns[_key] = arguments[_key];
     }
@@ -498,21 +532,13 @@ var compose = function () {
     var head = fns[0];
     var tail = fns.slice(1);
 
-    return _arity(head.length, function () {
-        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            args[_key2] = arguments[_key2];
-        }
-
-        return tail.reduce(function (x, fn) {
-            return fn.call(ctx, x);
-        }, head.apply(ctx, args));
-    });
+    return _arity(head.length, reduce(_pipe, head, tail));
 };
 
 function _isString(x) {
     return Object.prototype.toString.call(x) === '[object String]';
 }
-function isArrayLike(x) {
+var _isArrayLike = function (x) {
     if (Array.isArray(x)) {
         return true;
     }
@@ -535,7 +561,7 @@ function isArrayLike(x) {
         return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
     }
     return false;
-}
+};
 
 /**
  * Created by mgobbi on 12/04/2017.
@@ -552,7 +578,7 @@ function flatten(list) {
     var ilen = list.length;
 
     while (idx < ilen) {
-        if (isArrayLike(list[idx])) {
+        if (_isArrayLike(list[idx])) {
             value = flatten(list[idx]);
             j = 0;
             jlen = value.length;
@@ -572,19 +598,37 @@ function flatten(list) {
  * Created by mgobbi on 20/04/2017.
  */
 var filter = curry(function (fn, list) {
-  return Array.from(list).filter(fn);
+    var idx = 0;
+    var len = list.length;
+    var result = [];
+
+    while (idx < len) {
+        if (fn(list[idx])) {
+            result[result.length] = list[idx];
+        }
+        idx += 1;
+    }
+    return result;
+    //  return Array.from(list).filter(fn);
 });
 
 /**
  * Created by marcogobbi on 01/04/2017.
  */
-
+//import map from "../../internal/_map"
+//function identity(x){return x;}
 var getAllElements = function (node) {
-    var result = [];
+    //  var hrstart = process.hrtime();
+
+
+    //  var nodes=map(identity,node.querySelectorAll("[data-mediator]"));
+    var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
     if (!!node.getAttribute("data-mediator")) {
-        result.push(node);
+        nodes.unshift(node);
     }
-    return result.concat(Array.from(node.querySelectorAll("[data-mediator]")));
+    // var hrend = process.hrtime(hrstart);
+    //  console.info("Execution time (hr): %ds %dms", hrend[0], hrend[1]/1000000);
+    return nodes;
 };
 
 /**
@@ -601,7 +645,7 @@ function makeChain(prop, emit) {
         return nodes.length > 0;
     }), map(getAllElements), filter(function (node) {
         return node.querySelectorAll;
-    }), flatten, pluck$1(prop) //"addedNodes","removedNodes"
+    }), flatten, pluck(prop) //"addedNodes","removedNodes"
     );
 }
 
@@ -655,7 +699,8 @@ var nextUid = (function () {
 var noop = function noop(_) {
     return _;
 };
-function create(node, dispatcher, Mediator) {
+
+var create = curry(function (node, dispatcher, Mediator) {
     var mediatorId = nextUid();
     node.setAttribute('mediatorid', mediatorId);
     var dispose = Mediator(node, dispatcher) || noop;
@@ -664,13 +709,12 @@ function create(node, dispatcher, Mediator) {
         node: node,
         dispose: dispose
     };
-}
-var create$1 = curry(create);
+});
 
 /**
  * Created by mgobbi on 20/04/2017.
  */
-var find$1 = curry(function find(fn, list) {
+var find = curry(function (fn, list) {
     var idx = 0;
     var len = list.length;
     while (idx < len) {
@@ -685,7 +729,7 @@ var find$1 = curry(function find(fn, list) {
  * Created by mgobbi on 31/03/2017.
  */
 var inCache = (function (MEDIATORS_CACHE, node) {
-  return !!find$1(function (disposable) {
+  return !!find(function (disposable) {
     return disposable.node === node;
   }, MEDIATORS_CACHE);
 });
@@ -750,7 +794,7 @@ var MediatorHandler = function (params) {
         return MEDIATORS_CACHE;
     }
 
-    var _findMediator = FindMediator(getDefinition, create$1, updateCache);
+    var _findMediator = FindMediator(getDefinition, create, updateCache);
 
     function hasMediator(node) {
         return !!getDefinition(node) && !inCache(MEDIATORS_CACHE, node);
@@ -778,7 +822,7 @@ var GetMediators = function (findMediator, hasMediator) {
 /**
  * Created by mgobbi on 20/04/2017.
  */
-var forEach$1 = curry(function forEach(fn, list) {
+var forEach = curry(function (fn, list) {
     var len = list.length;
     var idx = 0;
     while (idx < len) {
@@ -792,7 +836,7 @@ var forEach$1 = curry(function forEach(fn, list) {
  * Created by marcogobbi on 01/04/2017.
  */
 var HandleNodesRemoved = function (destroy) {
-  return compose(forEach$1(destroy), flatten);
+  return compose(forEach(destroy), flatten);
 };
 
 /**

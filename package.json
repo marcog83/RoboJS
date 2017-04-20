@@ -11,7 +11,6 @@
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-core": "^6.24.0",
-    "babel-plugin-module-alias": "^1.6.0",
     "babel-preset-import-export": "^1.0.2",
     "babel-preset-latest": "^6.24.0",
     "jspm": "^0.17.0-beta.41"
@@ -19,6 +18,10 @@
   "jspm": {
     "name": "robojs",
     "main": "robojs.js",
+    "dependencies": {
+      "plugin-babel": "npm:systemjs-plugin-babel@^0.0.21"
+    },
+    "devDependencies": {},
     "peerDependencies": {
       "assert": "npm:jspm-nodelibs-assert@^0.2.0",
       "buffer": "npm:jspm-nodelibs-buffer@^0.2.0",
@@ -35,38 +38,11 @@
       "vm": "npm:jspm-nodelibs-vm@^0.2.0"
     },
     "overrides": {
-      "npm:debug@2.6.3": {
-        "main": "src/browser.js",
-        "jspmNodeConversion": false,
-        "format": "cjs",
-        "map": {
-          "./src/browser.js": {
-            "node": "./src/node.js"
-          },
-          "./node.js": {
-            "browser": "./src/browser.js"
-          },
-          "fs": "@node/fs",
-          "net": "@node/net",
-          "tty": "@node/tty",
-          "util": "@node/util"
-        }
-      },
       "npm:inherits@2.0.3": {
         "ignore": [
           "test.js"
         ]
-      },
-      "npm:lodash@4.17.4": {
-        "map": {
-          "buffer": "@empty",
-          "process": "@empty"
-        }
-      },
-      "npm:ms@0.7.2": {
-        "jspmNodeConversion": false,
-        "format": "cjs"
       }
     }
   }
-}
+}

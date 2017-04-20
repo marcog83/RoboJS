@@ -2,7 +2,7 @@
  * Created by mgobbi on 20/04/2017.
  */
 import _arity from "./_arity";
-export default function _curryN(length, received, fn) {
+function _curryN(length, received, fn) {
     return function() {
         var combined = [];
         var argsIdx = 0;
@@ -26,3 +26,4 @@ export default function _curryN(length, received, fn) {
             : _arity(left, _curryN(length, combined, fn));
     };
 };
+export default _curryN

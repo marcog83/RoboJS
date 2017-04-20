@@ -1,7 +1,7 @@
 /**
  * Created by mgobbi on 20/04/2017.
  */
-export default function _arity(n, fn) {
+export default function (n, fn) {
     /* eslint-disable no-unused-vars */
     switch (n) {
         case 0: return function() { return fn.apply(this, arguments); };

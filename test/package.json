@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-     "test":"mocha --compilers babel-core/register --ui bdd  ./ --reporter mochawesome"
+     "test":"mocha --compilers babel-core/register --ui bdd  ./ "
   },
   "author": "",
   "license": "MIT",

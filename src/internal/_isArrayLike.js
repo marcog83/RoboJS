@@ -1,7 +1,7 @@
 function _isString(x) {
     return Object.prototype.toString.call(x) === '[object String]';
 };
-export default function isArrayLike(x) {
+export default function (x) {
     if (Array.isArray(x)) { return true; }
     if (!x) { return false; }
     if (typeof x !== 'object') { return false; }

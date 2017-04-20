@@ -4,7 +4,8 @@
 import curry from "../../internal/_curry";
 import nextUid from "./next-uid";
 const noop = _ => _;
-function create(node, dispatcher, Mediator) {
+
+export default curry(function (node, dispatcher, Mediator) {
     const mediatorId = nextUid();
     node.setAttribute('mediatorid', mediatorId);
     const dispose = Mediator(node, dispatcher) || noop;
@@ -13,5 +14,4 @@ function create(node, dispatcher, Mediator) {
         node,
         dispose
     };
-}
-export default curry(create);
+});

@@ -1,5 +1,5 @@
 .idea
-.gitignore
+
 node_modules
 bower_components
 docs
@@ -7,3 +7,4 @@ jspm_packages
 grunt-tasks
 fix-for-amd
 mochawesome-reports
+

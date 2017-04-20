@@ -3,7 +3,7 @@
  */
 import map from "./_map";
 import curry from "./_curry";
-export default curry(function pluck(p, list) {
+export default curry(function (p, list) {
     return map(function (obj) {
         return obj[p];
     }, list);

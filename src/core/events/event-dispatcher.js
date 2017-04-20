@@ -1,4 +1,4 @@
-import RJSEvent from "./rjs-event";
+
 class EventDispatcher {
     constructor() {
         this._listeners = {};
@@ -68,7 +68,7 @@ class EventDispatcher {
             if (!listeners || !listeners[eventObj]) {
                 return false;
             }
-            eventObj = new RJSEvent(eventObj);
+            eventObj = new Event(eventObj);
         } else if (eventObj.target && eventObj.clone) {
             // redispatching an active event object, so clone it:
             eventObj = eventObj.clone();
@@ -139,4 +139,4 @@ class EventDispatcher {
 
 }
 export default new EventDispatcher();
-export var makeDispatcher = ()=>new EventDispatcher();
+export var makeDispatcher = () => new EventDispatcher();
