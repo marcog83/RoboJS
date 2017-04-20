@@ -1,6 +1,9 @@
 {
   "name": "robojs",
-  "version": "5.0.0",
+  "version": "5.0.1",
+
+  "license": "MIT",
+
   "main": [
     "dist/robojs.es6.min.js"
   ],
@@ -8,10 +11,12 @@
     "node_modules",
     "bower_components",
     "grunt-tasks",
-    "lib",
+    "src",
     "jspm_packages",
     ".gitignore",
-    "Gruntfile.js",
+    ".babelrc",
+    "jspm.config.js",
+
     "package.json"
   ],
   "dependencies": {}
