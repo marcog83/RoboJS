@@ -1,8 +1,0 @@
-if (typeof define == 'function' && define.amd)
-        define("robojs",[], function(){
-            return factory.apply(this,arguments).default
-        });
-    else if (typeof module == 'object' && module.exports && typeof require == 'function')
-        module.exports = factory().default;
-    else
-        window.robojs=factory().default;

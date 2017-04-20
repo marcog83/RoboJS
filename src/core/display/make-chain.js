@@ -1,11 +1,11 @@
 /**
  * Created by marcogobbi on 01/04/2017.
  */
-import map from "ramda/src/map";
-import flatten from "ramda/src/flatten";
-import pluck from "ramda/src/pluck";
-import compose from "ramda/src/compose";
-import filter from "ramda/src/filter";
+import map from "../../internal/_map";
+import pluck from "../../internal/_pluck";
+import compose from "../../internal/_compose";
+import flatten from "../../internal/_flatten";
+import filter from "../../internal/_filter";
 import getAllElements from "./get-all-elements";
 export default function makeChain(prop, emit) {
     return compose(

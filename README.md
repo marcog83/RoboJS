@@ -194,11 +194,11 @@ bootstrap({definitions: definitions,loader:AmdLoader(loadWithRequire)})
 The `EventDispatcher` can be your messaging System. It dispatches and listens to `Events` from your Application. 
 It's meant to be a Singleton in your application.
 
-You can get a new instance of EventDispatcher by calling `getEventDispatcher` function
+You can get a new instance of EventDispatcher by calling `makeDispatcher` function
 
 ```javascript
-import {getEventDispatcher} from "robojs"
-var myNewEventDispatcher=getEventDispatcher();
+import {makeDispatcher} from "robojs"
+var myNewEventDispatcher=makeDispatcher();
 ```
 	
 
@@ -213,7 +213,7 @@ This is an example how you can set dependencies using `RequireJS`
 
 requirejs.config({
 	paths: {		
-        robojs: "../../dist/robojs.es6"
+        robojs: "../../dist/robojs"
 	}
 });
 
@@ -227,7 +227,7 @@ This is an example how you can set dependencies using `SystemJS`
 System.config({
 		defaultJSExtensions: true,
 		paths:{
-			robojs:"../../dist/robojs.es6"
+			robojs:"../../dist/robojs"
 		}
 	});
 
@@ -238,7 +238,7 @@ or using **Globals**
 > **NB**. If you use robojs as global, you need some kind of script loader. If your project has SystemJS or RequireJS, please don't use global.
 
 ```html
-<script src="../../dist/robojs.es6.js"></script>
+<script src="../../dist/robojs.js"></script>
 <script>
 var definitions={
                     "my-custom-element": "client/my-custom-element",
@@ -250,36 +250,14 @@ robojs.bootstrap({definitions:definitions})
 ```
 
 # Dependencies
-
-
-RoboJS depends on some **[RamdaJS](http://ramdajs.com/)** functions.
-
-```javascript
-	// DomWatcher.js
-	//
-
-   import map from "ramda/src/map";
-   import flatten from "ramda/src/flatten";
-   import pluck from "ramda/src/pluck";
-   import compose from "ramda/src/compose";
-   //
-   // MediatorsBuilder.js
-   //
-   import curryN from "ramda/src/curryN";
-   import find from "ramda/src/find";
-   import compose from "ramda/src/compose";
-   import map from "ramda/src/map";
-   import filter from "ramda/src/filter";
-   import flatten from "ramda/src/flatten";
-```
->**NO** needs to import ramda library.
+no dependencies
 
 ### Build project
 transpiling es6 sources to es5 is handled by AWESOME project [jspm](http://jspm.io/), that is a package manager for the SystemJS universal module loader, built on top of the dynamic ES6 module loader. 
-You can run npm script named `build` or you can run it from command line.
+You can run npm script named `build`.
 
 ```
-jspm bundle-sfx src/core/robojs dist/robojs.es6.js --format umd
+npm run build
 ```
 
 

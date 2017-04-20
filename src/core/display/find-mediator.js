@@ -1,9 +1,9 @@
 /**
  * Created by marcogobbi on 02/04/2017.
  */
-import curryN from "ramda/src/curryN";
+import curry from "../../internal/_curry";
 export default (getDefinition, create, updateCache) => {
-    return curryN(3, function (dispatcher, load, node) {
+    return curry(function (dispatcher, load, node) {
         return load(getDefinition(node))
             .then(create(node, dispatcher))
             .then(updateCache);

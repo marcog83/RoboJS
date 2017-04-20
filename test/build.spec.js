@@ -2,7 +2,7 @@
  * Created by mgobbi on 05/04/2017.
  */
 import Build from "../src/core/display/build";
-import flatten from "ramda/src/flatten";
+import flatten from "../src/internal/_flatten";
 var assert = require("chai").assert;
 var jsdom = require('mocha-jsdom');
 

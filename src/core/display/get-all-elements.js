@@ -7,5 +7,5 @@ export default function ( node) {
     if(!!node.getAttribute("data-mediator")){
         result.push(node);
     }
-    return result.concat([].slice.call(node.querySelectorAll("[data-mediator]"), 0));
+    return result.concat(Array.from(node.querySelectorAll("[data-mediator]")));
 }

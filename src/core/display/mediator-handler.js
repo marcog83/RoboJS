@@ -10,9 +10,9 @@ import inCache from "./in-cache";
 import getAllElements from "./get-all-elements";
 import FindMediator from "./find-mediator";
 
-import curryN from "ramda/src/curryN";
+import curry from "../../internal/_curry";
 
-const GetDefinition = curryN(2, function (definitions, node) {
+const GetDefinition = curry( function (definitions, node) {
     return definitions[node.getAttribute("data-mediator")];
 });
 
@@ -54,11 +54,7 @@ export default  function (params) {
     }
 
     var _findMediator = FindMediator(getDefinition, create, updateCache);
-    // var findMediators = curryN(2, function (load, node) {
-    //     return load(getDefinition(node))
-    //         .then(create(node, dispatcher))
-    //         .then(updateCache);
-    // });
+
 
     function hasMediator(node) {
         return !!getDefinition(node) && !inCache(MEDIATORS_CACHE, node)

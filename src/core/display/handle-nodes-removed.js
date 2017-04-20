@@ -1,9 +1,9 @@
 /**
  * Created by marcogobbi on 01/04/2017.
  */
-import forEach from "ramda/src/forEach";
-import flatten from "ramda/src/flatten";
-import compose from "ramda/src/compose";
+import forEach from "../../internal/_for-each";
+import flatten from "../../internal/_flatten";
+import compose from "../../internal/_compose";
 
 export default function(destroy){
     return compose(

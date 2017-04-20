@@ -1,10 +1,10 @@
 /**
  * Created by mgobbi on 31/03/2017.
  */
-import curryN from "ramda/src/curryN";
+import curry from "../../internal/_curry";
 import nextUid from "./next-uid";
 const noop = _ => _;
-function create(node,dispatcher,Mediator) {
+function create(node, dispatcher, Mediator) {
     const mediatorId = nextUid();
     node.setAttribute('mediatorid', mediatorId);
     const dispose = Mediator(node, dispatcher) || noop;
@@ -14,4 +14,4 @@ function create(node,dispatcher,Mediator) {
         dispose
     };
 }
-export default curryN(3,create);
+export default curry(create);

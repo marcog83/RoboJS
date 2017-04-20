@@ -2,7 +2,7 @@
  * Created by marcogobbi on 02/04/2017.
  */
 import FindMediator from "../src/core/display/find-mediator";
-import curryN from "ramda/src/curryN";
+import curry from "../src/internal/_curry";
 var assert = require("chai").assert;
 var jsdom = require('mocha-jsdom');
 
@@ -18,13 +18,13 @@ describe('FindMediator', function () {
         return _ => _;
     }
 
-    var getDefinition = curryN(2,function (a,b) {
+    var getDefinition = curry(function (a,b) {
         return "path/to/module"
     });
     var load = function (path) {
         return Promise.resolve({path,Mediator})
     };
-    var create = curryN(3,function (node,dispatcher,Mediator) {
+    var create = curry(function (node,dispatcher,Mediator) {
         return disposable;
     });
     var updateCache = function (disposable) {

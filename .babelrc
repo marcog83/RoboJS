@@ -1,8 +1,4 @@
 {
   "presets": ["latest","import-export"]
-  ,"plugins": [
-  ["module-alias", [
-    { "src": "jspm_packages/npm/ramda@0.21.0", "expose": "ramda" }
-  ]]
-]
+
 }

@@ -1,8 +1,8 @@
 /**
  * Created by marcogobbi on 01/04/2017.
  */
-import map from "ramda/src/map";
-import compose from "ramda/src/compose";
+import map from "../../internal/_map";
+import compose from "../../internal/_compose";
 import getAllElements from "./get-all-elements";
 
 export default function (getMediators) {
