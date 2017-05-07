@@ -23,30 +23,6 @@
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
 
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var _createClass = function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ("value" in descriptor) descriptor.writable = true;
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);
-            if (staticProps) defineProperties(Constructor, staticProps);
-            return Constructor;
-        };
-    }();
-
     var amdLoader = function amdLoader(id, resolve, reject) {
         require([id], resolve, reject);
     };
@@ -62,235 +38,179 @@
             }
         });
     };
-    //---------------
-    //
-    // function defaultLoader(id) {
-    //     var getPromise = function () {
-    //         if (System.import) {
-    //             return url=> System.import(url);
-    //         } else {
-    //             return url=> Promise.resolve(System.get(url));
-    //         }
-    //     };
-    //     return getPromise()(id).then(e=> {
-    //         return e.default ? e.default : e;
-    //     }).catch(e=> {
-    //         console.log(e);
-    //     })
-    //
-    // }
-    // export default  (loaderFunction = defaultLoader)=> {
-    //     return Object.freeze({
-    //         load: loaderFunction
-    //     })
-    // };
 
-    var EventDispatcher = function () {
-        function EventDispatcher() {
-            _classCallCheck(this, EventDispatcher);
-
-            this._listeners = {};
-        }
-
-        _createClass(EventDispatcher, [{
-            key: 'addEventListener',
-            value: function addEventListener(type, listener, useCapture) {
-                var listeners;
-                if (useCapture) {
-                    listeners = this._captureListeners = this._captureListeners || {};
-                } else {
-                    listeners = this._listeners = this._listeners || {};
-                }
-                var arr = listeners[type];
-                if (arr) {
-                    this.removeEventListener(type, listener, useCapture);
-                }
-                arr = listeners[type]; // remove may have deleted the array
-                if (!arr) {
-                    listeners[type] = [listener];
-                } else {
-                    arr.push(listener);
-                }
-                return listener;
+    function EventDispatcher() {
+        this._listeners = {};
+    }
+    EventDispatcher.prototype = {
+        addEventListener: function addEventListener(type, listener, useCapture) {
+            var listeners;
+            if (useCapture) {
+                listeners = this._captureListeners = this._captureListeners || {};
+            } else {
+                listeners = this._listeners = this._listeners || {};
             }
-        }, {
-            key: 'removeEventListener',
-            value: function removeEventListener(type, listener, useCapture) {
-                var listeners = useCapture ? this._captureListeners : this._listeners;
-                if (!listeners) {
+            var arr = listeners[type];
+            if (arr) {
+                this.removeEventListener(type, listener, useCapture);
+            }
+            arr = listeners[type]; // remove may have deleted the array
+            if (!arr) {
+                listeners[type] = [listener];
+            } else {
+                arr.push(listener);
+            }
+            return listener;
+        },
+        removeEventListener: function removeEventListener(type, listener, useCapture) {
+            var listeners = useCapture ? this._captureListeners : this._listeners;
+            if (!listeners) {
+                return;
+            }
+            var arr = listeners[type];
+            if (!arr) {
+                return;
+            }
+            for (var i = 0, l = arr.length; i < l; i++) {
+                if (arr[i] == listener) {
+                    if (l == 1) {
+                        delete listeners[type];
+                    } // allows for faster checks.
+                    else {
+                            arr.splice(i, 1);
+                        }
+                    break;
+                }
+            }
+        },
+        removeAllEventListeners: function removeAllEventListeners(type) {
+            if (!type) {
+                this._listeners = this._captureListeners = null;
+            } else {
+                if (this._listeners) {
+                    delete this._listeners[type];
+                }
+                if (this._captureListeners) {
+                    delete this._captureListeners[type];
+                }
+            }
+        },
+        dispatchEvent: function dispatchEvent(eventObj) {
+            if (typeof eventObj == "string") {
+                // won't bubble, so skip everything if there's no listeners:
+                var listeners = this._listeners;
+                if (!listeners || !listeners[eventObj]) {
+                    return false;
+                }
+                eventObj = new Event(eventObj);
+            } else if (eventObj.target && eventObj.clone) {
+                // redispatching an active event object, so clone it:
+                eventObj = eventObj.clone();
+            }
+            try {
+                eventObj.target = this;
+            } catch (e) {} // try/catch allows redispatching of native events
+
+            if (!eventObj.bubbles || !this.parent) {
+                this._dispatchEvent(eventObj, 2);
+            } else {
+                var top = this,
+                    list = [top];
+                while (top.parent) {
+                    list.push(top = top.parent);
+                }
+                var i,
+                    l = list.length;
+
+                // capture & atTarget
+                for (i = l - 1; i >= 0 && !eventObj.propagationStopped; i--) {
+                    list[i]._dispatchEvent(eventObj, 1 + (i == 0));
+                }
+                // bubbling
+                for (i = 1; i < l && !eventObj.propagationStopped; i++) {
+                    list[i]._dispatchEvent(eventObj, 3);
+                }
+            }
+            return eventObj.defaultPrevented;
+        },
+        hasEventListener: function hasEventListener(type) {
+            var listeners = this._listeners,
+                captureListeners = this._captureListeners;
+            return !!(listeners && listeners[type] || captureListeners && captureListeners[type]);
+        },
+        _dispatchEvent: function _dispatchEvent(eventObj, eventPhase) {
+            var l,
+                listeners = eventPhase == 1 ? this._captureListeners : this._listeners;
+            if (eventObj && listeners) {
+                var arr = listeners[eventObj.type];
+                if (!arr || !(l = arr.length)) {
                     return;
-                }
-                var arr = listeners[type];
-                if (!arr) {
-                    return;
-                }
-                for (var i = 0, l = arr.length; i < l; i++) {
-                    if (arr[i] == listener) {
-                        if (l == 1) {
-                            delete listeners[type];
-                        } // allows for faster checks.
-                        else {
-                                arr.splice(i, 1);
-                            }
-                        break;
-                    }
-                }
-            }
-        }, {
-            key: 'removeAllEventListeners',
-            value: function removeAllEventListeners(type) {
-                if (!type) {
-                    this._listeners = this._captureListeners = null;
-                } else {
-                    if (this._listeners) {
-                        delete this._listeners[type];
-                    }
-                    if (this._captureListeners) {
-                        delete this._captureListeners[type];
-                    }
-                }
-            }
-        }, {
-            key: 'dispatchEvent',
-            value: function dispatchEvent(eventObj) {
-                if (typeof eventObj == "string") {
-                    // won't bubble, so skip everything if there's no listeners:
-                    var listeners = this._listeners;
-                    if (!listeners || !listeners[eventObj]) {
-                        return false;
-                    }
-                    eventObj = new Event(eventObj);
-                } else if (eventObj.target && eventObj.clone) {
-                    // redispatching an active event object, so clone it:
-                    eventObj = eventObj.clone();
                 }
                 try {
-                    eventObj.target = this;
-                } catch (e) {} // try/catch allows redispatching of native events
-
-                if (!eventObj.bubbles || !this.parent) {
-                    this._dispatchEvent(eventObj, 2);
-                } else {
-                    var top = this,
-                        list = [top];
-                    while (top.parent) {
-                        list.push(top = top.parent);
+                    eventObj.currentTarget = this;
+                } catch (e) {}
+                try {
+                    eventObj.eventPhase = eventPhase;
+                } catch (e) {}
+                eventObj.removed = false;
+                arr = arr.slice(); // to avoid issues with items being removed or added during the dispatch
+                for (var i = 0; i < l && !eventObj.immediatePropagationStopped; i++) {
+                    var o = arr[i];
+                    if (o.handleEvent) {
+                        o.handleEvent(eventObj);
+                    } else {
+                        o(eventObj);
                     }
-                    var i,
-                        l = list.length;
-
-                    // capture & atTarget
-                    for (i = l - 1; i >= 0 && !eventObj.propagationStopped; i--) {
-                        list[i]._dispatchEvent(eventObj, 1 + (i == 0));
-                    }
-                    // bubbling
-                    for (i = 1; i < l && !eventObj.propagationStopped; i++) {
-                        list[i]._dispatchEvent(eventObj, 3);
-                    }
-                }
-                return eventObj.defaultPrevented;
-            }
-        }, {
-            key: 'hasEventListener',
-            value: function hasEventListener(type) {
-                var listeners = this._listeners,
-                    captureListeners = this._captureListeners;
-                return !!(listeners && listeners[type] || captureListeners && captureListeners[type]);
-            }
-        }, {
-            key: '_dispatchEvent',
-            value: function _dispatchEvent(eventObj, eventPhase) {
-                var l,
-                    listeners = eventPhase == 1 ? this._captureListeners : this._listeners;
-                if (eventObj && listeners) {
-                    var arr = listeners[eventObj.type];
-                    if (!arr || !(l = arr.length)) {
-                        return;
-                    }
-                    try {
-                        eventObj.currentTarget = this;
-                    } catch (e) {}
-                    try {
-                        eventObj.eventPhase = eventPhase;
-                    } catch (e) {}
-                    eventObj.removed = false;
-                    arr = arr.slice(); // to avoid issues with items being removed or added during the dispatch
-                    for (var i = 0; i < l && !eventObj.immediatePropagationStopped; i++) {
-                        var o = arr[i];
-                        if (o.handleEvent) {
-                            o.handleEvent(eventObj);
-                        } else {
-                            o(eventObj);
-                        }
-                        if (eventObj.removed) {
-                            this.removeEventListener(eventObj.type, o, eventPhase == 1);
-                            eventObj.removed = false;
-                        }
+                    if (eventObj.removed) {
+                        this.removeEventListener(eventObj.type, o, eventPhase == 1);
+                        eventObj.removed = false;
                     }
                 }
             }
-        }]);
-
-        return EventDispatcher;
-    }();
-
+        }
+    };
     var eventDispatcher = new EventDispatcher();
     var makeDispatcher = function makeDispatcher() {
         return new EventDispatcher();
     };
 
-    var RJSEvent = function () {
-        function RJSEvent(type) {
-            var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var bubbles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var cancelable = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    function RJSEvent(type) {
+        var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+        var bubbles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+        var cancelable = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
-            _classCallCheck(this, RJSEvent);
+        this.data = data;
+        this.type = type;
+        this.bubbles = bubbles;
+        this.cancelable = cancelable;
+        this.timeStamp = new Date().getTime();
+        //
+        this.defaultPrevented = false;
+        this.propagationStopped = false;
+        this.immediatePropagationStopped = false;
+        this.removed = false;
+        this.target;
+        this.currentTarget;
+        this.eventPhase = 0;
+    }
 
-            this.data = data;
-            this.type = type;
-            this.bubbles = bubbles;
-            this.cancelable = cancelable;
-            this.timeStamp = new Date().getTime();
-            //
-            this.defaultPrevented = false;
-            this.propagationStopped = false;
-            this.immediatePropagationStopped = false;
-            this.removed = false;
-            this.target;
-            this.currentTarget;
-            this.eventPhase = 0;
+    RJSEvent.prototype = {
+        preventDefault: function preventDefault() {
+            this.defaultPrevented = true;
+        },
+        stopPropagation: function stopPropagation() {
+            this.propagationStopped = true;
+        },
+        stopImmediatePropagation: function stopImmediatePropagation() {
+            this.immediatePropagationStopped = this.propagationStopped = true;
+        },
+        remove: function remove() {
+            this.removed = true;
+        },
+        clone: function clone() {
+            return new RJSEvent(this.type, this.data, this.bubbles, this.cancelable);
         }
-
-        _createClass(RJSEvent, [{
-            key: 'preventDefault',
-            value: function preventDefault() {
-                this.defaultPrevented = true;
-            }
-        }, {
-            key: 'stopPropagation',
-            value: function stopPropagation() {
-                this.propagationStopped = true;
-            }
-        }, {
-            key: 'stopImmediatePropagation',
-            value: function stopImmediatePropagation() {
-                this.immediatePropagationStopped = this.propagationStopped = true;
-            }
-        }, {
-            key: 'remove',
-            value: function remove() {
-                this.removed = true;
-            }
-        }, {
-            key: 'clone',
-            value: function clone() {
-                return new RJSEvent(this.type, this.data, this.bubbles, this.cancelable);
-            }
-        }]);
-
-        return RJSEvent;
-    }();
+    };
 
     function Signal() {
 

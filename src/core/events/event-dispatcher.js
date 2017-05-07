@@ -1,9 +1,7 @@
-
-class EventDispatcher {
-    constructor() {
-        this._listeners = {};
-    }
-
+function EventDispatcher() {
+    this._listeners = {};
+}
+EventDispatcher.prototype = {
     addEventListener(type, listener, useCapture) {
         var listeners;
         if (useCapture) {
@@ -25,7 +23,7 @@ class EventDispatcher {
         return listener;
     }
 
-    removeEventListener(type, listener, useCapture) {
+    ,removeEventListener(type, listener, useCapture) {
         var listeners = useCapture ? this._captureListeners : this._listeners;
         if (!listeners) {
             return;
@@ -47,7 +45,7 @@ class EventDispatcher {
         }
     }
 
-    removeAllEventListeners(type) {
+    ,removeAllEventListeners(type) {
         if (!type) {
             this._listeners = this._captureListeners = null;
         }
@@ -61,7 +59,7 @@ class EventDispatcher {
         }
     }
 
-    dispatchEvent(eventObj) {
+    ,dispatchEvent(eventObj) {
         if (typeof eventObj == "string") {
             // won't bubble, so skip everything if there's no listeners:
             var listeners = this._listeners;
@@ -99,12 +97,12 @@ class EventDispatcher {
         return eventObj.defaultPrevented;
     }
 
-    hasEventListener(type) {
+    ,hasEventListener(type) {
         var listeners = this._listeners, captureListeners = this._captureListeners;
         return !!((listeners && listeners[type]) || (captureListeners && captureListeners[type]));
     }
 
-    _dispatchEvent(eventObj, eventPhase) {
+    ,_dispatchEvent(eventObj, eventPhase) {
         var l, listeners = (eventPhase == 1) ? this._captureListeners : this._listeners;
         if (eventObj && listeners) {
             var arr = listeners[eventObj.type];
@@ -137,6 +135,6 @@ class EventDispatcher {
         }
     }
 
-}
+};
 export default new EventDispatcher();
 export var makeDispatcher = () => new EventDispatcher();
