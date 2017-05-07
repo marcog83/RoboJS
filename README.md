@@ -82,113 +82,44 @@ When a `data-mediator` attribute matches an ID from MediatorsMap the `Mediator` 
    	}
 ```
 
-# Custom Elements
-
-RoboJS is a composable library that allow you to change the way you create modules and add logics to your application.
-**data-mediator mechanism** is my first solution to the problem, but moving on, custom elements are an easy, native way to  deal with it.
-This is why I decided to add `CustomElementHandler` Object
-This function constructor allow you to register and create your `Custom Elements`.
-
-By default your modules are handled by `data-mediator` mechanism, but you can set mediatorHandler in order to use custom elements.
-
-``` javascript
-import {bootstrap,CustomElementHandler} from "robojs"
- bootstrap({
-            definitions: definitions,
-            mediatorHandler:CustomElementHandler()
-        })
-```
-
-HTML markup looks like the following
-
-```html
-    <my-custom-element>a-2</my-custom-element>
-    <foo-element>b-1</foo-element>
-    <bar-element>c-1</bar-element>
-```
-
-
-Your Custom Element should be defined in a function that returns an Object.
-
-``` javascript
-function FooElement() {
-		return {
-			createdCallback: function () {
-				console.log("created foo element", this);
-				this.addEventListener("click",function(e){
-					e.currentTarget.parentElement.removeChild(e.currentTarget);
-					e.stopPropagation();
-				})
-			},
-			attachedCallback: function () {
-				console.log("attached foo element", this)
-			},
-			detachedCallback: function () {
-				console.log("deattached foo element", this)
-			}
-		}
-	}
-```
-
-Behind the scene CustomElementHandler creates a new Object extending HTMLElement prototype. Then it assigns your implementation to it.
-Finally RoboJS registers the new element with `document.registerElement` API
-
-``` javascript
- var customProto = FooElement();// your function constructor
- var proto = Object.assign(Object.create(HTMLElement.prototype), customProto);
- document.registerElement(id, {prototype: proto});
-```
-
-
-RoboJS recognizes new element added to DOM, if the new node `tagname` matches any id in `definitions.js` map and the element is not registered yet, the right script will be requested and executed.
-Sample folder contains a demo.
+ 
 
 # Loader Object
-Default loader is `SystemJS` based.
+Default loader is `AMD` based, it means that by default any module should be exported as amd.
+You can customize script loading strategy passing a function to `Loader`.
 
+For instance if you use  `SystemJS` module loader, you can do something like the follow.
+
+```javascript
+import {bootstrap,Loader} from "robojs"
+//this is the strategy used to load external modules
+function loaderFn(id, resolve, reject) {
+        return System.import(id).then(resolve).catch(reject)
+    }
+bootstrap({definitions: definitions,loader:Loader(loaderFn)})
+```
+
+and your HTML file can look like this
 ```html
 <script src="system.js"></script>
 <script>
 	System.config({
 		defaultJSExtensions: true,
 		paths:{
-			robojs:"../../dist/robojs.es6"
+			robojs:"../../dist/robojs"
 		}
 	});
 
 	System.import("./client/Application");
 </script>
 ```
-and inside `Application.js` you invoke `bootstrap` function
 
-```javascript
-import {bootstrap} from "robojs"
-bootstrap({definitions: definitions})
-```
 An example can be found in sample/systemjs folder.
 
 
 
 
-## AmdLoader Object
-
-If your project is AMD-style you can pass `AmdLoader` to bootstrap spec Object. `AmdLoader` supposes that `require` function is in global space.
-
-
-```javascript
-import {bootstrap,AmdLoader} from "robojs"
-bootstrap({definitions: definitions,loader:AmdLoader()})
-```
-
-You can customize script loading strategy passing a function to `AmdLoader`.
-
-```javascript
-import {bootstrap,AmdLoader} from "robojs"
-function loadWithRequire(id,resolve,reject){
-    require([id],resolve,reject);
-}
-bootstrap({definitions: definitions,loader:AmdLoader(loadWithRequire)})
-```
+ 
 
 ### EventDispatcher Object.
 The `EventDispatcher` can be your messaging System. It dispatches and listens to `Events` from your Application. 

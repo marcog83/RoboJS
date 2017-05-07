@@ -4,37 +4,12 @@
   (factory((global.robojs = global.robojs || {})));
 }(this, (function (exports) { 'use strict';
 
-function defaultLoader(id) {
-    var getPromise = function getPromise() {
-        if (System.import) {
-            return function (url) {
-                return System.import(url);
-            };
-        } else {
-            return function (url) {
-                return Promise.resolve(System.get(url));
-            };
-        }
-    };
-    return getPromise()(id).then(function (e) {
-        return e.default ? e.default : e;
-    }).catch(function (e) {
-        console.log(e);
-    });
-}
-var Loader = (function () {
-    var loaderFunction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultLoader;
-
-    return Object.freeze({
-        load: loaderFunction
-    });
+var amdLoader = (function (id, resolve, reject) {
+    require([id], resolve, reject);
 });
 
-var amdLoaderFunction = function amdLoaderFunction(id, resolve, reject) {
-    window.require([id], resolve, reject);
-};
-var amdLoader = (function () {
-    var loaderFunction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : amdLoaderFunction;
+var Loader = (function () {
+    var loaderFunction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : amdLoader;
 
     return Object.freeze({
         load: function load(id) {
@@ -769,12 +744,11 @@ var MediatorHandler = function (params) {
                 disposable.dispose();
                 disposable.node = null;
                 MEDIATORS_CACHE[i] = null;
+                MEDIATORS_CACHE.splice(i, 1);
             }
         }
 
-        MEDIATORS_CACHE = MEDIATORS_CACHE.filter(function (m) {
-            return m;
-        });
+        //MEDIATORS_CACHE = MEDIATORS_CACHE.filter(m => m);
         return MEDIATORS_CACHE;
     }
 
@@ -885,7 +859,6 @@ exports.RJSEvent = RJSEvent;
 exports.makeDispatcher = makeDispatcher;
 exports.EventDispatcher = eventDispatcher;
 exports.Loader = Loader;
-exports.AmdLoader = amdLoader;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

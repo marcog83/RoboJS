@@ -6,12 +6,16 @@ define(function (require) {
     var rjs = require("robojs");
     var definitions = require("./definitions");
 
+    function loaderFn(id, resolve, reject) {
+        return System.import(id).then(resolve).catch(reject)
+    }
+
     function Application() {
 
         rjs.bootstrap({
             definitions: definitions
-
-        }).promise.catch(function(e){
+            , loader: rjs.Loader(loaderFn)
+        }).promise.catch(function (e) {
             console.log(e);
         })
 
@@ -27,5 +31,5 @@ define(function (require) {
 
     }();
 
-    return  Application();
+    return Application();
 });

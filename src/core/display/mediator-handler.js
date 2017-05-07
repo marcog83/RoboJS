@@ -30,10 +30,11 @@ export default  function (params) {
                 disposable.dispose();
                 disposable.node = null;
                 MEDIATORS_CACHE[i] = null;
+                MEDIATORS_CACHE.splice(i, 1);
             }
         }
 
-        MEDIATORS_CACHE = MEDIATORS_CACHE.filter(m => m);
+        //MEDIATORS_CACHE = MEDIATORS_CACHE.filter(m => m);
         return MEDIATORS_CACHE;
     }
 

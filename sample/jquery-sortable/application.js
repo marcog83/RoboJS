@@ -19,8 +19,7 @@ define(function (require) {
         rjs.bootstrap({
             definitions: {
                 "sortable-item":"./sortable-item"
-            },
-            loader: rjs.AmdLoader()
+            }
         }).promise.catch(function(e){
             console.log(e);
         })

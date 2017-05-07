@@ -1,21 +1,21 @@
 {
   "name": "robojs",
-  "version": "5.0.1",
+  "version": "5.1.0",
 
   "license": "MIT",
 
   "main": [
-    "dist/robojs.es6.min.js"
+    "dist/robojs.min.js"
   ],
   "ignore": [
     "node_modules",
     "bower_components",
     "grunt-tasks",
     "src",
-    "jspm_packages",
+
     ".gitignore",
     ".babelrc",
-    "jspm.config.js",
+
 
     "package.json"
   ],

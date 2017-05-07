@@ -18,8 +18,8 @@ define(function (require) {
          *
          */
         rjs.bootstrap({
-            definitions: definitions,
-            loader: rjs.AmdLoader()
+            definitions: definitions
+
         }).promise.catch(function(e){
             console.log(e);
         })

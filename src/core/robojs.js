@@ -1,5 +1,5 @@
 import Loader from "./net/loader";
-import AmdLoader from "./net/amd-loader";
+
 import EventDispatcher, {makeDispatcher} from "./events/event-dispatcher";
 import RJSEvent from "./events/rjs-event";
 import Signal from "./events/signal";
@@ -28,5 +28,5 @@ export  {
     , makeDispatcher
     , EventDispatcher
     , Loader
-    , AmdLoader
+
 }

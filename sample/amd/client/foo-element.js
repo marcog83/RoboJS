@@ -3,12 +3,12 @@
  */
 define(function (require, exports, module) {
 
-
+    function handler(e) {
+        e.currentTarget.parentElement.removeChild(e.currentTarget);
+        e.stopPropagation();
+    }
     function FooElement(node, dispatcher) {
-        function handler(e) {
-            e.currentTarget.parentElement.removeChild(e.currentTarget);
-            e.stopPropagation();
-        }
+
         node.addEventListener("click", handler);
         return function () {
             node.removeEventListener("click", handler);
