@@ -293,7 +293,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         function emit(value) {
-            var length = slots.length || 0;
+            var length = slots ? slots.length : 0;
             for (var i = 0; i < length; i++) {
                 var _slots$i = slots[i],
                     listener = _slots$i.listener,

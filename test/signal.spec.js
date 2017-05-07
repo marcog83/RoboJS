@@ -112,7 +112,7 @@ describe('Signal', function () {
         signal.connect(listener, scope);
         signal.connect(_ => assert.fail("doveva essere eliminato"), scope);
         let slots = signal.disconnectAll();
-        assert.lengthOf(slots, 0, "");
+        assert.equal(slots, null, "");
         signal.emit({});
 
     });

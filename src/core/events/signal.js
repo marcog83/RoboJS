@@ -36,7 +36,7 @@ export default function Signal() {
 
 
     function emit(value) {
-        const length = slots.length ||0;
+        const length = slots ? slots.length : 0;
         for (let i = 0; i < length; i++) {
             let {listener, scope, once} = slots[i];
             once && disconnect(listener, scope);
@@ -55,9 +55,9 @@ export default function Signal() {
         for (let i = 0; i < slots.length; i++) {
             let slot = slots[i];
             if (slot.listener === listener && slot.scope === scope) {
-                slot.listener=null;
-                slot.scope=null;
-                slots[i]=null;
+                slot.listener = null;
+                slot.scope = null;
+                slots[i] = null;
             } else {
                 filtered.push(slot);
             }
