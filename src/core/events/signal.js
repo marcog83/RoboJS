@@ -3,6 +3,7 @@ export default function Signal() {
     let slots = [];
 
     function registrationPossible(listener, once, scope) {
+
         if (slots.length === 0)return true;
         let existingSlot;
         for (let i = 0; i < slots.length; i++) {
@@ -25,7 +26,7 @@ export default function Signal() {
     }
 
     function registerListener(listener, once, scope) {
-
+        if (!slots) slots = [];
         if (registrationPossible(listener, once, scope)) {
             const newSlot = {listener, scope, once};
             slots = slots.concat([newSlot]);
@@ -35,7 +36,7 @@ export default function Signal() {
 
 
     function emit(value) {
-        const length = slots.length;
+        const length = slots.length ||0;
         for (let i = 0; i < length; i++) {
             let {listener, scope, once} = slots[i];
             once && disconnect(listener, scope);
@@ -54,7 +55,9 @@ export default function Signal() {
         for (let i = 0; i < slots.length; i++) {
             let slot = slots[i];
             if (slot.listener === listener && slot.scope === scope) {
-                //
+                slot.listener=null;
+                slot.scope=null;
+                slots[i]=null;
             } else {
                 filtered.push(slot);
             }
@@ -64,7 +67,7 @@ export default function Signal() {
     }
 
     function disconnectAll() {
-        slots = [];
+        slots = null;
         return slots;
     }
 

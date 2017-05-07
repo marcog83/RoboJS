@@ -29,6 +29,11 @@ export default  root => {
         observer.disconnect();
         onAdded.disconnectAll();
         onRemoved.disconnectAll();
+        observer=null;
+        onAdded=null;
+        onRemoved=null;
+        getAdded=null;
+        getRemoved=null;
     }
 
     return Object.freeze({onAdded, onRemoved, dispose})

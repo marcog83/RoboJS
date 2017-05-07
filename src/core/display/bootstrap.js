@@ -18,13 +18,20 @@ export default (options) => {
     domWatcher.onAdded.connect(getMediators);
     domWatcher.onRemoved.connect(HandleNodesRemoved(handler.destroy));
 
-    let bootstrap = Build(getMediators);
+    let promise = Build(getMediators)(root);
 
     return {
-        promise: bootstrap(root)
+        promise: promise
         , dispose: function () {
             domWatcher.dispose();
             handler.dispose();
+            domWatcher=null;
+            handler=null;
+            getMediators=null;
+            definitions=null;
+            loader=null;
+            root=null;
+            promise=null;
         }
     }
 

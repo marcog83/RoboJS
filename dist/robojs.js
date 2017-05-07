@@ -261,6 +261,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var slots = [];
 
         function registrationPossible(listener, once, scope) {
+
             if (slots.length === 0) return true;
             var existingSlot = void 0;
             for (var i = 0; i < slots.length; i++) {
@@ -283,7 +284,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         function registerListener(listener, once, scope) {
-
+            if (!slots) slots = [];
             if (registrationPossible(listener, once, scope)) {
                 var newSlot = { listener: listener, scope: scope, once: once };
                 slots = slots.concat([newSlot]);
@@ -292,7 +293,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         function emit(value) {
-            var length = slots.length;
+            var length = slots.length || 0;
             for (var i = 0; i < length; i++) {
                 var _slots$i = slots[i],
                     listener = _slots$i.listener,
@@ -317,7 +318,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             for (var i = 0; i < slots.length; i++) {
                 var slot = slots[i];
                 if (slot.listener === listener && slot.scope === scope) {
-                    //
+                    slot.listener = null;
+                    slot.scope = null;
+                    slots[i] = null;
                 } else {
                     filtered.push(slot);
                 }
@@ -327,7 +330,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         function disconnectAll() {
-            slots = [];
+            slots = null;
             return slots;
         }
 
@@ -655,6 +658,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             observer.disconnect();
             onAdded.disconnectAll();
             onRemoved.disconnectAll();
+            observer = null;
+            onAdded = null;
+            onRemoved = null;
+            getAdded = null;
+            getRemoved = null;
         }
 
         return Object.freeze({ onAdded: onAdded, onRemoved: onRemoved, dispose: dispose });
@@ -764,8 +772,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     disposable.node = null;
                 }
             });
-            MEDIATORS_CACHE = [];
+            MEDIATORS_CACHE = null;
             dispatcher.removeAllEventListeners();
+            dispatcher = null;
+            _findMediator = null;
+            definitions = null;
+            getDefinition = null;
         }
 
         function updateCache(disposable) {
@@ -845,13 +857,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         domWatcher.onAdded.connect(getMediators);
         domWatcher.onRemoved.connect(HandleNodesRemoved(handler.destroy));
 
-        var bootstrap = Build(getMediators);
+        var promise = Build(getMediators)(root);
 
         return {
-            promise: bootstrap(root),
+            promise: promise,
             dispose: function dispose() {
                 domWatcher.dispose();
                 handler.dispose();
+                domWatcher = null;
+                handler = null;
+                getMediators = null;
+                definitions = null;
+                loader = null;
+                root = null;
+                promise = null;
             }
         };
     };

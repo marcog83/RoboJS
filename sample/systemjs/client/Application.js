@@ -12,24 +12,24 @@ define(function (require) {
 
     function Application() {
 
-        rjs.bootstrap({
+       var application= rjs.bootstrap({
             definitions: definitions
             , loader: rjs.Loader(loaderFn)
-        }).promise.catch(function (e) {
-            console.log(e);
-        })
-
-
-    }
-
-    !function setHandlers() {
-        document.querySelector(".add-button").addEventListener("click", function handler() {
+        });
+        function handler() {
             var element = document.createElement("div");
             element.innerHTML = "<div data-mediator='foo-element'>foo! <div data-mediator='bar-element'>bar!</div></div>";//.clone();
             document.body.appendChild(element.firstElementChild);
-        });
+        }
+        function dispose() {
+            application.dispose();
+        }
+        document.querySelector(".add-button").addEventListener("click",handler);
+        document.querySelector(".dispose-button").addEventListener("click",dispose );
 
-    }();
+    }
+
+
 
     return Application();
 });

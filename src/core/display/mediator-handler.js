@@ -18,10 +18,10 @@ const GetDefinition = curry( function (definitions, node) {
 
 export default  function (params) {
     //crea un'istanza dell'EventDispatcher se non viene passata
-    const {definitions = {}, dispatcher = makeDispatcher()} = params;
+    let {definitions = {}, dispatcher = makeDispatcher()} = params;
     //inizializza la cache dei mediatori registrati
     let MEDIATORS_CACHE = [];
-    const getDefinition = GetDefinition(definitions);
+    let getDefinition = GetDefinition(definitions);
 
     function destroy(node) {
         for (let i = 0; i < MEDIATORS_CACHE.length; i++) {
@@ -45,8 +45,12 @@ export default  function (params) {
                 disposable.node = null;
             }
         });
-        MEDIATORS_CACHE = [];
+        MEDIATORS_CACHE = null;
         dispatcher.removeAllEventListeners();
+        dispatcher=null;
+        _findMediator=null;
+        definitions=null;
+        getDefinition=null;
     }
 
     function updateCache(disposable) {
