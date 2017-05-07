@@ -4,16 +4,17 @@
   "license": "MIT",
   "main": "dist/robojs.min.js",
   "scripts": {
-    "bundle": "jspm build src/core/robojs dist/robojs.js --format umd --global-name robojs",
+    "babel-it": "babel ./dist/robojs.js --out-file ./dist/robojs.js"
+    ,"bundle": "rollup -c",
     "uglify": "uglifyjs --compress cascade,join_vars,if_return,unused,loops,booleans,evaluate,comparisons,conditionals,drop_debugger,sequences,properties,dead_code --mangle -o dist/robojs.min.js dist/robojs.js",
-    "build": "npm run bundle && npm run uglify"
+    "build": "npm run bundle && npm run babel-it && npm run uglify"
   },
   "devDependencies": {
     "babel": "^6.23.0",
+    "babel-cli": "^6.24.1",
     "babel-core": "^6.24.0",
     "babel-preset-import-export": "^1.0.2",
-    "babel-preset-latest": "^6.24.0"
+    "babel-preset-latest": "^6.24.0",
+    "rollup-plugin-babel": "^2.7.1"
   }
-
 }
-

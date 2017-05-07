@@ -16,7 +16,7 @@ import bootstrap from "./display/bootstrap";
  export makeDispatcher;
  export EventDispatcher;
  export Loader;
- export AmdLoader;
+
  */
 export  {
     bootstrap
