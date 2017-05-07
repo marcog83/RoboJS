@@ -5,7 +5,7 @@
 
 export default {
     entry: 'src/core/robojs.js',
-    format: 'umd',
+    format: 'es',
     moduleName:'robojs',
     dest: 'dist/robojs.js'
 

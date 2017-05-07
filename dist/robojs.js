@@ -1,15 +1,51 @@
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 (function (global, factory) {
-    (typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define(['exports'], factory) : factory(global.robojs = global.robojs || {});
-})(undefined, function (exports) {
+    if (typeof define === "function" && define.amd) {
+        define('robojs', ['exports'], factory);
+    } else if (typeof exports !== "undefined") {
+        factory(exports);
+    } else {
+        var mod = {
+            exports: {}
+        };
+        factory(mod.exports);
+        global.robojs = mod.exports;
+    }
+})(this, function (exports) {
     'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+        };
+    }();
 
     var amdLoader = function amdLoader(id, resolve, reject) {
         require([id], resolve, reject);
@@ -740,13 +776,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     });
 
     var MediatorHandler = function MediatorHandler(params) {
-        //crea un'istanza dell'EventDispatcher se non viene passata
         var _params$definitions = params.definitions,
             definitions = _params$definitions === undefined ? {} : _params$definitions,
             _params$dispatcher = params.dispatcher,
             dispatcher = _params$dispatcher === undefined ? makeDispatcher() : _params$dispatcher;
-        //inizializza la cache dei mediatori registrati
 
+        //inizializza la cache dei mediatori registrati
         var MEDIATORS_CACHE = [];
         var getDefinition = GetDefinition(definitions);
 
@@ -883,6 +918,4 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     exports.makeDispatcher = makeDispatcher;
     exports.EventDispatcher = eventDispatcher;
     exports.Loader = Loader;
-
-    Object.defineProperty(exports, '__esModule', { value: true });
 });
