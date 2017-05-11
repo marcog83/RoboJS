@@ -18,7 +18,7 @@ export default (options) => {
     domWatcher.onAdded.connect(getMediators);
     domWatcher.onRemoved.connect(HandleNodesRemoved(handler.destroy));
 
-    let promise = Build(getMediators)(root);
+    let promise = Build(getMediators,handler.getAllElements)(root);
 
     return {
         promise: promise

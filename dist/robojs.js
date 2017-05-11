@@ -788,7 +788,7 @@
     /**
      * Created by marcogobbi on 01/04/2017.
      */
-    var Build = function Build(getMediators) {
+    var Build = function Build(getMediators, getAllElements) {
         return compose(getMediators, map(getAllElements), function (root) {
             return [root];
         });
@@ -812,7 +812,7 @@
         domWatcher.onAdded.connect(getMediators);
         domWatcher.onRemoved.connect(HandleNodesRemoved(handler.destroy));
 
-        var promise = Build(getMediators)(root);
+        var promise = Build(getMediators, handler.getAllElements)(root);
 
         return {
             promise: promise,

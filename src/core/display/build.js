@@ -3,9 +3,9 @@
  */
 import map from "../../internal/_map";
 import compose from "../../internal/_compose";
-import getAllElements from "./get-all-elements";
 
-export default function (getMediators) {
+
+export default function (getMediators,getAllElements) {
     return compose(
         getMediators,
         map(getAllElements),
