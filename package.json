@@ -1,8 +1,8 @@
 {
   "name": "robojs",
-  "version": "5.1.2",
+  "version": "5.1.3",
   "license": "MIT",
-  "main": "dist/robojs.min.js",
+  "main": "src/core/robojs.js",
   "scripts": {
     "babel-it": "babel ./dist/robojs.js --out-file ./dist/robojs.js",
     "bundle": "rollup -c",
