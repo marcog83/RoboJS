@@ -1,18 +1,52 @@
 /**
  * Created by mgobbi on 11/05/2017.
  */
-import {makeDispatcher} from "robojs";
-import {curryN, identity, find} from "ramda";
-class MediatorClassHandler {
+import curry from "../internal/_curry";
+import {makeDispatcher} from "../core/events/event-dispatcher";
+import find from "../internal/_find";
+const noop = _ => _;
+export default class MediatorClassHandler {
     constructor(params) {
         this.definitions = params.definitions;
         this.dispatcher = params.dispatcher || makeDispatcher();
         this.VIEW_CACHE = [];
-        this.findMediator = curryN(2, (load, node)=> {
+        this.findMediator = curry((load, node) => {
             return load(this.getDefinition(node))
                 .then(this.createView(node))
                 .then(this.updateCache);
-        })
+        });
+        this.hasMediator = node => !find(disposable => disposable.node === node, this.VIEW_CACHE);
+        this.updateCache = (disposable) => {
+            this.VIEW_CACHE.push(disposable);
+            return this.VIEW_CACHE;
+        };
+        this.destroy = (node) => {
+            for (let i = 0; i < this.VIEW_CACHE.length; i++) {
+                let disposable = this.VIEW_CACHE[i];
+                if (disposable && disposable.node === node) {
+                    disposable.dispose();
+                    disposable.node = null;
+                    this.VIEW_CACHE[i] = null;
+                    this.VIEW_CACHE.splice(i, 1);
+                }
+            }
+            return this.VIEW_CACHE;
+        };
+        this.dispose = () => {
+            this.VIEW_CACHE.forEach(disposable => {
+                if (disposable) {
+                    disposable.dispose();
+                    disposable.node = null;
+                }
+            });
+            this.dispatcher.removeAllEventListeners();
+            this.VIEW_CACHE = null;
+            this.dispatcher = null;
+            this.definitions = null;
+
+        }
+
+
     }
 
     getDefinition(node) {
@@ -21,53 +55,18 @@ class MediatorClassHandler {
 
 
     createView(node) {
-        return ViewClass=> {
+        return ViewClass => {
             const mediatorId = this.nextUid();
             node.setAttribute('idview', mediatorId);
             var view = new ViewClass(node, this.dispatcher);
             return {
                 node,
-                dispose: view.dispose || identity
+                dispose: view.dispose || noop
             }
         }
     }
 
-    updateCache(disposable) {
-        this.VIEW_CACHE.push(disposable);
-        return this.VIEW_CACHE;
-    }
 
-    dispose() {
-        this.VIEW_CACHE.forEach(disposable => {
-            if (disposable) {
-                disposable.dispose();
-                disposable.node = null;
-            }
-        });
-        this.dispatcher.removeAllEventListeners();
-        this.VIEW_CACHE = null;
-        this.dispatcher = null;
-        this.definitions = null;
-
-    }
-
-    destroy(node) {
-        for (let i = 0; i < this.VIEW_CACHE.length; i++) {
-            let disposable = this.VIEW_CACHE[i];
-            if (disposable && disposable.node === node) {
-                disposable.dispose();
-                disposable.node = null;
-                this.VIEW_CACHE[i] = null;
-                this.VIEW_CACHE.splice(i, 1);
-            }
-        }
-        return this.VIEW_CACHE;
-    }
-
-
-    hasMediator(node) {
-        return !find(disposable => disposable.node === node, this.VIEW_CACHE);
-    }
     getAllElements(node) {
         var nodes = [].slice.call(node.querySelectorAll("[data-view]"), 0);
         if (!!node.getAttribute("data-view")) {
