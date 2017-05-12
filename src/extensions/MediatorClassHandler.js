@@ -3,7 +3,7 @@
  */
 import {makeDispatcher} from "robojs";
 import {curryN, identity, find} from "ramda";
-class MediatorClassHanlder {
+class MediatorClassHandler {
     constructor(params) {
         this.definitions = params.definitions;
         this.dispatcher = params.dispatcher || makeDispatcher();

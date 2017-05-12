@@ -6,8 +6,8 @@ import pluck from "../../internal/_pluck";
 import compose from "../../internal/_compose";
 import flatten from "../../internal/_flatten";
 import filter from "../../internal/_filter";
-import getAllElements from "./get-all-elements";
-export default function makeChain(prop, emit) {
+
+export default function makeChain(prop,getAllElements, emit) {
     return compose(
         nodes => {
             if (nodes.length > 0) {

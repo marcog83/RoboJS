@@ -11,7 +11,7 @@ import Build from "./build";
 export default (options) => {
     let {definitions, loader = Loader(), root = document.body} = options;
     let handler = options.mediatorHandler || MediatorHandler({definitions});
-    let domWatcher = options.domWatcher || DomWatcher(root);
+    let domWatcher = options.domWatcher || DomWatcher(root,handler.getAllElements);
     //
     let getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);
 

@@ -2,12 +2,12 @@ import Signal from "../events/signal";
 
 
 import makeChain from "./make-chain";
-export default  root => {
+export default  (root,getAllElements) => {
     let onAdded = Signal();
     let onRemoved = Signal();
 
-    let getAdded = makeChain("addedNodes", onAdded.emit);
-    let getRemoved = makeChain("removedNodes", onRemoved.emit);
+    let getAdded = makeChain("addedNodes",getAllElements, onAdded.emit);
+    let getRemoved = makeChain("removedNodes",getAllElements, onRemoved.emit);
 
     let handleMutations = mutations => {
 

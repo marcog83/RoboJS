@@ -554,26 +554,7 @@
     /**
      * Created by marcogobbi on 01/04/2017.
      */
-    //import map from "../../internal/_map"
-    //function identity(x){return x;}
-    var getAllElements = function getAllElements(node) {
-        //  var hrstart = process.hrtime();
-
-
-        //  var nodes=map(identity,node.querySelectorAll("[data-mediator]"));
-        var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
-        if (!!node.getAttribute("data-mediator")) {
-            nodes.unshift(node);
-        }
-        // var hrend = process.hrtime(hrstart);
-        //  console.info("Execution time (hr): %ds %dms", hrend[0], hrend[1]/1000000);
-        return nodes;
-    };
-
-    /**
-     * Created by marcogobbi on 01/04/2017.
-     */
-    function makeChain(prop, emit) {
+    function makeChain(prop, getAllElements, emit) {
         return compose(function (nodes) {
             if (nodes.length > 0) {
                 return emit(nodes);
@@ -588,12 +569,12 @@
         );
     }
 
-    var DomWatcher = function DomWatcher(root) {
+    var DomWatcher = function DomWatcher(root, getAllElements) {
         var onAdded = Signal();
         var onRemoved = Signal();
 
-        var getAdded = makeChain("addedNodes", onAdded.emit);
-        var getRemoved = makeChain("removedNodes", onRemoved.emit);
+        var getAdded = makeChain("addedNodes", getAllElements, onAdded.emit);
+        var getRemoved = makeChain("removedNodes", getAllElements, onRemoved.emit);
 
         var handleMutations = function handleMutations(mutations) {
 
@@ -676,6 +657,25 @@
         return !!find(function (disposable) {
             return disposable.node === node;
         }, MEDIATORS_CACHE);
+    };
+
+    /**
+     * Created by marcogobbi on 01/04/2017.
+     */
+    //import map from "../../internal/_map"
+    //function identity(x){return x;}
+    var getAllElements = function getAllElements(node) {
+        //  var hrstart = process.hrtime();
+
+
+        //  var nodes=map(identity,node.querySelectorAll("[data-mediator]"));
+        var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
+        if (!!node.getAttribute("data-mediator")) {
+            nodes.unshift(node);
+        }
+        // var hrend = process.hrtime(hrstart);
+        //  console.info("Execution time (hr): %ds %dms", hrend[0], hrend[1]/1000000);
+        return nodes;
     };
 
     /**
@@ -805,7 +805,7 @@
             root = _options$root === undefined ? document.body : _options$root;
 
         var handler = options.mediatorHandler || MediatorHandler({ definitions: definitions });
-        var domWatcher = options.domWatcher || DomWatcher(root);
+        var domWatcher = options.domWatcher || DomWatcher(root, handler.getAllElements);
         //
         var getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);
 
