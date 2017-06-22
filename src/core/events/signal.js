@@ -36,8 +36,8 @@ export default function Signal() {
 
 
     function emit(value) {
-        const length = slots ? slots.length : 0;
-        for (let i = 0; i < length; i++) {
+        if (!slots) slots = [];
+        for (let i = 0; i < slots.length; i++) {
             let {listener, scope, once} = slots[i];
             once && disconnect(listener, scope);
             listener.call(scope, value);

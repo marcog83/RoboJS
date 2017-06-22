@@ -249,8 +249,8 @@
         }
 
         function emit(value) {
-            var length = slots ? slots.length : 0;
-            for (var i = 0; i < length; i++) {
+            if (!slots) slots = [];
+            for (var i = 0; i < slots.length; i++) {
                 var _slots$i = slots[i],
                     listener = _slots$i.listener,
                     scope = _slots$i.scope,

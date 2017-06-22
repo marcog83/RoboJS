@@ -1,6 +1,6 @@
 {
   "name": "robojs",
-  "version": "5.1.4",
+  "version": "5.1.5",
   "license": "MIT",
   "main": "src/core/robojs.js",
   "scripts": {
@@ -16,6 +16,8 @@
     "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
     "babel-preset-import-export": "^1.0.2",
     "babel-preset-latest": "^6.24.0",
-    "rollup": "^0.41.6"
+    "rollup": "^0.41.6",
+    "uglify-js": "^3.0.19"
+
   }
 }
