@@ -12,11 +12,8 @@
     "bower_components",
     "grunt-tasks",
     "src",
-
     ".gitignore",
     ".babelrc",
-
-
     "package.json"
   ],
   "dependencies": {}
