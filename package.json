@@ -7,7 +7,10 @@
     "babel-it": "babel ./dist/robojs.js --out-file ./dist/robojs.js",
     "bundle": "rollup -c",
     "uglify": "uglifyjs --compress cascade,join_vars,if_return,unused,loops,booleans,evaluate,comparisons,conditionals,drop_debugger,sequences,properties,dead_code --mangle -o dist/robojs.min.js dist/robojs.js",
-    "build": "npm run bundle && npm run babel-it && npm run uglify"
+    "build": "npm run bundle && npm run babel-it && npm run uglify",
+    "release:major": "shelljs-release major",
+    "release:minor": "shelljs-release minor",
+    "release:patch": "shelljs-release patch"
   },
   "devDependencies": {
     "babel": "^6.23.0",
@@ -17,7 +20,7 @@
     "babel-preset-import-export": "^1.0.2",
     "babel-preset-latest": "^6.24.0",
     "rollup": "^0.41.6",
+    "shelljs-release": "^0.2.0",
     "uglify-js": "^3.0.19"
-
   }
 }

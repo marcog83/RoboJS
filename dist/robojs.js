@@ -214,80 +214,53 @@
 
     function Signal() {
 
-        var slots = [];
+        var listenerBoxes = [];
 
-        function registrationPossible(listener, once, scope) {
+        function registerListener(listener, scope, once) {
 
-            if (slots.length === 0) return true;
-            var existingSlot = void 0;
-            for (var i = 0; i < slots.length; i++) {
-                var slot = slots[i];
-                if (slot.listener === listener && slot.scope === scope) {
-                    existingSlot = slot;
-                    break;
-                }
-            }
-
-            if (!existingSlot) return true;
-
-            if (existingSlot.once !== once) {
-                // If the listener was previously added, definitely don't add it again.
-                // But throw an exception if their once values differ.
-                throw new Error('You cannot addOnce() then add() the same listener without removing the relationship first.');
-            }
-
-            return false; // Listener was already registered.
-        }
-
-        function registerListener(listener, once, scope) {
-            if (!slots) slots = [];
-            if (registrationPossible(listener, once, scope)) {
-                var newSlot = { listener: listener, scope: scope, once: once };
-                slots = slots.concat([newSlot]);
-            }
-            return slots;
+            listenerBoxes.filter(function (box) {
+                return box.listener === listener && box.scope === scope && function (box) {
+                    return box.once && !once || once && !box.once;
+                };
+            }).forEach(function (_) {
+                throw new Error('You cannot addOnce() then try to add() the same listener without removing the relationship first.');
+            });
+            listenerBoxes = listenerBoxes.concat([{ listener: listener, scope: scope, once: once }]);
         }
 
         function emit(value) {
-            if (!slots) slots = [];
-            for (var i = 0; i < slots.length; i++) {
-                var _slots$i = slots[i],
-                    listener = _slots$i.listener,
-                    scope = _slots$i.scope,
-                    once = _slots$i.once;
+            listenerBoxes.forEach(function (_ref) {
+                var listener = _ref.listener,
+                    scope = _ref.scope,
+                    once = _ref.once;
 
                 once && disconnect(listener, scope);
                 listener.call(scope, value);
-            }
+            });
         }
 
-        var connect = function connect(listener, scope) {
-            return registerListener(listener, false, scope);
+        var connect = function connect(slot, scope) {
+            return registerListener(slot, scope, false);
         };
 
-        var connectOnce = function connectOnce(listener, scope) {
-            return registerListener(listener, true, scope);
+        var connectOnce = function connectOnce(slot, scope) {
+            return registerListener(slot, scope, true);
         };
 
-        function disconnect(listener, scope) {
-            var filtered = [];
-            for (var i = 0; i < slots.length; i++) {
-                var slot = slots[i];
-                if (slot.listener === listener && slot.scope === scope) {
-                    slot.listener = null;
-                    slot.scope = null;
-                    slots[i] = null;
-                } else {
-                    filtered.push(slot);
-                }
-            }
-            slots = filtered;
-            return slots;
+        function disconnect(slot, _scope) {
+            listenerBoxes = listenerBoxes.filter(function (_ref2) {
+                var listener = _ref2.listener,
+                    scope = _ref2.scope;
+                return listener !== slot && scope !== _scope;
+            });
         }
 
         function disconnectAll() {
-            slots = null;
-            return slots;
+            listenerBoxes.forEach(function (_ref3) {
+                var listener = _ref3.listener,
+                    scope = _ref3.scope;
+                return disconnect(listener, scope);
+            });
         }
 
         return Object.freeze({
