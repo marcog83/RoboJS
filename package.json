@@ -1,0 +1,6 @@
+{
+  "name": "robojs demo",
+  "dependencies": {
+    "robojs": "^5.1.6"
+  }
+}
