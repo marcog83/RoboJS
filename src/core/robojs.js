@@ -1,32 +1,11 @@
-import Loader from "./net/loader";
+export {default as Loader} from "./net/loader";
 
-import EventDispatcher, {makeDispatcher} from "./events/event-dispatcher";
-import RJSEvent from "./events/rjs-event";
-import Signal from "./events/signal";
-import DomWatcher from "./display/dom-watcher";
+export {default as EventDispatcher, makeDispatcher}  from "./events/event-dispatcher";
+export {default as RJSEvent}  from "./events/rjs-event";
+export {default as Signal}  from "./events/signal";
+export {default as DomWatcher}  from "./display/dom-watcher";
 
-import MediatorHandler from "./display/mediator-handler";
-import bootstrap from "./display/bootstrap";
-/*
- export bootstrap;
- export MediatorHandler;
- export DomWatcher;
- export Signal;
- export RJSEvent;
- export makeDispatcher;
- export EventDispatcher;
- export Loader;
+export {default as MediatorHandler}  from "./display/mediator-handler";
+export {default as bootstrap}  from "./display/bootstrap";
+export {default as CustomElementHandler}  from "../extensions/custom-element/custom-element-handler";
 
- */
-export  {
-    bootstrap
-    , MediatorHandler
-
-    , DomWatcher
-    , Signal
-    , RJSEvent
-    , makeDispatcher
-    , EventDispatcher
-    , Loader
-
-}

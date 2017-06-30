@@ -777,7 +777,8 @@
             _options$root = options.root,
             root = _options$root === undefined ? document.body : _options$root;
 
-        var handler = options.mediatorHandler || MediatorHandler({ definitions: definitions });
+        var HandlerConstructor = options.mediatorHandler || MediatorHandler;
+        var handler = HandlerConstructor({ definitions: definitions });
         var domWatcher = options.domWatcher || DomWatcher(root, handler.getAllElements);
         //
         var getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);
@@ -803,12 +804,90 @@
         };
     };
 
-    exports.bootstrap = bootstrap;
-    exports.MediatorHandler = MediatorHandler;
-    exports.DomWatcher = DomWatcher;
-    exports.Signal = Signal;
-    exports.RJSEvent = RJSEvent;
-    exports.makeDispatcher = makeDispatcher;
-    exports.EventDispatcher = eventDispatcher;
+    /**
+     * Created by marcogobbi on 07/05/2017.
+     */
+    var KE = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "h1 ", "h2", "h3", "h4", "h5", "h6", "head", "header", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "main", "map", "mark", "menu", "menuitem", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
+    var query = KE.map(function (e) {
+        return ":not(" + e + ")";
+    }).reduce(function (prev, curr) {
+        return prev + curr;
+    }, "*");
+
+    var getAllElements$1 = function getAllElements$1(node) {
+        return [node].concat([].slice.call(node.querySelectorAll(query), 0));
+    };
+
+    /**
+     * Created by marcogobbi on 07/05/2017.
+     */
+
+    function create$1(node, dispatcher) {
+        return function (Mediator) {
+            var customProto = Mediator(dispatcher);
+            var proto = Object.assign(Object.create(HTMLElement.prototype), customProto);
+            document.registerElement(node.tagName.toLowerCase(), { prototype: proto });
+            return true;
+        };
+    }
+
+    /**
+     * Created by marcogobbi on 07/05/2017.
+     */
+    var GetDefinition$1 = curry(function (definitions, node) {
+        return definitions[node];
+    });
+
+    var customElementHandler = function customElementHandler(params) {
+        var _params$definitions2 = params.definitions,
+            definitions = _params$definitions2 === undefined ? {} : _params$definitions2,
+            _params$dispatcher2 = params.dispatcher,
+            dispatcher = _params$dispatcher2 === undefined ? makeDispatcher() : _params$dispatcher2;
+
+
+        var REGISTERED_ELEMENTS = {};
+
+        function updateCache(id) {
+            REGISTERED_ELEMENTS[id] = true;
+            return REGISTERED_ELEMENTS;
+        }
+
+        function inCache(elements, id) {
+            return !elements[id];
+        }
+
+        var getDefinition = GetDefinition$1(definitions);
+        var _findMediator = FindMediator(getDefinition, create$1, updateCache);
+
+        function isKnownElement(id) {
+            return !(document.createElement(id) instanceof HTMLUnknownElement);
+        }
+
+        function hasMediator(node) {
+            var id = node.tagName.toLowerCase();
+            return !!getDefinition(id) && !inCache(REGISTERED_ELEMENTS, id) && !isKnownElement(id);
+        }
+
+        var noop = function noop(_) {
+            return _;
+        };
+        return Object.freeze({
+            dispose: noop,
+            destroy: noop,
+            findMediator: _findMediator(dispatcher),
+            hasMediator: hasMediator,
+            getAllElements: getAllElements$1
+
+        });
+    };
+
     exports.Loader = Loader;
+    exports.EventDispatcher = eventDispatcher;
+    exports.makeDispatcher = makeDispatcher;
+    exports.RJSEvent = RJSEvent;
+    exports.Signal = Signal;
+    exports.DomWatcher = DomWatcher;
+    exports.MediatorHandler = MediatorHandler;
+    exports.bootstrap = bootstrap;
+    exports.CustomElementHandler = customElementHandler;
 });

@@ -10,8 +10,8 @@ define(function (require) {
 
         rjs.bootstrap({
             definitions: definitions,
-            loader: rjs.AMDScriptLoader(),
-            mediatorHandler:rjs.CustomElementHandler()
+            loader: rjs.Loader(),
+            mediatorHandler:rjs.CustomElementHandler
         }).promise.catch(function (e) {
             console.log(e);
         })

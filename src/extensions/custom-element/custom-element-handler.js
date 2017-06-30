@@ -7,7 +7,7 @@ import getAllElements from "./get-all-elements";
 import create from "./create";
 import FindMediator from "../../core/display/find-mediator";
 const GetDefinition = curry(function (definitions, node) {
-    return definitions[node.tagName.toLowerCase()];
+    return definitions[node];
 });
 
 export default params => {
@@ -28,9 +28,13 @@ export default params => {
     let getDefinition = GetDefinition(definitions);
     let _findMediator = FindMediator(getDefinition, create, updateCache);
 
+    function isKnownElement(id) {
+        return !(document.createElement(id) instanceof HTMLUnknownElement);
+    }
+
     function hasMediator(node) {
         let id = node.tagName.toLowerCase();
-        return !!getDefinition(id) && !inCache(REGISTERED_ELEMENTS, id)
+        return !!getDefinition(id) && !inCache(REGISTERED_ELEMENTS, id) && !isKnownElement(id);
     }
 
     let noop = _ => _;
