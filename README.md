@@ -1,4 +1,4 @@
-#### 2017-04-01 ... v5.0.0 doesn't support custom element, because of big refactor.
+
 RoboJS is a library that aims to dynamically load JS modules depending on how the DOM is composed.
 Add a node to the DOM and a JS will be loaded!
 Remove a node and the JS will be disposed!!
@@ -13,6 +13,7 @@ A quick demo can be found [HERE](http://marcog83.github.io/RoboJS/). It simulate
 # Installation
 ```javascript
 bower install robojs
+npm install robojs
 ```
 
 
