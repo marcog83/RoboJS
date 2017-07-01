@@ -777,8 +777,8 @@
             _options$root = options.root,
             root = _options$root === undefined ? document.body : _options$root;
 
-        var HandlerConstructor = options.mediatorHandler || MediatorHandler;
-        var handler = HandlerConstructor({ definitions: definitions });
+
+        var handler = options.handler || MediatorHandler({ definitions: definitions });
         var domWatcher = options.domWatcher || DomWatcher(root, handler.getAllElements);
         //
         var getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);
@@ -822,22 +822,31 @@
      * Created by marcogobbi on 07/05/2017.
      */
 
-    function create$1(node, dispatcher) {
-        return function (Mediator) {
-            var customProto = Mediator(dispatcher);
-            var proto = Object.assign(Object.create(HTMLElement.prototype), customProto);
-            document.registerElement(node.tagName.toLowerCase(), { prototype: proto });
-            return true;
+    var getCreate = function getCreate(inCache, updateCache) {
+        return function create(node, dispatcher) {
+            return function (Mediator) {
+                var tagName = "";
+                if (!inCache(node.tagName.toLowerCase())) {
+                    tagName = node.tagName.toLowerCase();
+                    var customProto = Mediator(dispatcher);
+                    var proto = Object.assign(Object.create(HTMLElement.prototype), customProto);
+                    document.registerElement(tagName, { prototype: proto });
+                    updateCache(tagName);
+                }
+                return tagName;
+            };
         };
-    }
+    };
 
     /**
      * Created by marcogobbi on 07/05/2017.
      */
     var GetDefinition$1 = curry(function (definitions, node) {
-        return definitions[node];
+        return definitions[node.tagName.toLowerCase()];
     });
-
+    var noop$1 = function noop$1(_) {
+        return _;
+    };
     var customElementHandler = function customElementHandler(params) {
         var _params$definitions2 = params.definitions,
             definitions = _params$definitions2 === undefined ? {} : _params$definitions2,
@@ -852,28 +861,21 @@
             return REGISTERED_ELEMENTS;
         }
 
-        function inCache(elements, id) {
-            return !elements[id];
-        }
+        var inCache = curry(function (elements, id) {
+            return !!elements[id];
+        });
 
         var getDefinition = GetDefinition$1(definitions);
-        var _findMediator = FindMediator(getDefinition, create$1, updateCache);
-
-        function isKnownElement(id) {
-            return !(document.createElement(id) instanceof HTMLUnknownElement);
-        }
+        var _findMediator = FindMediator(getDefinition, getCreate(inCache(REGISTERED_ELEMENTS), updateCache), noop$1);
 
         function hasMediator(node) {
             var id = node.tagName.toLowerCase();
-            return !!getDefinition(id) && !inCache(REGISTERED_ELEMENTS, id) && !isKnownElement(id);
+            return !!getDefinition(node) && !inCache(REGISTERED_ELEMENTS, id);
         }
 
-        var noop = function noop(_) {
-            return _;
-        };
         return Object.freeze({
-            dispose: noop,
-            destroy: noop,
+            dispose: noop$1,
+            destroy: noop$1,
             findMediator: _findMediator(dispatcher),
             hasMediator: hasMediator,
             getAllElements: getAllElements$1

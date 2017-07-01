@@ -2,10 +2,10 @@
  * Created by mgobbi on 03/02/2016.
  */
 define(function () {
-    function Module() {
+    function Module(dispatcher) {
         return {
             createdCallback: function () {
-                this.dispatcher.addEventListener("create-element", this.handleElementAdded.bind(this));
+                dispatcher.addEventListener("create-element", this.handleElementAdded.bind(this));
 
             },
             handleElementAdded: function (e) {

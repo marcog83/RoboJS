@@ -13,9 +13,8 @@
     "release:patch": "shelljs-release patch"
   },
   "devDependencies": {
-    "babel": "^6.23.0",
     "babel-cli": "^6.24.1",
-    "babel-core": "^6.24.0",
+    "babel-core": "^6.25.0",
     "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
     "babel-preset-import-export": "^1.0.2",
     "babel-preset-latest": "^6.24.0",

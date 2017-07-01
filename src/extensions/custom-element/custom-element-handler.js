@@ -4,12 +4,12 @@
 import {makeDispatcher} from "../../core/events/event-dispatcher";
 import curry from "../../internal/_curry";
 import getAllElements from "./get-all-elements";
-import create from "./create";
+import getCreate from "./create";
 import FindMediator from "../../core/display/find-mediator";
 const GetDefinition = curry(function (definitions, node) {
-    return definitions[node];
+    return definitions[node.tagName.toLowerCase()];
 });
-
+let noop = _ => _;
 export default params => {
     //crea un'istanza dell'EventDispatcher se non viene passata
     let {definitions = {}, dispatcher = makeDispatcher()} = params;
@@ -21,23 +21,20 @@ export default params => {
         return REGISTERED_ELEMENTS;
     }
 
-    function inCache(elements, id) {
-        return !elements[id]
-    }
+    var inCache = curry(function (elements, id) {
+        return !!elements[id]
+    });
 
     let getDefinition = GetDefinition(definitions);
-    let _findMediator = FindMediator(getDefinition, create, updateCache);
+    let _findMediator = FindMediator(getDefinition, getCreate(inCache(REGISTERED_ELEMENTS), updateCache), noop);
 
-    function isKnownElement(id) {
-        return !(document.createElement(id) instanceof HTMLUnknownElement);
-    }
 
     function hasMediator(node) {
         let id = node.tagName.toLowerCase();
-        return !!getDefinition(id) && !inCache(REGISTERED_ELEMENTS, id) && !isKnownElement(id);
+        return !!getDefinition(node) && !inCache(REGISTERED_ELEMENTS, id);
     }
 
-    let noop = _ => _;
+
     return Object.freeze({
         dispose: noop,
         destroy: noop,

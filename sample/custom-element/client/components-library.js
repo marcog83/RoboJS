@@ -5,7 +5,7 @@
 define(function (require, exports, module) {
 
 
-    function Module() {
+    function Module(dispatcher) {
         return {
             createdCallback: function () {
                 var xhr = new XMLHttpRequest();

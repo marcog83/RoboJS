@@ -3,7 +3,7 @@
  */
 define(function (require) {
     var rjs=require("robojs");
-    function Module() {
+    function Module(dispatcher) {
         return {
             createdCallback: function () {
                 this.counter = document.createElement("my-counter");
@@ -11,7 +11,7 @@ define(function (require) {
 
 
                 this.addEventListener("click", function () {
-                    this.dispatcher.dispatchEvent(new rjs.RJSEvent("create-element", this.id));
+                    dispatcher.dispatchEvent(new rjs.RJSEvent("create-element", this.id));
                 }.bind(this));
 
             },

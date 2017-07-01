@@ -10,8 +10,8 @@ import HandleNodesRemoved from "./handle-nodes-removed";
 import Build from "./build";
 export default (options) => {
     let {definitions, loader = Loader(), root = document.body} = options;
-    const HandlerConstructor = options.mediatorHandler || MediatorHandler;
-    let handler = HandlerConstructor({definitions});
+
+    let handler = options.handler || MediatorHandler({definitions});
     let domWatcher = options.domWatcher || DomWatcher(root, handler.getAllElements);
     //
     let getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);

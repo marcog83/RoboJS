@@ -18,7 +18,7 @@ define(function (require) {
         var robojs = rjs.bootstrap({
 
             loader: rjs.AmdLoader()
-            , mediatorHandler: rjs.MediatorHandler({definitions:definitions,dispatcher: componentDispatcher})
+            , handler: rjs.MediatorHandler({definitions:definitions,dispatcher: componentDispatcher})
             , root: node
         });
         componentDispatcher.addEventListener("dispose-component", function () {
