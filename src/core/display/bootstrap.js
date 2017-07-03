@@ -1,6 +1,7 @@
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
+
 import DomWatcher from "./dom-watcher";
 import  Loader from "../net/loader";
 import MediatorHandler from "./mediator-handler";
@@ -14,6 +15,8 @@ export default (options) => {
     let handler = options.handler || MediatorHandler({definitions});
     let domWatcher = options.domWatcher || DomWatcher(root, handler.getAllElements);
     //
+
+
     let getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);
 
     domWatcher.onAdded.connect(getMediators);

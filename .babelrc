@@ -1,5 +1,17 @@
 {
-  "presets": ["latest","import-export"]
-  ,"plugins": ["transform-es2015-modules-umd"]
-  , "moduleId": "robojs"
+  "presets": [
+    "flow",
+    [
+      "env",
+      {
+        "useBuiltIns": true,
+        "modules": false,
+        "targets": {
+          "browsers": [
+            "last 2 versions"
+          ]
+        }
+      }
+    ]
+  ]
 }

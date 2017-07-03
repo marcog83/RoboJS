@@ -1,6 +1,7 @@
 /**
  * Created by marcogobbi on 01/07/2017.
  */
+// @flow
 export interface Signal {
     connect(listener: (data?: any) => void): void
     connectOnce(listener: (data?: any) => void): void
@@ -20,7 +21,7 @@ export type Handler_getAllElements = (node: HTMLElement) => Array<HTMLElement>
 export interface Handler {
     dispose(): void
     destroy(node: HTMLElement): void
-    findMediator(load: Loader_load, node): Array<Promise<Function>>,
+    findMediator(load: Loader_load, node: HTMLElement): Promise<Function>,
     hasMediator(node: HTMLElement): boolean
     getAllElements: Handler_getAllElements
 }

@@ -1,27 +1,9 @@
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 (function (global, factory) {
-    if (typeof define === "function" && define.amd) {
-        define('robojs', ['exports'], factory);
-    } else if (typeof exports !== "undefined") {
-        factory(exports);
-    } else {
-        var mod = {
-            exports: {}
-        };
-        factory(mod.exports);
-        global.robojs = mod.exports;
-    }
+    (typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define(['exports'], factory) : factory(global.robojs = global.robojs || {});
 })(this, function (exports) {
     'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-
-    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-        return typeof obj;
-    } : function (obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
 
     var amdLoader = function amdLoader(id, resolve, reject) {
         require([id], resolve, reject);
@@ -669,12 +651,13 @@
     });
 
     var MediatorHandler = function MediatorHandler(params) {
+        //crea un'istanza dell'EventDispatcher se non viene passata
         var _params$definitions = params.definitions,
             definitions = _params$definitions === undefined ? {} : _params$definitions,
             _params$dispatcher = params.dispatcher,
             dispatcher = _params$dispatcher === undefined ? makeDispatcher() : _params$dispatcher;
-
         //inizializza la cache dei mediatori registrati
+
         var MEDIATORS_CACHE = [];
         var getDefinition = GetDefinition(definitions);
 
@@ -770,6 +753,7 @@
     /**
      * Created by marco.gobbi on 21/01/2015.
      */
+
     var bootstrap = function bootstrap(options) {
         var definitions = options.definitions,
             _options$loader = options.loader,
@@ -781,6 +765,8 @@
         var handler = options.handler || MediatorHandler({ definitions: definitions });
         var domWatcher = options.domWatcher || DomWatcher(root, handler.getAllElements);
         //
+
+
         var getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);
 
         domWatcher.onAdded.connect(getMediators);
@@ -848,6 +834,7 @@
         return _;
     };
     var customElementHandler = function customElementHandler(params) {
+        //crea un'istanza dell'EventDispatcher se non viene passata
         var _params$definitions2 = params.definitions,
             definitions = _params$definitions2 === undefined ? {} : _params$definitions2,
             _params$dispatcher2 = params.dispatcher,
@@ -892,4 +879,6 @@
     exports.MediatorHandler = MediatorHandler;
     exports.bootstrap = bootstrap;
     exports.CustomElementHandler = customElementHandler;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
 });

@@ -11,6 +11,7 @@
     "bundle": "rollup -c",
     "uglify": "uglifyjs --compress cascade,join_vars,if_return,unused,loops,booleans,evaluate,comparisons,conditionals,drop_debugger,sequences,properties,dead_code --mangle -o dist/robojs.min.js dist/robojs.js",
     "build": "npm run bundle && npm run babel-it && npm run uglify",
+    "flow": "flow check ./src/type-definitions",
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch"
@@ -18,9 +19,9 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
-    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
-    "babel-preset-import-export": "^1.0.2",
-    "babel-preset-latest": "^6.24.0",
+    "babel-preset-env": "^1.5.2",
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.49.1",
     "rollup": "^0.41.6",
     "shelljs-release": "^0.2.0",
     "uglify-js": "^3.0.19"

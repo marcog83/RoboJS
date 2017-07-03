@@ -1,6 +1,7 @@
 /**
  * Created by marcogobbi on 01/07/2017.
  */
+// @flow
 import {
     Bootstrap,
     BootstrapConfig,
