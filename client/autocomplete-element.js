@@ -4,15 +4,15 @@
 
 define(function (require, exports, module) {
 
-
-	function FooElement() {
+	var rjs=require("robojs");
+	function FooElement(dispatcher) {
 		return {
 			createdCallback: function () {
 				var input=document.createElement("input");
 				this.appendChild(input);
 				var autocomplete = new google.maps.places.Autocomplete(input);
 				google.maps.event.addListener(autocomplete, "place_changed", function (e) {
-					this.dispatcher.dispatchEvent("place-changed",autocomplete.getPlace().geometry.location);
+					dispatcher.dispatchEvent(new rjs.RJSEvent("place-changed",autocomplete.getPlace().geometry.location));
 				}.bind(this));
 			},
 

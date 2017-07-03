@@ -4,8 +4,8 @@
 requirejs.config({
     paths: {
 
-        robojs: "./robojs.es6"
+        robojs: "./robojs"
 
     }
 });
-require(["./client/Application"], function () {});
+require(["./client/application"], function (app) {app()});
