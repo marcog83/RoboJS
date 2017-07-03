@@ -1,6 +1,5 @@
 {
   "presets": [
-    "flow",
     [
       "env",
       {
@@ -8,7 +7,8 @@
         "modules": false,
         "targets": {
           "browsers": [
-            "last 2 versions"
+            "last 2 versions",
+            "safari >8"
           ]
         }
       }
