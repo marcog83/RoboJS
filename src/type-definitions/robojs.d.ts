@@ -13,11 +13,11 @@ import {
 } from "./types.d";
 export {EventDispatcher, RJSEvent, Signal} from "./types.d";
 
-export function Loader(loaderfn?: (id: any, resolve, reject) => Promise<any>): LoaderDef;
+export type  Loader = (loaderfn?: (id: any, resolve, reject) => Promise<any>) => LoaderDef;
 
-export function makeDispatcher(): EventDispatcher;
+export type  makeDispatcher = () => EventDispatcher;
 
-export function DomWatcher(root: HTMLElement, getAllElements: Handler_getAllElements): Watcher;
-export function MediatorHandler(definitions: any, dispatcher?: EventDispatcher): Handler;
-export function bootstrap(config: BootstrapConfig): Bootstrap;
-export function CustomElementHandler(definitions: any, dispatcher?: EventDispatcher): Handler;
+export type  DomWatcher = (root: HTMLElement, getAllElements: Handler_getAllElements) => Watcher;
+export type  MediatorHandler = (definitions: any, dispatcher?: EventDispatcher) => Handler;
+export type  bootstrap = (config: BootstrapConfig) => Bootstrap;
+export type  CustomElementHandler = (definitions: any, dispatcher?: EventDispatcher) => Handler;
