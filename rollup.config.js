@@ -4,9 +4,13 @@
 
 
 export default {
-    entry: 'src/core/robojs.js',
-    format: 'umd',
+    input: 'src/core/robojs.js',
+    output: {
+        format: 'umd',
+        file: 'dist/robojs.js'
+    },
+
     exports: 'named',
-    moduleName:'robojs',
-    dest: 'dist/robojs.js'
+    name: 'robojs'
+
 };
