@@ -3,8 +3,8 @@ import Signal from "../events/signal";
 
 import makeChain from "./make-chain";
 export default  (root,getAllElements) => {
-    let onAdded = Signal();
-    let onRemoved = Signal();
+    let onAdded =new  Signal();
+    let onRemoved = new Signal();
 
     let getAdded = makeChain("addedNodes",getAllElements, onAdded.emit);
     let getRemoved = makeChain("removedNodes",getAllElements, onRemoved.emit);

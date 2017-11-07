@@ -21,6 +21,7 @@
     "babel-core": "^6.25.0",
     "babel-preset-env": "^1.5.2",
     "babel-preset-flow": "^6.23.0",
+    "babel-preset-import-export": "^1.0.2",
     "flow-bin": "^0.58.0",
     "rollup": "^0.50.0",
     "shelljs-release": "^0.2.0",

@@ -1,5 +1,17 @@
 {
-  "presets": ["latest","import-export"]
-
-  , "moduleId": "robojs"
+  "presets": [
+    [
+      "env",
+      {
+        "useBuiltIns": true,
+        "modules": false,
+        "targets": {
+          "browsers": [
+            "last 2 versions",
+            "safari >8"
+          ]
+        }
+      }
+    ],"import-export"
+  ]
 }

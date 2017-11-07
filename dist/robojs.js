@@ -1,8 +1,14 @@
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 (function (global, factory) {
     (typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define(['exports'], factory) : factory(global.robojs = {});
-})(this, function (exports) {
+})(undefined, function (exports) {
     'use strict';
 
     var amdLoader = function amdLoader(id, resolve, reject) {
@@ -194,70 +200,180 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
     };
 
-    function Signal() {
+    /*
+        <h2>Signal</h2>
+        <p>Signals and slots are used for communication between objects. The signals and slots mechanism is a central feature of Qt </p>
+        <p>A <code>signal</code> is emitted when a particular event occurs.
+        A <code>slot</code> is a function that is called in response to a particular <code>signal</code>.
+        You can connect as many signals as you want to a single slot, and a signal can be connected to as many slots as you need.
+    
+        </p>
+    
+    
+         */
 
-        var listenerBoxes = [];
+    var Signal = function () {
+        function Signal() {
+            _classCallCheck(this, Signal);
 
-        function registerListener(listener, scope, once) {
+            this.listenerBoxes = [];
 
-            listenerBoxes.filter(function (box) {
-                return box.listener === listener && box.scope === scope && function (box) {
-                    return box.once && !once || once && !box.once;
-                };
-            }).forEach(function (_) {
-                throw new Error('You cannot addOnce() then try to add() the same listener without removing the relationship first.');
-            });
-            listenerBoxes = listenerBoxes.concat([{ listener: listener, scope: scope, once: once }]);
+            this._valueClasses = null;
+
+            this.listenersNeedCloning = false;
+
+            this.setValueClasses(arguments);
         }
 
-        function emit(value) {
-            listenerBoxes.forEach(function (_ref) {
-                var listener = _ref.listener,
-                    scope = _ref.scope,
-                    once = _ref.once;
+        _createClass(Signal, [{
+            key: 'getNumListeners',
+            value: function getNumListeners() {
+                return this.listenerBoxes.length;
+            }
+        }, {
+            key: 'getValueClasses',
+            value: function getValueClasses() {
+                return this._valueClasses;
+            }
 
-                once && disconnect(listener, scope);
-                listener.call(scope, value);
-            });
-        }
+            /**
+             <h3>connect</h3>
+             <p>Connects the signal this to the incoming slot.</p>
+             @param <code>Function</code> the slot function
+             @param <code>Object</code> the scope of slot function execution
+             */
 
-        var connect = function connect(slot, scope) {
-            return registerListener(slot, scope, false);
-        };
+        }, {
+            key: 'connect',
+            value: function connect(slot, scope) {
+                this.registerListener(slot, scope, false);
+            }
 
-        var connectOnce = function connectOnce(slot, scope) {
-            return registerListener(slot, scope, true);
-        };
+            /**
+             <h3>connectOnce</h3>
+             <p></p>
+             @param <code>Function</code> the slot function
+             @param <code>Object</code> the scope of slot function execution
+             */
 
-        function disconnect(slot, _scope) {
-            listenerBoxes = listenerBoxes.filter(function (_ref2) {
-                var listener = _ref2.listener,
-                    scope = _ref2.scope;
-                return listener !== slot && scope !== _scope;
-            });
-        }
+        }, {
+            key: 'connectOnce',
+            value: function connectOnce(slot, scope) {
+                this.registerListener(slot, scope, true);
+            }
 
-        function disconnectAll() {
-            listenerBoxes.forEach(function (_ref3) {
-                var listener = _ref3.listener,
-                    scope = _ref3.scope;
-                return disconnect(listener, scope);
-            });
-        }
+            /**
+             <h3>disconnect</h3>
+             <p>the given slot are disconnected.</p>
+             @param <code>Function</code> the slot function
+             @param <code>Object</code> the scope of slot function execution
+             */
 
-        return Object.freeze({
-            connect: connect,
-            connectOnce: connectOnce,
-            disconnect: disconnect,
-            disconnectAll: disconnectAll,
-            emit: emit
+        }, {
+            key: 'disconnect',
+            value: function disconnect(slot, scope) {
+                if (this.listenersNeedCloning) {
+                    this.listenerBoxes = this.listenerBoxes.slice();
+                    this.listenersNeedCloning = false;
+                }
 
-        });
-    }
+                for (var i = this.listenerBoxes.length; i--;) {
+                    if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
+                        this.listenerBoxes.splice(i, 1);
+                        return;
+                    }
+                }
+            }
+
+            /**
+             <h3>disconnectAll</h3>
+             <p>Disconnects all slots connected to the signal.</p>
+               */
+
+        }, {
+            key: 'disconnectAll',
+            value: function disconnectAll() {
+
+                for (var i = this.listenerBoxes.length; i--;) {
+                    this.disconnect(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
+                }
+            }
+
+            /**
+             <h3>emit</h3>
+             <p>Dispatches an event into the signal flow.</p>
+               */
+
+        }, {
+            key: 'emit',
+            value: function emit() {
+                var valueObject;
+                for (var n = 0; n < this._valueClasses.length; n++) {
+                    if (this.primitiveMatchesValueClass(arguments[n], this._valueClasses[n])) continue;
+
+                    if ((valueObject = arguments[n]) == null || valueObject instanceof this._valueClasses[n]) continue;
+
+                    throw new Error('Value object <' + valueObject + '> is not an instance of <' + this._valueClasses[n] + '>.');
+                }
+
+                var listenerBoxes = this.listenerBoxes;
+                var len = listenerBoxes.length;
+                var listenerBox;
+
+                this.listenersNeedCloning = true;
+                for (var i = 0; i < len; i++) {
+                    listenerBox = listenerBoxes[i];
+                    if (listenerBox.once) this.disconnect(listenerBox.listener, listenerBox.scope);
+
+                    listenerBox.listener.apply(listenerBox.scope, arguments);
+                }
+                this.listenersNeedCloning = false;
+            }
+        }, {
+            key: 'primitiveMatchesValueClass',
+            value: function primitiveMatchesValueClass(primitive, valueClass) {
+                if (typeof primitive == "string" && valueClass == String || typeof primitive == "number" && valueClass == Number || typeof primitive == "boolean" && valueClass == Boolean) return true;
+
+                return false;
+            }
+        }, {
+            key: 'setValueClasses',
+            value: function setValueClasses(valueClasses) {
+                this._valueClasses = valueClasses || [];
+
+                for (var i = this._valueClasses.length; i--;) {
+                    if (!(this._valueClasses[i] instanceof Function)) throw new Error('Invalid valueClasses argument: item at index ' + i + ' should be a Class but was:<' + this._valueClasses[i] + '>.');
+                }
+            }
+        }, {
+            key: 'registerListener',
+            value: function registerListener(listener, scope, once) {
+                for (var i = 0; i < this.listenerBoxes.length; i++) {
+                    if (this.listenerBoxes[i].listener == listener && this.listenerBoxes[i].scope == scope) {
+                        if (this.listenerBoxes[i].once && !once) {
+                            throw new Error('You cannot addOnce() then try to add() the same listener ' + 'without removing the relationship first.');
+                        } else if (once && !this.listenerBoxes[i].once) {
+                            throw new Error('You cannot add() then addOnce() the same listener ' + 'without removing the relationship first.');
+                        }
+                        return;
+                    }
+                }
+                if (this.listenersNeedCloning) {
+                    this.listenerBoxes = this.listenerBoxes.slice();
+                }
+
+                this.listenerBoxes.push({ listener: listener, scope: scope, once: once });
+            }
+        }]);
+
+        return Signal;
+    }();
 
     /**
      * Created by mgobbi on 20/04/2017.
      */
+
+
     var _arity = function _arity(n, fn) {
         /* eslint-disable no-unused-vars */
         switch (n) {
@@ -525,8 +641,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
 
     var DomWatcher = function DomWatcher(root, getAllElements) {
-        var onAdded = Signal();
-        var onRemoved = Signal();
+        var onAdded = new Signal();
+        var onRemoved = new Signal();
 
         var getAdded = makeChain("addedNodes", getAllElements, onAdded.emit);
         var getRemoved = makeChain("removedNodes", getAllElements, onRemoved.emit);

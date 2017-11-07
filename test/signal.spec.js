@@ -15,7 +15,7 @@ describe('Signal', function () {
     });
 
     it('ritorna un oggetto con le funzioni esposte', function () {
-        let signal = Signal();
+        let signal =new Signal();
         /*
          connect,
          connectOnce,
@@ -32,14 +32,14 @@ describe('Signal', function () {
     });
     it('emit dispaccia correttamente a 1 listener', function () {
         var params = [12345, 'text', {a: 1}];
-        let signal = Signal();
+        let signal = new Signal();
 
         signal.connect(_params => assert.equal(_params, params));
         signal.emit(params);
     });
     it('emit dispaccia correttamente a più listeners', function () {
         var params = [12345, 'text', {a: 1}];
-        let signal = Signal();
+        let signal = new Signal();
 
         signal.connect(_params => assert.equal(_params, params));
         signal.connect(_params => assert.equal(_params, params));
@@ -49,35 +49,35 @@ describe('Signal', function () {
     });
     it('connect connette lo stesso listener/scope solo una volta', function () {
 
-        let signal = Signal();
+        let signal = new Signal();
         const listener = _ => _;
-        let slots = signal.connect(listener);
-        slots = signal.connect(listener);
-        slots = signal.connect(listener);
-        slots = signal.connect(listener);
+         signal.connect(listener);
+         signal.connect(listener);
+         signal.connect(listener);
+         signal.connect(listener);
 
-        assert.lengthOf(slots, 1, "");
+        assert.lengthOf(signal.listenerBoxes, 1, "");
     });
     it('connect connette listener con scope differenti', function () {
 
-        let signal = Signal();
+        let signal = new Signal();
         const scope = {};
         const scope2 = {a: 1};
         const listener = _ => _;
-        let slots = signal.connect(listener);
-        slots = signal.connect(listener, scope);
-        slots = signal.connect(listener, scope2);
+         signal.connect(listener);
+        signal.connect(listener, scope);
+         signal.connect(listener, scope2);
         //
-        slots = signal.connect(listener);
-        slots = signal.connect(listener, scope2);
-        slots = signal.connect(listener, scope);
+         signal.connect(listener);
+        signal.connect(listener, scope2);
+         signal.connect(listener, scope);
 
 
-        assert.lengthOf(slots, 3, "");
+        assert.lengthOf(signal.listenerBoxes, 3, "");
     });
     it('disconnect rimuove correttamente il listener', function () {
 
-        let signal = Signal();
+        let signal = new Signal();
         const listener = _ => assert.fail("[listener è stato chiamato]", "[il listener doveva essere eliminato]", "gli slots non si rimuovono correttamente");
         signal.connect(listener);
         signal.disconnect(listener);
@@ -86,22 +86,22 @@ describe('Signal', function () {
     });
     it('disconnect rimuove listener con scope differenti', function () {
 
-        let signal = Signal();
+        let signal = new Signal();
         const scope = {};
         const scope2 = {a: 1};
         const listener = function (p) {
             assert.equal(this, scope, "lo scope disconnesso è ancora in giro");
         };
-        let slots = signal.connect(listener, scope2);
-        slots = signal.connect(listener, scope);
-        slots = signal.disconnect(listener, scope2);
-        assert.lengthOf(slots, 1, "");
+        signal.connect(listener, scope2);
+        signal.connect(listener, scope);
+          signal.disconnect(listener, scope2);
+        assert.lengthOf(signal.listenerBoxes, 1, "");
         signal.emit({});
 
     });
     it('disconnectAll rimuove tutti i listeners', function () {
 
-        let signal = Signal();
+        let signal = new Signal();
         const scope = {};
         const scope2 = {a: 1};
         const listener = function (p) {
@@ -111,9 +111,9 @@ describe('Signal', function () {
         signal.connect(listener);
         signal.connect(listener, scope);
         signal.connect(_ => assert.fail("doveva essere eliminato"), scope);
-        let slots = signal.disconnectAll();
-        assert.equal(slots, null, "");
-        signal.emit({});
+       signal.disconnectAll();
 
+        signal.emit({});
+        assert.lengthOf(signal.listenerBoxes, 0, "");
     });
 });
