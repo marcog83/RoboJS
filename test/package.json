@@ -15,8 +15,8 @@
     "babel-preset-import-export": "^1.0.2",
     "chai": "^3.5.0",
     "jsdom": "^9.12.0",
-    "mocha": "^3.2.0",
+    "mocha": "^3.5.3",
     "mocha-jsdom": "^1.1.0",
-    "mochawesome": "^2.0.4"
+    "mochawesome": "^2.3.1"
   }
 }
