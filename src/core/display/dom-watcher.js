@@ -6,8 +6,8 @@ export default  (root,getAllElements) => {
     let onAdded =new  Signal();
     let onRemoved = new Signal();
 
-    let getAdded = makeChain("addedNodes",getAllElements, onAdded.emit);
-    let getRemoved = makeChain("removedNodes",getAllElements, onRemoved.emit);
+    let getAdded = makeChain("addedNodes",getAllElements, onAdded.emit.bind(onAdded));
+    let getRemoved = makeChain("removedNodes",getAllElements, onRemoved.emit.bind(onRemoved));
 
     let handleMutations = mutations => {
 
