@@ -736,7 +736,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
 
-            //MEDIATORS_CACHE = MEDIATORS_CACHE.filter(m => m);
             return MEDIATORS_CACHE;
         }
 

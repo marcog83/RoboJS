@@ -50,14 +50,14 @@ export default class MediatorClassHandler {
     }
 
     getDefinition(node) {
-        return node.dataset.view;
+        return node.dataset.mediator;
     }
 
 
     createView(node) {
         return ViewClass => {
             const mediatorId = this.nextUid();
-            node.setAttribute('idview', mediatorId);
+            node.setAttribute('idmediator', mediatorId);
             var view = new ViewClass(node, this.dispatcher);
             return {
                 node,
@@ -68,8 +68,8 @@ export default class MediatorClassHandler {
 
 
     getAllElements(node) {
-        var nodes = [].slice.call(node.querySelectorAll("[data-view]"), 0);
-        if (!!node.getAttribute("data-view")) {
+        var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
+        if (!!node.getAttribute("data-mediator")) {
             nodes.unshift(node);
         }
 

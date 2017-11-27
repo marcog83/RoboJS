@@ -34,7 +34,7 @@ export default  function (params) {
             }
         }
 
-        //MEDIATORS_CACHE = MEDIATORS_CACHE.filter(m => m);
+
         return MEDIATORS_CACHE;
     }
 
