@@ -6,28 +6,27 @@ define(function (require, exports, module) {
 
 
 	function FooElement(dispatcher) {
-		return {
-			createdCallback: function () {
-
-			},
-			attachedCallback: function () {
-				console.log("map")
-				var map = new google.maps.Map(this, {
-					zoom: 8,
-					center: {lat: -34.397, lng: 150.644}
-				});
-				dispatcher.addEventListener("place-changed",function(e){
-					var center=e.data;
-					map.setCenter(center);
-				})
-			},
-			detachedCallback: function () {
-				console.log("deattached foo element", this)
-			}
-		}
+        this.dispatcher=dispatcher;
 
 
 	}
+	FooElement.prototype={
+
+        connectedCallback: function () {
+            console.log("map")
+            var map = new google.maps.Map(this, {
+                zoom: 8,
+                center: {lat: -34.397, lng: 150.644}
+            });
+            this.dispatcher.addEventListener("place-changed",function(e){
+                var center=e.data;
+                map.setCenter(center);
+            })
+        },
+        disconnectedCallback: function () {
+            console.log("deattached foo element", this)
+        }
+    }
 
 
 	module.exports = FooElement;

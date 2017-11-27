@@ -2,6 +2,12 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 (function (global, factory) {
     (typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define(['exports'], factory) : factory(global.robojs = {});
 })(undefined, function (exports) {
@@ -872,14 +878,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
      */
 
     var getCreate = function getCreate(inCache, updateCache) {
+
         return function create(node, dispatcher) {
             return function (Mediator) {
                 var tagName = "";
                 if (!inCache(node.tagName.toLowerCase())) {
                     tagName = node.tagName.toLowerCase();
-                    var customProto = Mediator(dispatcher);
-                    var proto = Object.assign(Object.create(HTMLElement.prototype), customProto);
-                    document.registerElement(tagName, { prototype: proto });
+                    if (!tagName.match(/-/gim)) {
+                        throw new Error("The name of a custom element must contain a dash (-). So <x-tags>, <my-element>, and <my-awesome-app> are all valid names, while <tabs> and <foo_bar> are not.");
+                    }
+                    var _proto = Mediator.prototype;
+                    Mediator.prototype = Object.create(HTMLElement.prototype);
+                    Object.assign(Mediator.prototype, _proto);
+                    Mediator.prototype.constructor = Mediator;
+                    window.customElements.define(tagName, function (_Mediator) {
+                        _inherits(_class, _Mediator);
+
+                        /* ... */
+                        function _class() {
+                            _classCallCheck(this, _class);
+
+                            return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, dispatcher));
+                            // this.dispatcher = dispatcher;
+                        }
+
+                        return _class;
+                    }(Mediator));
+                    //  var proto = Object.assign(Object.create(HTMLElement.prototype), customProto);
+                    //   document.registerElement(tagName, {prototype: proto});
                     updateCache(tagName);
                 }
                 return tagName;

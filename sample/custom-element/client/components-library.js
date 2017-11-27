@@ -6,31 +6,31 @@ define(function (require, exports, module) {
 
 
     function Module(dispatcher) {
-        return {
-            createdCallback: function () {
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "components.json");
-                xhr.onload = this.handleLoaded.bind(this);
-                xhr.send();
+        this.dispatcher = dispatcher;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "components.json");
+        xhr.onload = function (e) {
+            this.handleLoaded(e);
+        }.bind(this);
+        xhr.send();
+    }
 
-            },
-            handleLoaded: function (e) {
-                var thumbnails = JSON.parse(e.currentTarget.responseText);
-                this.innerHTML = thumbnails.reduce(function (prev, curr) {
-                    return prev.concat("<my-thumbnail id='"+curr+"'>" + curr + "</my-thumbnail>");
-                }, "<div class='thumbnails'>").concat("</div>");
+    Module.prototype = {
+
+        handleLoaded: function (e) {
+            var thumbnails = JSON.parse(e.currentTarget.responseText);
+            this.innerHTML = thumbnails.reduce(function (prev, curr) {
+                return prev.concat("<my-thumbnail id='" + curr + "'>" + curr + "</my-thumbnail>");
+            }, "<div class='thumbnails'>").concat("</div>");
 
 
-            },
-            attachedCallback: function () {
-                console.log("attached my-custom-element", this)
-            },
-            detachedCallback: function () {
-                console.log("deattached my-custom-element", this)
-            }
+        },
+        connectedCallback: function () {
+            console.log("attached my-custom-element", this)
+        },
+        disconnectedCallback: function () {
+            console.log("deattached my-custom-element", this)
         }
-
-
     }
 
 

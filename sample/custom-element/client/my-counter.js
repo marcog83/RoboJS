@@ -3,34 +3,31 @@
  */
 define(function () {
     function Module(dispatcher) {
-        return {
-            createdCallback: function () {
-                this.count = 0;
-                dispatcher.addEventListener("create-element", function (e) {
-                    var thumb_id=e.data;
-                    var id = this.getAttribute("data-id");
-                    if (thumb_id === id) {
-                        this.update();
-                    }
-                }.bind(this))
-
-
-            },
-            update: function () {
-                this.count++;
-                this.innerHTML = this.count;
-            },
-
-
-            attachedCallback: function () {
-                this.innerHTML = this.count;
-            },
-            detachedCallback: function () {
-
+        this.dispatcher=dispatcher;
+        this.count = 0;
+        this.dispatcher.addEventListener("create-element", function (e) {
+            var thumb_id = e.data;
+            var id = this.getAttribute("data-id");
+            if (thumb_id === id) {
+                this.update();
             }
+        }.bind(this))
+    }
+
+    Module.prototype = {
+
+        update: function () {
+            this.count++;
+            this.innerHTML = this.count;
+        },
+
+
+        connectedCallback: function () {
+            this.innerHTML = this.count;
+        },
+        disconnectedCallback: function () {
+
         }
-
-
     }
 
 

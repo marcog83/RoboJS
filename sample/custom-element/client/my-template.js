@@ -3,24 +3,22 @@
  */
 define(function () {
     function Module(dispatcher) {
-        return {
-            createdCallback: function () {
-                dispatcher.addEventListener("create-element", this.handleElementAdded.bind(this));
+        this.dispatcher = dispatcher;
+        this.dispatcher.addEventListener("create-element", this.handleElementAdded.bind(this));
+    }
 
-            },
-            handleElementAdded: function (e) {
-                var id=e.data;
-                this.appendChild(document.createElement(id));
-            },
-            attachedCallback: function () {
+    Module.prototype = {
 
-            },
-            detachedCallback: function () {
+        handleElementAdded: function (e) {
+            var id = e.data;
+            this.appendChild(document.createElement(id));
+        },
+        connectedCallback: function () {
 
-            }
+        },
+        disconnectedCallback: function () {
+
         }
-
-
     }
 
 

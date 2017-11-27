@@ -3,7 +3,10 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCbQ3qhoF6ThhzfikRb454ZEKe6QvHRIfE"></script>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCbQ3qhoF6ThhzfikRb454ZEKe6QvHRIfE"></script>
+    <script src="custom-elements.min.js"></script>
+    <script src="native-shim.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
 
     <style>
@@ -17,7 +20,7 @@
 
         .wrapper-CNT {
             width: 1000px;
-            margin:auto;
+            margin: auto;
         }
 
         .library-CTR {
@@ -71,7 +74,7 @@
         autocomplete-element input {
             padding: 10px;
             box-sizing: border-box;
-            width:100%;
+            width: 100%;
         }
 
         bar-element {
@@ -94,30 +97,35 @@
             min-height: 286px;
             display: inline-block;
             vertical-align: top;
-            background: rgba(255,204,0,0.3);
+            background: rgba(255, 204, 0, 0.3);
         }
-@media (max-width: 767px) {
-    .wrapper-CNT{
-        width: 100%;
-    }
-    .library-CTR {
-        width: 100%;
-        display: block;
-    }
-    my-template {
-        width: 100%;
-    }
-    .wrapper {
-        width: 100%;
-    }
-    bar-element {
-        width: 100%;
-    }
 
-    maps-element {
-        width: 100%;
-    }
-}
+        @media (max-width: 767px) {
+            .wrapper-CNT {
+                width: 100%;
+            }
+
+            .library-CTR {
+                width: 100%;
+                display: block;
+            }
+
+            my-template {
+                width: 100%;
+            }
+
+            .wrapper {
+                width: 100%;
+            }
+
+            bar-element {
+                width: 100%;
+            }
+
+            maps-element {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -133,8 +141,6 @@
         <my-template></my-template>
     </div>
 </div>
-
-
 
 
 <script src="require.js" data-main="config"></script>
