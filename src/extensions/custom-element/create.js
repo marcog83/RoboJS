@@ -13,10 +13,6 @@ export default function (inCache, updateCache) {
                 if (!tagName.match(/-/gim)) {
                     throw new Error("The name of a custom element must contain a dash (-). So <x-tags>, <my-element>, and <my-awesome-app> are all valid names, while <tabs> and <foo_bar> are not.")
                 }
-                let _proto = Mediator.prototype;
-                Mediator.prototype = Object.create(HTMLElement.prototype);
-                Object.assign(Mediator.prototype, _proto);
-                Mediator.prototype.constructor = Mediator;
                 window.customElements.define(tagName, class extends Mediator {
                     constructor() {
                         super(dispatcher);
