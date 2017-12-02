@@ -894,12 +894,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                     window.customElements.define(tagName, function (_Mediator) {
                         _inherits(_class, _Mediator);
 
-                        /* ... */
                         function _class() {
                             _classCallCheck(this, _class);
 
                             return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, dispatcher));
-                            // this.dispatcher = dispatcher;
                         }
 
                         return _class;
