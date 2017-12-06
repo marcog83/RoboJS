@@ -15,7 +15,9 @@ define(function (require, exports, module) {
         xhr.send();
     }
 
-    Module.prototype = {
+    Module.prototype = Object.create(HTMLElement.prototype);
+    Module.prototype.constructor = Module;
+    Object.assign(Module.prototype, {
 
         handleLoaded: function (e) {
             var thumbnails = JSON.parse(e.currentTarget.responseText);
@@ -31,7 +33,7 @@ define(function (require, exports, module) {
         disconnectedCallback: function () {
             console.log("deattached my-custom-element", this)
         }
-    }
+    })
 
 
     module.exports = Module;

@@ -13,8 +13,9 @@ define(function () {
             }
         }.bind(this))
     }
-
-    Module.prototype = {
+    Module.prototype = Object.create(HTMLElement.prototype);
+    Module.prototype.constructor = Module;
+    Object.assign(Module.prototype , {
 
         update: function () {
             this.count++;
@@ -28,7 +29,7 @@ define(function () {
         disconnectedCallback: function () {
 
         }
-    }
+    })
 
 
     return Module;

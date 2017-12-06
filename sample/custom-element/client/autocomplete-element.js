@@ -4,28 +4,33 @@
 
 define(function (require, exports, module) {
 
-	var rjs=require("robojs");
-	function FooElement(dispatcher) {
+    var rjs = require("robojs");
 
-        this.dispatcher=dispatcher;
-        var input=document.createElement("input");
-        this.appendChild(input);
-        var autocomplete = new google.maps.places.Autocomplete(input);
-        google.maps.event.addListener(autocomplete, "place_changed", function (e) {
-            this.dispatcher.dispatchEvent(new rjs.RJSEvent("place-changed",autocomplete.getPlace().geometry.location));
-        }.bind(this));
-	}
-	FooElement.prototype={
+    function FooElement(dispatcher) {
+
+        this.dispatcher = dispatcher;
+
+    }
+
+    FooElement.prototype = Object.create(HTMLElement.prototype);
+    FooElement.prototype.constructor = FooElement;
+    Object.assign(FooElement.prototype, {
 
 
         connectedCallback: function () {
-            console.log("attached foo element", this)
+            console.log("attached foo element", this);
+            var input = document.createElement("input");
+            this.appendChild(input);
+            var autocomplete = new google.maps.places.Autocomplete(input);
+            google.maps.event.addListener(autocomplete, "place_changed", function (e) {
+                this.dispatcher.dispatchEvent(new rjs.RJSEvent("place-changed", autocomplete.getPlace().geometry.location));
+            }.bind(this));
         },
         disconnectedCallback: function () {
             console.log("deattached foo element", this)
         }
-    }
+    });
 
 
-	module.exports = FooElement;
+    module.exports = FooElement;
 });

@@ -23,8 +23,8 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-import-export": "^1.0.2",
     "flow-bin": "^0.60.0",
-    "rollup": "^0.52.0",
+    "rollup": "^0.52.1",
     "shelljs-release": "^0.2.0",
-    "uglify-js": "^3.2.0"
+    "uglify-js": "^3.2.1"
   }
 }

@@ -5,7 +5,7 @@ define(function (require) {
     var rjs = require("robojs");
 
     function Module(dispatcher) {
-        this.dispatcher=dispatcher;
+        this.dispatcher = dispatcher;
         this.counter = document.createElement("my-counter");
         this.counter.setAttribute("data-id", this.id);
 
@@ -15,7 +15,9 @@ define(function (require) {
         }.bind(this));
     }
 
-    Module.prototype = {
+    Module.prototype = Object.create(HTMLElement.prototype);
+    Module.prototype.constructor = Module;
+    Object.assign(Module.prototype, {
 
 
         connectedCallback: function () {
@@ -24,7 +26,7 @@ define(function (require) {
         disconnectedCallback: function () {
             console.log("deattached my-custom-element", this)
         }
-    };
+    });
 
 
     return Module;

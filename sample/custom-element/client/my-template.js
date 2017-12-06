@@ -6,8 +6,9 @@ define(function () {
         this.dispatcher = dispatcher;
         this.dispatcher.addEventListener("create-element", this.handleElementAdded.bind(this));
     }
-
-    Module.prototype = {
+    Module.prototype = Object.create(HTMLElement.prototype);
+    Module.prototype.constructor = Module;
+    Object.assign(Module.prototype , {
 
         handleElementAdded: function (e) {
             var id = e.data;
@@ -19,7 +20,7 @@ define(function () {
         disconnectedCallback: function () {
 
         }
-    }
+    })
 
 
     return Module;
