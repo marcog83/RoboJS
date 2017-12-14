@@ -1,0 +1,25 @@
+robojs è un tool per la creazione e la gestione di componenti javascript.
+L'idea principale è quella di avere un set di componenti sempre a disposizione, che però vengono instanziati
+solo se dichiarati nel DOM.
+
+caso d'uso.
+
+1. carica il core principale e ogni componente è un file esterno. 
+   PRO: hai il core dell'applicazione molto leggera.
+   CONTRO: ogni componente genera una richiesta alla rete.
+
+2. si crea un bundle dove il core e i componenti sono già presenti.
+   PRO: un'unica richiesta alla rete. I componenti sono presenti ma non istanziati.
+   CONTRO: il bundle può diventare enorme.
+   
+3. si crea un bundle dove è presente il core applicativo e alcuni componenti principali. 
+   Gli altri componenti sono esterni e richiesti solo se necessario.
+   PRO: si ha a disposizione già da subito un set di componenti, senza bisogno di ulteriori richieste.
+   Si può controllare la grandezza del bundle, aggiungendo o eliminando dei componenti dal bundle.
+
+   CONTRO: gli altri componenti generano richieste alla rete.
+   
+4. si crea un core applicativo che carica tanti bundle differenti. Ogni bundle ha al suo interno il proprio set di componenti.
+   PRO: Ogni bundle è atomico. Gestiste un proprio set di componenti e osserva solo un pezzo specifico del DOM della pagina.
+   Si possono creare dei bundles esterni condivisibili
+   CONTRO: Ogni bundle genera richieste alla rete. Il core applicativo deve gestire l'istanziamento dei bundle.
