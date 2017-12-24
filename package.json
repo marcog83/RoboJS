@@ -1,6 +1,6 @@
 {
   "name": "robojs",
-  "version": "5.3.3",
+  "version": "5.3.4",
   "license": "MIT",
   "main": "dist/robojs.min.js",
   "jsnext:main": "src/core/robojs.js",
