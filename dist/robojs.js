@@ -260,7 +260,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         /**
          <h3>disconnectAll</h3>
          <p>Disconnects all slots connected to the signal.</p>
-           */
+          */
         disconnectAll: function disconnectAll() {
 
             for (var i = this.listenerBoxes.length; i--;) {
@@ -270,7 +270,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         /**
          <h3>emit</h3>
          <p>Dispatches an event into the signal flow.</p>
-           */
+          */
         emit: function emit() {
             var valueObject;
             for (var n = 0; n < this._valueClasses.length; n++) {
@@ -328,7 +328,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     /**
      * Created by mgobbi on 20/04/2017.
      */
-    var _arity = function _arity(n, fn) {
+    function _arity(n, fn) {
         /* eslint-disable no-unused-vars */
         switch (n) {
             case 0:
@@ -378,7 +378,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             default:
                 throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
         }
-    };
+    }
 
     /**
      * Created by mgobbi on 20/04/2017.
@@ -410,7 +410,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     /**
      * Created by mgobbi on 20/04/2017.
      */
-    var _curry1 = function _curry1(fn) {
+    function _curry1(fn) {
         return function f1(a) {
             if (arguments.length === 0) {
                 return f1;
@@ -418,18 +418,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                 return fn.apply(this, arguments);
             }
         };
-    };
+    }
 
     /**
      * Created by mgobbi on 14/03/2017.
      */
-    var curry = function curry(fn) {
+    function curry(fn) {
         var length = fn.length;
         if (length === 1) {
             return _curry1(fn);
         }
         return _arity(length, _curryN(length, [], fn));
-    };
+    }
 
     /**
      * Created by mgobbi on 20/04/2017.
@@ -472,7 +472,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
          var idx = 0;
          var len = tail.length;
          while (idx < len){
-               result=tail[i].call(ctx, result);
+              result=tail[i].call(ctx, result);
              i--;
          }
          return result;*/
@@ -487,7 +487,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             return g.call(this, f.apply(this, arguments));
         };
     }
-    var compose = function compose() {
+    function compose() {
         for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
             fns[_key] = arguments[_key];
         }
@@ -497,12 +497,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var tail = fns.slice(1);
 
         return _arity(head.length, reduce(_pipe, head, tail));
-    };
+    }
 
     function _isString(x) {
         return Object.prototype.toString.call(x) === '[object String]';
     }
-    var _isArrayLike = function _isArrayLike(x) {
+    function _isArrayLike(x) {
         if (Array.isArray(x)) {
             return true;
         }
@@ -525,7 +525,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
         }
         return false;
-    };
+    }
 
     /**
      * Created by mgobbi on 12/04/2017.
@@ -689,7 +689,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
      */
     //import map from "../../internal/_map"
     //function identity(x){return x;}
-    var getAllElements = function getAllElements(node) {
+    function getAllElements(node) {
         //  var hrstart = process.hrtime();
 
 
@@ -701,7 +701,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         // var hrend = process.hrtime(hrstart);
         //  console.info("Execution time (hr): %ds %dms", hrend[0], hrend[1]/1000000);
         return nodes;
-    };
+    }
 
     /**
      * Created by marcogobbi on 02/04/2017.
@@ -720,7 +720,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         return definitions[node.getAttribute("data-mediator")];
     });
 
-    var MediatorHandler = function MediatorHandler(params) {
+    function MediatorHandler(params) {
         //crea un'istanza dell'EventDispatcher se non viene passata
         var _params$definitions = params.definitions,
             definitions = _params$definitions === undefined ? {} : _params$definitions,
@@ -779,16 +779,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             getAllElements: getAllElements
 
         });
-    };
+    }
 
     /**
      * Created by marcogobbi on 01/04/2017.
      */
-    var GetMediators = function GetMediators(findMediator, hasMediator) {
+    function GetMediators(findMediator, hasMediator) {
         return compose(function (promises) {
             return Promise.all(promises);
         }, map(findMediator), filter(hasMediator), flatten);
-    };
+    }
 
     /**
      * Created by mgobbi on 20/04/2017.
@@ -806,18 +806,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     /**
      * Created by marcogobbi on 01/04/2017.
      */
-    var HandleNodesRemoved = function HandleNodesRemoved(destroy) {
+    function HandleNodesRemoved(destroy) {
         return compose(forEach(destroy), flatten);
-    };
+    }
 
     /**
      * Created by marcogobbi on 01/04/2017.
      */
-    var Build = function Build(getMediators, getAllElements) {
+    function Build(getMediators, getAllElements) {
         return compose(getMediators, map(getAllElements), function (root) {
             return [root];
         });
-    };
+    }
 
     /**
      * Created by marco.gobbi on 21/01/2015.
@@ -869,15 +869,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         return prev + curr;
     }, "*");
 
-    var getAllElements$1 = function getAllElements$1(node) {
+    function getAllElements$1(node) {
         return [node].concat([].slice.call(node.querySelectorAll(query), 0));
-    };
+    }
 
     /**
      * Created by marcogobbi on 07/05/2017.
      */
 
-    var getCreate = function getCreate(inCache, updateCache) {
+    function getCreate(inCache, updateCache) {
 
         return function create(node, dispatcher) {
             return function (Mediator) {
@@ -905,7 +905,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                 return tagName;
             };
         };
-    };
+    }
 
     /**
      * Created by marcogobbi on 07/05/2017.

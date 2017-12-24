@@ -2,7 +2,7 @@ robojs è un tool per la creazione e la gestione di componenti javascript.
 L'idea principale è quella di avere un set di componenti sempre a disposizione, che però vengono instanziati
 solo se dichiarati nel DOM.
 
-caso d'uso.
+casi d'uso.
 
 1. carica il core principale e ogni componente è un file esterno. 
    PRO: hai il core dell'applicazione molto leggera.
