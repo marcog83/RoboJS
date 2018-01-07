@@ -9,8 +9,9 @@ export default {
         format: 'umd',
         file: 'dist/robojs.js'
         , name: 'robojs'
-    },
+        , exports: 'named'
+    }
 
-    exports: 'named'
+
 
 };
