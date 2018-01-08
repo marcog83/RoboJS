@@ -4,7 +4,7 @@
 import curry from "../internal/_curry";
 import {makeDispatcher} from "../core/events/event-dispatcher";
 import find from "../internal/_find";
-const noop = _ => _;
+import noop from "../internal/_noop";
 export default class MediatorClassHandler {
     constructor(params) {
         this.definitions = params.definitions;

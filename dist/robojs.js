@@ -260,7 +260,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         /**
          <h3>disconnectAll</h3>
          <p>Disconnects all slots connected to the signal.</p>
-          */
+           */
         disconnectAll: function disconnectAll() {
 
             for (var i = this.listenerBoxes.length; i--;) {
@@ -270,7 +270,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         /**
          <h3>emit</h3>
          <p>Dispatches an event into the signal flow.</p>
-          */
+           */
         emit: function emit() {
             var valueObject;
             for (var n = 0; n < this._valueClasses.length; n++) {
@@ -472,7 +472,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
          var idx = 0;
          var len = tail.length;
          while (idx < len){
-              result=tail[i].call(ctx, result);
+               result=tail[i].call(ctx, result);
              i--;
          }
          return result;*/
@@ -643,13 +643,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         });
     };
 
-    /**
-     * Created by mgobbi on 31/03/2017.
-     */
     var noop = function noop(_) {
         return _;
     };
 
+    /**
+     * Created by mgobbi on 31/03/2017.
+     */
     var create = curry(function (node, dispatcher, Mediator) {
         var mediatorId = nextUid();
         node.setAttribute('mediatorid', mediatorId);
@@ -913,9 +913,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     var GetDefinition$1 = curry(function (definitions, node) {
         return definitions[node.tagName.toLowerCase()];
     });
-    var noop$1 = function noop$1(_) {
-        return _;
-    };
+
     var customElementHandler = function customElementHandler(params) {
         //crea un'istanza dell'EventDispatcher se non viene passata
         var _params$definitions2 = params.definitions,
@@ -936,7 +934,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         });
 
         var getDefinition = GetDefinition$1(definitions);
-        var _findMediator = FindMediator(getDefinition, getCreate(inCache(REGISTERED_ELEMENTS), updateCache), noop$1);
+        var _findMediator = FindMediator(getDefinition, getCreate(inCache(REGISTERED_ELEMENTS), updateCache), noop);
 
         function hasMediator(node) {
             var id = node.tagName.toLowerCase();
@@ -944,8 +942,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
 
         return Object.freeze({
-            dispose: noop$1,
-            destroy: noop$1,
+            dispose: noop,
+            destroy: noop,
             findMediator: _findMediator(dispatcher),
             hasMediator: hasMediator,
             getAllElements: getAllElements$1

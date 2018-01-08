@@ -6,10 +6,11 @@ import curry from "../../internal/_curry";
 import getAllElements from "./get-all-elements";
 import getCreate from "./create";
 import FindMediator from "../../core/display/find-mediator";
+import noop from "../../internal/_noop";
 const GetDefinition = curry(function (definitions, node) {
     return definitions[node.tagName.toLowerCase()];
 });
-let noop = _ => _;
+
 export default params => {
     //crea un'istanza dell'EventDispatcher se non viene passata
     let {definitions = {}, dispatcher = makeDispatcher()} = params;
