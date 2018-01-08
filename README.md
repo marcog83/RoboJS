@@ -24,24 +24,34 @@ npm install robojs
 # How it works.
 You set a `data-mediator` attribute with an ID (whatever you want)
 ```html
-    <div data-mediator="my-custom-element">a-2</div>
-    <div data-mediator="foo-element">b-1</div>
-    <div data-mediator="bar-element">c-1</div>
+    <div data-mediator="my-mediator">a-2</div>
+    
 ```
 in `definitions.js` you define a Map where the key is an ID , and the value is the file to request in order to register the element.
 
-```javascript
+```json
 	{
-        "my-custom-element": "client/my-custom-element",
-        "foo-element": "client/foo-element",
-        "bar-element": "client/bar-element"
+        "my-mediator": "component/mediator"
     }
 ```
 
-For instance in this sample I mapped 3 different Mediators.
+By default `robojs` supposes the presence of an AMD Loader like `RequireJS` in order to request the component and its dependencies.
+For example "component/mediator" looks like the follow
 
-When the builder finds a match between a `data-mediator` attribute and an ID from `MediatorsMap`,
-it will create a new instance of Mediator, storing the DOM Node into a property named `element` and executes `initialize` method
+```javascript
+
+define(function(){
+    return function Mediator(node){
+        //
+    }
+})
+
+```
+
+When `robojs` finds a match between a `data-mediator` attribute and an ID from `definitions.js`,
+it will load `component/mediator.js` file and it will execute the `Mediator` function.
+The `node` parameter is a reference to the DOM element.
+
 
 # Usage
 
