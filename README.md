@@ -22,6 +22,15 @@ npm install robojs
 
 
 # How it works.
+
+`robojs` will iterate the DOM trying to match components id with `data-mediator` attributes.
+Each time it finds a match, a request is send to load the right script.
+The first time the script is loaded from network, while the next one is retrived from cache.
+`MutationObserver` is used to handle DOM changes, and when it happens `robojs` iterates over the new added nodes.
+
+
+# Usage
+
 You set a `data-mediator` attribute with an ID (whatever you want)
 ```html
     <div data-mediator="my-mediator">a-2</div>
@@ -53,8 +62,6 @@ it will load `component/mediator.js` file and it will execute the `Mediator` fun
 The `node` parameter is a reference to the DOM element.
 
 
-# Usage
-
 ```javascript
 import {bootstrap} from "robojs"
 const definitions={
@@ -70,7 +77,7 @@ import {bootstrap} from "robojs"
 const definitions={
      "my-mediator": "component/mediator"
 };
-var application=bootstrap({definitions}) // return {dispose,promise}
+var application=bootstrap({definitions}) // return {dispose:Function,promise:Promise<any>}
 
 //you can handle when every Mediators in page are executed
 application.promise.then(function(){
@@ -83,11 +90,7 @@ application.promise.then(function(){
 application.dispose();
 ```
 
-# MediatorsBuilder
-`MediatorsBuilder` will iterate the DOM trying to match definitions.js **keys** with `data-mediator` attributes.
-Each time it finds a match, a request is send to load the right script.
-The first time the script is loaded from network, while the next one is retrived from cache.
-`MutationObserver` is used to handle DOM changes, and when it happens MediatorsBuilder iterates over the new added nodes.
+
 
 
 # Mediator Function.
@@ -127,7 +130,7 @@ function loaderFn(id, resolve, reject) {
 bootstrap({definitions,loader:Loader(loaderFn)})
 ```
 
-If you use ES2015 `import` statement, you can create something more advanced. 
+If you use ES2015 `import` statement, you can create something different. 
 You don't need to load `Mediator` from external file, but just retrieve the `Mediator` function from `definitions` Map
 
 ```javascript
@@ -142,7 +145,7 @@ function loaderFn(id, resolve, reject) {
         resolve(definitions[id]);
     }
     
-bootstrap({definitions: definitions,loader:Loader(loaderFn)});
+bootstrap({definitions,loader:Loader(loaderFn)});
 ```
 
  
