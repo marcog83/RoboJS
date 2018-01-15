@@ -6,10 +6,13 @@ import bootstrap from "../src/core/display/bootstrap";
 
 var assert = require("chai").assert;
 var jsdom = require('mocha-jsdom');
+require('./libs/MutationObserver');
 
 
 describe('bootstrap', function () {
     jsdom();
+
+
     it('it is a function', function () {
         assert.isFunction(bootstrap);
     });
@@ -23,10 +26,10 @@ describe('bootstrap', function () {
 
     });
     it('bootstrap: L\'oggetto ritornato ha due proprietà, promise e dispose', function () {
-        var app = bootstrap({definitions: {}});
+        let {promise,dispose} = bootstrap({definitions: {}});
 
-        assert.instanceOf(app.promise, Promise, "promise non è una promessa");
-        assert.isFunction(app.dispose, "dispose non è una funzione");
+        assert.instanceOf(promise, Promise, "promise non è una promessa");
+        assert.isFunction(dispose, "dispose non è una funzione");
 
     });
 
