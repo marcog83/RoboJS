@@ -164,9 +164,9 @@ import {makeDispatcher} from "robojs"
 var myNewEventDispatcher=makeDispatcher();
 ```
 	
-## RequireJS configuration
+##  Configurations
 
-This is an example how you can set dependencies using `RequireJS`
+Using `RequireJS`
 
 ```javascript
 
@@ -175,24 +175,16 @@ requirejs.config({
         robojs: "../../dist/robojs"
 	}
 });
+//
+require(["robojs"],({bootstrap})=>{
+    const definitions={
+         "my-mediator": "component/mediator"
+    }
+    bootstrap({definitions});
+});
 
 ```
-## SystemJS configuration
-
-This is an example how you can set dependencies using `SystemJS`
-
-```javascript
-
-System.config({
-		defaultJSExtensions: true,
-		paths:{
-			robojs:"../../dist/robojs"
-		}
-	});
-
-```
-
-## ES2015
+Using `ES2015`
 
 ```javascript
 import {bootstrap} from "robojs"
@@ -202,6 +194,27 @@ const definitions={
  
 bootstrap({definitions});
 
+```
+
+Using `SystemJS`
+
+ 
+```javascript
+
+System.config({
+		defaultJSExtensions: true,
+		paths:{
+			robojs:"../../dist/robojs"
+		}
+	});
+//
+System.import("robojs").then(({bootstrap})=>{
+    const definitions={
+         "my-mediator": "component/mediator"
+    };
+     
+    bootstrap({definitions});
+});
 ```
 
 # Dependencies

@@ -50,7 +50,7 @@ export default class MediatorClassHandler {
     }
 
     getDefinition(node) {
-        return node.dataset.mediator;
+        return this.definitions[node.dataset.mediator];
     }
 
 
@@ -69,7 +69,7 @@ export default class MediatorClassHandler {
 
     getAllElements(node) {
         var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
-        if (!!node.getAttribute("data-mediator")) {
+        if (node.hasAttribute("data-mediator")) {
             nodes.unshift(node);
         }
 
