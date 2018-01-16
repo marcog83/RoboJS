@@ -7,5 +7,6 @@ export {default as DomWatcher}  from "./display/dom-watcher";
 
 export {default as MediatorHandler}  from "./display/mediator-handler";
 export {default as bootstrap}  from "./display/bootstrap";
-export {default as CustomElementHandler}  from "../extensions/custom-element/custom-element-handler";
+//
+
 

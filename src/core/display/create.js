@@ -1,9 +1,8 @@
 /**
  * Created by mgobbi on 31/03/2017.
  */
-import curry from "../../internal/_curry";
 import nextUid from "./next-uid";
-const noop = _ => _;
+import {curry, noop} from "@robojs/internal";
 
 export default curry(function (node, dispatcher, Mediator) {
     const mediatorId = nextUid();

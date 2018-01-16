@@ -1,8 +1,8 @@
 /**
  * Created by marcogobbi on 01/04/2017.
  */
-import map from "../../internal/_map";
-import compose from "../../internal/_compose";
+import {map,compose} from "@robojs/internal";
+
 
 
 export default function (getMediators,getAllElements) {

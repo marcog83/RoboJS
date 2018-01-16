@@ -9,14 +9,13 @@ import create from "./create";
 import inCache from "./in-cache";
 import getAllElements from "./get-all-elements";
 import FindMediator from "./find-mediator";
+import {curry} from "@robojs/internal";
 
-import curry from "../../internal/_curry";
-
-const GetDefinition = curry( function (definitions, node) {
+const GetDefinition = curry(function (definitions, node) {
     return definitions[node.getAttribute("data-mediator")];
 });
 
-export default  function (params) {
+export default function (params) {
     //crea un'istanza dell'EventDispatcher se non viene passata
     let {definitions = {}, dispatcher = makeDispatcher()} = params;
     //inizializza la cache dei mediatori registrati
@@ -47,10 +46,10 @@ export default  function (params) {
         });
         MEDIATORS_CACHE = null;
         dispatcher.removeAllEventListeners();
-        dispatcher=null;
-        _findMediator=null;
-        definitions=null;
-        getDefinition=null;
+        dispatcher = null;
+        _findMediator = null;
+        definitions = null;
+        getDefinition = null;
     }
 
     function updateCache(disposable) {
@@ -68,7 +67,7 @@ export default  function (params) {
     return Object.freeze({
         dispose,
         destroy,
-        findMediator:_findMediator(dispatcher),
+        findMediator: _findMediator(dispatcher),
         hasMediator,
         getAllElements
 

@@ -1,10 +1,9 @@
 /**
  * Created by mgobbi on 11/05/2017.
  */
-import curry from "../internal/_curry";
-import {makeDispatcher} from "../core/events/event-dispatcher";
-import find from "../internal/_find";
-const noop = _ => _;
+import {curry, find, noop} from "@robojs/internal";
+import {makeDispatcher} from "@robojs/core";
+
 export default class MediatorClassHandler {
     constructor(params) {
         this.definitions = params.definitions;
@@ -50,7 +49,7 @@ export default class MediatorClassHandler {
     }
 
     getDefinition(node) {
-        return node.dataset.mediator;
+        return this.definitions[node.dataset.mediator];
     }
 
 
@@ -69,7 +68,7 @@ export default class MediatorClassHandler {
 
     getAllElements(node) {
         var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
-        if (!!node.getAttribute("data-mediator")) {
+        if (node.hasAttribute("data-mediator")) {
             nodes.unshift(node);
         }
 

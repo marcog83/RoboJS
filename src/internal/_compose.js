@@ -4,11 +4,8 @@
 // Performs left-to-right composition of one or more  functions.
 import _arity from "./_arity";
 import reduce from "./_reduce";
-function _pipe(f, g) {
-    return function() {
-        return g.call(this, f.apply(this, arguments));
-    };
-};
+import _pipe from "./_pipe";
+
 export default function (...fns) {
 
     fns.reverse();
