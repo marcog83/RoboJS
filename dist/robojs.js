@@ -380,6 +380,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }
     }
 
+    var noop = function noop(_) {
+        return _;
+    };
+
     /**
      * Created by mgobbi on 20/04/2017.
      */
@@ -432,30 +436,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }
 
     /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    var map = curry(function (fn, list) {
-        //  return Array.from(list).map(fn);
-        var idx = 0;
-        var length = list.length;
-        var result = [];
-        for (idx; idx < length; idx++) {
-            result[idx] = fn(list[idx]);
-        }
-
-        return result;
-    });
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    var pluck = curry(function (p, list) {
-        return map(function (obj) {
-            return obj[p];
-        }, list);
-    });
-
-    /**
      * Created by marcogobbi on 20/04/2017.
      */
     var reduce = curry(function (xf, acc, list) {
@@ -478,15 +458,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
          return result;*/
     });
 
-    /**
-     * Created by mgobbi on 17/03/2017.
-     */
-    // Performs left-to-right composition of one or more  functions.
     function _pipe(f, g) {
         return function () {
             return g.call(this, f.apply(this, arguments));
         };
     }
+
+    /**
+     * Created by mgobbi on 17/03/2017.
+     */
+    // Performs left-to-right composition of one or more  functions.
     function compose() {
         for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
             fns[_key] = arguments[_key];
@@ -498,6 +479,38 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         return _arity(head.length, reduce(_pipe, head, tail));
     }
+
+    /**
+     * Created by mgobbi on 20/04/2017.
+     */
+    var filter = curry(function (fn, list) {
+        var idx = 0;
+        var len = list.length;
+        var result = [];
+
+        while (idx < len) {
+            if (fn(list[idx])) {
+                result[result.length] = list[idx];
+            }
+            idx += 1;
+        }
+        return result;
+        //  return Array.from(list).filter(fn);
+    });
+
+    /**
+     * Created by mgobbi on 20/04/2017.
+     */
+    var find = curry(function (fn, list) {
+        var idx = 0;
+        var len = list.length;
+        while (idx < len) {
+            if (fn(list[idx])) {
+                return list[idx];
+            }
+            idx += 1;
+        }
+    });
 
     function _isString(x) {
         return Object.prototype.toString.call(x) === '[object String]';
@@ -561,19 +574,38 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     /**
      * Created by mgobbi on 20/04/2017.
      */
-    var filter = curry(function (fn, list) {
-        var idx = 0;
+    var forEach = curry(function (fn, list) {
         var len = list.length;
-        var result = [];
-
+        var idx = 0;
         while (idx < len) {
-            if (fn(list[idx])) {
-                result[result.length] = list[idx];
-            }
+            fn(list[idx]);
             idx += 1;
         }
+        return list;
+    });
+
+    /**
+     * Created by mgobbi on 20/04/2017.
+     */
+    var map = curry(function (fn, list) {
+        //  return Array.from(list).map(fn);
+        var idx = 0;
+        var length = list.length;
+        var result = [];
+        for (idx; idx < length; idx++) {
+            result[idx] = fn(list[idx]);
+        }
+
         return result;
-        //  return Array.from(list).filter(fn);
+    });
+
+    /**
+     * Created by mgobbi on 20/04/2017.
+     */
+    var pluck = curry(function (p, list) {
+        return map(function (obj) {
+            return obj[p];
+        }, list);
     });
 
     /**
@@ -643,10 +675,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         });
     };
 
-    var noop = function noop(_) {
-        return _;
-    };
-
     /**
      * Created by mgobbi on 31/03/2017.
      */
@@ -662,20 +690,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     });
 
     /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    var find = curry(function (fn, list) {
-        var idx = 0;
-        var len = list.length;
-        while (idx < len) {
-            if (fn(list[idx])) {
-                return list[idx];
-            }
-            idx += 1;
-        }
-    });
-
-    /**
      * Created by mgobbi on 31/03/2017.
      */
     var inCache = function inCache(MEDIATORS_CACHE, node) {
@@ -687,19 +701,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     /**
      * Created by marcogobbi on 01/04/2017.
      */
-    //import map from "../../internal/_map"
-    //function identity(x){return x;}
     function getAllElements(node) {
-        //  var hrstart = process.hrtime();
 
-
-        //  var nodes=map(identity,node.querySelectorAll("[data-mediator]"));
         var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
         if (!!node.getAttribute("data-mediator")) {
             nodes.unshift(node);
         }
-        // var hrend = process.hrtime(hrstart);
-        //  console.info("Execution time (hr): %ds %dms", hrend[0], hrend[1]/1000000);
         return nodes;
     }
 
@@ -791,19 +798,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }
 
     /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    var forEach = curry(function (fn, list) {
-        var len = list.length;
-        var idx = 0;
-        while (idx < len) {
-            fn(list[idx]);
-            idx += 1;
-        }
-        return list;
-    });
-
-    /**
      * Created by marcogobbi on 01/04/2017.
      */
     function HandleNodesRemoved(destroy) {
@@ -858,6 +852,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             }
         };
     };
+
+    //
 
     /**
      * Created by marcogobbi on 07/05/2017.

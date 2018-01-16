@@ -1,10 +1,9 @@
 /**
  * Created by mgobbi on 11/05/2017.
  */
-import curry from "../internal/_curry";
-import {makeDispatcher} from "../core/events/event-dispatcher";
-import find from "../internal/_find";
-import noop from "../internal/_noop";
+import {curry, find, noop} from "@robojs/internal";
+import {makeDispatcher} from "@robojs/core";
+
 export default class MediatorClassHandler {
     constructor(params) {
         this.definitions = params.definitions;

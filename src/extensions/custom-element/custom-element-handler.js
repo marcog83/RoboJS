@@ -1,12 +1,12 @@
 /**
  * Created by marcogobbi on 07/05/2017.
  */
-import {makeDispatcher} from "../../core/events/event-dispatcher";
-import curry from "../../internal/_curry";
 import getAllElements from "./get-all-elements";
 import getCreate from "./create";
 import FindMediator from "../../core/display/find-mediator";
-import noop from "../../internal/_noop";
+import {curry, noop} from "@robojs/internal";
+import {makeDispatcher} from "@robojs/core";
+
 const GetDefinition = curry(function (definitions, node) {
     return definitions[node.tagName.toLowerCase()];
 });

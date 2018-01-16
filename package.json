@@ -5,8 +5,8 @@
   "repository": "https://github.com/marcog83/RoboJS",
   "author": "Marco Gobbi",
   "main": "dist/robojs.min.js",
-  "jsnext:main": "src/core/robojs.js",
-  "module": "src/core/robojs.js",
+  "jsnext:main": "robojs.js",
+  "module": "robojs.js",
   "typings": "src/type-definitions/robojs.d.ts",
   "scripts": {
     "babel-it": "babel ./dist/robojs.js --out-file ./dist/robojs.js",
@@ -17,12 +17,17 @@
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch"
   },
+  "dependencies": {
+    "@robojs/core": "file:src/core",
+    "@robojs/extensions": "file:src/extensions"
+  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
     "babel-preset-env": "^1.5.2",
     "babel-preset-import-export": "^1.0.2",
     "rollup": "^0.54.0",
+    "rollup-plugin-node-resolve": "^3.0.2",
     "shelljs-release": "^0.2.0",
     "uglify-js": "^3.3.7"
   }

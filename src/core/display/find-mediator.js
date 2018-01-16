@@ -1,7 +1,8 @@
 /**
  * Created by marcogobbi on 02/04/2017.
  */
-import curry from "../../internal/_curry";
+import {curry} from "@robojs/internal";
+
 export default (getDefinition, create, updateCache) => {
     return curry(function (dispatcher, load, node) {
         return load(getDefinition(node))
