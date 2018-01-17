@@ -9,10 +9,10 @@
   "module": "robojs.js",
   "typings": "src/type-definitions/robojs.d.ts",
   "scripts": {
-    "babel-it": "babel ./dist/robojs.js --out-file ./dist/robojs.js",
-    "bundle": "rollup -c",
-    "uglify": "uglifyjs --compress unsafe --mangle -o dist/robojs.min.js dist/robojs.js",
-    "build": "npm run bundle && npm run babel-it && npm run uglify",
+    "build:babel-it": "babel ./dist/robojs.js --out-file ./dist/robojs.js",
+    "build:bundle": "rollup -c",
+    "build:uglify": "uglifyjs --compress unsafe --mangle -o dist/robojs.min.js dist/robojs.js",
+    "build": "npm run build:bundle && npm run build:babel-it && npm run build:uglify",
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch"
