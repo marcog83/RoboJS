@@ -6,7 +6,7 @@ import resolve from 'rollup-plugin-node-resolve';
 export default {
     input: 'robojs.js',
     output: {
-        format: 'umd',
+        format: 'es',
         file: 'dist/robojs.js'
         , name: 'robojs'
         , exports: 'named'

@@ -1,17 +1,57 @@
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 (function (global, factory) {
-    (typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define(['exports'], factory) : factory(global.robojs = {});
-})(undefined, function (exports) {
+    if (typeof define === "function" && define.amd) {
+        define('robojs', ['exports'], factory);
+    } else if (typeof exports !== "undefined") {
+        factory(exports);
+    } else {
+        var mod = {
+            exports: {}
+        };
+        factory(mod.exports);
+        global.robojs = mod.exports;
+    }
+})(this, function (exports) {
     'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    function _possibleConstructorReturn(self, call) {
+        if (!self) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
+
+        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    }
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+        }
+
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+    }
+
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
 
     var amdLoader = function amdLoader(id, resolve, reject) {
         require([id], resolve, reject);
@@ -728,13 +768,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     });
 
     function MediatorHandler(params) {
-        //crea un'istanza dell'EventDispatcher se non viene passata
         var _params$definitions = params.definitions,
             definitions = _params$definitions === undefined ? {} : _params$definitions,
             _params$dispatcher = params.dispatcher,
             dispatcher = _params$dispatcher === undefined ? makeDispatcher() : _params$dispatcher;
-        //inizializza la cache dei mediatori registrati
 
+        //inizializza la cache dei mediatori registrati
         var MEDIATORS_CACHE = [];
         var getDefinition = GetDefinition(definitions);
 
@@ -911,7 +950,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     });
 
     var customElementHandler = function customElementHandler(params) {
-        //crea un'istanza dell'EventDispatcher se non viene passata
         var _params$definitions2 = params.definitions,
             definitions = _params$definitions2 === undefined ? {} : _params$definitions2,
             _params$dispatcher2 = params.dispatcher,
@@ -956,6 +994,4 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     exports.MediatorHandler = MediatorHandler;
     exports.bootstrap = bootstrap;
     exports.CustomElementHandler = customElementHandler;
-
-    Object.defineProperty(exports, '__esModule', { value: true });
 });

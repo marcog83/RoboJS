@@ -1,16 +1,17 @@
 {
-  "presets": [
+  "moduleId": "robojs"
+  ,"presets": [
     [
       "env",
       {
         "useBuiltIns": true,
-        "modules": false,
+        "modules": "umd",
         "targets": {
           "browsers": [
             "last 2 versions"
           ]
         }
       }
-    ],"import-export"
+    ]
   ]
 }
