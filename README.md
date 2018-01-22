@@ -9,6 +9,7 @@ Not further framework frontend , but a tool that lets you manage the association
 [![Greenkeeper badge](https://badges.greenkeeper.io/marcog83/RoboJS.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/marcog83/RoboJS.svg?branch=master)](https://travis-ci.org/marcog83/RoboJS)
 [![codebeat badge](https://codebeat.co/badges/04be77bb-9247-4988-8499-3711bcbe1485)](https://codebeat.co/projects/github-com-marcog83-robojs-master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/73702f345d75cdc37cb7/maintainability)](https://codeclimate.com/github/marcog83/RoboJS/maintainability)
 
 
 
