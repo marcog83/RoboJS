@@ -1,0 +1,7 @@
+---
+exclude_paths:
+- dist/**
+- docs/**
+- node_modules/**
+- sample/**
+- test/**
