@@ -300,7 +300,7 @@
         /**
          <h3>disconnectAll</h3>
          <p>Disconnects all slots connected to the signal.</p>
-           */
+          */
         disconnectAll: function disconnectAll() {
 
             for (var i = this.listenerBoxes.length; i--;) {
@@ -310,7 +310,7 @@
         /**
          <h3>emit</h3>
          <p>Dispatches an event into the signal flow.</p>
-           */
+          */
         emit: function emit() {
             var valueObject;
             for (var n = 0; n < this._valueClasses.length; n++) {
@@ -492,7 +492,7 @@
          var idx = 0;
          var len = tail.length;
          while (idx < len){
-               result=tail[i].call(ctx, result);
+              result=tail[i].call(ctx, result);
              i--;
          }
          return result;*/
