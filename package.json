@@ -15,7 +15,8 @@
     "build": "npm run build:bundle && npm run build:babel-it && npm run build:uglify",
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
-    "release:patch": "shelljs-release patch"
+    "release:patch": "shelljs-release patch",
+    "test": "cd test && npm run test"
   },
   "dependencies": {
     "@robojs/core": "file:src/core",
