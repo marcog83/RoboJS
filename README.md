@@ -4,7 +4,10 @@ Add a node to the DOM and a JS will be loaded!
 Remove a node and the JS will be disposed!!
 Not further framework frontend , but a tool that lets you manage the association DOM and JS in less than 4k gzipped;
 
+[![NPM](https://nodei.co/npm/robojs.png)](https://nodei.co/npm/robojs/)
+
 [![Greenkeeper badge](https://badges.greenkeeper.io/marcog83/RoboJS.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.org/marcog83/RoboJS.svg?branch=master)](https://travis-ci.org/marcog83/RoboJS)
 
 # The idea behind the code
 
