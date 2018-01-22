@@ -1,6 +1,7 @@
 function EventDispatcher() {
     this._listeners = {};
 }
+
 EventDispatcher.prototype = {
     addEventListener(type, listener, useCapture) {
         var listeners;
@@ -23,7 +24,7 @@ EventDispatcher.prototype = {
         return listener;
     }
 
-    ,removeEventListener(type, listener, useCapture) {
+    , removeEventListener(type, listener, useCapture) {
         var listeners = useCapture ? this._captureListeners : this._listeners;
         if (!listeners) {
             return;
@@ -45,7 +46,7 @@ EventDispatcher.prototype = {
         }
     }
 
-    ,removeAllEventListeners(type) {
+    , removeAllEventListeners(type) {
         if (!type) {
             this._listeners = this._captureListeners = null;
         }
@@ -59,11 +60,11 @@ EventDispatcher.prototype = {
         }
     }
 
-    ,dispatchEvent(eventObj) {
-        if (typeof eventObj == "string") {
+    , dispatchEvent(eventObj) {
+        if (typeof eventObj === "string") {
             // won't bubble, so skip everything if there's no listeners:
-            var listeners = this._listeners;
-            if (!listeners || !listeners[eventObj]) {
+            // var listeners = this._listeners;
+            if (!this._listeners || !this._listeners[eventObj]) {
                 return false;
             }
             eventObj = new Event(eventObj);
@@ -97,13 +98,18 @@ EventDispatcher.prototype = {
         return eventObj.defaultPrevented;
     }
 
-    ,hasEventListener(type) {
-        var listeners = this._listeners, captureListeners = this._captureListeners;
+    , hasEventListener(type) {
+        var listeners = this._listeners,
+            captureListeners = this._captureListeners;
         return !!((listeners && listeners[type]) || (captureListeners && captureListeners[type]));
     }
 
-    ,_dispatchEvent(eventObj, eventPhase) {
-        var l, listeners = (eventPhase == 1) ? this._captureListeners : this._listeners;
+    , _dispatchEvent(eventObj, eventPhase) {
+        var l,
+            listeners = (eventPhase === 1)
+                ? this._captureListeners
+                : this._listeners;
+
         if (eventObj && listeners) {
             var arr = listeners[eventObj.type];
             if (!arr || !(l = arr.length)) {

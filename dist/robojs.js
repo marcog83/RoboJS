@@ -72,6 +72,7 @@
     function EventDispatcher() {
         this._listeners = {};
     }
+
     EventDispatcher.prototype = {
         addEventListener: function addEventListener(type, listener, useCapture) {
             var listeners;
@@ -126,10 +127,10 @@
             }
         },
         dispatchEvent: function dispatchEvent(eventObj) {
-            if (typeof eventObj == "string") {
+            if (typeof eventObj === "string") {
                 // won't bubble, so skip everything if there's no listeners:
-                var listeners = this._listeners;
-                if (!listeners || !listeners[eventObj]) {
+                // var listeners = this._listeners;
+                if (!this._listeners || !this._listeners[eventObj]) {
                     return false;
                 }
                 eventObj = new Event(eventObj);
@@ -170,7 +171,8 @@
         },
         _dispatchEvent: function _dispatchEvent(eventObj, eventPhase) {
             var l,
-                listeners = eventPhase == 1 ? this._captureListeners : this._listeners;
+                listeners = eventPhase === 1 ? this._captureListeners : this._listeners;
+
             if (eventObj && listeners) {
                 var arr = listeners[eventObj.type];
                 if (!arr || !(l = arr.length)) {
