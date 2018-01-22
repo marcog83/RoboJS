@@ -3,6 +3,7 @@
  */
 import {curry, find, noop} from "@robojs/internal";
 import {makeDispatcher} from "@robojs/core";
+import nextUid from "../core/display/next-uid";
 
 export default class MediatorClassHandler {
     constructor(params) {
@@ -14,39 +15,50 @@ export default class MediatorClassHandler {
                 .then(this.createView(node))
                 .then(this.updateCache);
         });
-        this.hasMediator = node => !find(disposable => disposable.node === node, this.VIEW_CACHE);
-        this.updateCache = (disposable) => {
-            this.VIEW_CACHE.push(disposable);
-            return this.VIEW_CACHE;
-        };
-        this.destroy = (node) => {
-            for (let i = 0; i < this.VIEW_CACHE.length; i++) {
-                let disposable = this.VIEW_CACHE[i];
-                if (disposable && disposable.node === node) {
-                    disposable.dispose();
-                    disposable.node = null;
-                    this.VIEW_CACHE[i] = null;
-                    this.VIEW_CACHE.splice(i, 1);
-                }
-            }
-            return this.VIEW_CACHE;
-        };
-        this.dispose = () => {
-            this.VIEW_CACHE.forEach(disposable => {
-                if (disposable) {
-                    disposable.dispose();
-                    disposable.node = null;
-                }
-            });
-            this.dispatcher.removeAllEventListeners();
-            this.VIEW_CACHE = null;
-            this.dispatcher = null;
-            this.definitions = null;
-
-        }
+        // this.hasMediator =;
+        //this.updateCache =;
+        // this.destroy =
+        //this.
 
 
     }
+
+    hasMediator(node) {
+        return !find(disposable => disposable.node === node, this.VIEW_CACHE)
+    }
+
+    updateCache(disposable) {
+        this.VIEW_CACHE.push(disposable);
+        return this.VIEW_CACHE;
+    }
+
+    destroy(node) {
+        for (let i = 0; i < this.VIEW_CACHE.length; i++) {
+            let disposable = this.VIEW_CACHE[i];
+            if (disposable && disposable.node === node) {
+                disposable.dispose();
+                disposable.node = null;
+                this.VIEW_CACHE[i] = null;
+                this.VIEW_CACHE.splice(i, 1);
+            }
+        }
+        return this.VIEW_CACHE;
+    }
+
+    dispose() {
+        this.VIEW_CACHE.forEach(disposable => {
+            if (disposable) {
+                disposable.dispose();
+                disposable.node = null;
+            }
+        });
+        this.dispatcher.removeAllEventListeners();
+        this.VIEW_CACHE = null;
+        this.dispatcher = null;
+        this.definitions = null;
+
+    }
+
 
     getDefinition(node) {
         return this.definitions[node.dataset.mediator];
@@ -76,13 +88,7 @@ export default class MediatorClassHandler {
     }
 
     nextUid() {
-        const REG_EXP = /[xy]/g;
-        const STRING = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-        return STRING.replace(REG_EXP, c => {
-            let r = Math.random() * 16 | 0;
-            let v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        })
+        return nextUid();
     }
 
 }
