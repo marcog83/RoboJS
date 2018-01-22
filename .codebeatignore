@@ -1,5 +1,5 @@
-sample
-docs
-test
-dist
+sample/**
+docs/**
+test/**
+dist/**
 node_modules
