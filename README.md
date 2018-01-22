@@ -7,6 +7,7 @@ Not further framework frontend , but a tool that lets you manage the association
 [![NPM](https://nodei.co/npm/robojs.png)](https://nodei.co/npm/robojs/)
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/marcog83/RoboJS.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.org/marcog83/RoboJS.svg?branch=master)](https://travis-ci.org/marcog83/RoboJS)
 
 # The idea behind the code
 
