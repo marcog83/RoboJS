@@ -3,7 +3,7 @@ version: "2"         # required to adjust maintainability checks
 checks:
   argument-count:
     config:
-      threshold: 4
+      threshold: 5
   complex-logic:
     config:
       threshold: 4
@@ -25,12 +25,12 @@ checks:
   return-statements:
     config:
       threshold: 4
-  similar-code:
-    config:
-      threshold: # language-specific defaults. an override will affect all languages.
-  identical-code:
-    config:
-      threshold: # language-specific defaults. an override will affect all languages.
+  #similar-code:
+   # config:
+    #  threshold: # language-specific defaults. an override will affect all languages.
+  #identical-code:
+  #  config:
+  #    threshold: # language-specific defaults. an override will affect all languages.
 
 exclude_paths:
 - dist/**
@@ -38,3 +38,4 @@ exclude_paths:
 - node_modules/**
 - sample/**
 - test/**
+- coverage/**
