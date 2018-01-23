@@ -2,20 +2,20 @@ function Signal() {
 
     this.listenerBoxes = [];
 
-    this._valueClasses = null;
+   // this._valueClasses = null;
 
     this.listenersNeedCloning = false;
 
-    this.setValueClasses(arguments);
+    // this.setValueClasses(arguments);
 }
 
 Signal.prototype = {
     getNumListeners: function () {
         return this.listenerBoxes.length;
     },
-    getValueClasses: function () {
+   /* getValueClasses: function () {
         return this._valueClasses;
-    },
+    },*/
     /**
      <h3>connect</h3>
      <p>Connects the signal this to the incoming slot.</p>
@@ -70,17 +70,17 @@ Signal.prototype = {
 
      */
     emit: function () {
-        var valueObject;
-        for (var n = 0; n < this._valueClasses.length; n++) {
-            if (this.primitiveMatchesValueClass(arguments[n], this._valueClasses[n]))
-                continue;
-
-            if ((valueObject = arguments[n]) == null || valueObject instanceof this._valueClasses[n])
-                continue;
-
-            throw new Error('Value object <' + valueObject
-                + '> is not an instance of <' + this._valueClasses[n] + '>.');
-        }
+      //  var valueObject;
+        // for (var n = 0; n < this._valueClasses.length; n++) {
+        //     if (this.primitiveMatchesValueClass(arguments[n], this._valueClasses[n]))
+        //         continue;
+        //
+        //     if ((valueObject = arguments[n]) == null || valueObject instanceof this._valueClasses[n])
+        //         continue;
+        //
+        //     throw new Error('Value object <' + valueObject
+        //         + '> is not an instance of <' + this._valueClasses[n] + '>.');
+        // }
 
         var listenerBoxes = this.listenerBoxes;
         var len = listenerBoxes.length;
@@ -96,15 +96,15 @@ Signal.prototype = {
         }
         this.listenersNeedCloning = false;
     },
-    primitiveMatchesValueClass: function (primitive, valueClass) {
-        if (typeof(primitive) == "string" && valueClass == String
-            || typeof(primitive) == "number" && valueClass == Number
-            || typeof(primitive) == "boolean" && valueClass == Boolean)
-            return true;
-
-        return false;
-    },
-    setValueClasses: function (valueClasses) {
+    // primitiveMatchesValueClass: function (primitive, valueClass) {
+    //     if (typeof(primitive) == "string" && valueClass == String
+    //         || typeof(primitive) == "number" && valueClass == Number
+    //         || typeof(primitive) == "boolean" && valueClass == Boolean)
+    //         return true;
+    //
+    //     return false;
+    // },
+    /*setValueClasses: function (valueClasses) {
         this._valueClasses = valueClasses || [];
 
         for (var i = this._valueClasses.length; i--;) {
@@ -112,7 +112,7 @@ Signal.prototype = {
                 throw new Error('Invalid valueClasses argument: item at index ' + i
                     + ' should be a Class but was:<' + this._valueClasses[i] + '>.');
         }
-    },
+    },*/
     registerListener: function (listener, scope, once) {
         for (var i = 0; i < this.listenerBoxes.length; i++) {
             if (this.listenerBoxes[i].listener == listener && this.listenerBoxes[i].scope == scope) {
