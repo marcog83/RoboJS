@@ -1,4 +1,4 @@
 export default (id,resolve,reject)=>{
-    require([id],resolve,reject);
+    window.require([id],resolve,reject);
 };
 

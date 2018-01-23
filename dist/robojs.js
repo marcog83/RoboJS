@@ -54,7 +54,7 @@
     };
 
     var amdLoader = function amdLoader(id, resolve, reject) {
-        require([id], resolve, reject);
+        window.require([id], resolve, reject);
     };
 
     var Loader = function Loader() {
@@ -248,44 +248,22 @@
 
         this.listenerBoxes = [];
 
-        this._valueClasses = null;
-
         this.listenersNeedCloning = false;
-
-        this.setValueClasses(arguments);
     }
 
     Signal.prototype = {
         getNumListeners: function getNumListeners() {
             return this.listenerBoxes.length;
         },
-        getValueClasses: function getValueClasses() {
-            return this._valueClasses;
-        },
-        /**
-         <h3>connect</h3>
-         <p>Connects the signal this to the incoming slot.</p>
-         @param <code>Function</code> the slot function
-         @param <code>Object</code> the scope of slot function execution
-         */
+
         connect: function connect(slot, scope) {
             this.registerListener(slot, scope, false);
         },
-        /**
-         <h3>connectOnce</h3>
-         <p></p>
-         @param <code>Function</code> the slot function
-         @param <code>Object</code> the scope of slot function execution
-         */
+
         connectOnce: function connectOnce(slot, scope) {
             this.registerListener(slot, scope, true);
         },
-        /**
-         <h3>disconnect</h3>
-         <p>the given slot are disconnected.</p>
-         @param <code>Function</code> the slot function
-         @param <code>Object</code> the scope of slot function execution
-         */
+
         disconnect: function disconnect(slot, scope) {
             if (this.listenersNeedCloning) {
                 this.listenerBoxes = this.listenerBoxes.slice();
@@ -299,71 +277,63 @@
                 }
             }
         },
-        /**
-         <h3>disconnectAll</h3>
-         <p>Disconnects all slots connected to the signal.</p>
-          */
+
         disconnectAll: function disconnectAll() {
 
             for (var i = this.listenerBoxes.length; i--;) {
                 this.disconnect(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
             }
         },
-        /**
-         <h3>emit</h3>
-         <p>Dispatches an event into the signal flow.</p>
-          */
+
         emit: function emit() {
-            var valueObject;
-            for (var n = 0; n < this._valueClasses.length; n++) {
-                if (this.primitiveMatchesValueClass(arguments[n], this._valueClasses[n])) continue;
+            var _this = this;
 
-                if ((valueObject = arguments[n]) == null || valueObject instanceof this._valueClasses[n]) continue;
-
-                throw new Error('Value object <' + valueObject + '> is not an instance of <' + this._valueClasses[n] + '>.');
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
             }
-
-            var listenerBoxes = this.listenerBoxes;
-            var len = listenerBoxes.length;
-            var listenerBox;
 
             this.listenersNeedCloning = true;
-            for (var i = 0; i < len; i++) {
-                listenerBox = listenerBoxes[i];
-                if (listenerBox.once) this.disconnect(listenerBox.listener, listenerBox.scope);
+            this.listenerBoxes.forEach(function (_ref) {
+                var scope = _ref.scope,
+                    listener = _ref.listener,
+                    once = _ref.once;
 
-                listenerBox.listener.apply(listenerBox.scope, arguments);
-            }
+                if (once) {
+                    _this.disconnect(listener, scope);
+                }
+                listener.apply(scope, args);
+            });
+
             this.listenersNeedCloning = false;
         },
-        primitiveMatchesValueClass: function primitiveMatchesValueClass(primitive, valueClass) {
-            if (typeof primitive == "string" && valueClass == String || typeof primitive == "number" && valueClass == Number || typeof primitive == "boolean" && valueClass == Boolean) return true;
 
-            return false;
-        },
-        setValueClasses: function setValueClasses(valueClasses) {
-            this._valueClasses = valueClasses || [];
-
-            for (var i = this._valueClasses.length; i--;) {
-                if (!(this._valueClasses[i] instanceof Function)) throw new Error('Invalid valueClasses argument: item at index ' + i + ' should be a Class but was:<' + this._valueClasses[i] + '>.');
-            }
-        },
         registerListener: function registerListener(listener, scope, once) {
-            for (var i = 0; i < this.listenerBoxes.length; i++) {
-                if (this.listenerBoxes[i].listener == listener && this.listenerBoxes[i].scope == scope) {
-                    if (this.listenerBoxes[i].once && !once) {
-                        throw new Error('You cannot addOnce() then try to add() the same listener ' + 'without removing the relationship first.');
-                    } else if (once && !this.listenerBoxes[i].once) {
-                        throw new Error('You cannot add() then addOnce() the same listener ' + 'without removing the relationship first.');
-                    }
-                    return;
+            var _listeners = this.listenerBoxes.filter(function (box) {
+                return box.listener === listener && box.scope === scope;
+            });
+
+            if (!_listeners.length) {
+                if (this.listenersNeedCloning) {
+                    this.listenerBoxes = this.listenerBoxes.slice();
+                }
+
+                this.listenerBoxes.push({ listener: listener, scope: scope, once: once });
+            } else {
+                //
+                var addOnce_add = _listeners.find(function (box) {
+                    return box.once && !once;
+                });
+                var add_addOnce = _listeners.find(function (box) {
+                    return once && !box.once;
+                });
+
+                if (!!addOnce_add) {
+                    throw new Error('You cannot addOnce() then try to add() the same listener ' + 'without removing the relationship first.');
+                }
+                if (!!add_addOnce) {
+                    throw new Error('You cannot add() then addOnce() the same listener ' + 'without removing the relationship first.');
                 }
             }
-            if (this.listenersNeedCloning) {
-                this.listenerBoxes = this.listenerBoxes.slice();
-            }
-
-            this.listenerBoxes.push({ listener: listener, scope: scope, once: once });
         }
     };
 
@@ -511,8 +481,8 @@
      */
     // Performs left-to-right composition of one or more  functions.
     function compose() {
-        for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
-            fns[_key] = arguments[_key];
+        for (var _len2 = arguments.length, fns = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            fns[_key2] = arguments[_key2];
         }
 
         fns.reverse();
@@ -558,28 +528,29 @@
         return Object.prototype.toString.call(x) === '[object String]';
     }
     function _isArrayLike(x) {
+        var result = false;
         if (Array.isArray(x)) {
-            return true;
+            result = true;
         }
         if (!x) {
-            return false;
+            result = false;
         }
         if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) !== 'object') {
-            return false;
+            result = false;
         }
         if (_isString(x)) {
-            return false;
+            result = false;
         }
         if (x.nodeType === 1) {
-            return !!x.length;
+            result = !!x.length;
         }
         if (x.length === 0) {
-            return true;
+            result = true;
         }
         if (x.length > 0) {
-            return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
+            result = x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
         }
-        return false;
+        return result;
     }
 
     /**

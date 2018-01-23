@@ -34,7 +34,7 @@ describe('dom-watcher', function () {
         assert.instanceOf(onAdded, Signal, "onAdded non è un Signal");
         assert.instanceOf(onRemoved, Signal, "onRemoved non è un Signal");
         assert.isFunction(dispose, "dispose non è una funzione");
-
+        dispose();
     });
 
 
