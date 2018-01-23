@@ -15,4 +15,4 @@ branches:
 before_script:
   - npm install codeclimate-test-reporter -g
 after_success:
-  - set CODECLIMATE_REPO_TOKEN=d4bfc623b541efcc21f1e735a27a37297ab138fde061f7c4b35f79b6dd22aa43 && codeclimate-test-reporter < lcov.info
+  - codeclimate-test-reporter < coverage/lcov.info
