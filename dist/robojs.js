@@ -206,44 +206,6 @@
         return new EventDispatcher();
     };
 
-    function RJSEvent(type) {
-        var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-        var bubbles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-        var cancelable = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-        this.data = data;
-        this.type = type;
-        this.bubbles = bubbles;
-        this.cancelable = cancelable;
-        this.timeStamp = new Date().getTime();
-        //
-        this.defaultPrevented = false;
-        this.propagationStopped = false;
-        this.immediatePropagationStopped = false;
-        this.removed = false;
-        this.target;
-        this.currentTarget;
-        this.eventPhase = 0;
-    }
-
-    RJSEvent.prototype = {
-        preventDefault: function preventDefault() {
-            this.defaultPrevented = true;
-        },
-        stopPropagation: function stopPropagation() {
-            this.propagationStopped = true;
-        },
-        stopImmediatePropagation: function stopImmediatePropagation() {
-            this.immediatePropagationStopped = this.propagationStopped = true;
-        },
-        remove: function remove() {
-            this.removed = true;
-        },
-        clone: function clone() {
-            return new RJSEvent(this.type, this.data, this.bubbles, this.cancelable);
-        }
-    };
-
     function Signal() {
 
         this.listenerBoxes = [];
@@ -961,7 +923,6 @@
     exports.Loader = Loader;
     exports.EventDispatcher = eventDispatcher;
     exports.makeDispatcher = makeDispatcher;
-    exports.RJSEvent = RJSEvent;
     exports.Signal = Signal;
     exports.DomWatcher = DomWatcher;
     exports.MediatorHandler = MediatorHandler;

@@ -49,7 +49,8 @@ describe('MediatorHandler', function () {
 
 
     it("dispose", function () {
-        assert.isOk("non so come testarlo!");
+        handler = MediatorHandler({});
+        assert.isUndefined(handler.dispose(),"non so come testarlo!");
     });
     it("destroy: destroy one element and update cache array", function (done) {
         var newDIV = document.createElement("div");

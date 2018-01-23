@@ -30,9 +30,7 @@ export interface Watcher {
     onRemoved: Signal
     dispose(): void
 }
-export interface RJSEvent extends Event {
-    data?: any
-}
+
 export interface EventDispatcher {
     addEventListener(type: string, listener: Function, useCapture?: boolean): Function
     removeEventListener(type: string, listener: Function, useCapture?: boolean): void

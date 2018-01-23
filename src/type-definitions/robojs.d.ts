@@ -11,7 +11,7 @@ import {
     Watcher,
     Handler_getAllElements
 } from "./types.d";
-export {EventDispatcher, RJSEvent, Signal} from "./types.d";
+export {EventDispatcher, Signal} from "./types.d";
 
 export type  Loader = (loaderfn?: (id: any, resolve, reject) => Promise<any>) => LoaderDef;
 
