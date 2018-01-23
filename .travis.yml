@@ -6,9 +6,13 @@ env:
 language: node_js
 sudo: false
 node_js:
-  - "8"
+  - stable
 
 
 branches:
   only:
     - master
+before_script:
+  - npm install codeclimate-test-reporter -g
+after_success:
+  - codeclimate-test-reporter < coverage/lcov.info
