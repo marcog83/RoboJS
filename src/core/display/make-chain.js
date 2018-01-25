@@ -1,7 +1,7 @@
 /**
  * Created by marcogobbi on 01/04/2017.
  */
-import {compose, filter, flatten, map, pluck} from "@robojs/internal";
+import {compose, filter, flatten, map, pluck} from "../../internal";
 
 export default function makeChain(prop, getAllElements, emit) {
     return compose(

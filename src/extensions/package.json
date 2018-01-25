@@ -1,9 +1,5 @@
 {
   "name": "@robojs/extensions",
   "version": "1.0.0",
-  "main": "index.js",
-  "dependencies": {
-    "@robojs/internal": "file:../internal",
-    "@robojs/core": "file:../core"
-  }
+  "main": "index.js"
 }

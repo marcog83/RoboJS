@@ -1,2 +1,2 @@
-export * from "@robojs/core";
-export * from "@robojs/extensions";
+export * from "./src/core";
+export * from "./src/extensions";

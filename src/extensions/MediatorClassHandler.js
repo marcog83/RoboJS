@@ -1,8 +1,8 @@
 /**
  * Created by mgobbi on 11/05/2017.
  */
-import {curry, find, noop} from "@robojs/internal";
-import {makeDispatcher} from "@robojs/core";
+import {curry, find, noop} from "../internal";
+import {makeDispatcher} from "../core";
 import nextUid from "../core/display/next-uid";
 
 export default class MediatorClassHandler {

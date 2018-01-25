@@ -9,7 +9,7 @@ import create from "./create";
 import inCache from "./in-cache";
 import getAllElements from "./get-all-elements";
 import FindMediator from "./find-mediator";
-import {curry} from "@robojs/internal";
+import {curry} from "../../internal";
 
 const GetDefinition = curry(function (definitions, node) {
     return definitions[node.getAttribute("data-mediator")];

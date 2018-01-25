@@ -4,8 +4,8 @@
 import getAllElements from "./get-all-elements";
 import getCreate from "./create";
 import FindMediator from "../../core/display/find-mediator";
-import {curry, noop} from "@robojs/internal";
-import {makeDispatcher} from "@robojs/core";
+import {curry, noop} from "../../internal";
+import {makeDispatcher} from "../../core";
 
 const GetDefinition = curry(function (definitions, node) {
     return definitions[node.tagName.toLowerCase()];

@@ -18,10 +18,7 @@
     "release:patch": "shelljs-release patch",
     "test": "nyc --reporter=lcov mocha --require babel-core/register --ui bdd  ./test"
   },
-  "dependencies": {
-    "@robojs/core": "file:src/core",
-    "@robojs/extensions": "file:src/extensions"
-  },
+
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",

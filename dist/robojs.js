@@ -426,7 +426,7 @@
          var idx = 0;
          var len = tail.length;
          while (idx < len){
-              result=tail[i].call(ctx, result);
+               result=tail[i].call(ctx, result);
              i--;
          }
          return result;*/
