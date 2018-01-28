@@ -3,6 +3,7 @@
  */
 define(function (require) {
     "use strict";
+
     var rjs = require("robojs");
     var definitions = require("./client/definitions");
 

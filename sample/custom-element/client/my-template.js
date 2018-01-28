@@ -11,7 +11,7 @@ define(function () {
     Object.assign(Module.prototype , {
 
         handleElementAdded: function (e) {
-            var id = e.data;
+            var id = e.detail;
             this.appendChild(document.createElement(id));
         },
         connectedCallback: function () {

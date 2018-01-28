@@ -22,7 +22,7 @@ define(function (require, exports, module) {
                 center: {lat: -34.397, lng: 150.644}
             });
             this.dispatcher.addEventListener("place-changed", function (e) {
-                var center = e.data;
+                var center = e.detail;
                 map.setCenter(center);
             })
         },

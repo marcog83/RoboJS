@@ -2,7 +2,6 @@
  * Created by mgobbi on 03/02/2016.
  */
 define(function (require) {
-    var rjs = require("robojs");
 
     function Module(dispatcher) {
         this.dispatcher = dispatcher;
@@ -11,7 +10,7 @@ define(function (require) {
 
 
         this.addEventListener("click", function () {
-            this.dispatcher.dispatchEvent(new rjs.RJSEvent("create-element", this.id));
+            this.dispatcher.dispatchEvent(new CustomEvent("create-element", {detail:this.id}));
         }.bind(this));
     }
 

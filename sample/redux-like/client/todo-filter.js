@@ -3,10 +3,9 @@
  */
 define(function (require) {
     var Actions = require("./actions");
-    var rjs = require("robojs");
     return function (node, dispatcher) {
         function handler() {
-            dispatcher.dispatchEvent(new rjs.RJSEvent(Actions.SET_VISIBILITY_FILTER, node.value));
+            dispatcher.dispatchEvent(new CustomEvent(Actions.SET_VISIBILITY_FILTER,{detail: node.value}));
         }
 
 

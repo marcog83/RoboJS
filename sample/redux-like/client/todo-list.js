@@ -17,7 +17,7 @@ define(function (require) {
 
         };
         dispatcher.addEventListener("state", function (e) {
-            var state = e.data;
+            var state = e.detail;
             var filterFn = visibilityFilters[state.visibilityFilter];
             node.innerHTML = state.todos
                 .reduce(function (prev, todo, i) {

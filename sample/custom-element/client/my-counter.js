@@ -5,13 +5,7 @@ define(function () {
     function Module(dispatcher) {
         this.dispatcher=dispatcher;
         this.count = 0;
-        this.dispatcher.addEventListener("create-element", function (e) {
-            var thumb_id = e.data;
-            var id = this.getAttribute("data-id");
-            if (thumb_id === id) {
-                this.update();
-            }
-        }.bind(this))
+
     }
     Module.prototype = Object.create(HTMLElement.prototype);
     Module.prototype.constructor = Module;
@@ -25,6 +19,13 @@ define(function () {
 
         connectedCallback: function () {
             this.innerHTML = this.count;
+            this.dispatcher.addEventListener("create-element", function (e) {
+                var thumb_id = e.detail;
+                var id = this.getAttribute("data-id");
+                if (thumb_id === id) {
+                    this.update();
+                }
+            }.bind(this))
         },
         disconnectedCallback: function () {
 

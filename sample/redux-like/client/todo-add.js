@@ -3,12 +3,11 @@
  */
 define(function (require) {
     var Actions = require("./actions");
-    var rjs = require("robojs");
     return function (node, dispatcher) {
         var input = node.querySelector("input");
         var button = node.querySelector("button");
         button.addEventListener("click", function (e) {
-            dispatcher.dispatchEvent(new rjs.RJSEvent(Actions.ADD_TODO, input.value));
+            dispatcher.dispatchEvent(new CustomEvent(Actions.ADD_TODO, {detail: input.value}));
         })
     };
 });
