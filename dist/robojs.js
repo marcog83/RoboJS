@@ -583,6 +583,12 @@
         }, list);
     });
 
+    function unique(arrArg) {
+        return arrArg.filter(function (elem, pos, arr) {
+            return arr.indexOf(elem) == pos;
+        });
+    }
+
     /**
      * Created by marcogobbi on 01/04/2017.
      */
@@ -593,7 +599,7 @@
             } else {
                 return [];
             }
-        }, filter(function (nodes) {
+        }, unique, flatten, filter(function (nodes) {
             return nodes.length > 0;
         }), map(getAllElements), filter(function (node) {
             return node.querySelectorAll;
