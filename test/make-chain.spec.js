@@ -38,7 +38,7 @@ describe('make chain', function () {
         var mutations = [{
             addedNodes: [document.createElement("div"), p, document.createElement("nav")]
         }];
-        assert.sameDeepMembers(getAdded(mutations)[0], [p], "dovrebbe trovare solo il p");
+        assert.strictEqual(getAdded(mutations)[0], p, "dovrebbe trovare solo il p");
     });
     it('I nodi rimossi senza data-mediator non vengono considerati', function () {
         let getRemoved = makeChain("removedNodes",getAllElements, emit);
@@ -54,6 +54,6 @@ describe('make chain', function () {
         var mutations = [{
             removedNodes: [document.createElement("div"), p, document.createElement("nav")]
         }];
-        assert.sameDeepMembers(getRemoved(mutations)[0], [p], "dovrebbe trovare solo il p");
+        assert.strictEqual(getRemoved(mutations)[0], p, "dovrebbe trovare solo il p");
     });
 });
