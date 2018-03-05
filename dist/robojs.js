@@ -69,141 +69,81 @@
         });
     };
 
-    function EventDispatcher() {
-        this._listeners = {};
-    }
+    /**
+     * Creates a new EventTarget. This class implements the DOM level 2
+     * EventTarget interface and can be used wherever those are used.
+     * @constructor
+     * @implements {EventTarget}
+     */
+    function EventTarget() {}
 
-    EventDispatcher.prototype = {
-        addEventListener: function addEventListener(type, listener, useCapture) {
-            var listeners;
-            if (useCapture) {
-                listeners = this._captureListeners = this._captureListeners || {};
+    EventTarget.prototype = {
+        /**
+         * Adds an event listener to the target.
+         * @param {string} type The name of the event.
+         * @param {EventListenerType} handler The handler for the event. This is
+         *     called when the event is dispatched.
+         */
+        addEventListener: function addEventListener(type, handler) {
+            if (!this.listeners_) this.listeners_ = Object.create(null);
+            if (!(type in this.listeners_)) {
+                this.listeners_[type] = [handler];
             } else {
-                listeners = this._listeners = this._listeners || {};
-            }
-            var arr = listeners[type];
-            if (arr) {
-                this.removeEventListener(type, listener, useCapture);
-            }
-            arr = listeners[type]; // remove may have deleted the array
-            if (!arr) {
-                listeners[type] = [listener];
-            } else {
-                arr.push(listener);
-            }
-            return listener;
-        },
-        removeEventListener: function removeEventListener(type, listener, useCapture) {
-            var listeners = useCapture ? this._captureListeners : this._listeners;
-            if (!listeners) {
-                return;
-            }
-            var arr = listeners[type];
-            if (!arr) {
-                return;
-            }
-            for (var i = 0, l = arr.length; i < l; i++) {
-                if (arr[i] == listener) {
-                    if (l == 1) {
-                        delete listeners[type];
-                    } // allows for faster checks.
-                    else {
-                            arr.splice(i, 1);
-                        }
-                    break;
-                }
+                var handlers = this.listeners_[type];
+                if (handlers.indexOf(handler) < 0) handlers.push(handler);
             }
         },
-        removeAllEventListeners: function removeAllEventListeners(type) {
-            if (!type) {
-                this._listeners = this._captureListeners = null;
-            } else {
-                if (this._listeners) {
-                    delete this._listeners[type];
-                }
-                if (this._captureListeners) {
-                    delete this._captureListeners[type];
-                }
-            }
-        },
-        dispatchEvent: function dispatchEvent(eventObj) {
-            if (typeof eventObj === "string") {
-                // won't bubble, so skip everything if there's no listeners:
-                // var listeners = this._listeners;
-                if (!this._listeners || !this._listeners[eventObj]) {
-                    return false;
-                }
-                eventObj = new Event(eventObj);
-            } else if (eventObj.target && eventObj.clone) {
-                // redispatching an active event object, so clone it:
-                eventObj = eventObj.clone();
-            }
-            try {
-                eventObj.target = this;
-            } catch (e) {} // try/catch allows redispatching of native events
 
-            if (!eventObj.bubbles || !this.parent) {
-                this._dispatchEvent(eventObj, 2);
-            } else {
-                var top = this,
-                    list = [top];
-                while (top.parent) {
-                    list.push(top = top.parent);
-                }
-                var i,
-                    l = list.length;
-
-                // capture & atTarget
-                for (i = l - 1; i >= 0 && !eventObj.propagationStopped; i--) {
-                    list[i]._dispatchEvent(eventObj, 1 + (i == 0));
-                }
-                // bubbling
-                for (i = 1; i < l && !eventObj.propagationStopped; i++) {
-                    list[i]._dispatchEvent(eventObj, 3);
+        /**
+         * Removes an event listener from the target.
+         * @param {string} type The name of the event.
+         * @param {EventListenerType} handler The handler for the event.
+         */
+        removeEventListener: function removeEventListener(type, handler) {
+            if (!this.listeners_) return;
+            if (type in this.listeners_) {
+                var handlers = this.listeners_[type];
+                var index = handlers.indexOf(handler);
+                if (index >= 0) {
+                    // Clean up if this was the last listener.
+                    if (handlers.length === 1) delete this.listeners_[type];else handlers.splice(index, 1);
                 }
             }
-            return eventObj.defaultPrevented;
         },
-        hasEventListener: function hasEventListener(type) {
-            var listeners = this._listeners,
-                captureListeners = this._captureListeners;
-            return !!(listeners && listeners[type] || captureListeners && captureListeners[type]);
-        },
-        _dispatchEvent: function _dispatchEvent(eventObj, eventPhase) {
-            var l,
-                listeners = eventPhase === 1 ? this._captureListeners : this._listeners;
 
-            if (eventObj && listeners) {
-                var arr = listeners[eventObj.type];
-                if (!arr || !(l = arr.length)) {
-                    return;
-                }
-                try {
-                    eventObj.currentTarget = this;
-                } catch (e) {}
-                try {
-                    eventObj.eventPhase = eventPhase;
-                } catch (e) {}
-                eventObj.removed = false;
-                arr = arr.slice(); // to avoid issues with items being removed or added during the dispatch
-                for (var i = 0; i < l && !eventObj.immediatePropagationStopped; i++) {
-                    var o = arr[i];
-                    if (o.handleEvent) {
-                        o.handleEvent(eventObj);
-                    } else {
-                        o(eventObj);
-                    }
-                    if (eventObj.removed) {
-                        this.removeEventListener(eventObj.type, o, eventPhase == 1);
-                        eventObj.removed = false;
-                    }
+        /**
+         * Dispatches an event and calls all the listeners that are listening to
+         * the type of the event.
+         * @param {!Event} event The event to dispatch.
+         * @return {boolean} Whether the default action was prevented. If someone
+         *     calls preventDefault on the event object then this returns false.
+         */
+        dispatchEvent: function dispatchEvent(event) {
+            if (!this.listeners_) return true;
+
+            // Since we are using DOM Event objects we need to override some of the
+            // properties and methods so that we can emulate this correctly.
+            var self = this;
+            event.__defineGetter__('target', function () {
+                return self;
+            });
+
+            var type = event.type;
+            var prevented = 0;
+            if (type in this.listeners_) {
+                // Clone to prevent removal during dispatch
+                var handlers = this.listeners_[type].concat();
+                for (var i = 0, handler; handler = handlers[i]; i++) {
+                    if (handler.handleEvent) prevented |= handler.handleEvent.call(handler, event) === false;else prevented |= handler.call(this, event) === false;
                 }
             }
+
+            return !prevented && !event.defaultPrevented;
         }
     };
-    var eventDispatcher = new EventDispatcher();
+    var eventDispatcher = new EventTarget();
     var makeDispatcher = function makeDispatcher() {
-        return new EventDispatcher();
+        return new EventTarget();
     };
 
     function Signal() {
@@ -401,6 +341,7 @@
     /**
      * Created by mgobbi on 14/03/2017.
      */
+
     function curry(fn) {
         var length = fn.length;
         if (length === 1) {
@@ -412,6 +353,7 @@
     /**
      * Created by marcogobbi on 20/04/2017.
      */
+
     var reduce = curry(function (xf, acc, list) {
         var idx = 0;
         var len = list.length;
@@ -426,7 +368,7 @@
          var idx = 0;
          var len = tail.length;
          while (idx < len){
-               result=tail[i].call(ctx, result);
+              result=tail[i].call(ctx, result);
              i--;
          }
          return result;*/
@@ -441,7 +383,7 @@
     /**
      * Created by mgobbi on 17/03/2017.
      */
-    // Performs left-to-right composition of one or more  functions.
+
     function compose() {
         for (var _len2 = arguments.length, fns = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
             fns[_key2] = arguments[_key2];
@@ -488,8 +430,7 @@
 
     function _isString(x) {
         return Object.prototype.toString.call(x) === '[object String]';
-    }
-    function _isArrayLike(x) {
+    }function _isArrayLike(x) {
         var result = false;
         if (Array.isArray(x)) {
             result = true;
@@ -518,11 +459,6 @@
     /**
      * Created by mgobbi on 12/04/2017.
      */
-    //  function flatten(arr) {
-    //     return arr.reduce(function (flat, toFlatten) {
-    //         return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-    //     }, []);
-    // }
     function flatten(list) {
         var value, jlen, j;
         var result = [];
@@ -592,6 +528,7 @@
     /**
      * Created by marcogobbi on 01/04/2017.
      */
+
     function makeChain(prop, getAllElements, emit) {
         return compose(function (nodes) {
             if (nodes.length > 0) {
@@ -659,6 +596,7 @@
     /**
      * Created by mgobbi on 31/03/2017.
      */
+
     var create = curry(function (node, dispatcher, Mediator) {
         var mediatorId = nextUid();
         node.setAttribute('mediatorid', mediatorId);
@@ -673,6 +611,7 @@
     /**
      * Created by mgobbi on 31/03/2017.
      */
+
     var inCache = function inCache(MEDIATORS_CACHE, node) {
         return !!find(function (disposable) {
             return disposable.node === node;
@@ -694,6 +633,7 @@
     /**
      * Created by marcogobbi on 02/04/2017.
      */
+
     var FindMediator = function FindMediator(getDefinition, create, updateCache) {
         return curry(function (dispatcher, load, node) {
             return load(getDefinition(node)).then(create(node, dispatcher)).then(updateCache);
@@ -740,7 +680,7 @@
                 }
             });
             MEDIATORS_CACHE = null;
-            dispatcher.removeAllEventListeners();
+            dispatcher.listeners_ = null;
             dispatcher = null;
             _findMediator = null;
             definitions = null;
@@ -771,6 +711,7 @@
     /**
      * Created by marcogobbi on 01/04/2017.
      */
+
     function GetMediators(findMediator, hasMediator) {
         return compose(function (promises) {
             return Promise.all(promises);
@@ -780,6 +721,7 @@
     /**
      * Created by marcogobbi on 01/04/2017.
      */
+
     function HandleNodesRemoved(destroy) {
         return compose(forEach(destroy), flatten);
     }
@@ -787,6 +729,7 @@
     /**
      * Created by marcogobbi on 01/04/2017.
      */
+
     function Build(getMediators, getAllElements) {
         return compose(getMediators, map(getAllElements), function (root) {
             return [root];
@@ -796,7 +739,6 @@
     /**
      * Created by marco.gobbi on 21/01/2015.
      */
-
     var bootstrap = function bootstrap(options) {
         var definitions = options.definitions,
             _options$loader = options.loader,
@@ -886,6 +828,7 @@
     /**
      * Created by marcogobbi on 07/05/2017.
      */
+
     var GetDefinition$1 = curry(function (definitions, node) {
         return definitions[node.tagName.toLowerCase()];
     });

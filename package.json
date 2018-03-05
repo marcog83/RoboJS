@@ -25,13 +25,13 @@
     "babel-preset-import-export": "^1.0.2",
     "chai": "^4.1.2",
     "jsdom": "^11.6.2",
-    "mocha": "^5.0.0",
+    "mocha": "^5.0.1",
     "mocha-jsdom": "^1.1.0",
     "mochawesome": "^3.0.2",
-    "nyc": "^11.4.1",
+    "nyc": "^11.5.0",
     "rollup": "^0.56.0",
-    "rollup-plugin-node-resolve": "^3.0.2",
+    "rollup-plugin-node-resolve": "^3.0.3",
     "shelljs-release": "^0.2.0",
-    "uglify-js": "^3.3.9"
+    "uglify-js": "^3.3.13"
   }
 }

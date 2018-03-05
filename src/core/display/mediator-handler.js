@@ -45,7 +45,7 @@ export default function (params) {
             }
         });
         MEDIATORS_CACHE = null;
-        dispatcher.removeAllEventListeners();
+        dispatcher.listeners_= null;
         dispatcher = null;
         _findMediator = null;
         definitions = null;
