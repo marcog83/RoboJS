@@ -154,6 +154,23 @@ describe('Signal', function () {
         assert.equal(signal.getNumListeners(), 0, "una volta fatto emit viene eliminato il listener");
         assert.equal(i, 7, "il valore di emit viene passato correttamente");
     })
+    it("connectOnce:emit connect dentro listener!!!bomba", function () {
+        let signal = new Signal();
+        var i = 0;
+        const listener = function (p) {
+            
+            signal.connect(k=>{
+                i=k;
+            });
+            i=p;
+        };
+        signal.connect(listener);
+
+        signal.emit(7);
+        signal.emit(8);
+        assert.equal(signal.getNumListeners(), 3);
+        assert.equal(i, 8, "il valore di emit viene passato correttamente");
+    })
     it("connectOnce: no connectOnce e connect", function () {
         let signal = new Signal();
 
