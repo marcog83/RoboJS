@@ -32,6 +32,12 @@ describe('bootstrap', function () {
         assert.isFunction(dispose, "dispose non è una funzione");
 
     });
+    it('bootstrap: dispose viene chiamata ', function () {
+        let {dispose} = bootstrap({definitions: {}});
+        dispose();
 
+        assert.ok( "dispose non da errori");
+
+    });
 
 });

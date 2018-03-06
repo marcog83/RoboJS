@@ -15,27 +15,25 @@ const GetDefinition = curry(function (definitions, node) {
     return definitions[node.getAttribute("data-mediator")];
 });
 
+function destroy(node, MEDIATORS_CACHE) {
+    for (let i = 0; i < MEDIATORS_CACHE.length; i++) {
+        let disposable = MEDIATORS_CACHE[i];
+        if (disposable && disposable.node === node) {
+            disposable.dispose();
+            disposable.node = null;
+            MEDIATORS_CACHE[i] = null;
+            MEDIATORS_CACHE.splice(i, 1);
+        }
+    }
+    return MEDIATORS_CACHE;
+}
+
 export default function (params) {
     //crea un'istanza dell'EventDispatcher se non viene passata
     let {definitions = {}, dispatcher = makeDispatcher()} = params;
     //inizializza la cache dei mediatori registrati
     let MEDIATORS_CACHE = [];
     let getDefinition = GetDefinition(definitions);
-
-    function destroy(node) {
-        for (let i = 0; i < MEDIATORS_CACHE.length; i++) {
-            let disposable = MEDIATORS_CACHE[i];
-            if (disposable && disposable.node === node) {
-                disposable.dispose();
-                disposable.node = null;
-                MEDIATORS_CACHE[i] = null;
-                MEDIATORS_CACHE.splice(i, 1);
-            }
-        }
-
-
-        return MEDIATORS_CACHE;
-    }
 
     function dispose() {
         MEDIATORS_CACHE.forEach(disposable => {
@@ -45,7 +43,7 @@ export default function (params) {
             }
         });
         MEDIATORS_CACHE = null;
-        dispatcher.listeners_= null;
+        dispatcher.listeners_ = null;
         dispatcher = null;
         _findMediator = null;
         definitions = null;
@@ -66,7 +64,9 @@ export default function (params) {
 
     return Object.freeze({
         dispose,
-        destroy,
+        destroy: node => {
+            return destroy(node, MEDIATORS_CACHE);
+        },
         findMediator: _findMediator(dispatcher),
         hasMediator,
         getAllElements

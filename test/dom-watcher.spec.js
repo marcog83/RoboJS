@@ -14,7 +14,10 @@ describe('dom-watcher', function () {
     jsdom();
 
     beforeEach(() => {
-
+        global.mutations={
+            addedNodes:[]
+            ,removedNodes:[]
+        }
     })
     it('it is a function', function () {
         assert.isFunction(DomWatcher);

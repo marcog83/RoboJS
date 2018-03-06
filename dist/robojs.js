@@ -648,6 +648,19 @@
         return definitions[node.getAttribute("data-mediator")];
     });
 
+    function _destroy(node, MEDIATORS_CACHE) {
+        for (var i = 0; i < MEDIATORS_CACHE.length; i++) {
+            var disposable = MEDIATORS_CACHE[i];
+            if (disposable && disposable.node === node) {
+                disposable.dispose();
+                disposable.node = null;
+                MEDIATORS_CACHE[i] = null;
+                MEDIATORS_CACHE.splice(i, 1);
+            }
+        }
+        return MEDIATORS_CACHE;
+    }
+
     function MediatorHandler(params) {
         var _params$definitions = params.definitions,
             definitions = _params$definitions === undefined ? {} : _params$definitions,
@@ -657,20 +670,6 @@
         //inizializza la cache dei mediatori registrati
         var MEDIATORS_CACHE = [];
         var getDefinition = GetDefinition(definitions);
-
-        function destroy(node) {
-            for (var i = 0; i < MEDIATORS_CACHE.length; i++) {
-                var disposable = MEDIATORS_CACHE[i];
-                if (disposable && disposable.node === node) {
-                    disposable.dispose();
-                    disposable.node = null;
-                    MEDIATORS_CACHE[i] = null;
-                    MEDIATORS_CACHE.splice(i, 1);
-                }
-            }
-
-            return MEDIATORS_CACHE;
-        }
 
         function dispose() {
             MEDIATORS_CACHE.forEach(function (disposable) {
@@ -700,7 +699,9 @@
 
         return Object.freeze({
             dispose: dispose,
-            destroy: destroy,
+            destroy: function destroy(node) {
+                return _destroy(node, MEDIATORS_CACHE);
+            },
             findMediator: _findMediator(dispatcher),
             hasMediator: hasMediator,
             getAllElements: getAllElements

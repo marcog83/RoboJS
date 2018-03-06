@@ -48,9 +48,15 @@ describe('MediatorHandler', function () {
      */
 
 
-    it("dispose", function () {
-        handler = MediatorHandler({});
-        assert.isUndefined(handler.dispose(),"non so come testarlo!");
+    it("dispose", function (done) {
+
+        handler.findMediator(load, node).then(newCache => {
+            assert.lengthOf(newCache, 1,"non ha inserito correttamente in cache");
+            handler.dispose();
+            assert.ok("non so come testarlo!");
+            done();
+        }).catch(done)
+
     });
     it("destroy: destroy one element and update cache array", function (done) {
         var newDIV = document.createElement("div");
