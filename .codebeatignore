@@ -3,5 +3,4 @@ docs/**
 test/**
 dist/**
 coverage/**
-src/internal/**
 node_modules

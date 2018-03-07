@@ -39,4 +39,3 @@ exclude_paths:
 - sample/**
 - test/**
 - coverage/**
-- src/internal/**
