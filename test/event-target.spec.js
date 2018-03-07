@@ -11,6 +11,11 @@ var assert = require("chai").assert;
 describe('EventTarget', function () {
 
     jsdom();
+    var Event,CustomEvent;
+    beforeEach(function(){
+        Event=window.Event;
+        CustomEvent=window.CustomEvent;
+    })
     it('makeDispatcher: it is a function', function () {
 
         assert.isFunction(makeDispatcher);
@@ -40,9 +45,9 @@ describe('EventTarget', function () {
 
 
         dispatcher.addEventListener("a",_ => assert.ok("ok"));
-        dispatcher.dispatchEvent(new window.Event("a"));
+        dispatcher.dispatchEvent(new Event("a"));
         dispatcher.addEventListener("b",e => assert.equal(e.detail,params,"ok"));
-        dispatcher.dispatchEvent(new window.CustomEvent("b",{detail:params}));
+        dispatcher.dispatchEvent(new CustomEvent("b",{detail:params}));
 
     });
 
