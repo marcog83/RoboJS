@@ -16,7 +16,7 @@
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch",
-    "test": "nyc --reporter=lcov mocha --require babel-core/register --ui bdd  ./test"
+    "test": "nyc --reporter=lcov mocha --require babel-core/register --ui bdd ./test"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
