@@ -26,8 +26,12 @@ const _EventTarget = (function () {
                     this.listeners_[type] = [handler];
                 } else {
                     var handlers = this.listeners_[type];
-                    if (handlers.indexOf(handler) < 0)
+                    if (handlers.indexOf(handler) < 0){
+
                         handlers.push(handler);
+
+                    }
+
                 }
             },
 
@@ -42,12 +46,18 @@ const _EventTarget = (function () {
                 if (type in this.listeners_) {
                     var handlers = this.listeners_[type];
                     var index = handlers.indexOf(handler);
+
                     if (index >= 0) {
+
                         // Clean up if this was the last listener.
-                        if (handlers.length === 1)
+                        if (handlers.length === 1){
                             delete this.listeners_[type];
-                        else
+                        }
+
+                        else{
                             handlers.splice(index, 1);
+                        }
+
                     }
                 }
             },
