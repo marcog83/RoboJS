@@ -5,10 +5,15 @@ import Build from "../src/core/display/build";
 import flatten from "../src/internal/_flatten";
 import getAllElements from "../src/core/display/get-all-elements";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('build', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
     var mediators = [1, 2, 3, 4];
 
     function getMediators() {

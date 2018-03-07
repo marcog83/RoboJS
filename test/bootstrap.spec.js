@@ -5,13 +5,19 @@ import bootstrap from "../src/core/display/bootstrap";
 
 
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
+
 require('./libs/MutationObserver');
 
 
 
 describe('bootstrap', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
 
 
     it('it is a function', function () {

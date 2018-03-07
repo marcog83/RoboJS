@@ -3,11 +3,15 @@
  */
 import getAllElements from "../src/core/display/get-all-elements";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('getAllElements', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
 
+    after(function () {
+        this.jsdom()
+    })
 
     it('it is a function', function () {
 

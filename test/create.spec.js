@@ -3,10 +3,15 @@
  */
 import create from "../src/core/display/create";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('create', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
     var node;
     var dispatcher = {};
     var disposable;

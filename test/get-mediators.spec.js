@@ -3,10 +3,15 @@
  */
 import GetMediators from "../src/core/display/get-mediators";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('GetMediators', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
     function findMediator(item) {
         return Promise.resolve(item);
     }

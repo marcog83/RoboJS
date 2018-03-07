@@ -3,10 +3,15 @@
  */
 import MediatorHandler from "../src/core/display/mediator-handler";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('MediatorHandler', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
     var handler;
     var load, node, definitions;
 

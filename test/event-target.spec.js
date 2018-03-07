@@ -4,13 +4,18 @@
 
 import {makeDispatcher} from "../src/core/events/event-dispatcher";
 import dispatcher from "../src/core/events/event-dispatcher";
-var jsdom = require('mocha-jsdom');
 var assert = require("chai").assert;
 
 
 describe('EventTarget', function () {
 
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
     var Event,CustomEvent;
     beforeEach(function(){
         Event=window.Event;

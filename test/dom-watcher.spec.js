@@ -6,12 +6,17 @@ import Signal from "../src/core/events/signal";
 
 
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 require('./libs/MutationObserver');
 
 
 describe('dom-watcher', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
 
     beforeEach(() => {
         global.mutations={

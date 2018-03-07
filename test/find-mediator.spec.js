@@ -4,9 +4,17 @@
 import FindMediator from "../src/core/display/find-mediator";
 import curry from "../src/internal/_curry";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('FindMediator', function () {
+
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
+
     var dispatcher = {};
     var disposable = {
         mediatorId: 1,

@@ -3,10 +3,15 @@
  */
 import inCache from "../src/core/display/in-cache";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('inCache', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
 
 
     it('it is a function', function () {

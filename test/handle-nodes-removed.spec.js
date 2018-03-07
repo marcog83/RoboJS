@@ -3,10 +3,15 @@
  */
 import HandleNodesRemoved from "../src/core/display/handle-nodes-removed";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('HandleNodesRemoved', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
 
     function destroy() {
     }

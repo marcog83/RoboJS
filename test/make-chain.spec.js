@@ -4,10 +4,15 @@
 import makeChain from "../src/core/display/make-chain";
 import getAllElements from "../src/core/display/get-all-elements";
 var assert = require("chai").assert;
-var jsdom = require('mocha-jsdom');
 
 describe('make chain', function () {
-    jsdom();
+    before(function () {
+        this.jsdom = require('jsdom-global')()
+    })
+
+    after(function () {
+        this.jsdom()
+    })
     function emit(args) {
         return args;
     }
