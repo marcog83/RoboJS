@@ -11,6 +11,7 @@ Not further framework frontend , but a tool that lets you manage the association
 [![codebeat badge](https://codebeat.co/badges/04be77bb-9247-4988-8499-3711bcbe1485)](https://codebeat.co/projects/github-com-marcog83-robojs-master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/73702f345d75cdc37cb7/maintainability)](https://codeclimate.com/github/marcog83/RoboJS/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/73702f345d75cdc37cb7/test_coverage)](https://codeclimate.com/github/marcog83/RoboJS/test_coverage)
+[![Coverage Status](https://coveralls.io/repos/github/marcog83/RoboJS/badge.svg?branch=master)](https://coveralls.io/github/marcog83/RoboJS?branch=master)
 [![Inline docs](http://inch-ci.org/github/marcog83/RoboJS.svg?branch=master)](http://inch-ci.org/github/marcog83/RoboJS)
 
 # The idea behind the code

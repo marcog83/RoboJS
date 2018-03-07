@@ -1,28 +1,33 @@
 function _isString(x) {
     return Object.prototype.toString.call(x) === '[object String]';
 };
+const _isArray = Array.isArray || function (val) {
+    return (val != null &&
+        val.length >= 0 &&
+        Object.prototype.toString.call(val) === '[object Array]');
+};
 export default function (x) {
-    let result = false;
-    if (Array.isArray(x)) {
-        result = true;
+
+    if (_isArray(x)) {
+        return true;
     }
     if (!x) {
-        result = false;
+        return false;
     }
     if (typeof x !== 'object') {
-        result = false;
+        return false;
     }
     if (_isString(x)) {
-        result = false;
+        return false;
     }
     if (x.nodeType === 1) {
-        result = !!x.length;
+        return !!x.length;
     }
     if (x.length === 0) {
-        result = true;
+        return true;
     }
     if (x.length > 0) {
-        result = x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
+        return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
     }
-    return result;
+    return false;
 }

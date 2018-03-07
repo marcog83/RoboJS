@@ -95,7 +95,10 @@
                         this.listeners_[type] = [handler];
                     } else {
                         var handlers = this.listeners_[type];
-                        if (handlers.indexOf(handler) < 0) handlers.push(handler);
+                        if (handlers.indexOf(handler) < 0) {
+
+                            handlers.push(handler);
+                        }
                     }
                 },
 
@@ -109,9 +112,15 @@
                     if (type in this.listeners_) {
                         var handlers = this.listeners_[type];
                         var index = handlers.indexOf(handler);
+
                         if (index >= 0) {
+
                             // Clean up if this was the last listener.
-                            if (handlers.length === 1) delete this.listeners_[type];else handlers.splice(index, 1);
+                            if (handlers.length === 1) {
+                                delete this.listeners_[type];
+                            } else {
+                                handlers.splice(index, 1);
+                            }
                         }
                     }
                 },
@@ -440,30 +449,33 @@
 
     function _isString(x) {
         return Object.prototype.toString.call(x) === '[object String]';
-    }function _isArrayLike(x) {
-        var result = false;
-        if (Array.isArray(x)) {
-            result = true;
+    }var _isArray = Array.isArray || function (val) {
+        return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
+    };
+    function _isArrayLike(x) {
+
+        if (_isArray(x)) {
+            return true;
         }
         if (!x) {
-            result = false;
+            return false;
         }
         if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) !== 'object') {
-            result = false;
+            return false;
         }
         if (_isString(x)) {
-            result = false;
+            return false;
         }
         if (x.nodeType === 1) {
-            result = !!x.length;
+            return !!x.length;
         }
         if (x.length === 0) {
-            result = true;
+            return true;
         }
         if (x.length > 0) {
-            result = x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
+            return x.hasOwnProperty(0) && x.hasOwnProperty(x.length - 1);
         }
-        return result;
+        return false;
     }
 
     /**
