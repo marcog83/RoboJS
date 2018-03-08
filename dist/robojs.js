@@ -622,12 +622,21 @@
     var create = curry(function (node, dispatcher, Mediator) {
         var mediatorId = nextUid();
         node.setAttribute('mediatorid', mediatorId);
-        var dispose = Mediator(node, dispatcher) || noop;
-        return {
+        var disposable = {
             mediatorId: mediatorId,
             node: node,
-            dispose: dispose
+            dispose: noop
         };
+        if (!!node.parentNode) {
+
+            var dispose = Mediator(node, dispatcher) || noop;
+            disposable = {
+                mediatorId: mediatorId,
+                node: node,
+                dispose: dispose
+            };
+        }
+        return disposable;
     });
 
     /**
@@ -684,10 +693,11 @@
     }
 
     function MediatorHandler(params) {
-        var _params$definitions = params.definitions,
-            definitions = _params$definitions === undefined ? {} : _params$definitions,
-            _params$dispatcher = params.dispatcher,
-            dispatcher = _params$dispatcher === undefined ? makeDispatcher() : _params$dispatcher;
+        var _ref2 = params || {},
+            _ref2$definitions = _ref2.definitions,
+            definitions = _ref2$definitions === undefined ? {} : _ref2$definitions,
+            _ref2$dispatcher = _ref2.dispatcher,
+            dispatcher = _ref2$dispatcher === undefined ? makeDispatcher() : _ref2$dispatcher;
 
         //inizializza la cache dei mediatori registrati
         var MEDIATORS_CACHE = [];
@@ -857,10 +867,10 @@
     });
 
     var customElementHandler = function customElementHandler(params) {
-        var _params$definitions2 = params.definitions,
-            definitions = _params$definitions2 === undefined ? {} : _params$definitions2,
-            _params$dispatcher2 = params.dispatcher,
-            dispatcher = _params$dispatcher2 === undefined ? makeDispatcher() : _params$dispatcher2;
+        var _params$definitions = params.definitions,
+            definitions = _params$definitions === undefined ? {} : _params$definitions,
+            _params$dispatcher = params.dispatcher,
+            dispatcher = _params$dispatcher === undefined ? makeDispatcher() : _params$dispatcher;
 
 
         var REGISTERED_ELEMENTS = {};

@@ -30,7 +30,7 @@ function destroy(node, MEDIATORS_CACHE) {
 
 export default function (params) {
     //crea un'istanza dell'EventDispatcher se non viene passata
-    let {definitions = {}, dispatcher = makeDispatcher()} = params;
+    let {definitions = {}, dispatcher = makeDispatcher()} = params || {};
     //inizializza la cache dei mediatori registrati
     let MEDIATORS_CACHE = [];
     let getDefinition = GetDefinition(definitions);

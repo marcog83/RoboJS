@@ -7,10 +7,19 @@ import {curry, noop} from "../../internal";
 export default curry(function (node, dispatcher, Mediator) {
     const mediatorId = nextUid();
     node.setAttribute('mediatorid', mediatorId);
-    const dispose = Mediator(node, dispatcher) || noop;
-    return {
+    let disposable = {
         mediatorId,
         node,
-        dispose
+        dispose: noop
     };
+    if (!!node.parentNode) {
+
+        const dispose = Mediator(node, dispatcher) || noop;
+        disposable = {
+            mediatorId,
+            node,
+            dispose
+        };
+    }
+    return disposable
 });

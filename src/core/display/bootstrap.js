@@ -9,7 +9,7 @@ import MediatorHandler from "./mediator-handler";
 import GetMediators from "./get-mediators";
 import HandleNodesRemoved from "./handle-nodes-removed";
 import Build from "./build";
-export default (options) => {
+export default options => {
     let {definitions, loader = Loader(), root = document.body} = options;
 
     let handler = options.handler || MediatorHandler({definitions});
