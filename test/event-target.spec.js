@@ -2,7 +2,7 @@
  * Created by mgobbi on 05/04/2017.
  */
 
-import {makeDispatcher} from "../src/core/events/event-dispatcher";
+import EventTarget from "../src/core/events/event-dispatcher";
 //import dispatcher from "../src/core/events/event-dispatcher";
 var assert = require("chai").assert;
 
@@ -20,12 +20,9 @@ describe('EventTarget', function () {
     beforeEach(function () {
         Event = window.Event;
         CustomEvent = window.CustomEvent;
-        dispatcher = makeDispatcher();
+        dispatcher = new EventTarget();
     })
-    it('makeDispatcher: it is a function', function () {
 
-        assert.isFunction(makeDispatcher);
-    });
     it('dispatcher: it is a object', function () {
 
         assert.isObject(dispatcher);

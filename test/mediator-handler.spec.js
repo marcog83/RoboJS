@@ -114,7 +114,7 @@ describe('MediatorHandler', function () {
         }).catch(done);
     });
     it("crea un oggetto vuoto per definitions, crea new EventTarget se non specificato", function (done) {
-        //makeDispatcher()
+        //
         var handler = MediatorHandler();
         handler.findMediator(load, node).then(newCache => {
             assert.isFalse(handler.hasMediator(node));

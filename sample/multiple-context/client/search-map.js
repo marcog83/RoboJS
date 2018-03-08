@@ -14,7 +14,7 @@ define(function (require) {
         // create a new EventDispatcher for each search-map component.
         // By default a new instance of EventDispatcher is created when MediatorHandler is invoked.
         // In this case we need a reference of dispatcher which listen to 'dispose-component' event.
-        var componentDispatcher = rjs.makeDispatcher();
+        var componentDispatcher = new rjs.EventTarget();
         var robojs = rjs.bootstrap({
 
              handler: rjs.MediatorHandler({definitions:definitions,dispatcher: componentDispatcher})

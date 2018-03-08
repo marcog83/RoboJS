@@ -2,13 +2,13 @@
  * Created by mgobbi on 11/05/2017.
  */
 import {curry, find, noop} from "../internal";
-import {makeDispatcher} from "../core";
+import {EventTarget} from "../core";
 import nextUid from "../core/display/next-uid";
 
 export default class MediatorClassHandler {
     constructor(params) {
         this.definitions = params.definitions;
-        this.dispatcher = params.dispatcher || makeDispatcher();
+        this.dispatcher = params.dispatcher || new EventTarget();
         this.VIEW_CACHE = [];
         this.findMediator = curry((load, node) => {
             return load(this.getDefinition(node))

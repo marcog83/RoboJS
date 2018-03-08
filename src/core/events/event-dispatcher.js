@@ -102,5 +102,4 @@ const _EventTarget = (function () {
     return EventTarget;
 })();
 
-export default new _EventTarget();
-export var makeDispatcher = () => new _EventTarget();
+export default _EventTarget;

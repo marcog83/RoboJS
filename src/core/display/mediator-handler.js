@@ -2,7 +2,7 @@
  * Created by marco.gobbi on 21/01/2015.
  */
 
-import {makeDispatcher} from "../events/event-dispatcher";
+import EventTarget from "../events/event-dispatcher";
 
 
 import create from "./create";
@@ -30,7 +30,7 @@ function destroy(node, MEDIATORS_CACHE) {
 
 export default function (params) {
     //crea un'istanza dell'EventDispatcher se non viene passata
-    let {definitions = {}, dispatcher = makeDispatcher()} = params || {};
+    let {definitions = {}, dispatcher = new EventTarget()} = params || {};
     //inizializza la cache dei mediatori registrati
     let MEDIATORS_CACHE = [];
     let getDefinition = GetDefinition(definitions);

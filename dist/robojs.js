@@ -160,11 +160,6 @@
         return EventTarget;
     }();
 
-    var eventDispatcher = new _EventTarget();
-    var makeDispatcher = function makeDispatcher() {
-        return new _EventTarget();
-    };
-
     function Signal() {
 
         this.listenerBoxes = [];
@@ -697,7 +692,7 @@
             _ref2$definitions = _ref2.definitions,
             definitions = _ref2$definitions === undefined ? {} : _ref2$definitions,
             _ref2$dispatcher = _ref2.dispatcher,
-            dispatcher = _ref2$dispatcher === undefined ? makeDispatcher() : _ref2$dispatcher;
+            dispatcher = _ref2$dispatcher === undefined ? new _EventTarget() : _ref2$dispatcher;
 
         //inizializza la cache dei mediatori registrati
         var MEDIATORS_CACHE = [];
@@ -870,7 +865,7 @@
         var _params$definitions = params.definitions,
             definitions = _params$definitions === undefined ? {} : _params$definitions,
             _params$dispatcher = params.dispatcher,
-            dispatcher = _params$dispatcher === undefined ? makeDispatcher() : _params$dispatcher;
+            dispatcher = _params$dispatcher === undefined ? new _EventTarget() : _params$dispatcher;
 
 
         var REGISTERED_ELEMENTS = {};
@@ -903,8 +898,7 @@
     };
 
     exports.Loader = Loader;
-    exports.EventDispatcher = eventDispatcher;
-    exports.makeDispatcher = makeDispatcher;
+    exports.EventTarget = _EventTarget;
     exports.Signal = Signal;
     exports.DomWatcher = DomWatcher;
     exports.MediatorHandler = MediatorHandler;

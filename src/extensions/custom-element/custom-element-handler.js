@@ -5,7 +5,7 @@ import getAllElements from "./get-all-elements";
 import getCreate from "./create";
 import FindMediator from "../../core/display/find-mediator";
 import {curry, noop} from "../../internal";
-import {makeDispatcher} from "../../core";
+import {EventTarget} from "../../core";
 
 const GetDefinition = curry(function (definitions, node) {
     return definitions[node.tagName.toLowerCase()];
@@ -13,7 +13,7 @@ const GetDefinition = curry(function (definitions, node) {
 
 export default params => {
     //crea un'istanza dell'EventDispatcher se non viene passata
-    let {definitions = {}, dispatcher = makeDispatcher()} = params;
+    let {definitions = {}, dispatcher = new EventTarget()} = params;
 
     let REGISTERED_ELEMENTS = {};
 
