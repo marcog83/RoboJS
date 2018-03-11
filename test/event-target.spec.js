@@ -36,6 +36,7 @@ describe('EventTarget', function () {
         assert.isFunction(dispatcher.dispatchEvent);
 
     });
+
     it('dispatchEvent dispaccia correttamente a 1 listener', function () {
         var params = [12345, 'text', {a: 1}];
 
@@ -52,20 +53,37 @@ describe('EventTarget', function () {
 
 
         dispatcher.addEventListener("b", e => {
-            var a=0;
+            var a = 0;
             assert.equal(e.detail, params)
         });
         dispatcher.addEventListener("b", e => {
-            var a=1;
+            var a = 1;
             assert.equal(e.detail, params)
         });
-        dispatcher.addEventListener("b", e =>{
-            var a=2;
+        dispatcher.addEventListener("b", e => {
+            var a = 2;
             assert.equal(e.detail, params)
-        } );
+        });
         dispatcher.addEventListener("b", e => assert.equal(e.detail, params));
         dispatcher.dispatchEvent(new CustomEvent("b", {detail: params}));
     });
+
+    it('addEventListener accetta un oggetto Listener', function () {
+        var listener = {
+            prop: "prop",
+            handleEvent: function (e) {
+                assert.ok("passa per il listener");
+                assert.equal(listener, this, "non mantiene il contesto");
+                assert.equal(listener.prop, this.prop, "non è lo stesso oggetto");
+                assert.equal(e.type, "a");
+                assert.equal(e.target, dispatcher, "non è lo stesso target")
+            }
+        };
+        dispatcher.addEventListener("a", listener);
+        dispatcher.dispatchEvent(new Event("a"));
+
+    });
+
     it('dispatcher connette lo stesso listener solo una volta', function () {
 
         let i = 0;
@@ -88,7 +106,7 @@ describe('EventTarget', function () {
         dispatcher.dispatchEvent(new Event("b"));
         assert.equal(i, 0, "");
     });
-    it('removeEventListener senza listeners', function () {
+    it('removeEventListener: non ci sono più listeners', function () {
 
         let i = 0;
         const listener = e => i = i + 1;
@@ -97,6 +115,28 @@ describe('EventTarget', function () {
 
         dispatcher.dispatchEvent(new Event("b"));
         assert.equal(i, 0, "");
+    });
+    it('removeEventListener: non c\'è quel listeners', function () {
+
+        let i = 0;
+        const listener = e => i = i + 1;
+        dispatcher.addEventListener("b", listener);
+        dispatcher.removeEventListener("b", function () {
+        });
+
+        dispatcher.dispatchEvent(new Event("b"));
+        assert.equal(i, 1, "");
+    });
+    it('removeEventListener senza listeners di quel type', function () {
+
+        let i = 0;
+        const listener = e => i = i + 1;
+
+        dispatcher.addEventListener("a", listener);
+        dispatcher.removeEventListener("b", listener);
+
+        dispatcher.dispatchEvent(new Event("a"));
+        assert.equal(i, 1, "");
     });
     it('removeEventListener con più listeners', function () {
 
@@ -104,11 +144,13 @@ describe('EventTarget', function () {
         const listener = e => i = i + 1;
 
         dispatcher.addEventListener("b", listener);
-        dispatcher.addEventListener("b", _=>3);
-        dispatcher.addEventListener("b", _=>_);
+        dispatcher.addEventListener("b", _ => 3);
+        dispatcher.addEventListener("b", _ => _);
         dispatcher.removeEventListener("b", listener);
 
         dispatcher.dispatchEvent(new Event("b"));
         assert.equal(i, 0, "");
     });
+
+
 });

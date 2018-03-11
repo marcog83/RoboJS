@@ -5,7 +5,13 @@
  * @implements {EventTarget}
  */
 const _EventTarget = (function () {
-    var G = typeof global === typeof null ? global : self;
+    var G;
+    try {
+        G = self;
+    } catch (e) {
+        G = global;
+    }
+   // var G = typeof self === "undefined" ? global : self;
     var EventTarget = G.EventTarget;
     try {
         new EventTarget();
@@ -26,7 +32,7 @@ const _EventTarget = (function () {
                     this.listeners_[type] = [handler];
                 } else {
                     var handlers = this.listeners_[type];
-                    if (handlers.indexOf(handler) < 0){
+                    if (handlers.indexOf(handler) < 0) {
 
                         handlers.push(handler);
 
@@ -50,11 +56,11 @@ const _EventTarget = (function () {
                     if (index >= 0) {
 
                         // Clean up if this was the last listener.
-                        if (handlers.length === 1){
+                        if (handlers.length === 1) {
                             delete this.listeners_[type];
                         }
 
-                        else{
+                        else {
                             handlers.splice(index, 1);
                         }
 

@@ -76,7 +76,13 @@
      * @implements {EventTarget}
      */
     var _EventTarget = function () {
-        var G = (typeof global === 'undefined' ? 'undefined' : _typeof(global)) === _typeof(null) ? global : self;
+        var G;
+        try {
+            G = self;
+        } catch (e) {
+            G = global;
+        }
+        // var G = typeof self === "undefined" ? global : self;
         var EventTarget = G.EventTarget;
         try {
             new EventTarget();
