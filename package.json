@@ -17,9 +17,8 @@
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch",
     "test": "nyc --reporter=lcov mocha --require babel-core/register ./test/**",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
-
-
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "nsp": "nsp check"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
