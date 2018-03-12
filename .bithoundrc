@@ -1,0 +1,15 @@
+{
+"test": [
+    "test/**/*.spec.js"
+  ]
+"ignore":[
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/.nyc_output/**",
+    "**/docs/**"
+    "**/sample/**"
+    "**/test/**"
+
+]
+}
