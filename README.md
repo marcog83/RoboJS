@@ -14,6 +14,8 @@ Not further framework frontend , but a tool that lets you manage the association
 [![Coverage Status](https://coveralls.io/repos/github/marcog83/RoboJS/badge.svg?branch=master)](https://coveralls.io/github/marcog83/RoboJS?branch=master)
 [![Inline docs](http://inch-ci.org/github/marcog83/RoboJS.svg?branch=master)](http://inch-ci.org/github/marcog83/RoboJS)
 
+[![NSP Status](https://nodesecurity.io/orgs/marcog83/projects/c8621ee6-fb99-4e5f-ae62-265279409532/badge)](https://nodesecurity.io/orgs/marcog83/projects/c8621ee6-fb99-4e5f-ae62-265279409532)
+
 # The idea behind the code
 
 
