@@ -13,7 +13,8 @@ Not further framework frontend , but a tool that lets you manage the association
 [![Test Coverage](https://api.codeclimate.com/v1/badges/73702f345d75cdc37cb7/test_coverage)](https://codeclimate.com/github/marcog83/RoboJS/test_coverage)
 [![Coverage Status](https://coveralls.io/repos/github/marcog83/RoboJS/badge.svg?branch=master)](https://coveralls.io/github/marcog83/RoboJS?branch=master)
 [![Inline docs](http://inch-ci.org/github/marcog83/RoboJS.svg?branch=master)](http://inch-ci.org/github/marcog83/RoboJS)
-
+[![bitHound Overall Score](https://www.bithound.io/github/marcog83/RoboJS/badges/score.svg)](https://www.bithound.io/github/marcog83/RoboJS)
+[![bitHound Code](https://www.bithound.io/github/marcog83/RoboJS/badges/code.svg)](https://www.bithound.io/github/marcog83/RoboJS)
 [![NSP Status](https://nodesecurity.io/orgs/marcog83/projects/c8621ee6-fb99-4e5f-ae62-265279409532/badge)](https://nodesecurity.io/orgs/marcog83/projects/c8621ee6-fb99-4e5f-ae62-265279409532)
 
 # The idea behind the code
