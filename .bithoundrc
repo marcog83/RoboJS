@@ -7,8 +7,8 @@
     "**/dist/**",
     "**/coverage/**",
     "**/.nyc_output/**",
-    "**/docs/**"
-    "**/sample/**"
+    "**/docs/**",
+    "**/sample/**",
     "**/test/**"
 
 ]
