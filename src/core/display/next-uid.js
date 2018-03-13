@@ -3,6 +3,10 @@
  */
 const REG_EXP = /[xy]/g;
 const STRING = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+/**
+ *
+ * @return {string}
+ */
 export default  () => {
     return STRING.replace(REG_EXP, c => {
         let r = Math.random() * 16 | 0;

@@ -4,7 +4,12 @@
 import {map,compose} from "../../internal";
 
 
-
+/**
+ *
+ * @param getMediators {function}
+ * @param getAllElements {Handler_getAllElements}
+ * @return {function}
+ */
 export default function (getMediators,getAllElements) {
     return compose(
         getMediators,

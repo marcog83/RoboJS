@@ -28,6 +28,12 @@ function destroy(node, MEDIATORS_CACHE) {
     return MEDIATORS_CACHE;
 }
 
+/**
+ *
+ *
+ * @param params {MediatorHandlerParams}
+ * @return {Handler}
+ */
 export default function (params) {
     //crea un'istanza dell'EventDispatcher se non viene passata
     let {definitions = {}, dispatcher = new EventTarget()} = params || {};

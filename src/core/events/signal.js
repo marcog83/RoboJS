@@ -1,3 +1,8 @@
+/**
+ *
+ * @constructor
+ * @return {Signal}
+ */
 function Signal() {
 
     this.listenerBoxes = [];

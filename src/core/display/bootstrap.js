@@ -9,6 +9,12 @@ import MediatorHandler from "./mediator-handler";
 import GetMediators from "./get-mediators";
 import HandleNodesRemoved from "./handle-nodes-removed";
 import Build from "./build";
+
+/**
+ *
+ * @param options {BootstrapConfig}
+ * @returns {Bootstrap}
+ */
 export default options => {
     let {definitions, loader = Loader(), root = document.body} = options;
 

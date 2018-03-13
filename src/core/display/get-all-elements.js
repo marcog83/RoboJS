@@ -1,5 +1,7 @@
 /**
- * Created by marcogobbi on 01/04/2017.
+ *
+ * @param node {HTMLElement}
+ * @return {Array}
  */
 export default function (node) {
 

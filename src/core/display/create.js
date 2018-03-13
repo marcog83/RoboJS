@@ -4,6 +4,12 @@
 import nextUid from "./next-uid";
 import {curry, noop} from "../../internal";
 
+/**
+ * @param node {HTMLElement}
+ * @param dispatcher {EventTarget}
+ * @param Mediator {function}
+ * @return {Disposable}
+ */
 export default curry(function (node, dispatcher, Mediator) {
     const mediatorId = nextUid();
     node.setAttribute('mediatorid', mediatorId);

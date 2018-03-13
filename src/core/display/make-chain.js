@@ -3,6 +3,12 @@
  */
 import {compose, filter, flatten, map, pluck,unique} from "../../internal";
 
+/**
+ *
+ * @param prop {String}
+ * @param getAllElements {Handler_getAllElements}
+ * @param emit {function}
+ */
 export default function makeChain(prop, getAllElements, emit) {
     return compose(
         nodes => {

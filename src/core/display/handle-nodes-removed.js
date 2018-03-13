@@ -3,6 +3,11 @@
  */
 import {compose, flatten, forEach} from "../../internal";
 
+/**
+ *
+ * @param destroy {function}
+ * @return void;
+ */
 export default function (destroy) {
     return compose(
         forEach(destroy),

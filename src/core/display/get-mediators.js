@@ -3,6 +3,12 @@
  */
 import {compose, filter, flatten, map} from "../../internal";
 
+/**
+ *
+ * @param findMediator {function}
+ * @param hasMediator {function}
+ * @return {function}
+ */
 export default function (findMediator, hasMediator) {
     return compose(
         promises => Promise.all(promises)

@@ -57,6 +57,11 @@
         window.require([id], resolve, reject);
     };
 
+    /**
+     *
+     * @param loaderFunction
+     * @return {LoaderDef}
+     */
     var Loader = function Loader() {
         var loaderFunction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : amdLoader;
 
@@ -166,6 +171,11 @@
         return EventTarget;
     }();
 
+    /**
+     *
+     * @constructor
+     * @return {Signal}
+     */
     function Signal() {
 
         this.listenerBoxes = [];
@@ -552,6 +562,12 @@
      * Created by marcogobbi on 01/04/2017.
      */
 
+    /**
+     *
+     * @param prop {String}
+     * @param getAllElements {Handler_getAllElements}
+     * @param emit {function}
+     */
     function makeChain(prop, getAllElements, emit) {
         return compose(function (nodes) {
             if (nodes.length > 0) {
@@ -567,6 +583,12 @@
         );
     }
 
+    /**
+     *
+     * @param root {HTMLElement}
+     * @param getAllElements {function}
+     * @return {DomWatcher}
+     */
     var DomWatcher = function DomWatcher(root, getAllElements) {
         var onAdded = new Signal();
         var onRemoved = new Signal();
@@ -608,6 +630,10 @@
      */
     var REG_EXP = /[xy]/g;
     var STRING = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    /**
+     *
+     * @return {string}
+     */
     var nextUid = function nextUid() {
         return STRING.replace(REG_EXP, function (c) {
             var r = Math.random() * 16 | 0;
@@ -620,6 +646,12 @@
      * Created by mgobbi on 31/03/2017.
      */
 
+    /**
+     * @param node {HTMLElement}
+     * @param dispatcher {EventTarget}
+     * @param Mediator {function}
+     * @return {Disposable}
+     */
     var create = curry(function (node, dispatcher, Mediator) {
         var mediatorId = nextUid();
         node.setAttribute('mediatorid', mediatorId);
@@ -644,6 +676,12 @@
      * Created by mgobbi on 31/03/2017.
      */
 
+    /**
+     *
+     * @param MEDIATORS_CACHE {Array}
+     * @param node {HTMLElement}
+     * @return {boolean}
+     */
     var inCache = function inCache(MEDIATORS_CACHE, node) {
         return !!find(function (disposable) {
             return disposable.node === node;
@@ -651,7 +689,9 @@
     };
 
     /**
-     * Created by marcogobbi on 01/04/2017.
+     *
+     * @param node {HTMLElement}
+     * @return {Array}
      */
     function getAllElements(node) {
 
@@ -666,6 +706,13 @@
      * Created by marcogobbi on 02/04/2017.
      */
 
+    /**
+     *
+     * @param getDefinition {function}
+     * @param create {function}
+     * @param updateCache {function}
+     * @return {function}
+     */
     var FindMediator = function FindMediator(getDefinition, create, updateCache) {
         return curry(function (dispatcher, load, node) {
             return load(getDefinition(node)).then(create(node, dispatcher)).then(updateCache);
@@ -693,6 +740,12 @@
         return MEDIATORS_CACHE;
     }
 
+    /**
+     *
+     *
+     * @param params {MediatorHandlerParams}
+     * @return {Handler}
+     */
     function MediatorHandler(params) {
         var _ref2 = params || {},
             _ref2$definitions = _ref2.definitions,
@@ -746,6 +799,12 @@
      * Created by marcogobbi on 01/04/2017.
      */
 
+    /**
+     *
+     * @param findMediator {function}
+     * @param hasMediator {function}
+     * @return {function}
+     */
     function GetMediators(findMediator, hasMediator) {
         return compose(function (promises) {
             return Promise.all(promises);
@@ -756,6 +815,11 @@
      * Created by marcogobbi on 01/04/2017.
      */
 
+    /**
+     *
+     * @param destroy {function}
+     * @return void;
+     */
     function HandleNodesRemoved(destroy) {
         return compose(forEach(destroy), flatten);
     }
@@ -764,6 +828,12 @@
      * Created by marcogobbi on 01/04/2017.
      */
 
+    /**
+     *
+     * @param getMediators {function}
+     * @param getAllElements {Handler_getAllElements}
+     * @return {function}
+     */
     function Build(getMediators, getAllElements) {
         return compose(getMediators, map(getAllElements), function (root) {
             return [root];
@@ -772,6 +842,12 @@
 
     /**
      * Created by marco.gobbi on 21/01/2015.
+     */
+
+    /**
+     *
+     * @param options {BootstrapConfig}
+     * @returns {Bootstrap}
      */
     var bootstrap = function bootstrap(options) {
         var definitions = options.definitions,

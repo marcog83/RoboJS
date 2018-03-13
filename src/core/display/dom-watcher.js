@@ -2,6 +2,13 @@ import Signal from "../events/signal";
 
 
 import makeChain from "./make-chain";
+
+/**
+ *
+ * @param root {HTMLElement}
+ * @param getAllElements {function}
+ * @return {DomWatcher}
+ */
 export default  (root,getAllElements) => {
     let onAdded =new  Signal();
     let onRemoved = new Signal();
