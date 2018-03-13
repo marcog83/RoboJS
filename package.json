@@ -18,7 +18,8 @@
     "release:patch": "shelljs-release patch",
     "test": "nyc --reporter=lcov mocha --require babel-core/register ./test/**",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "nsp": "nsp check"
+    "nsp": "nsp check",
+    "docs":"typedoc --includeDeclarations --out docs src/type-definitions"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
