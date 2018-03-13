@@ -17,6 +17,10 @@ export type Loader_load = (id: any) => Promise<Function>;
 export interface LoaderDef {
     load: Loader_load
 }
+export interface MediatorHandlerParams{
+    definitions:any
+    , dispatcher?: EventTarget
+}
 export type Handler_getAllElements = (node: HTMLElement) => Array<HTMLElement>
 export interface Handler {
     dispose(): void
@@ -31,12 +35,10 @@ export interface Watcher {
     dispose(): void
 }
 
-export interface EventDispatcher {
+export interface EventTarget {
     addEventListener(type: string, listener: Function, useCapture?: boolean): Function
     removeEventListener(type: string, listener: Function, useCapture?: boolean): void
-    removeAllEventListeners(type: string): void
     dispatchEvent(eventObj: Event): void
-    hasEventListener(type: string): boolean
 }
 
 export interface BootstrapConfig {
