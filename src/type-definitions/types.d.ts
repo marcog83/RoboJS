@@ -34,10 +34,18 @@ export interface Watcher {
     onRemoved: Signal
     dispose(): void
 }
+interface EventListenerObject {
+    handleEvent(evt: Event): void;
+}
+interface EventListener {
+    (evt: Event): void;
+}
+declare type EventListenerOrEventListenerObject = EventListener | EventListenerObject;
+
 
 export interface EventTarget {
-    addEventListener(type: string, listener: Function, useCapture?: boolean): Function
-    removeEventListener(type: string, listener: Function, useCapture?: boolean): void
+    addEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void
+    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, useCapture?: boolean): void
     dispatchEvent(eventObj: Event): void
 }
 
