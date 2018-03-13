@@ -336,9 +336,7 @@
                     argsIdx += 1;
                 }
                 combined[combinedIdx] = result;
-                {
-                    left -= 1;
-                }
+                left -= 1;
                 combinedIdx += 1;
             }
             return left <= 0 ? fn.apply(this, combined) : _arity(left, _curryN(length, combined, fn));
@@ -448,11 +446,13 @@
         }
     });
 
-    function _isString(x) {
-        return Object.prototype.toString.call(x) === '[object String]';
-    }var _isArray = Array.isArray || function (val) {
+    var _isArray = Array.isArray || function (val) {
         return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
     };
+
+    function _isString(x) {
+        return Object.prototype.toString.call(x) === '[object String]';
+    }
     function _isArrayLike(x) {
 
         if (_isArray(x)) {

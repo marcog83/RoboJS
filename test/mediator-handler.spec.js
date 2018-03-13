@@ -121,4 +121,5 @@ describe('MediatorHandler', function () {
             done();
         }).catch(done);
     });
+
 });

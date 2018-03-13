@@ -2,6 +2,7 @@
  * Created by mgobbi on 05/04/2017.
  */
 import bootstrap from "../src/core/display/bootstrap";
+import Loader from "../src/core/net/loader";
 
 
 var assert = require("chai").assert;
@@ -30,6 +31,16 @@ describe('bootstrap', function () {
     it('ritorna un Oggetto', function () {
 
         assert.isObject(bootstrap({definitions: {}}), "non ritorna un Oggetto");
+
+    });
+    it('Si può passare il loader', function () {
+
+        assert.isObject(bootstrap({definitions: {},loader:Loader()}), "non ritorna un Oggetto");
+
+    });
+    it('Si può passare la root', function () {
+
+        assert.isObject(bootstrap({definitions: {},root:document.createElement("div")}), "non ritorna un Oggetto");
 
     });
     it('bootstrap: L\'oggetto ritornato ha due proprietà, promise e dispose', function () {

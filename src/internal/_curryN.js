@@ -17,9 +17,7 @@ function _curryN(length, received, fn) {
                 argsIdx += 1;
             }
             combined[combinedIdx] = result;
-            if (true) {
-                left -= 1;
-            }
+            left -= 1;
             combinedIdx += 1;
         }
         return left <= 0 ? fn.apply(this, combined)

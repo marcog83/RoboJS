@@ -3,7 +3,9 @@ import {isArrayLike} from "../../src/internal/index";
 
 var assert = require("chai").assert;
 describe('isArrayLike', function() {
+
     it('is true for Arrays', function() {
+
         assert.equal(isArrayLike([]), true);
         assert.equal(isArrayLike([1, 2, 3, 4]), true);
         assert.equal(isArrayLike([null]), true);
@@ -20,6 +22,7 @@ describe('isArrayLike', function() {
 
     it('is false for Strings', function() {
         assert.equal(isArrayLike(''), false);
+        assert.equal(isArrayLike(new String("asd")), false);
         assert.equal(isArrayLike('abcdefg'), false);
     });
 
@@ -39,8 +42,10 @@ describe('isArrayLike', function() {
     });
 
     it('is false for everything else', function() {
+
         assert.equal(isArrayLike(undefined), false);
-        assert.equal(isArrayLike(1), false);
+        assert.equal(isArrayLike(null), false);
+        assert.equal(isArrayLike(123), false);
         assert.equal(isArrayLike({}), false);
         assert.equal(isArrayLike(false), false);
         assert.equal(isArrayLike(function() {}), false);
