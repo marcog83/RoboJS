@@ -16,7 +16,7 @@
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch",
-    "test": "nyc --reporter=lcov mocha --require babel-core/register ./test/**/*.spec.js",
+    "test": "nyc --reporter=lcov mocha --require babel-core/register ./test/**",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "nsp": "nsp check",
     "docs": "typedoc --includeDeclarations --out docs src/type-definitions"
@@ -30,12 +30,12 @@
     "coveralls": "^3.0.0",
     "jsdom": "^11.6.2",
     "jsdom-global": "^3.0.2",
-    "mocha": "^5.0.2",
+    "mocha": "^5.0.4",
     "mochawesome": "^3.0.2",
     "nyc": "^11.6.0",
-    "rollup": "^0.56.0",
-    "rollup-plugin-node-resolve": "^3.0.3",
+    "rollup": "^0.56.5",
+    "rollup-plugin-node-resolve": "^3.2.0",
     "shelljs-release": "^0.2.0",
-    "uglify-js": "^3.3.13"
+    "uglify-js": "^3.3.15"
   }
 }

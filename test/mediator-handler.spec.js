@@ -88,7 +88,7 @@ describe('MediatorHandler', function () {
         };
         var MEDIATOR_CACHE = [disposable, {},null];
         var arr=destroy(newDIV, MEDIATOR_CACHE);
-        console.log("arr",arr)
+
         assert.equal(arr.length,0,"non ha eliminato gli elementi")
 
     });

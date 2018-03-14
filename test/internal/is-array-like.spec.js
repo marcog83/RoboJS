@@ -3,6 +3,7 @@ import _isArray from "../../src/internal/_isArray";
 
 
 var assert = require("chai").assert;
+
 describe('isArrayLike', function () {
 
     it('is true for Arrays', function () {

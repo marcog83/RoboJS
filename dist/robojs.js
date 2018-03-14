@@ -396,7 +396,7 @@
          var idx = 0;
          var len = tail.length;
          while (idx < len){
-               result=tail[i].call(ctx, result);
+              result=tail[i].call(ctx, result);
              i--;
          }
          return result;*/
@@ -464,13 +464,13 @@
         return Object.prototype.toString.call(x) === '[object String]';
     }var isArray = Array.isArray || _isArray;
     function _isArrayLike(x) {
-
-        if (isArray(x)) {
-            return true;
-        }
         if (!x) {
             return false;
         }
+        if (isArray(x)) {
+            return true;
+        }
+
         if ('object' !== (typeof x === 'undefined' ? 'undefined' : _typeof(x))) {
             return false;
         }
