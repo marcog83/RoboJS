@@ -1,6 +1,6 @@
 {
-  "moduleId": "robojs"
-  ,"presets": [
+  "moduleId": "robojs",
+  "presets": [
     [
       "env",
       {
@@ -13,5 +13,12 @@
         }
       }
     ]
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  }
 }

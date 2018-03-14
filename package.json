@@ -16,10 +16,10 @@
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch",
-    "test": "nyc --reporter=lcov mocha --require babel-core/register ./test/**",
+    "test": "nyc --reporter=lcov mocha --require babel-core/register ./test/**/*.spec.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "nsp": "nsp check",
-    "docs":"typedoc --includeDeclarations --out docs src/type-definitions"
+    "docs": "typedoc --includeDeclarations --out docs src/type-definitions"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -32,7 +32,7 @@
     "jsdom-global": "^3.0.2",
     "mocha": "^5.0.2",
     "mochawesome": "^3.0.2",
-    "nyc": "^11.5.0",
+    "nyc": "^11.6.0",
     "rollup": "^0.56.0",
     "rollup-plugin-node-resolve": "^3.0.3",
     "shelljs-release": "^0.2.0",

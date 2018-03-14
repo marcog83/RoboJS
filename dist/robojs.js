@@ -396,7 +396,7 @@
          var idx = 0;
          var len = tail.length;
          while (idx < len){
-              result=tail[i].call(ctx, result);
+               result=tail[i].call(ctx, result);
              i--;
          }
          return result;*/
@@ -456,22 +456,22 @@
         }
     });
 
-    var _isArray = Array.isArray || function (val) {
+    var _isArray = function _isArray(val) {
         return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
     };
 
     function _isString(x) {
         return Object.prototype.toString.call(x) === '[object String]';
-    }
+    }var isArray = Array.isArray || _isArray;
     function _isArrayLike(x) {
 
-        if (_isArray(x)) {
+        if (isArray(x)) {
             return true;
         }
         if (!x) {
             return false;
         }
-        if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) !== 'object') {
+        if ('object' !== (typeof x === 'undefined' ? 'undefined' : _typeof(x))) {
             return false;
         }
         if (_isString(x)) {
@@ -672,6 +672,36 @@
         return disposable;
     });
 
+    function _destroy(node, MEDIATORS_CACHE) {
+        var l = MEDIATORS_CACHE.length;
+        for (var i = 0; i < l; i++) {
+            var disposable = MEDIATORS_CACHE[i];
+            if (!!disposable) {
+                if (disposable.node === node) {
+                    disposable.dispose && disposable.dispose();
+                    disposable.node = null;
+                    MEDIATORS_CACHE[i] = null;
+                    //MEDIATORS_CACHE.splice(i, 1);
+                }
+                if (!disposable.node) {
+                    console.log("no node", disposable, node);
+                    disposable.dispose && disposable.dispose();
+                    disposable.node = null;
+                    MEDIATORS_CACHE[i] = null;
+                    //MEDIATORS_CACHE.splice(i, 1);
+                }
+            } else {
+
+                MEDIATORS_CACHE[i] = null;
+                //MEDIATORS_CACHE.splice(i, 1);
+            }
+        }
+
+        return MEDIATORS_CACHE.filter(function (i) {
+            return i;
+        });
+    }
+
     /**
      * Created by mgobbi on 31/03/2017.
      */
@@ -727,19 +757,6 @@
         return definitions[node.getAttribute("data-mediator")];
     });
 
-    function _destroy(node, MEDIATORS_CACHE) {
-        for (var i = 0; i < MEDIATORS_CACHE.length; i++) {
-            var disposable = MEDIATORS_CACHE[i];
-            if (disposable && disposable.node === node) {
-                disposable.dispose();
-                disposable.node = null;
-                MEDIATORS_CACHE[i] = null;
-                MEDIATORS_CACHE.splice(i, 1);
-            }
-        }
-        return MEDIATORS_CACHE;
-    }
-
     /**
      *
      *
@@ -786,7 +803,8 @@
         return Object.freeze({
             dispose: dispose,
             destroy: function destroy(node) {
-                return _destroy(node, MEDIATORS_CACHE);
+                MEDIATORS_CACHE = _destroy(node, MEDIATORS_CACHE);
+                return MEDIATORS_CACHE;
             },
             findMediator: _findMediator(dispatcher),
             hasMediator: hasMediator,

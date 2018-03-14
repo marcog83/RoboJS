@@ -6,6 +6,7 @@ import EventTarget from "../events/event-dispatcher";
 
 
 import create from "./create";
+import destroy from "./destroy-mediator";
 import inCache from "./in-cache";
 import getAllElements from "./get-all-elements";
 import FindMediator from "./find-mediator";
@@ -14,19 +15,6 @@ import {curry} from "../../internal";
 const GetDefinition = curry(function (definitions, node) {
     return definitions[node.getAttribute("data-mediator")];
 });
-
-function destroy(node, MEDIATORS_CACHE) {
-    for (let i = 0; i < MEDIATORS_CACHE.length; i++) {
-        let disposable = MEDIATORS_CACHE[i];
-        if (disposable && disposable.node === node) {
-            disposable.dispose();
-            disposable.node = null;
-            MEDIATORS_CACHE[i] = null;
-            MEDIATORS_CACHE.splice(i, 1);
-        }
-    }
-    return MEDIATORS_CACHE;
-}
 
 /**
  *
@@ -71,7 +59,8 @@ export default function (params) {
     return Object.freeze({
         dispose,
         destroy: node => {
-            return destroy(node, MEDIATORS_CACHE);
+            MEDIATORS_CACHE=destroy(node, MEDIATORS_CACHE);
+            return MEDIATORS_CACHE
         },
         findMediator: _findMediator(dispatcher),
         hasMediator,

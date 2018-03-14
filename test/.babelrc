@@ -14,4 +14,9 @@
       }
     ],"import-export"
   ]
+  ,"env": {
+    "test": {
+      "plugins": ["istanbul"]
+    }
+  }
 }

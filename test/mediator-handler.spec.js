@@ -2,6 +2,8 @@
  * Created by marcogobbi on 02/04/2017.
  */
 import MediatorHandler from "../src/core/display/mediator-handler";
+import destroy from "../src/core/display/destroy-mediator";
+
 var assert = require("chai").assert;
 
 describe('MediatorHandler', function () {
@@ -18,6 +20,7 @@ describe('MediatorHandler', function () {
     function disposeFn() {
 
     };
+
     function Mediator(node, dispatcher) {
         return disposeFn;
     }
@@ -33,7 +36,7 @@ describe('MediatorHandler', function () {
             return Promise.resolve(Mediator);
         };
         node = document.createElement("div");
-        node.setAttribute("data-mediator","a") ;
+        node.setAttribute("data-mediator", "a");
         document.body.appendChild(node);
         handler = MediatorHandler({definitions});
     });
@@ -57,7 +60,7 @@ describe('MediatorHandler', function () {
     it("dispose", function (done) {
 
         handler.findMediator(load, node).then(newCache => {
-            assert.lengthOf(newCache, 1,"non ha inserito correttamente in cache");
+            assert.lengthOf(newCache, 1, "non ha inserito correttamente in cache");
             handler.dispose();
             assert.ok("non so come testarlo!");
             done();
@@ -67,6 +70,7 @@ describe('MediatorHandler', function () {
     it("destroy: destroy one element and update cache array", function (done) {
         var newDIV = document.createElement("div");
         newDIV.setAttribute("data-mediator", "b");
+        document.body.appendChild(newDIV)
         Promise.all([
             handler.findMediator(load, node)
             , handler.findMediator(load, newDIV)
@@ -76,28 +80,38 @@ describe('MediatorHandler', function () {
             assert.equal(emptyCache[0].node, newDIV, "non è il nodo che mi aspettavo rimanesse");
 
             done();
-        }).catch(done)
+        }).catch(done);
+        var disposable = {
+            dispose: function () {
+            },
+            node: newDIV
+        };
+        var MEDIATOR_CACHE = [disposable, {},null];
+        var arr=destroy(newDIV, MEDIATOR_CACHE);
+        console.log("arr",arr)
+        assert.equal(arr.length,0,"non ha eliminato gli elementi")
+
     });
     it("findMediator", function (done) {
         handler.findMediator(load, node).then(newCache => {
-            assert.lengthOf(newCache, 1,"non ha inserito correttamente in cache");
+            assert.lengthOf(newCache, 1, "non ha inserito correttamente in cache");
             done();
         }).catch(done)
     });
     it("findMediator : cache contiene il corretto node", function (done) {
         handler.findMediator(load, node).then(newCache => {
-            assert.equal(newCache[0].node, node,"non ha inserito correttamente in cache");
+            assert.equal(newCache[0].node, node, "non ha inserito correttamente in cache");
             done();
         }).catch(done)
     });
     it("findMediator : cache contiene il corretto dispose", function (done) {
         handler.findMediator(load, node).then(newCache => {
-            assert.equal(newCache[0].dispose, disposeFn,"non ha inserito correttamente in cache");
+            assert.equal(newCache[0].dispose, disposeFn, "non ha inserito correttamente in cache");
             done();
         }).catch(done)
     });
     it("hasMediator, il nodo deve avere una definizione e non deve essere in cache", function () {
-       assert.isTrue(handler.hasMediator(node));
+        assert.isTrue(handler.hasMediator(node));
     });
     it("hasMediator,il nodo deve avere una definizione", function (done) {
         var newDIV = document.createElement("div");
