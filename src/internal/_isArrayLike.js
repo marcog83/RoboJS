@@ -1,8 +1,8 @@
 import _isArray from "./_isArray";
 
 function _isString(x) {
-    return Object.prototype.toString.call(x) === '[object String]';
-};
+    return Object.prototype.toString.call(x) === "[object String]";
+}
 const isArray = Array.isArray || _isArray;
 export default function (x) {
     if (!x) {
@@ -12,7 +12,7 @@ export default function (x) {
         return true;
     }
 
-    if ('object' !== (typeof x)) {
+    if ("object" !== (typeof x)) {
         return false;
     }
     if (_isString(x)) {

@@ -9,4 +9,4 @@ export default function (fn) {
             return fn.apply(this, arguments);
         }
     };
-};
+}

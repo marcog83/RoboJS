@@ -4,12 +4,12 @@
 import _arity from "./_arity";
 function _curryN(length, received, fn) {
     return function() {
-        var combined = [];
-        var argsIdx = 0;
-        var left = length;
-        var combinedIdx = 0;
+        const combined = [];
+        let argsIdx = 0;
+        let left = length;
+        let combinedIdx = 0;
         while (combinedIdx < received.length || argsIdx < arguments.length) {
-            var result;
+            let result;
             if (combinedIdx < received.length  ) {
                 result = received[combinedIdx];
             } else {
@@ -23,5 +23,5 @@ function _curryN(length, received, fn) {
         return left <= 0 ? fn.apply(this, combined)
             : _arity(left, _curryN(length, combined, fn));
     };
-};
-export default _curryN
+}
+export default _curryN;

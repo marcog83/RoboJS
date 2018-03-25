@@ -1,6 +1,6 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define('robojs', ['exports'], factory);
+        define("robojs", ["exports"], factory);
     } else if (typeof exports !== "undefined") {
         factory(exports);
     } else {
@@ -11,7 +11,7 @@
         global.robojs = mod.exports;
     }
 })(this, function (exports) {
-    'use strict';
+    "use strict";
 
     Object.defineProperty(exports, "__esModule", {
         value: true
@@ -65,6 +65,7 @@
     var Loader = function Loader() {
         var loaderFunction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : amdLoader;
 
+        // noinspection Annotator
         return Object.freeze({
             load: function load(id) {
                 return new Promise(function (resolve, reject) {
@@ -80,8 +81,9 @@
      * @constructor
      * @implements {EventTarget}
      */
+    // global
     var _EventTarget = function () {
-        var G;
+        var G = void 0;
         try {
             G = self;
         } catch (e) {
@@ -101,7 +103,10 @@
                  *     called when the event is dispatched.
                  */
                 addEventListener: function addEventListener(type, handler) {
-                    if (!this.listeners_) this.listeners_ = Object.create(null);
+                    if (!this.listeners_) {
+                        this.listeners_ = Object.create(null);
+                    }
+
                     if (!(type in this.listeners_)) {
                         this.listeners_[type] = [handler];
                     } else {
@@ -119,7 +124,10 @@
                  * @param {EventListenerType} handler The handler for the event.
                  */
                 removeEventListener: function removeEventListener(type, handler) {
-                    if (!this.listeners_) return;
+                    if (!this.listeners_) {
+                        return;
+                    }
+
                     if (type in this.listeners_) {
                         var handlers = this.listeners_[type];
                         var index = handlers.indexOf(handler);
@@ -144,12 +152,14 @@
                  *     calls preventDefault on the event object then this returns false.
                  */
                 dispatchEvent: function dispatchEvent(event) {
-                    if (!this.listeners_) return true;
+                    if (!this.listeners_) {
+                        return true;
+                    }
 
                     // Since we are using DOM Event objects we need to override some of the
                     // properties and methods so that we can emulate this correctly.
                     var self = this;
-                    event.__defineGetter__('target', function () {
+                    event.__defineGetter__("target", function () {
                         return self;
                     });
 
@@ -158,8 +168,13 @@
                     if (type in this.listeners_) {
                         // Clone to prevent removal during dispatch
                         var handlers = this.listeners_[type].concat();
-                        for (var i = 0, handler; handler = handlers[i]; i++) {
-                            if (handler.handleEvent) prevented |= handler.handleEvent.call(handler, event) === false;else prevented |= handler.call(this, event) === false;
+                        var handler = void 0;
+                        for (var i = 0; handler = handlers[i]; i++) {
+                            if (handler.handleEvent) {
+                                prevented |= handler.handleEvent.call(handler, event) === false;
+                            } else {
+                                prevented |= handler.call(this, event) === false;
+                            }
                         }
                     }
 
@@ -259,11 +274,11 @@
                     return once && !box.once;
                 });
 
-                if (!!addOnce_add) {
-                    throw new Error('You cannot addOnce() then try to add() the same listener ' + 'without removing the relationship first.');
+                if (addOnce_add) {
+                    throw new Error("You cannot addOnce() then try to add() the same listener " + "without removing the relationship first.");
                 }
-                if (!!add_addOnce) {
-                    throw new Error('You cannot add() then addOnce() the same listener ' + 'without removing the relationship first.');
+                if (add_addOnce) {
+                    throw new Error("You cannot add() then addOnce() the same listener " + "without removing the relationship first.");
                 }
             }
         }
@@ -320,7 +335,7 @@
                     return fn.apply(this, arguments);
                 };
             default:
-                throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
+                throw new Error("First argument to _arity must be a non-negative integer no greater than ten");
         }
     }
 
@@ -338,7 +353,7 @@
             var left = length;
             var combinedIdx = 0;
             while (combinedIdx < received.length || argsIdx < arguments.length) {
-                var result;
+                var result = void 0;
                 if (combinedIdx < received.length) {
                     result = received[combinedIdx];
                 } else {
@@ -457,12 +472,13 @@
     });
 
     var _isArray = function _isArray(val) {
-        return val != null && val.length >= 0 && Object.prototype.toString.call(val) === '[object Array]';
+        return val != null && val.length >= 0 && Object.prototype.toString.call(val) === "[object Array]";
     };
 
     function _isString(x) {
-        return Object.prototype.toString.call(x) === '[object String]';
-    }var isArray = Array.isArray || _isArray;
+        return Object.prototype.toString.call(x) === "[object String]";
+    }
+    var isArray = Array.isArray || _isArray;
     function _isArrayLike(x) {
         if (!x) {
             return false;
@@ -471,7 +487,7 @@
             return true;
         }
 
-        if ('object' !== (typeof x === 'undefined' ? 'undefined' : _typeof(x))) {
+        if ("object" !== (typeof x === "undefined" ? "undefined" : _typeof(x))) {
             return false;
         }
         if (_isString(x)) {
@@ -493,7 +509,9 @@
      * Created by mgobbi on 12/04/2017.
      */
     function flatten(list) {
-        var value, jlen, j;
+        var value = void 0,
+            jlen = void 0,
+            j = void 0;
         var result = [];
         var idx = 0;
         var ilen = list.length;
@@ -629,7 +647,7 @@
      * Created by mgobbi on 31/03/2017.
      */
     var REG_EXP = /[xy]/g;
-    var STRING = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+    var STRING = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
     /**
      *
      * @return {string}
@@ -637,7 +655,7 @@
     var nextUid = function nextUid() {
         return STRING.replace(REG_EXP, function (c) {
             var r = Math.random() * 16 | 0;
-            var v = c === 'x' ? r : r & 0x3 | 0x8;
+            var v = c === "x" ? r : r & 0x3 | 0x8;
             return v.toString(16);
         });
     };
@@ -654,13 +672,13 @@
      */
     var create = curry(function (node, dispatcher, Mediator) {
         var mediatorId = nextUid();
-        node.setAttribute('mediatorid', mediatorId);
+        node.setAttribute("mediatorid", mediatorId);
         var disposable = {
             mediatorId: mediatorId,
             node: node,
             dispose: noop
         };
-        if (!!node.parentNode) {
+        if (node.parentNode) {
 
             var dispose = Mediator(node, dispatcher) || noop;
             disposable = {
@@ -676,7 +694,7 @@
         var l = MEDIATORS_CACHE.length;
         for (var i = 0; i < l; i++) {
             var disposable = MEDIATORS_CACHE[i];
-            if (!!disposable) {
+            if (disposable) {
                 if (disposable.node === node) {
                     disposable.dispose && disposable.dispose();
                     disposable.node = null;
@@ -684,7 +702,7 @@
                     //MEDIATORS_CACHE.splice(i, 1);
                 }
                 if (!disposable.node) {
-                    console.log("no node", disposable, node);
+
                     disposable.dispose && disposable.dispose();
                     disposable.node = null;
                     MEDIATORS_CACHE[i] = null;
@@ -726,7 +744,7 @@
     function getAllElements(node) {
 
         var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
-        if (!!node.getAttribute("data-mediator")) {
+        if (node.getAttribute("data-mediator")) {
             nodes.unshift(node);
         }
         return nodes;

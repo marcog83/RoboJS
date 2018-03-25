@@ -15,5 +15,5 @@ export default (getDefinition, create, updateCache) => {
         return load(getDefinition(node))
             .then(create(node, dispatcher))
             .then(updateCache);
-    })
-}
+    });
+};

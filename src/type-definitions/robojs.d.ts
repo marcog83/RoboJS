@@ -11,8 +11,8 @@ import {
     Watcher,
     Handler_getAllElements,
     MediatorHandlerParams
-} from "./types.d";
-export {EventTarget, Signal} from "./types.d";
+} from "./types";
+export {EventTarget, Signal} from "./types";
 
 export type  Loader = (loaderfn?: (id: any, resolve, reject) => Promise<any>) => LoaderDef;
 

@@ -43,8 +43,8 @@ export default options => {
             root = null;
             promise = null;
         }
-    }
+    };
 
-}
+};
 
 

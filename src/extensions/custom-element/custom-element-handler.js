@@ -22,8 +22,8 @@ export default params => {
         return REGISTERED_ELEMENTS;
     }
 
-    var inCache = curry(function (elements, id) {
-        return !!elements[id]
+    const inCache = curry(function (elements, id) {
+        return !!elements[id];
     });
 
     let getDefinition = GetDefinition(definitions);
@@ -43,5 +43,5 @@ export default params => {
         hasMediator,
         getAllElements
 
-    })
-}
+    });
+};

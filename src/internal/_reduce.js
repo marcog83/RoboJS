@@ -4,8 +4,8 @@
 import curry from "./_curry";
 
 export default curry(function (xf, acc, list) {
-    var idx = 0;
-    var len = list.length;
+    let idx = 0;
+    const len = list.length;
     while (idx < len) {
         acc = xf(acc, list[idx]);
 
@@ -22,4 +22,4 @@ export default curry(function (xf, acc, list) {
          i--;
      }
      return result;*/
-})
+});

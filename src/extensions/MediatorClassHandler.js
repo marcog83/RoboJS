@@ -24,7 +24,7 @@ export default class MediatorClassHandler {
     }
 
     hasMediator(node) {
-        return !find(disposable => disposable.node === node, this.VIEW_CACHE)
+        return !find(disposable => disposable.node === node, this.VIEW_CACHE);
     }
 
     updateCache(disposable) {
@@ -68,18 +68,18 @@ export default class MediatorClassHandler {
     createView(node) {
         return ViewClass => {
             const mediatorId = this.nextUid();
-            node.setAttribute('idmediator', mediatorId);
-            var view = new ViewClass(node, this.dispatcher);
+            node.setAttribute("idmediator", mediatorId);
+            const view = new ViewClass(node, this.dispatcher);
             return {
                 node,
                 dispose: view.dispose || noop
-            }
-        }
+            };
+        };
     }
 
 
     getAllElements(node) {
-        var nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
+        const nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
         if (node.hasAttribute("data-mediator")) {
             nodes.unshift(node);
         }

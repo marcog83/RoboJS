@@ -32,7 +32,7 @@ Signal.prototype = {
             this.listenersNeedCloning = false;
         }
 
-        for (var i = this.listenerBoxes.length; i--;) {
+        for (let i = this.listenerBoxes.length; i--;) {
             if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
                 this.listenerBoxes.splice(i, 1);
                 return;
@@ -42,7 +42,7 @@ Signal.prototype = {
 
     disconnectAll: function () {
 
-        for (var i = this.listenerBoxes.length; i--;) {
+        for (let i = this.listenerBoxes.length; i--;) {
             this.disconnect(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
         }
     },
@@ -53,7 +53,7 @@ Signal.prototype = {
             if (once) {
                 this.disconnect(listener, scope);
             }
-            listener.apply(scope, args)
+            listener.apply(scope, args);
         });
 
         this.listenersNeedCloning = false;
@@ -73,13 +73,13 @@ Signal.prototype = {
             const addOnce_add = _listeners.find(box => box.once && !once);
             const add_addOnce = _listeners.find(box => once && !box.once);
 
-            if (!!addOnce_add) {
-                throw new Error('You cannot addOnce() then try to add() the same listener ' +
-                    'without removing the relationship first.');
+            if (addOnce_add) {
+                throw new Error("You cannot addOnce() then try to add() the same listener " +
+                    "without removing the relationship first.");
             }
-            if (!!add_addOnce) {
-                throw new Error('You cannot add() then addOnce() the same listener ' +
-                    'without removing the relationship first.');
+            if (add_addOnce) {
+                throw new Error("You cannot add() then addOnce() the same listener " +
+                    "without removing the relationship first.");
             }
         }
 

@@ -9,10 +9,10 @@ import _pipe from "./_pipe";
 export default function (...fns) {
 
     fns.reverse();
-    var head = fns[0];
-    var tail = fns.slice(1);
+    const head = fns[0];
+    const tail = fns.slice(1);
 
 
     return _arity(head.length, reduce(_pipe, head, tail));
-};
+}
 

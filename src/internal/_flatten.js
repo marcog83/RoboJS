@@ -8,10 +8,10 @@
 // }
 import _isArrayLike from "./_isArrayLike";
 function flatten(list) {
-    var value, jlen, j;
-    var result = [];
-    var idx = 0;
-    var ilen = list.length;
+    let value, jlen, j;
+    const result = [];
+    let idx = 0;
+    const ilen = list.length;
 
     while (idx < ilen) {
         if (_isArrayLike(list[idx])) {
@@ -28,5 +28,5 @@ function flatten(list) {
         idx += 1;
     }
     return result;
-};
+}
 export default flatten;

@@ -33,9 +33,7 @@ export interface MediatorHandlerParams {
     dispatcher?: EventTarget
 }
 
-export interface Handler_getAllElements {
-    (node: HTMLElement): Array<HTMLElement>
-}
+export type Handler_getAllElements = (node: HTMLElement) => Array<HTMLElement>;
 
 /**
  * E' la strategia con la quale vengono creati i Mediator. Di default con il meccanismo data-mediator
@@ -45,21 +43,26 @@ export interface Handler {
 
     destroy(node: HTMLElement): void
 
-    findMediator:Handler_findMediator,
+    findMediator: Handler_findMediator,
 
     hasMediator(node: HTMLElement): boolean
 
     getAllElements: Handler_getAllElements
 }
-interface Handler_findMediator{
-    (dispatcher:EventTarget):Function;
-    (dispatcher:EventTarget,load:Loader_load):Function;
-    (dispatcher:EventTarget,load: Loader_load, node: HTMLElement): Promise<Mediator>;
+
+export interface Handler_findMediator {
+    (dispatcher: EventTarget): Function;
+
+    (dispatcher: EventTarget, load: Loader_load): Function;
+
+    (dispatcher: EventTarget, load: Loader_load, node: HTMLElement): Promise<Mediator>;
 
 }
-interface Handler_getDefinition{
-    (definitions):any
-    (definitions, node:HTMLElement):any
+
+export interface Handler_getDefinition {
+    (definitions): any
+
+    (definitions, node: HTMLElement): any
 }
 
 /**
@@ -102,8 +105,8 @@ export interface EventTarget {
 }
 
 
-export interface Mediator{
-    (node:HTMLElement,dispatcher:EventTarget):Function;
+export interface Mediator {
+    (node: HTMLElement, dispatcher: EventTarget): Function;
 }
 
 /**

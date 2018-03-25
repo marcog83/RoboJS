@@ -3,9 +3,9 @@
  */
 import curry from "./_curry";
 export default curry((fn, list) => {
-    var idx = 0;
-    var len = list.length;
-    var result = [];
+    let idx = 0;
+    const len = list.length;
+    const result = [];
 
     while (idx < len) {
         if (fn(list[idx])) {
@@ -14,6 +14,6 @@ export default curry((fn, list) => {
         idx += 1;
     }
     return result;
-  //  return Array.from(list).filter(fn);
+    //  return Array.from(list).filter(fn);
 
-})
+});

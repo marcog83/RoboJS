@@ -49,22 +49,22 @@ export default function (params) {
         return MEDIATORS_CACHE;
     }
 
-    var _findMediator = FindMediator(getDefinition, create, updateCache);
+    let _findMediator = FindMediator(getDefinition, create, updateCache);
 
 
     function hasMediator(node) {
-        return !!getDefinition(node) && !inCache(MEDIATORS_CACHE, node)
+        return !!getDefinition(node) && !inCache(MEDIATORS_CACHE, node);
     }
 
     return Object.freeze({
         dispose,
         destroy: node => {
             MEDIATORS_CACHE=destroy(node, MEDIATORS_CACHE);
-            return MEDIATORS_CACHE
+            return MEDIATORS_CACHE;
         },
         findMediator: _findMediator(dispatcher),
         hasMediator,
         getAllElements
 
-    })
-};
+    });
+}

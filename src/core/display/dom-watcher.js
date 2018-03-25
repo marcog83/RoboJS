@@ -43,7 +43,7 @@ export default  (root,getAllElements) => {
         getRemoved=null;
     }
 
-    return Object.freeze({onAdded, onRemoved, dispose})
+    return Object.freeze({onAdded, onRemoved, dispose});
 };
 
 

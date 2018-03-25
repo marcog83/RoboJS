@@ -15,7 +15,7 @@ export default function makeChain(prop, getAllElements, emit) {
             if (nodes.length > 0) {
                 return emit(nodes);
             } else {
-                return []
+                return [];
             }
         },
         unique,
@@ -25,6 +25,6 @@ export default function makeChain(prop, getAllElements, emit) {
         filter(node => node.querySelectorAll),
         flatten,
         pluck(prop)//"addedNodes","removedNodes"
-    )
+    );
 
 }
