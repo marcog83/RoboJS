@@ -5,10 +5,10 @@ import {curry} from "../../internal";
 
 /**
  *
- * @param getDefinition {function}
+ * @param getDefinition {Handler_getDefinition}
  * @param create {function}
  * @param updateCache {function}
- * @return {function}
+ * @return {Handler_findMediator}
  */
 export default (getDefinition, create, updateCache) => {
     return curry(function (dispatcher, load, node) {

@@ -7,7 +7,7 @@ import {curry, noop} from "../../internal";
 /**
  * @param node {HTMLElement}
  * @param dispatcher {EventTarget}
- * @param Mediator {function}
+ * @param Mediator {Mediator}
  * @return {Disposable}
  */
 export default curry(function (node, dispatcher, Mediator) {

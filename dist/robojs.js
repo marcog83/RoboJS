@@ -586,7 +586,7 @@
     /**
      *
      * @param root {HTMLElement}
-     * @param getAllElements {function}
+     * @param getAllElements {Handler_getAllElements}
      * @return {DomWatcher}
      */
     var DomWatcher = function DomWatcher(root, getAllElements) {
@@ -649,7 +649,7 @@
     /**
      * @param node {HTMLElement}
      * @param dispatcher {EventTarget}
-     * @param Mediator {function}
+     * @param Mediator {Mediator}
      * @return {Disposable}
      */
     var create = curry(function (node, dispatcher, Mediator) {
@@ -738,10 +738,10 @@
 
     /**
      *
-     * @param getDefinition {function}
+     * @param getDefinition {Handler_getDefinition}
      * @param create {function}
      * @param updateCache {function}
-     * @return {function}
+     * @return {Handler_findMediator}
      */
     var FindMediator = function FindMediator(getDefinition, create, updateCache) {
         return curry(function (dispatcher, load, node) {
