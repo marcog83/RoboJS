@@ -12,6 +12,7 @@ import {
     Handler_getAllElements,
     MediatorHandlerParams
 } from "./types";
+
 export {EventTarget, Signal} from "./types";
 
 export type  Loader = (loaderfn?: (id: any, resolve, reject) => Promise<any>) => LoaderDef;
@@ -19,6 +20,6 @@ export type  Loader = (loaderfn?: (id: any, resolve, reject) => Promise<any>) =>
 export type  makeDispatcher = () => EventTarget;
 
 export type  DomWatcher = (root: HTMLElement, getAllElements: Handler_getAllElements) => Watcher;
-export type  MediatorHandler = (MediatorHandlerParams) => Handler;
+export type  MediatorHandler = (config: MediatorHandlerParams) => Handler;
 export type  bootstrap = (config: BootstrapConfig) => Bootstrap;
 export type  CustomElementHandler = (definitions: any, dispatcher?: EventTarget) => Handler;

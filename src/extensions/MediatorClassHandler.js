@@ -4,6 +4,7 @@
 import {curry, find, noop} from "../internal";
 import {EventTarget} from "../core";
 import nextUid from "../core/display/next-uid";
+import getAllElements from "../core/display/get-all-elements";
 
 export default class MediatorClassHandler {
     constructor(params) {
@@ -79,12 +80,7 @@ export default class MediatorClassHandler {
 
 
     getAllElements(node) {
-        const nodes = [].slice.call(node.querySelectorAll("[data-mediator]"), 0);
-        if (node.hasAttribute("data-mediator")) {
-            nodes.unshift(node);
-        }
-
-        return nodes;
+        return getAllElements(node);
     }
 
     nextUid() {

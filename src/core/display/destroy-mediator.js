@@ -3,19 +3,19 @@ export default function destroy(node, MEDIATORS_CACHE) {
     for (let i = 0; i < l; i++) {
         let disposable = MEDIATORS_CACHE[i];
         if (disposable) {
-            if (disposable.node === node) {
+            if (!disposable.node || disposable.node === node) {
                 disposable.dispose && disposable.dispose();
                 disposable.node = null;
                 MEDIATORS_CACHE[i] = null;
                 //MEDIATORS_CACHE.splice(i, 1);
             }
-            if (!disposable.node) {
-
-                disposable.dispose && disposable.dispose();
-                disposable.node = null;
-                MEDIATORS_CACHE[i] = null;
-                //MEDIATORS_CACHE.splice(i, 1);
-            }
+            // if (!disposable.node) {
+            //
+            //     disposable.dispose && disposable.dispose();
+            //     disposable.node = null;
+            //     MEDIATORS_CACHE[i] = null;
+            //     //MEDIATORS_CACHE.splice(i, 1);
+            // }
         } else {
 
             MEDIATORS_CACHE[i] = null;
