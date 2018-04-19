@@ -50,6 +50,7 @@ describe('isArrayLike', function () {
         assert.equal(isArrayLike(null), false);
         assert.equal(isArrayLike(123), false);
         assert.equal(isArrayLike({}), false);
+        assert.equal(isArrayLike({a:1}), false);
         assert.equal(isArrayLike(false), false);
         assert.equal(isArrayLike(function () {
         }), false);

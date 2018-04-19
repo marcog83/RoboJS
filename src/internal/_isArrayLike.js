@@ -12,7 +12,8 @@ export default function (x) {
         return true;
     }
 
-    if ("object" !== (typeof x)) {
+    if ("object" !== typeof x) {
+        console.log("wee")
         return false;
     }
     if (_isString(x)) {
