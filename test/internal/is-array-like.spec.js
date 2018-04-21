@@ -60,5 +60,12 @@ describe('isArrayLike', function () {
         assert.equal(_isArray([]), true);
 
     });
+    it('is array polyfill', function () {
+        var _isarray=Array.isArray;
+        Array.isArray=null;
+        assert.equal(isArrayLike({}), false);
+        assert.equal(_isArray([]), true);
+        Array.isArray=_isarray;
 
+    });
 });

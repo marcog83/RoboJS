@@ -3,8 +3,9 @@ import _isArray from "./_isArray";
 function _isString(x) {
     return Object.prototype.toString.call(x) === "[object String]";
 }
-const isArray = Array.isArray || _isArray;
+
 export default function (x) {
+    const isArray = Array.isArray || _isArray;
     if (!x) {
         return false;
     }
@@ -13,7 +14,7 @@ export default function (x) {
     }
 
     if ("object" !== typeof x) {
-        console.log("wee")
+
         return false;
     }
     if (_isString(x)) {

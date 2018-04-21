@@ -1,23 +1,50 @@
 {
   "moduleId": "robojs",
-  "presets": [
-    [
-      "env",
-      {
-        "useBuiltIns": true,
-        "modules": "umd",
-        "targets": {
-          "browsers": [
-            "last 2 versions"
-          ]
-        }
-      }
-    ]
-  ],
+
   "env": {
+    "production":{
+      "presets": [
+        [
+          "env",
+          {
+            "useBuiltIns": true,
+            "modules": "umd",
+            "targets": {
+              "browsers": [
+                "last 2 versions"
+              ]
+            }
+          }
+        ]
+      ]
+    },
     "test": {
+      "presets": [
+        [
+          "env",
+          {
+            "useBuiltIns": true,
+            "modules": false,
+            "targets": {
+              "browsers": [
+                "last 2 versions",
+                "safari >8"
+              ]
+            }
+          }
+        ],
+        "import-export"
+      ],
       "plugins": [
-        "istanbul"
+        [
+          "istanbul",
+          {
+            "exclude": [
+              "**/*.spec.js"
+            ],
+            "useInlineSourceMaps": false
+          }
+        ]
       ]
     }
   }

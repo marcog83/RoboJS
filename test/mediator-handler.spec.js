@@ -2,6 +2,7 @@
  * Created by marcogobbi on 02/04/2017.
  */
 import MediatorHandler from "../src/core/display/mediator-handler";
+import disposeMediator from "../src/core/display/dispose-mediator";
 import destroy from "../src/core/display/destroy-mediator";
 
 var assert = require("chai").assert;
@@ -48,6 +49,17 @@ describe('MediatorHandler', function () {
     it('arity 1', function () {
         assert.lengthOf(MediatorHandler, 1);
     });
+    it('disposeMediator', function () {
+        var disposable = {dispose: function(){
+            assert.ok("viene chiamata la funzione");
+        }, node: {}};
+        disposeMediator(disposable);
+
+        assert.equal(disposable.node,null);
+        disposeMediator(null);
+        assert.ok("ok");
+    });
+
     /*
      dispose,
      destroy,
@@ -86,10 +98,10 @@ describe('MediatorHandler', function () {
             },
             node: newDIV
         };
-        var MEDIATOR_CACHE = [disposable, {},null];
-        var arr=destroy(newDIV, MEDIATOR_CACHE);
+        var MEDIATOR_CACHE = [disposable, {}, null];
+        var arr = destroy(newDIV, MEDIATOR_CACHE);
 
-        assert.equal(arr.length,0,"non ha eliminato gli elementi")
+        assert.equal(arr.length, 0, "non ha eliminato gli elementi")
 
     });
     it("findMediator", function (done) {

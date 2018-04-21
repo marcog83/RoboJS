@@ -6,6 +6,7 @@ import EventTarget from "../events/event-dispatcher";
 
 
 import create from "./create";
+import disposeMediator from "./dispose-mediator";
 import destroy from "./destroy-mediator";
 import inCache from "./in-cache";
 import getAllElements from "./get-all-elements";
@@ -30,12 +31,7 @@ export default function (params) {
     let getDefinition = GetDefinition(definitions);
 
     function dispose() {
-        MEDIATORS_CACHE.forEach(disposable => {
-            if (disposable) {
-                disposable.dispose();
-                disposable.node = null;
-            }
-        });
+        MEDIATORS_CACHE.forEach(disposeMediator);
         MEDIATORS_CACHE = null;
         dispatcher.listeners_ = null;
         dispatcher = null;
