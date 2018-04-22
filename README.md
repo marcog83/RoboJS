@@ -250,3 +250,4 @@ If you need to support old browsers, you need to something for
 2. [Webcomponents](https://github.com/webcomponents). If you use custom element extension.
  
 
+[![HitCount](http://hits.dwyl.io/marcog83/RoboJS.svg)](http://hits.dwyl.io/marcog83/RoboJS)
