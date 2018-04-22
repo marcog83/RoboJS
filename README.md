@@ -15,6 +15,7 @@ Not further framework frontend , but a tool that lets you manage the association
 [![bitHound Overall Score](https://www.bithound.io/github/marcog83/RoboJS/badges/score.svg)](https://www.bithound.io/github/marcog83/RoboJS)
 [![bitHound Code](https://www.bithound.io/github/marcog83/RoboJS/badges/code.svg)](https://www.bithound.io/github/marcog83/RoboJS)
 [![NSP Status](https://nodesecurity.io/orgs/marcog83/projects/c8621ee6-fb99-4e5f-ae62-265279409532/badge)](https://nodesecurity.io/orgs/marcog83/projects/c8621ee6-fb99-4e5f-ae62-265279409532)
+[![devDependencies Status](https://david-dm.org/marcog83/RoboJS/dev-status.svg)](https://david-dm.org/marcog83/RoboJS?type=dev)
 
 # The idea behind the code
 
