@@ -16,7 +16,7 @@
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch",
-    "test": "cross-env NODE_ENV=test nyc mocha ./test/**",
+    "test": "cross-env NODE_ENV=test nyc mocha --recursive test",
     "coverage": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
     "nsp": "nsp check",
     "docs": "typedoc --includeDeclarations --out docs src/type-definitions"
