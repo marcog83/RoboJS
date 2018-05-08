@@ -39,7 +39,7 @@
     "nyc": "^11.7.1",
     "rollup": "^0.58.2",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "shelljs-release": "^0.2.0",
+    "shelljs-release": "^0.3.0",
     "uglify-js": "^3.3.23"
   },
   "nyc": {
