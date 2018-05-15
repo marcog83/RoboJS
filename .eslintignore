@@ -1,9 +1,10 @@
 node_modules/*
 rollup.config.js
-type-definitions/*
+**/type-definitions/*
 sample/**
 docs/**
 test/**
 dist/**
 coverage/**
 .nyc_output/**
+*.ts
