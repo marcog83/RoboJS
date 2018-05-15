@@ -2,7 +2,7 @@
  * Created by mgobbi on 20/04/2017.
  */
 export default function (fn) {
-    return function f1(a) {
+    return function f1() {
         if (arguments.length === 0 ) {
             return f1;
         } else {

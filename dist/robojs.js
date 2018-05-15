@@ -81,7 +81,7 @@
      * @constructor
      * @implements {EventTarget}
      */
-    // global
+
     var _EventTarget = function () {
         var G = void 0;
         try {
@@ -168,8 +168,9 @@
                     if (type in this.listeners_) {
                         // Clone to prevent removal during dispatch
                         var handlers = this.listeners_[type].concat();
-                        var handler = void 0;
-                        for (var i = 0; handler = handlers[i]; i++) {
+
+                        for (var i = 0; i < handlers.length; i++) {
+                            var handler = handlers[i];
                             if (handler.handleEvent) {
                                 prevented |= handler.handleEvent.call(handler, event) === false;
                             } else {
@@ -410,7 +411,7 @@
      * Created by mgobbi on 20/04/2017.
      */
     function _curry1(fn) {
-        return function f1(a) {
+        return function f1() {
             if (arguments.length === 0) {
                 return f1;
             } else {

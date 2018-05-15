@@ -4,7 +4,7 @@
  * @constructor
  * @implements {EventTarget}
  */
-// global
+
 const _EventTarget = (function () {
     let G;
     try {
@@ -98,8 +98,9 @@ const _EventTarget = (function () {
                 if (type in this.listeners_) {
                     // Clone to prevent removal during dispatch
                     let handlers = this.listeners_[type].concat();
-                    let handler;
-                    for (let i = 0; handler = handlers[i]; i++) {
+
+                    for (let i = 0; i<handlers.length; i++) {
+                        let handler = handlers[i];
                         if (handler.handleEvent){
                             prevented |= handler.handleEvent.call(handler, event) === false;
                         }
