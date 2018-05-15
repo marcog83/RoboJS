@@ -9,7 +9,10 @@
     "**/.nyc_output/**",
     "**/docs/**",
     "**/sample/**",
-    "**/test/**"
+    "**/test/**",
+    *.ts,
+    rollup.config.js,
+    .eslintrc.js
 
 ]
 }
