@@ -10,9 +10,9 @@
     "**/docs/**",
     "**/sample/**",
     "**/test/**",
-    *.ts,
-    rollup.config.js,
-    .eslintrc.js
+    "*.ts",
+    "rollup.config.js",
+    ".eslintrc.js"
 
 ]
 }
