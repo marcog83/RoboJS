@@ -3,7 +3,7 @@
  */
 
 import DomWatcher from "./dom-watcher";
-import  Loader from "../net/loader";
+import Loader from "../net/loader";
 import MediatorHandler from "./mediator-handler";
 
 import GetMediators from "./get-mediators";
@@ -15,8 +15,20 @@ import Build from "./build";
  * @param options {BootstrapConfig}
  * @returns {Bootstrap}
  */
+
+class Bootstrap {
+    constructor(options) {
+        let {definitions, loader = new Loader(), root = document.body} = options;
+
+        this.definitions = definitions;
+        this.loader = loader;
+        this.root = root;
+        this.handler = options.handler ||  new MediatorHandler({definitions});
+        this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler.getAllElements);
+    }
+}
+
 export default options => {
-    let {definitions, loader = Loader(), root = document.body} = options;
 
     let handler = options.handler || MediatorHandler({definitions});
     let domWatcher = options.domWatcher || DomWatcher(root, handler.getAllElements);
