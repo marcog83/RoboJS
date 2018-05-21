@@ -39,3 +39,4 @@ exclude_paths:
 - sample/**
 - test/**
 - coverage/**
+- src/type-definitions/**
