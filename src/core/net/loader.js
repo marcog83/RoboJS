@@ -1,4 +1,3 @@
-
 import amdLoader from "./amd-loader";
 
 /**
@@ -6,10 +5,22 @@ import amdLoader from "./amd-loader";
  * @param loaderFunction
  * @return {LoaderDef}
  */
-export default  (loaderFunction = amdLoader) => {
-    // noinspection Annotator
-    return Object.freeze({
-        load: id => new Promise((resolve, reject) => loaderFunction(id, resolve, reject))
-    });
-};
+
+export default class Loader {
+    constructor() {
+    }
+
+    load(id) {
+        return new Promise((resolve, reject) => this.onComplete(id, resolve, reject));
+    }
+
+    onComplete(id, resolve, reject) {
+    }
+}
+
+export class AMDLoader extends Loader {
+    onComplete(id, resolve, reject) {
+        window.require([id], resolve, reject);
+    }
+}
 

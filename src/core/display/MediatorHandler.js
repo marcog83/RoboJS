@@ -17,6 +17,23 @@ const GetDefinition = curry(function (definitions, node) {
     return definitions[node.getAttribute("data-mediator")];
 });
 
+
+export default class MediatorHandler {
+    constructor(params = {}) {
+        let {definitions = {}, dispatcher = new EventTarget()} = params;
+        this.definitions = definitions;
+        this.dispatcher = dispatcher;
+
+    }
+
+    onAdded() {
+    }
+
+    onRemoved() {
+    }
+}
+
+
 /**
  *
  *
@@ -55,7 +72,7 @@ export default function (params) {
     return Object.freeze({
         dispose,
         destroy: node => {
-            MEDIATORS_CACHE=destroy(node, MEDIATORS_CACHE);
+            MEDIATORS_CACHE = destroy(node, MEDIATORS_CACHE);
             return MEDIATORS_CACHE;
         },
         findMediator: _findMediator(dispatcher),

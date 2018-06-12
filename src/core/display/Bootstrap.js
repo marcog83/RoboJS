@@ -4,7 +4,7 @@
 
 import DomWatcher from "./dom-watcher";
 import Loader from "../net/loader";
-import MediatorHandler from "./mediator-handler";
+import MediatorHandler from "./MediatorHandler";
 
 import GetMediators from "./get-mediators";
 import HandleNodesRemoved from "./handle-nodes-removed";
@@ -23,8 +23,23 @@ class Bootstrap {
         this.definitions = definitions;
         this.loader = loader;
         this.root = root;
-        this.handler = options.handler ||  new MediatorHandler({definitions});
+        this.handler = options.handler || new MediatorHandler({definitions});
         this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler.getAllElements);
+        this.domWatcher.onAdded.connect(this.handler.onAdded);
+        this.domWatcher.onRemoved.connect(this.handler.onRemoved);
+
+    }
+
+    dispose() {
+        this.domWatcher.dispose();
+        this.handler.dispose();
+        this.domWatcher = null;
+        this.handler = null;
+
+        this.definitions = null;
+        this.loader = null;
+        this.root = null;
+        this.promise = null;
     }
 }
 
