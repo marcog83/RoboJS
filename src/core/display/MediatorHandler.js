@@ -2,20 +2,10 @@
  * Created by marco.gobbi on 21/01/2015.
  */
 
-import EventTarget from "../events/event-dispatcher";
+import EventTarget from "../events/EventTarget";
 
-
-import create from "./create";
-import disposeMediator from "./dispose-mediator";
-import destroy from "./destroy-mediator";
-import inCache from "./in-cache";
-import getAllElements from "./get-all-elements";
-import FindMediator from "./find-mediator";
-import {curry} from "../../internal";
-
-const GetDefinition = curry(function (definitions, node) {
-    return definitions[node.getAttribute("data-mediator")];
-});
+import {compose, filter, find, flatten, map, noop} from "../../internal";
+import nextUid from "./next-uid";
 
 
 export default class MediatorHandler {
@@ -23,61 +13,108 @@ export default class MediatorHandler {
         let {definitions = {}, dispatcher = new EventTarget()} = params;
         this.definitions = definitions;
         this.dispatcher = dispatcher;
-
+        this.MEDIATORS_CACHE = [];
     }
 
-    onAdded() {
+    get selector() {
+        return "data-mediator";
     }
 
-    onRemoved() {
+
+    getDefinition(node) {
+        return this.definitions[node.getAttribute(this.selector)];
+    }
+
+    inCache(node) {
+        return !!find(disposable => disposable.node === node, this.MEDIATORS_CACHE);
+    }
+
+    updateCache(disposable) {
+        this.MEDIATORS_CACHE.push(disposable);//[mediatorId] = disposeFunction;
+        return this.MEDIATORS_CACHE;
+    }
+
+    hasMediator(node) {
+        return !!this.getDefinition(node) && !this.inCache(node);
+    }
+
+
+    findMediator(load, node) {
+        return load(this.getDefinition(node))
+            .then(Mediator => this.create(node, Mediator))
+            .then(this.updateCache.bind(this));
+    }
+
+    create(node, Mediator) {
+        const mediatorId = nextUid();
+        node.setAttribute("mediatorid", mediatorId);
+        let disposable = {
+            mediatorId,
+            node,
+            dispose: noop
+        };
+        if (node.parentNode) {
+
+            const dispose = Mediator(node, this.dispatcher) || noop;
+            disposable = {
+                mediatorId,
+                node,
+                dispose
+            };
+        }
+        return disposable;
+    }
+
+    getAllElements(node) {
+        const nodes = [].slice.call(node.querySelectorAll("[" + this.selector + "]"), 0);
+        if (node.getAttribute(this.selector)) {
+            nodes.unshift(node);
+        }
+        return nodes;
+    }
+
+    disposeMediator(disposable) {
+        if (disposable) {
+            disposable.dispose();
+            disposable.node = null;
+        }
+    }
+
+    _destroy(node) {
+        const l = this.MEDIATORS_CACHE.length;
+        for (let i = 0; i < l; i++) {
+            let disposable = this.MEDIATORS_CACHE[i];
+            if (disposable) {
+                if (!disposable.node || disposable.node === node) {
+                    disposable.dispose && disposable.dispose();
+                    disposable.node = null;
+                    this.MEDIATORS_CACHE[i] = null;
+
+                }
+
+            } else {
+
+                this.MEDIATORS_CACHE[i] = null;
+
+            }
+
+        }
+
+        return this.MEDIATORS_CACHE.filter(i => i);
+    }
+
+    destroy(node) {
+        this.MEDIATORS_CACHE = this._destroy(node);
+        return this.MEDIATORS_CACHE;
+    }
+
+    dispose() {
+        this.MEDIATORS_CACHE.forEach(this.disposeMediator);
+        this.MEDIATORS_CACHE = null;
+        this.dispatcher.listeners_ = null;
+        this.dispatcher = null;
+
     }
 }
 
 
-/**
- *
- *
- * @param params {MediatorHandlerParams}
- * @return {Handler}
- */
-export default function (params) {
-    //crea un'istanza dell'EventDispatcher se non viene passata
-    let {definitions = {}, dispatcher = new EventTarget()} = params || {};
-    //inizializza la cache dei mediatori registrati
-    let MEDIATORS_CACHE = [];
-    let getDefinition = GetDefinition(definitions);
-
-    function dispose() {
-        MEDIATORS_CACHE.forEach(disposeMediator);
-        MEDIATORS_CACHE = null;
-        dispatcher.listeners_ = null;
-        dispatcher = null;
-        _findMediator = null;
-        definitions = null;
-        getDefinition = null;
-    }
-
-    function updateCache(disposable) {
-        MEDIATORS_CACHE.push(disposable);//[mediatorId] = disposeFunction;
-        return MEDIATORS_CACHE;
-    }
-
-    let _findMediator = FindMediator(getDefinition, create, updateCache);
-
-
-    function hasMediator(node) {
-        return !!getDefinition(node) && !inCache(MEDIATORS_CACHE, node);
-    }
-
-    return Object.freeze({
-        dispose,
-        destroy: node => {
-            MEDIATORS_CACHE = destroy(node, MEDIATORS_CACHE);
-            return MEDIATORS_CACHE;
-        },
-        findMediator: _findMediator(dispatcher),
-        hasMediator,
-        getAllElements
-
-    });
-}

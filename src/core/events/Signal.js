@@ -3,7 +3,7 @@
  * @constructor
  * @return {Signal}
  */
-class Signal {
+export default class Signal {
     constructor() {
         this.listenerBoxes = [];
 
@@ -84,4 +84,4 @@ class Signal {
 }
 
 
-export default Signal;
+ ;

@@ -17,7 +17,7 @@ define(function (require) {
         var componentDispatcher = new rjs.EventTarget();
         var robojs = rjs.bootstrap({
 
-             handler: rjs.MediatorHandler({definitions:definitions,dispatcher: componentDispatcher})
+             handler:new rjs.MediatorHandler({definitions:definitions,dispatcher: componentDispatcher})
             , root: node
         });
         componentDispatcher.addEventListener("dispose-component", function () {

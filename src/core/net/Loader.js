@@ -1,4 +1,3 @@
-import amdLoader from "./amd-loader";
 
 /**
  *

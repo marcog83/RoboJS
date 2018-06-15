@@ -1,12 +1,15 @@
-export {default as Loader} from "./net/loader";
+export {default as Loader} from "./net/Loader";
 
-export {default as EventTarget}  from "./events/event-dispatcher";
-export {default as RJSEvent}  from "./events/rjs-event";
-export {default as Signal}  from "./events/signal";
-export {default as DomWatcher}  from "./display/dom-watcher";
+export {default as EventTarget} from "./events/EventTarget";
+export {default as Signal} from "./events/Signal";
+export {default as DomWatcher} from "./display/DomWatcher";
 
-export {default as MediatorHandler}  from "./display/mediator-handler";
-export {default as bootstrap}  from "./display/bootstrap";
+export {default as MediatorHandler} from "./display/MediatorHandler";
+import Bootstrap from "./display/Bootstrap";
+
+export {default as Bootstrap} from "./display/Bootstrap";
 //
 
-
+export const bootstrap = options => {
+    return new Bootstrap(options);
+}
