@@ -1,9 +1,7 @@
-/**
- *
- * @constructor
- * @return {Signal}
- */
+
 export default class Signal {
+    listenerBoxes:Array;
+    listenersNeedCloning:boolean;
     constructor() {
         this.listenerBoxes = [];
 

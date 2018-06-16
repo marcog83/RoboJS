@@ -2,17 +2,16 @@
  * Created by marco.gobbi on 21/01/2015.
  */
 
-import EventTarget from "../events/EventTarget";
 
-import {compose, filter, find, flatten, map, noop} from "../../internal";
+import {find, noop} from "../../internal";
 import nextUid from "./next-uid";
+import Handler from "./Handler";
 
 
-export default class MediatorHandler {
+export default class MediatorHandler extends Handler {
     constructor(params = {}) {
-        let {definitions = {}, dispatcher = new EventTarget()} = params;
-        this.definitions = definitions;
-        this.dispatcher = dispatcher;
+        super(params);
+
         this.MEDIATORS_CACHE = [];
     }
 

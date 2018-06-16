@@ -14,7 +14,7 @@ define(function (require) {
 
        var application= rjs.bootstrap({
             definitions: definitions
-            , loader: new rjs.Loader(loaderFn)
+            , loader: new rjs.CustomLoader(loaderFn)
         });
         function handler() {
             var element = document.createElement("div");

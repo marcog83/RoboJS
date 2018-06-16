@@ -1,22 +1,13 @@
-/**
- * Creates a new EventTarget. This class implements the DOM level 2
- * EventTarget interface and can be used wherever those are used.
- * @constructor
- * @implements {EventTarget}
- */
+
 
 class EventTarget {
+    listeners_:Object;
     constructor() {
         this.listeners_ = {};
 
     }
 
-    /**
-     * Adds an event listener to the target.
-     * @param {string} type The name of the event.
-     * @param {EventListenerType} handler The handler for the event. This is
-     *     called when the event is dispatched.
-     */
+
     addEventListener(type, handler) {
 
 
@@ -33,11 +24,7 @@ class EventTarget {
         }
     }
 
-    /**
-     * Removes an event listener from the target.
-     * @param {string} type The name of the event.
-     * @param {EventListenerType} handler The handler for the event.
-     */
+
     removeEventListener(type, handler) {
 
 
@@ -60,13 +47,7 @@ class EventTarget {
         }
     }
 
-    /**
-     * Dispatches an event and calls all the listeners that are listening to
-     * the type of the event.
-     * @param {!Event} event The event to dispatch.
-     * @return {boolean} Whether the default action was prevented. If someone
-     *     calls preventDefault on the event object then this returns false.
-     */
+
     dispatchEvent(event) {
         // Since we are using DOM Event objects we need to override some of the
         // properties and methods so that we can emulate this correctly.

@@ -720,11 +720,9 @@
      * Created by marco.gobbi on 21/01/2015.
      */
 
-    var MediatorHandler = function () {
-        function MediatorHandler() {
-            var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            _classCallCheck(this, MediatorHandler);
+    var Handler = function () {
+        function Handler(params) {
+            _classCallCheck(this, Handler);
 
             var _params$definitions = params.definitions,
                 definitions = _params$definitions === undefined ? {} : _params$definitions,
@@ -733,7 +731,69 @@
 
             this.definitions = definitions;
             this.dispatcher = dispatcher;
-            this.MEDIATORS_CACHE = [];
+        }
+        /**
+         *
+         * @param node
+         * @return {*}
+         */
+
+        _createClass(Handler, [{
+            key: "getDefinition",
+            value: function getDefinition(node) {}
+        }, {
+            key: "inCache",
+            value: function inCache(node) {
+                return false;
+            }
+        }, {
+            key: "updateCache",
+            value: function updateCache(disposable) {}
+        }, {
+            key: "hasMediator",
+            value: function hasMediator(node) {
+                return false;
+            }
+        }, {
+            key: "findMediator",
+            value: function findMediator(load, node) {
+                var _this6 = this;
+
+                return load(this.getDefinition(node)).then(function (Mediator) {
+                    return _this6.create(node, Mediator);
+                }).then(this.updateCache.bind(this));
+            }
+        }, {
+            key: "create",
+            value: function create(node, Mediator) {
+                throw new Error("not implemented");
+            }
+        }, {
+            key: "getAllElements",
+            value: function getAllElements(node) {}
+        }, {
+            key: "destroy",
+            value: function destroy(node) {}
+        }, {
+            key: "dispose",
+            value: function dispose() {}
+        }]);
+
+        return Handler;
+    }();
+
+    var MediatorHandler = function (_Handler) {
+        _inherits(MediatorHandler, _Handler);
+
+        function MediatorHandler() {
+            var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            _classCallCheck(this, MediatorHandler);
+
+            var _this7 = _possibleConstructorReturn(this, (MediatorHandler.__proto__ || Object.getPrototypeOf(MediatorHandler)).call(this, params));
+
+            _this7.MEDIATORS_CACHE = [];
+            return _this7;
         }
 
         _createClass(MediatorHandler, [{
@@ -762,10 +822,10 @@
         }, {
             key: "findMediator",
             value: function findMediator(load, node) {
-                var _this6 = this;
+                var _this8 = this;
 
                 return load(this.getDefinition(node)).then(function (Mediator) {
-                    return _this6.create(node, Mediator);
+                    return _this8.create(node, Mediator);
                 }).then(this.updateCache.bind(this));
             }
         }, {
@@ -850,7 +910,7 @@
         }]);
 
         return MediatorHandler;
-    }();
+    }(Handler);
 
     var Bootstrap = function () {
         function Bootstrap(options) {
@@ -892,14 +952,14 @@
         }, {
             key: "handleAdded",
             value: function handleAdded(node) {
-                var _this7 = this;
+                var _this9 = this;
 
                 var nodes = flatten(node);
                 nodes = filter(this.handler.hasMediator.bind(this.handler), nodes);
                 var promises = map(function (node) {
-                    return _this7.loader.load(_this7.handler.getDefinition(node)).then(function (Mediator) {
-                        return _this7.handler.create(node, Mediator);
-                    }).then(_this7.handler.updateCache.bind(_this7.handler));
+                    return _this9.loader.load(_this9.handler.getDefinition(node)).then(function (Mediator) {
+                        return _this9.handler.create(node, Mediator);
+                    }).then(_this9.handler.updateCache.bind(_this9.handler));
                 }, nodes);
                 return Promise.all(promises);
             }
@@ -960,12 +1020,6 @@
     //
     // };
 
-    //
-
-    var bootstrap = function bootstrap(options) {
-        return new Bootstrap(options);
-    };
-
     /**
      * Created by marcogobbi on 07/05/2017.
      */
@@ -977,17 +1031,17 @@
         return prev + curr;
     }, "*");
 
-    var CustomElementHandler = function (_MediatorHandler) {
-        _inherits(CustomElementHandler, _MediatorHandler);
+    var CustomElementHandler = function (_Handler2) {
+        _inherits(CustomElementHandler, _Handler2);
 
         function CustomElementHandler(params) {
             _classCallCheck(this, CustomElementHandler);
 
-            var _this8 = _possibleConstructorReturn(this, (CustomElementHandler.__proto__ || Object.getPrototypeOf(CustomElementHandler)).call(this, params));
+            var _this10 = _possibleConstructorReturn(this, (CustomElementHandler.__proto__ || Object.getPrototypeOf(CustomElementHandler)).call(this, params));
 
-            _this8.REGISTERED_ELEMENTS = {};
+            _this10.REGISTERED_ELEMENTS = {};
 
-            return _this8;
+            return _this10;
         }
 
         _createClass(CustomElementHandler, [{
@@ -1052,9 +1106,50 @@
         }]);
 
         return CustomElementHandler;
-    }(MediatorHandler);
+    }(Handler);
 
-    exports.CustomElementHandler = CustomElementHandler;
+    //
+    // export default params => {
+    //     //crea un'istanza dell'EventDispatcher se non viene passata
+    //     // let {definitions = {}, dispatcher = new EventTarget()} = params;
+    //
+    //     // let REGISTERED_ELEMENTS = {};
+    //     //
+    //     // function updateCache(id) {
+    //     //     REGISTERED_ELEMENTS[id] = true;
+    //     //     return REGISTERED_ELEMENTS;
+    //     // }
+    //     //
+    //     // const inCache = curry(function (elements, id) {
+    //     //     return !!elements[id];
+    //     // });
+    //
+    //     // let getDefinition = GetDefinition(definitions);
+    //     // let _findMediator = FindMediator(getDefinition, getCreate(inCache(REGISTERED_ELEMENTS), updateCache), noop);
+    //
+    //
+    //     // function hasMediator(node) {
+    //     //      let id = node.tagName.toLowerCase();
+    //     //      return !!getDefinition(node) && !inCache(REGISTERED_ELEMENTS, id);
+    //     //   }
+    //
+    //
+    //     return Object.freeze({
+    //         dispose: noop,
+    //         destroy: noop,
+    //         findMediator: _findMediator(dispatcher),
+    //         hasMediator,
+    //         getAllElements
+    //
+    //     });
+    // };
+
+    //
+
+    var bootstrap = function bootstrap(options) {
+        return new Bootstrap(options);
+    };
+
     exports.bootstrap = bootstrap;
     exports.Loader = Loader;
     exports.AMDLoader = AMDLoader;
@@ -1064,4 +1159,5 @@
     exports.DomWatcher = DomWatcher;
     exports.MediatorHandler = MediatorHandler;
     exports.Bootstrap = Bootstrap;
+    exports.CustomElementHandler = CustomElementHandler;
 });

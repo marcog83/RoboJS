@@ -1,9 +1,4 @@
-
-/**
- *
- * @param loaderFunction
- * @return {LoaderDef}
- */
+declare function require(path: Array<string>, resolve: Function, reject: Function): void;
 
 export default class Loader {
     constructor() {
@@ -19,15 +14,19 @@ export default class Loader {
 
 export class AMDLoader extends Loader {
     onComplete(id, resolve, reject) {
-        window.require([id], resolve, reject);
+        require([id], resolve, reject);
     }
 }
-export class CustomLoader extends Loader{
-    constructor(fn){
+
+export class CustomLoader extends Loader {
+    fn: Function;
+
+    constructor(fn) {
         super();
-        this.fn=fn;
+        this.fn = fn;
     }
-    onComplete(id,resolve,reject){
-        this.fn(id,resolve,reject);
+
+    onComplete(id, resolve, reject) {
+        this.fn(id, resolve, reject);
     }
 }

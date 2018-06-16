@@ -9,6 +9,8 @@ export {default as MediatorHandler} from "./display/MediatorHandler";
 import Bootstrap from "./display/Bootstrap";
 
 export {default as Bootstrap} from "./display/Bootstrap";
+export {default as CustomElementHandler} from "./display/CustomElementHandler";
+
 //
 
 export const bootstrap = options => {
