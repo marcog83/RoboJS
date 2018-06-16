@@ -112,6 +112,28 @@
         return AMDLoader;
     }(Loader);
 
+    var CustomLoader = function (_Loader2) {
+        _inherits(CustomLoader, _Loader2);
+
+        function CustomLoader(fn) {
+            _classCallCheck(this, CustomLoader);
+
+            var _this3 = _possibleConstructorReturn(this, (CustomLoader.__proto__ || Object.getPrototypeOf(CustomLoader)).call(this));
+
+            _this3.fn = fn;
+            return _this3;
+        }
+
+        _createClass(CustomLoader, [{
+            key: "onComplete",
+            value: function onComplete(id, resolve, reject) {
+                this.fn(id, resolve, reject);
+            }
+        }]);
+
+        return CustomLoader;
+    }(Loader);
+
     var EventTarget = function () {
         function EventTarget() {
             _classCallCheck(this, EventTarget);
@@ -258,7 +280,7 @@
         }, {
             key: "emit",
             value: function emit() {
-                var _this3 = this;
+                var _this4 = this;
 
                 for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
                     args[_key] = arguments[_key];
@@ -271,7 +293,7 @@
                         once = _ref.once;
 
                     if (once) {
-                        _this3.disconnect(listener, scope);
+                        _this4.disconnect(listener, scope);
                     }
                     listener.apply(scope, args);
                 });
@@ -621,11 +643,11 @@
         }, {
             key: "handleMutations",
             value: function handleMutations(mutations) {
-                var _this4 = this;
+                var _this5 = this;
 
                 mutations.forEach(function (mutation) {
-                    _this4.getRemoved(mutation.removedNodes);
-                    _this4.getAdded(mutation.addedNodes);
+                    _this5.getRemoved(mutation.removedNodes);
+                    _this5.getAdded(mutation.addedNodes);
                 });
             }
         }, {
@@ -740,10 +762,10 @@
         }, {
             key: "findMediator",
             value: function findMediator(load, node) {
-                var _this5 = this;
+                var _this6 = this;
 
                 return load(this.getDefinition(node)).then(function (Mediator) {
-                    return _this5.create(node, Mediator);
+                    return _this6.create(node, Mediator);
                 }).then(this.updateCache.bind(this));
             }
         }, {
@@ -870,14 +892,14 @@
         }, {
             key: "handleAdded",
             value: function handleAdded(node) {
-                var _this6 = this;
+                var _this7 = this;
 
                 var nodes = flatten(node);
                 nodes = filter(this.handler.hasMediator.bind(this.handler), nodes);
                 var promises = map(function (node) {
-                    return _this6.loader.load(_this6.handler.getDefinition(node)).then(function (Mediator) {
-                        return _this6.handler.create(node, Mediator);
-                    }).then(_this6.handler.updateCache.bind(_this6.handler));
+                    return _this7.loader.load(_this7.handler.getDefinition(node)).then(function (Mediator) {
+                        return _this7.handler.create(node, Mediator);
+                    }).then(_this7.handler.updateCache.bind(_this7.handler));
                 }, nodes);
                 return Promise.all(promises);
             }
@@ -944,8 +966,99 @@
         return new Bootstrap(options);
     };
 
+    /**
+     * Created by marcogobbi on 07/05/2017.
+     */
+
+    var KE = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "h1 ", "h2", "h3", "h4", "h5", "h6", "head", "header", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "main", "map", "mark", "menu", "menuitem", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
+    var query = KE.map(function (e) {
+        return ":not(" + e + ")";
+    }).reduce(function (prev, curr) {
+        return prev + curr;
+    }, "*");
+
+    var CustomElementHandler = function (_MediatorHandler) {
+        _inherits(CustomElementHandler, _MediatorHandler);
+
+        function CustomElementHandler(params) {
+            _classCallCheck(this, CustomElementHandler);
+
+            var _this8 = _possibleConstructorReturn(this, (CustomElementHandler.__proto__ || Object.getPrototypeOf(CustomElementHandler)).call(this, params));
+
+            _this8.REGISTERED_ELEMENTS = {};
+
+            return _this8;
+        }
+
+        _createClass(CustomElementHandler, [{
+            key: "updateCache",
+            value: function updateCache(id) {
+                this.REGISTERED_ELEMENTS[id] = true;
+                return this.REGISTERED_ELEMENTS;
+            }
+        }, {
+            key: "inCache",
+            value: function inCache(id) {
+                return !!this.REGISTERED_ELEMENTS[id];
+            }
+        }, {
+            key: "getDefinition",
+            value: function getDefinition(node) {
+                return this.definitions[node.tagName.toLowerCase()];
+            }
+        }, {
+            key: "create",
+            value: function create(node, Mediator) {
+                var tagName = "";
+                var dispatcher = this.dispatcher;
+                if (!this.inCache(node.tagName.toLowerCase())) {
+                    tagName = node.tagName.toLowerCase();
+                    if (!tagName.match(/-/gim)) {
+                        throw new Error("The name of a custom element must contain a dash (-). So <x-tags>, <my-element>, and <my-awesome-app> are all valid names, while <tabs> and <foo_bar> are not.");
+                    }
+                    window.customElements.define(tagName, function (_Mediator) {
+                        _inherits(_class, _Mediator);
+
+                        function _class() {
+                            _classCallCheck(this, _class);
+
+                            return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, dispatcher));
+                        }
+
+                        return _class;
+                    }(Mediator));
+
+                    this.updateCache(tagName);
+                }
+                return tagName;
+            }
+        }, {
+            key: "hasMediator",
+            value: function hasMediator(node) {
+                var id = node.tagName.toLowerCase();
+                return !!this.getDefinition(node) && !this.inCache(id);
+            }
+        }, {
+            key: "getAllElements",
+            value: function getAllElements(node) {
+                return [node].concat([].slice.call(node.querySelectorAll(query), 0));
+            }
+        }, {
+            key: "dispose",
+            value: function dispose() {}
+        }, {
+            key: "destroy",
+            value: function destroy() {}
+        }]);
+
+        return CustomElementHandler;
+    }(MediatorHandler);
+
+    exports.CustomElementHandler = CustomElementHandler;
     exports.bootstrap = bootstrap;
     exports.Loader = Loader;
+    exports.AMDLoader = AMDLoader;
+    exports.CustomLoader = CustomLoader;
     exports.EventTarget = EventTarget$1;
     exports.Signal = Signal;
     exports.DomWatcher = DomWatcher;

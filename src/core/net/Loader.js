@@ -22,4 +22,12 @@ export class AMDLoader extends Loader {
         window.require([id], resolve, reject);
     }
 }
-
+export class CustomLoader extends Loader{
+    constructor(fn){
+        super();
+        this.fn=fn;
+    }
+    onComplete(id,resolve,reject){
+        this.fn(id,resolve,reject);
+    }
+}

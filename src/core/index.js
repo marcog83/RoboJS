@@ -1,4 +1,5 @@
 export {default as Loader} from "./net/Loader";
+export {AMDLoader, CustomLoader} from "./net/Loader";
 
 export {default as EventTarget} from "./events/EventTarget";
 export {default as Signal} from "./events/Signal";
