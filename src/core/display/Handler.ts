@@ -5,6 +5,8 @@ import EventTarget from "../events/EventTarget";
 
 
 export default class Handler {
+    definitions:{};
+    dispatcher:EventTarget;
     constructor(params){
         let {definitions = {}, dispatcher = new EventTarget()} = params;
         this.definitions = definitions;
@@ -84,7 +86,7 @@ export default class Handler {
      * @param node
      */
 
-    destroy(node) {
+    destroy(node:HTMLElement) {
 
     }
 

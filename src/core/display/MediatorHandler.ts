@@ -8,7 +8,17 @@ import nextUid from "./next-uid";
 import Handler from "./Handler";
 
 
+interface Disposable {
+    mediatorId: string,
+    node: HTMLElement,
+    dispose: () => void
+}
+
 export default class MediatorHandler extends Handler {
+    MEDIATORS_CACHE: Array<Disposable>;
+    definitions: Object;
+    dispatcher: EventTarget;
+
     constructor(params = {}) {
         super(params);
 
@@ -20,25 +30,25 @@ export default class MediatorHandler extends Handler {
     }
 
 
-    getDefinition(node) {
+    getDefinition(node: HTMLElement) {
         return this.definitions[node.getAttribute(this.selector)];
     }
 
-    inCache(node) {
-        return !!find(disposable => disposable.node === node, this.MEDIATORS_CACHE);
+    inCache(node: HTMLElement) {
+        return !!this.MEDIATORS_CACHE.find((disposable: Disposable) => disposable.node === node);
     }
 
-    updateCache(disposable) {
+    updateCache(disposable: Disposable) {
         this.MEDIATORS_CACHE.push(disposable);//[mediatorId] = disposeFunction;
         return this.MEDIATORS_CACHE;
     }
 
-    hasMediator(node) {
+    hasMediator(node: HTMLElement) {
         return !!this.getDefinition(node) && !this.inCache(node);
     }
 
 
-    findMediator(load, node) {
+    findMediator(load, node: HTMLElement) {
         return load(this.getDefinition(node))
             .then(Mediator => this.create(node, Mediator))
             .then(this.updateCache.bind(this));
@@ -64,7 +74,7 @@ export default class MediatorHandler extends Handler {
         return disposable;
     }
 
-    getAllElements(node) {
+    getAllElements(node: HTMLElement) {
         const nodes = [].slice.call(node.querySelectorAll("[" + this.selector + "]"), 0);
         if (node.getAttribute(this.selector)) {
             nodes.unshift(node);
@@ -72,14 +82,14 @@ export default class MediatorHandler extends Handler {
         return nodes;
     }
 
-    disposeMediator(disposable) {
+    static disposeMediator(disposable: Disposable) {
         if (disposable) {
             disposable.dispose();
             disposable.node = null;
         }
     }
 
-    _destroy(node) {
+    _destroy(node: HTMLElement) {
         const l = this.MEDIATORS_CACHE.length;
         for (let i = 0; i < l; i++) {
             let disposable = this.MEDIATORS_CACHE[i];
@@ -102,15 +112,15 @@ export default class MediatorHandler extends Handler {
         return this.MEDIATORS_CACHE.filter(i => i);
     }
 
-    destroy(node) {
+    destroy(node: HTMLElement) {
         this.MEDIATORS_CACHE = this._destroy(node);
         return this.MEDIATORS_CACHE;
     }
 
     dispose() {
-        this.MEDIATORS_CACHE.forEach(this.disposeMediator);
+        this.MEDIATORS_CACHE.forEach(MediatorHandler.disposeMediator);
         this.MEDIATORS_CACHE = null;
-        this.dispatcher.listeners_ = null;
+        //  this.dispatcher.listeners_ = null;
         this.dispatcher = null;
 
     }

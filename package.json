@@ -13,6 +13,7 @@
     "build:bundle": "rollup -c",
     "build:uglify": "uglifyjs --compress unsafe --mangle -o dist/robojs.min.js dist/robojs.js",
     "build": "cross-env NODE_ENV=production npm run build:bundle && npm run build:babel-it && npm run build:uglify",
+
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch",
@@ -39,8 +40,9 @@
     "nyc": "^11.8.0",
     "rollup": "^0.59.0",
     "rollup-plugin-node-resolve": "^3.3.0",
-    
+    "rollup-plugin-typescript": "^0.8.1",
     "shelljs-release": "^0.3.0",
+    "typescript": "^2.9.2",
     "uglify-js": "^3.3.25"
   },
   "nyc": {

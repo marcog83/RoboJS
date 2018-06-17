@@ -3,19 +3,29 @@
  */
 
 import DomWatcher from "./DomWatcher";
-import  {AMDLoader} from "../net/Loader";
+import {AMDLoader, default as Loader} from "../net/Loader";
 import MediatorHandler from "./MediatorHandler";
 
-import { filter, flatten,  map} from "../../internal";
+import {filter, flatten, map} from "../../internal";
+import Handler from "./Handler";
 
-/**
- *
- * @param options {BootstrapConfig}
- * @returns {Bootstrap}
- */
+interface BootstrapConfig {
+    handler?: Handler;
+    definitions: any;
+    loader?: Loader;
+    root?: HTMLElement;
+    domWatcher?: DomWatcher;
+}
 
 export default class Bootstrap {
-    constructor(options) {
+    handler: Handler;
+    definitions: Object;
+    loader: Loader;
+    root: HTMLElement;
+    domWatcher: DomWatcher;
+    promise: Promise<any>;
+
+    constructor(options: BootstrapConfig) {
         let {definitions, loader = new AMDLoader(), root = document.body} = options;
 
         this.definitions = definitions;
@@ -44,18 +54,18 @@ export default class Bootstrap {
         this.promise = this.getMediators(nodes);
     }
 
-    handleAdded(node) {
-        let nodes = flatten(node);
-        nodes = filter(this.handler.hasMediator.bind(this.handler), nodes);
-        const promises = map(node => {
-            return this.loader.load(this.handler.getDefinition(node))
-                .then(Mediator => this.handler.create(node, Mediator))
-                .then(this.handler.updateCache.bind(this.handler));
-        }, nodes);
+    handleAdded(nodes: Array<HTMLElement>) {
+          nodes = flatten(nodes);
+        const promises = nodes.filter(this.handler.hasMediator.bind(this.handler))
+            .map((node: HTMLElement) => {
+                return this.loader.load(this.handler.getDefinition(node))
+                    .then(Mediator => this.handler.create(node, Mediator))
+                    .then(this.handler.updateCache.bind(this.handler));
+            });
         return Promise.all(promises);
     }
 
-    handleRemoved(nodes) {
+    handleRemoved(nodes: Array<HTMLElement>) {
         nodes.forEach(this.handler.destroy.bind(this.handler));
 
     }

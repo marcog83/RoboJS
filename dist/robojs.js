@@ -23,315 +23,183 @@
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
 
-    function _possibleConstructorReturn(self, call) {
-        if (!self) {
-            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    function __extends(d, b) {
+        for (var p in b) {
+            if (b.hasOwnProperty(p)) d[p] = b[p];
+        }function __() {
+            this.constructor = d;
         }
-
-        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     }
 
-    function _inherits(subClass, superClass) {
-        if (typeof superClass !== "function" && superClass !== null) {
-            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-        }
-
-        subClass.prototype = Object.create(superClass && superClass.prototype, {
-            constructor: {
-                value: subClass,
-                enumerable: false,
-                writable: true,
-                configurable: true
-            }
-        });
-        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var _createClass = function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ("value" in descriptor) descriptor.writable = true;
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);
-            if (staticProps) defineProperties(Constructor, staticProps);
-            return Constructor;
+    var Loader = /** @class */function () {
+        function Loader() {}
+        Loader.prototype.load = function (id) {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                return _this.onComplete(id, resolve, reject);
+            });
         };
-    }();
-
-    var Loader = function () {
-        function Loader() {
-            _classCallCheck(this, Loader);
-        }
-
-        _createClass(Loader, [{
-            key: "load",
-            value: function load(id) {
-                var _this = this;
-
-                return new Promise(function (resolve, reject) {
-                    return _this.onComplete(id, resolve, reject);
-                });
-            }
-        }, {
-            key: "onComplete",
-            value: function onComplete(id, resolve, reject) {}
-        }]);
-
+        Loader.prototype.onComplete = function (id, resolve, reject) {};
         return Loader;
     }();
-
-    var AMDLoader = function (_Loader) {
-        _inherits(AMDLoader, _Loader);
-
+    var AMDLoader = /** @class */function (_super) {
+        __extends(AMDLoader, _super);
         function AMDLoader() {
-            _classCallCheck(this, AMDLoader);
-
-            return _possibleConstructorReturn(this, (AMDLoader.__proto__ || Object.getPrototypeOf(AMDLoader)).apply(this, arguments));
+            return _super !== null && _super.apply(this, arguments) || this;
         }
-
-        _createClass(AMDLoader, [{
-            key: "onComplete",
-            value: function onComplete(id, resolve, reject) {
-                window.require([id], resolve, reject);
-            }
-        }]);
-
+        AMDLoader.prototype.onComplete = function (id, resolve, reject) {
+            require([id], resolve, reject);
+        };
         return AMDLoader;
     }(Loader);
-
-    var CustomLoader = function (_Loader2) {
-        _inherits(CustomLoader, _Loader2);
-
+    var CustomLoader = /** @class */function (_super) {
+        __extends(CustomLoader, _super);
         function CustomLoader(fn) {
-            _classCallCheck(this, CustomLoader);
-
-            var _this3 = _possibleConstructorReturn(this, (CustomLoader.__proto__ || Object.getPrototypeOf(CustomLoader)).call(this));
-
-            _this3.fn = fn;
-            return _this3;
+            var _this = _super.call(this) || this;
+            _this.fn = fn;
+            return _this;
         }
-
-        _createClass(CustomLoader, [{
-            key: "onComplete",
-            value: function onComplete(id, resolve, reject) {
-                this.fn(id, resolve, reject);
-            }
-        }]);
-
+        CustomLoader.prototype.onComplete = function (id, resolve, reject) {
+            this.fn(id, resolve, reject);
+        };
         return CustomLoader;
     }(Loader);
 
-    var EventTarget = function () {
+    var EventTarget = /** @class */function () {
         function EventTarget() {
-            _classCallCheck(this, EventTarget);
-
             this.listeners_ = {};
         }
-
-        /**
-         * Adds an event listener to the target.
-         * @param {string} type The name of the event.
-         * @param {EventListenerType} handler The handler for the event. This is
-         *     called when the event is dispatched.
-         */
-
-
-        _createClass(EventTarget, [{
-            key: "addEventListener",
-            value: function addEventListener(type, handler) {
-
-                if (!(type in this.listeners_)) {
-                    this.listeners_[type] = [handler];
-                } else {
-                    var handlers = this.listeners_[type];
-                    if (handlers.indexOf(handler) < 0) {
-
-                        handlers.push(handler);
+        EventTarget.prototype.addEventListener = function (type, handler) {
+            if (!(type in this.listeners_)) {
+                this.listeners_[type] = [handler];
+            } else {
+                var handlers = this.listeners_[type];
+                if (handlers.indexOf(handler) < 0) {
+                    handlers.push(handler);
+                }
+            }
+        };
+        EventTarget.prototype.removeEventListener = function (type, handler) {
+            if (type in this.listeners_) {
+                var handlers = this.listeners_[type];
+                var index = handlers.indexOf(handler);
+                if (index >= 0) {
+                    // Clean up if this was the last listener.
+                    if (handlers.length === 1) {
+                        delete this.listeners_[type];
+                    } else {
+                        handlers.splice(index, 1);
                     }
                 }
             }
-        }, {
-            key: "removeEventListener",
-            value: function removeEventListener(type, handler) {
-
-                if (type in this.listeners_) {
-                    var handlers = this.listeners_[type];
-                    var index = handlers.indexOf(handler);
-
-                    if (index >= 0) {
-
-                        // Clean up if this was the last listener.
-                        if (handlers.length === 1) {
-                            delete this.listeners_[type];
-                        } else {
-                            handlers.splice(index, 1);
-                        }
+        };
+        EventTarget.prototype.dispatchEvent = function (event) {
+            // Since we are using DOM Event objects we need to override some of the
+            // properties and methods so that we can emulate this correctly.
+            var self = this;
+            event.__defineGetter__("target", function () {
+                return self;
+            });
+            var type = event.type;
+            var prevented = 0;
+            if (type in this.listeners_) {
+                // Clone to prevent removal during dispatch
+                var handlers = this.listeners_[type].concat();
+                for (var i = 0; i < handlers.length; i++) {
+                    var handler = handlers[i];
+                    if (handler.handleEvent) {
+                        prevented |= handler.handleEvent.call(handler, event) === false;
+                    } else {
+                        prevented |= handler.call(this, event) === false;
                     }
                 }
             }
-        }, {
-            key: "dispatchEvent",
-            value: function dispatchEvent(event) {
-                // Since we are using DOM Event objects we need to override some of the
-                // properties and methods so that we can emulate this correctly.
-                var self = this;
-                event.__defineGetter__("target", function () {
-                    return self;
-                });
-
-                var type = event.type;
-                var prevented = 0;
-                if (type in this.listeners_) {
-                    // Clone to prevent removal during dispatch
-                    var handlers = this.listeners_[type].concat();
-
-                    for (var i = 0; i < handlers.length; i++) {
-                        var handler = handlers[i];
-                        if (handler.handleEvent) {
-                            prevented |= handler.handleEvent.call(handler, event) === false;
-                        } else {
-                            prevented |= handler.call(this, event) === false;
-                        }
-                    }
-                }
-
-                return !prevented && !event.defaultPrevented;
-            }
-        }]);
-
+            return !prevented && !event.defaultPrevented;
+        };
         return EventTarget;
     }();
-
     var G = (typeof global === "undefined" ? "undefined" : _typeof(global)) === _typeof(null) ? global : self;
-
     var _EventTarget = G.EventTarget;
-
     try {} catch (e) {
         _EventTarget = EventTarget;
     }
     var EventTarget$1 = _EventTarget;
 
-    /**
-     *
-     * @constructor
-     * @return {Signal}
-     */
-
-    var Signal = function () {
+    var Signal = /** @class */function () {
         function Signal() {
-            _classCallCheck(this, Signal);
-
             this.listenerBoxes = [];
-
             this.listenersNeedCloning = false;
         }
-
-        _createClass(Signal, [{
-            key: "getNumListeners",
-            value: function getNumListeners() {
-                return this.listenerBoxes.length;
-            }
-        }, {
-            key: "connect",
-            value: function connect(slot, scope) {
-                this.registerListener(slot, scope, false);
-            }
-        }, {
-            key: "connectOnce",
-            value: function connectOnce(slot, scope) {
-                this.registerListener(slot, scope, true);
-            }
-        }, {
-            key: "disconnect",
-            value: function disconnect(slot, scope) {
-                if (this.listenersNeedCloning) {
-                    this.listenerBoxes = this.listenerBoxes.slice();
-                    this.listenersNeedCloning = false;
-                }
-
-                for (var i = this.listenerBoxes.length; i--;) {
-                    if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
-                        this.listenerBoxes.splice(i, 1);
-                        return;
-                    }
-                }
-            }
-        }, {
-            key: "disconnectAll",
-            value: function disconnectAll() {
-
-                for (var i = this.listenerBoxes.length; i--;) {
-                    this.disconnect(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
-                }
-            }
-        }, {
-            key: "emit",
-            value: function emit() {
-                var _this4 = this;
-
-                for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                    args[_key] = arguments[_key];
-                }
-
-                this.listenersNeedCloning = true;
-                this.listenerBoxes.forEach(function (_ref) {
-                    var scope = _ref.scope,
-                        listener = _ref.listener,
-                        once = _ref.once;
-
-                    if (once) {
-                        _this4.disconnect(listener, scope);
-                    }
-                    listener.apply(scope, args);
-                });
-
+        Signal.prototype.getNumListeners = function () {
+            return this.listenerBoxes.length;
+        };
+        Signal.prototype.connect = function (slot, scope) {
+            this.registerListener(slot, scope, false);
+        };
+        Signal.prototype.connectOnce = function (slot, scope) {
+            this.registerListener(slot, scope, true);
+        };
+        Signal.prototype.disconnect = function (slot, scope) {
+            if (this.listenersNeedCloning) {
+                this.listenerBoxes = this.listenerBoxes.slice();
                 this.listenersNeedCloning = false;
             }
-        }, {
-            key: "registerListener",
-            value: function registerListener(listener, scope, once) {
-                var _listeners = this.listenerBoxes.filter(function (box) {
-                    return box.listener === listener && box.scope === scope;
-                });
-
-                if (!_listeners.length) {
-                    if (this.listenersNeedCloning) {
-                        this.listenerBoxes = this.listenerBoxes.slice();
-                    }
-
-                    this.listenerBoxes.push({ listener: listener, scope: scope, once: once });
-                } else {
-                    //
-                    var addOnce_add = _listeners.find(function (box) {
-                        return box.once && !once;
-                    });
-                    var add_addOnce = _listeners.find(function (box) {
-                        return once && !box.once;
-                    });
-
-                    if (addOnce_add) {
-                        throw new Error("You cannot addOnce() then try to add() the same listener " + "without removing the relationship first.");
-                    }
-                    if (add_addOnce) {
-                        throw new Error("You cannot add() then addOnce() the same listener " + "without removing the relationship first.");
-                    }
+            for (var i = this.listenerBoxes.length; i--;) {
+                if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
+                    this.listenerBoxes.splice(i, 1);
+                    return;
                 }
             }
-        }]);
-
+        };
+        Signal.prototype.disconnectAll = function () {
+            for (var i = this.listenerBoxes.length; i--;) {
+                this.disconnect(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
+            }
+        };
+        Signal.prototype.emit = function () {
+            var _this = this;
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            this.listenersNeedCloning = true;
+            this.listenerBoxes.forEach(function (_a) {
+                var scope = _a.scope,
+                    listener = _a.listener,
+                    once = _a.once;
+                if (once) {
+                    _this.disconnect(listener, scope);
+                }
+                listener.apply(scope, args);
+            });
+            this.listenersNeedCloning = false;
+        };
+        Signal.prototype.registerListener = function (listener, scope, once) {
+            var _listeners = this.listenerBoxes.filter(function (box) {
+                return box.listener === listener && box.scope === scope;
+            });
+            if (!_listeners.length) {
+                if (this.listenersNeedCloning) {
+                    this.listenerBoxes = this.listenerBoxes.slice();
+                }
+                this.listenerBoxes.push({ listener: listener, scope: scope, once: once });
+            } else {
+                //
+                var addOnce_add = _listeners.find(function (box) {
+                    return box.once && !once;
+                });
+                var add_addOnce = _listeners.find(function (box) {
+                    return once && !box.once;
+                });
+                if (addOnce_add) {
+                    throw new Error("You cannot addOnce() then try to add() the same listener " + "without removing the relationship first.");
+                }
+                if (add_addOnce) {
+                    throw new Error("You cannot add() then addOnce() the same listener " + "without removing the relationship first.");
+                }
+            }
+        };
         return Signal;
     }();
 
@@ -435,7 +303,6 @@
     /**
      * Created by mgobbi on 14/03/2017.
      */
-
     function curry(fn) {
         var length = fn.length;
         if (length === 1) {
@@ -447,17 +314,14 @@
     /**
      * Created by marcogobbi on 20/04/2017.
      */
-
     curry(function (xf, acc, list) {
         var idx = 0;
         var len = list.length;
         while (idx < len) {
             acc = xf(acc, list[idx]);
-
             idx += 1;
         }
         return acc;
-
         /* var result=head.apply(ctx, args);
          var idx = 0;
          var len = tail.length;
@@ -475,11 +339,10 @@
     /**
      * Created by mgobbi on 20/04/2017.
      */
-    var filter = curry(function (fn, list) {
+    curry(function (fn, list) {
         var idx = 0;
         var len = list.length;
         var result = [];
-
         while (idx < len) {
             if (fn(list[idx])) {
                 result[result.length] = list[idx];
@@ -493,7 +356,7 @@
     /**
      * Created by mgobbi on 20/04/2017.
      */
-    var find = curry(function (fn, list) {
+    curry(function (fn, list) {
         var idx = 0;
         var len = list.length;
         while (idx < len) {
@@ -511,7 +374,6 @@
     function _isString(x) {
         return Object.prototype.toString.call(x) === "[object String]";
     }
-
     function _isArrayLike(x) {
         var isArray = Array.isArray || _isArray;
         if (!x) {
@@ -520,9 +382,7 @@
         if (isArray(x)) {
             return true;
         }
-
         if ("object" !== (typeof x === "undefined" ? "undefined" : _typeof(x))) {
-
             return false;
         }
         if (_isString(x)) {
@@ -544,13 +404,10 @@
      * Created by mgobbi on 12/04/2017.
      */
     function flatten(list) {
-        var value = void 0,
-            jlen = void 0,
-            j = void 0;
+        var value, jlen, j;
         var result = [];
         var idx = 0;
         var ilen = list.length;
-
         while (idx < ilen) {
             if (_isArrayLike(list[idx])) {
                 value = flatten(list[idx]);
@@ -592,7 +449,6 @@
         for (idx; idx < length; idx++) {
             result[idx] = fn(list[idx]);
         }
-
         return result;
     });
 
@@ -611,91 +467,68 @@
         });
     }
 
-    /**
-     *
-     * @param root {HTMLElement}
-     * @param getAllElements {Handler_getAllElements}
-     * @return {DomWatcher}
-     */
-
-    var DomWatcher = function () {
+    var DomWatcher = /** @class */function () {
         function DomWatcher(root, getAllElements) {
-            _classCallCheck(this, DomWatcher);
-
             this.onAdded = new Signal();
             this.onRemoved = new Signal();
             this.root = root;
             this.getAllElements = getAllElements;
             this.init();
         }
-
-        _createClass(DomWatcher, [{
-            key: "init",
-            value: function init() {
-                this.observer = new MutationObserver(this.handleMutations.bind(this));
-                this.observer.observe(this.root, {
-                    attributes: false, //true
-                    childList: true,
-                    characterData: false,
-                    subtree: true
-                });
+        DomWatcher.prototype.init = function () {
+            this.observer = new MutationObserver(this.handleMutations.bind(this));
+            this.observer.observe(this.root, {
+                attributes: false,
+                childList: true,
+                characterData: false,
+                subtree: true
+            });
+        };
+        DomWatcher.prototype.handleMutations = function (mutations) {
+            var _this = this;
+            mutations.forEach(function (mutation) {
+                _this.getRemoved(mutation.removedNodes);
+                _this.getAdded(mutation.addedNodes);
+            });
+        };
+        DomWatcher.prototype.getAdded = function (addedNodes) {
+            var nodes = flatten(addedNodes);
+            nodes = nodes.filter(function (node) {
+                return node.querySelectorAll;
+            }).map(this.getAllElements).filter(function (nodes) {
+                return nodes.length > 0;
+            });
+            nodes = flatten(nodes);
+            nodes = unique(nodes);
+            if (nodes.length > 0) {
+                return this.onAdded.emit(nodes);
+            } else {
+                return [];
             }
-        }, {
-            key: "handleMutations",
-            value: function handleMutations(mutations) {
-                var _this5 = this;
-
-                mutations.forEach(function (mutation) {
-                    _this5.getRemoved(mutation.removedNodes);
-                    _this5.getAdded(mutation.addedNodes);
-                });
+        };
+        DomWatcher.prototype.getRemoved = function (removedNodes) {
+            var nodes = flatten(removedNodes);
+            nodes = nodes.filter(function (node) {
+                return node.querySelectorAll;
+            }).map(this.getAllElements).filter(function (nodes) {
+                return nodes.length > 0;
+            });
+            nodes = flatten(nodes);
+            nodes = unique(nodes);
+            if (nodes.length > 0) {
+                return this.onRemoved.emit(nodes);
+            } else {
+                return [];
             }
-        }, {
-            key: "getAdded",
-            value: function getAdded(addedNodes) {
-                var nodes = flatten(addedNodes);
-                nodes = nodes.filter(function (node) {
-                    return node.querySelectorAll;
-                }).map(this.getAllElements).filter(function (nodes) {
-                    return nodes.length > 0;
-                });
-                nodes = flatten(nodes);
-                nodes = unique(nodes);
-                if (nodes.length > 0) {
-                    return this.onAdded.emit(nodes);
-                } else {
-                    return [];
-                }
-            }
-        }, {
-            key: "getRemoved",
-            value: function getRemoved(removedNodes) {
-                var nodes = flatten(removedNodes);
-                nodes = nodes.filter(function (node) {
-                    return node.querySelectorAll;
-                }).map(this.getAllElements).filter(function (nodes) {
-                    return nodes.length > 0;
-                });
-                nodes = flatten(nodes);
-                nodes = unique(nodes);
-                if (nodes.length > 0) {
-                    return this.onRemoved.emit(nodes);
-                } else {
-                    return [];
-                }
-            }
-        }, {
-            key: "dispose",
-            value: function dispose() {
-                this.observer.disconnect();
-                this.onAdded.disconnectAll();
-                this.onRemoved.disconnectAll();
-                this.observer = null;
-                this.onAdded = null;
-                this.onRemoved = null;
-            }
-        }]);
-
+        };
+        DomWatcher.prototype.dispose = function () {
+            this.observer.disconnect();
+            this.onAdded.disconnectAll();
+            this.onRemoved.disconnectAll();
+            this.observer = null;
+            this.onAdded = null;
+            this.onRemoved = null;
+        };
         return DomWatcher;
     }();
 
@@ -719,16 +552,12 @@
     /**
      * Created by marco.gobbi on 21/01/2015.
      */
-
-    var Handler = function () {
+    var Handler = /** @class */function () {
         function Handler(params) {
-            _classCallCheck(this, Handler);
-
-            var _params$definitions = params.definitions,
-                definitions = _params$definitions === undefined ? {} : _params$definitions,
-                _params$dispatcher = params.dispatcher,
-                dispatcher = _params$dispatcher === undefined ? new EventTarget$1() : _params$dispatcher;
-
+            var _a = params.definitions,
+                definitions = _a === void 0 ? {} : _a,
+                _b = params.dispatcher,
+                dispatcher = _b === void 0 ? new EventTarget$1() : _b;
             this.definitions = definitions;
             this.dispatcher = dispatcher;
         }
@@ -737,192 +566,177 @@
          * @param node
          * @return {*}
          */
-
-        _createClass(Handler, [{
-            key: "getDefinition",
-            value: function getDefinition(node) {}
-        }, {
-            key: "inCache",
-            value: function inCache(node) {
-                return false;
-            }
-        }, {
-            key: "updateCache",
-            value: function updateCache(disposable) {}
-        }, {
-            key: "hasMediator",
-            value: function hasMediator(node) {
-                return false;
-            }
-        }, {
-            key: "findMediator",
-            value: function findMediator(load, node) {
-                var _this6 = this;
-
-                return load(this.getDefinition(node)).then(function (Mediator) {
-                    return _this6.create(node, Mediator);
-                }).then(this.updateCache.bind(this));
-            }
-        }, {
-            key: "create",
-            value: function create(node, Mediator) {
-                throw new Error("not implemented");
-            }
-        }, {
-            key: "getAllElements",
-            value: function getAllElements(node) {}
-        }, {
-            key: "destroy",
-            value: function destroy(node) {}
-        }, {
-            key: "dispose",
-            value: function dispose() {}
-        }]);
-
+        Handler.prototype.getDefinition = function (node) {};
+        /**
+         *
+         * @param node
+         * @return {boolean}
+         */
+        Handler.prototype.inCache = function (node) {
+            return false;
+        };
+        /**
+         *
+         * @param disposable
+         */
+        Handler.prototype.updateCache = function (disposable) {};
+        /**
+         *
+         * @param {HTMLElement} node
+         * @return {boolean}
+         */
+        Handler.prototype.hasMediator = function (node) {
+            return false;
+        };
+        /**
+         *
+         * @param load
+         * @param node
+         * @return {Promise.<TResult>}
+         */
+        Handler.prototype.findMediator = function (load, node) {
+            var _this = this;
+            return load(this.getDefinition(node)).then(function (Mediator) {
+                return _this.create(node, Mediator);
+            }).then(this.updateCache.bind(this));
+        };
+        /**
+         *
+         * @param node
+         * @param Mediator
+         * @return {*}
+         */
+        Handler.prototype.create = function (node, Mediator) {
+            throw new Error("not implemented");
+        };
+        /**
+         *
+         * @param node
+         * @return {Array.<TResult>}
+         */
+        Handler.prototype.getAllElements = function (node) {};
+        /**
+         *
+         * @param node
+         */
+        Handler.prototype.destroy = function (node) {};
+        Handler.prototype.dispose = function () {};
         return Handler;
     }();
 
-    var MediatorHandler = function (_Handler) {
-        _inherits(MediatorHandler, _Handler);
-
-        function MediatorHandler() {
-            var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            _classCallCheck(this, MediatorHandler);
-
-            var _this7 = _possibleConstructorReturn(this, (MediatorHandler.__proto__ || Object.getPrototypeOf(MediatorHandler)).call(this, params));
-
-            _this7.MEDIATORS_CACHE = [];
-            return _this7;
+    /**
+     * Created by marco.gobbi on 21/01/2015.
+     */
+    var MediatorHandler = /** @class */function (_super) {
+        __extends(MediatorHandler, _super);
+        function MediatorHandler(params) {
+            if (params === void 0) {
+                params = {};
+            }
+            var _this = _super.call(this, params) || this;
+            _this.MEDIATORS_CACHE = [];
+            return _this;
         }
-
-        _createClass(MediatorHandler, [{
-            key: "getDefinition",
-            value: function getDefinition(node) {
-                return this.definitions[node.getAttribute(this.selector)];
-            }
-        }, {
-            key: "inCache",
-            value: function inCache(node) {
-                return !!find(function (disposable) {
-                    return disposable.node === node;
-                }, this.MEDIATORS_CACHE);
-            }
-        }, {
-            key: "updateCache",
-            value: function updateCache(disposable) {
-                this.MEDIATORS_CACHE.push(disposable); //[mediatorId] = disposeFunction;
-                return this.MEDIATORS_CACHE;
-            }
-        }, {
-            key: "hasMediator",
-            value: function hasMediator(node) {
-                return !!this.getDefinition(node) && !this.inCache(node);
-            }
-        }, {
-            key: "findMediator",
-            value: function findMediator(load, node) {
-                var _this8 = this;
-
-                return load(this.getDefinition(node)).then(function (Mediator) {
-                    return _this8.create(node, Mediator);
-                }).then(this.updateCache.bind(this));
-            }
-        }, {
-            key: "create",
-            value: function create(node, Mediator) {
-                var mediatorId = nextUid();
-                node.setAttribute("mediatorid", mediatorId);
-                var disposable = {
-                    mediatorId: mediatorId,
-                    node: node,
-                    dispose: noop
-                };
-                if (node.parentNode) {
-
-                    var dispose = Mediator(node, this.dispatcher) || noop;
-                    disposable = {
-                        mediatorId: mediatorId,
-                        node: node,
-                        dispose: dispose
-                    };
-                }
-                return disposable;
-            }
-        }, {
-            key: "getAllElements",
-            value: function getAllElements(node) {
-                var nodes = [].slice.call(node.querySelectorAll("[" + this.selector + "]"), 0);
-                if (node.getAttribute(this.selector)) {
-                    nodes.unshift(node);
-                }
-                return nodes;
-            }
-        }, {
-            key: "disposeMediator",
-            value: function disposeMediator(disposable) {
-                if (disposable) {
-                    disposable.dispose();
-                    disposable.node = null;
-                }
-            }
-        }, {
-            key: "_destroy",
-            value: function _destroy(node) {
-                var l = this.MEDIATORS_CACHE.length;
-                for (var i = 0; i < l; i++) {
-                    var disposable = this.MEDIATORS_CACHE[i];
-                    if (disposable) {
-                        if (!disposable.node || disposable.node === node) {
-                            disposable.dispose && disposable.dispose();
-                            disposable.node = null;
-                            this.MEDIATORS_CACHE[i] = null;
-                        }
-                    } else {
-
-                        this.MEDIATORS_CACHE[i] = null;
-                    }
-                }
-
-                return this.MEDIATORS_CACHE.filter(function (i) {
-                    return i;
-                });
-            }
-        }, {
-            key: "destroy",
-            value: function destroy(node) {
-                this.MEDIATORS_CACHE = this._destroy(node);
-                return this.MEDIATORS_CACHE;
-            }
-        }, {
-            key: "dispose",
-            value: function dispose() {
-                this.MEDIATORS_CACHE.forEach(this.disposeMediator);
-                this.MEDIATORS_CACHE = null;
-                this.dispatcher.listeners_ = null;
-                this.dispatcher = null;
-            }
-        }, {
-            key: "selector",
+        Object.defineProperty(MediatorHandler.prototype, "selector", {
             get: function get() {
                 return "data-mediator";
+            },
+            enumerable: true,
+            configurable: true
+        });
+        MediatorHandler.prototype.getDefinition = function (node) {
+            return this.definitions[node.getAttribute(this.selector)];
+        };
+        MediatorHandler.prototype.inCache = function (node) {
+            return !!this.MEDIATORS_CACHE.find(function (disposable) {
+                return disposable.node === node;
+            });
+        };
+        MediatorHandler.prototype.updateCache = function (disposable) {
+            this.MEDIATORS_CACHE.push(disposable); //[mediatorId] = disposeFunction;
+            return this.MEDIATORS_CACHE;
+        };
+        MediatorHandler.prototype.hasMediator = function (node) {
+            return !!this.getDefinition(node) && !this.inCache(node);
+        };
+        MediatorHandler.prototype.findMediator = function (load, node) {
+            var _this = this;
+            return load(this.getDefinition(node)).then(function (Mediator) {
+                return _this.create(node, Mediator);
+            }).then(this.updateCache.bind(this));
+        };
+        MediatorHandler.prototype.create = function (node, Mediator) {
+            var mediatorId = nextUid();
+            node.setAttribute("mediatorid", mediatorId);
+            var disposable = {
+                mediatorId: mediatorId,
+                node: node,
+                dispose: noop
+            };
+            if (node.parentNode) {
+                var dispose = Mediator(node, this.dispatcher) || noop;
+                disposable = {
+                    mediatorId: mediatorId,
+                    node: node,
+                    dispose: dispose
+                };
             }
-        }]);
-
+            return disposable;
+        };
+        MediatorHandler.prototype.getAllElements = function (node) {
+            var nodes = [].slice.call(node.querySelectorAll("[" + this.selector + "]"), 0);
+            if (node.getAttribute(this.selector)) {
+                nodes.unshift(node);
+            }
+            return nodes;
+        };
+        MediatorHandler.disposeMediator = function (disposable) {
+            if (disposable) {
+                disposable.dispose();
+                disposable.node = null;
+            }
+        };
+        MediatorHandler.prototype._destroy = function (node) {
+            var l = this.MEDIATORS_CACHE.length;
+            for (var i = 0; i < l; i++) {
+                var disposable = this.MEDIATORS_CACHE[i];
+                if (disposable) {
+                    if (!disposable.node || disposable.node === node) {
+                        disposable.dispose && disposable.dispose();
+                        disposable.node = null;
+                        this.MEDIATORS_CACHE[i] = null;
+                    }
+                } else {
+                    this.MEDIATORS_CACHE[i] = null;
+                }
+            }
+            return this.MEDIATORS_CACHE.filter(function (i) {
+                return i;
+            });
+        };
+        MediatorHandler.prototype.destroy = function (node) {
+            this.MEDIATORS_CACHE = this._destroy(node);
+            return this.MEDIATORS_CACHE;
+        };
+        MediatorHandler.prototype.dispose = function () {
+            this.MEDIATORS_CACHE.forEach(MediatorHandler.disposeMediator);
+            this.MEDIATORS_CACHE = null;
+            //  this.dispatcher.listeners_ = null;
+            this.dispatcher = null;
+        };
         return MediatorHandler;
     }(Handler);
 
-    var Bootstrap = function () {
+    /**
+     * Created by marco.gobbi on 21/01/2015.
+     */
+    var Bootstrap = /** @class */function () {
         function Bootstrap(options) {
-            _classCallCheck(this, Bootstrap);
-
             var definitions = options.definitions,
-                _options$loader = options.loader,
-                loader = _options$loader === undefined ? new AMDLoader() : _options$loader,
-                _options$root = options.root,
-                root = _options$root === undefined ? document.body : _options$root;
-
-
+                _a = options.loader,
+                loader = _a === void 0 ? new AMDLoader() : _a,
+                _b = options.root,
+                root = _b === void 0 ? document.body : _b;
             this.definitions = definitions;
             this.loader = loader;
             this.root = root;
@@ -938,214 +752,101 @@
             this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler.getAllElements.bind(this.handler));
             this.domWatcher.onAdded.connect(this.handleAdded.bind(this));
             this.domWatcher.onRemoved.connect(this.handleRemoved.bind(this));
-
             this.init();
         }
-
-        _createClass(Bootstrap, [{
-            key: "init",
-            value: function init() {
-
-                var nodes = [this.root].map(this.handler.getAllElements.bind(this.handler));
-                this.promise = this.getMediators(nodes);
-            }
-        }, {
-            key: "handleAdded",
-            value: function handleAdded(node) {
-                var _this9 = this;
-
-                var nodes = flatten(node);
-                nodes = filter(this.handler.hasMediator.bind(this.handler), nodes);
-                var promises = map(function (node) {
-                    return _this9.loader.load(_this9.handler.getDefinition(node)).then(function (Mediator) {
-                        return _this9.handler.create(node, Mediator);
-                    }).then(_this9.handler.updateCache.bind(_this9.handler));
-                }, nodes);
-                return Promise.all(promises);
-            }
-        }, {
-            key: "handleRemoved",
-            value: function handleRemoved(nodes) {
-                nodes.forEach(this.handler.destroy.bind(this.handler));
-            }
-        }, {
-            key: "getMediators",
-            value: function getMediators(nodes) {
-                nodes = flatten(nodes);
-                var promises = nodes.filter(this.handler.hasMediator.bind(this.handler)).map(this.handler.findMediator.bind(this.handler, this.loader.load.bind(this.loader)));
-
-                return Promise.all(promises);
-            }
-        }, {
-            key: "dispose",
-            value: function dispose() {
-                this.domWatcher.dispose();
-                this.handler.dispose();
-                this.domWatcher = null;
-                this.handler = null;
-
-                this.definitions = null;
-                this.loader = null;
-                this.root = null;
-                this.promise = null;
-            }
-        }]);
-
+        Bootstrap.prototype.init = function () {
+            var nodes = [this.root].map(this.handler.getAllElements.bind(this.handler));
+            this.promise = this.getMediators(nodes);
+        };
+        Bootstrap.prototype.handleAdded = function (nodes) {
+            var _this = this;
+            nodes = flatten(nodes);
+            var promises = nodes.filter(this.handler.hasMediator.bind(this.handler)).map(function (node) {
+                return _this.loader.load(_this.handler.getDefinition(node)).then(function (Mediator) {
+                    return _this.handler.create(node, Mediator);
+                }).then(_this.handler.updateCache.bind(_this.handler));
+            });
+            return Promise.all(promises);
+        };
+        Bootstrap.prototype.handleRemoved = function (nodes) {
+            nodes.forEach(this.handler.destroy.bind(this.handler));
+        };
+        Bootstrap.prototype.getMediators = function (nodes) {
+            nodes = flatten(nodes);
+            var promises = nodes.filter(this.handler.hasMediator.bind(this.handler)).map(this.handler.findMediator.bind(this.handler, this.loader.load.bind(this.loader)));
+            return Promise.all(promises);
+        };
+        Bootstrap.prototype.dispose = function () {
+            this.domWatcher.dispose();
+            this.handler.dispose();
+            this.domWatcher = null;
+            this.handler = null;
+            this.definitions = null;
+            this.loader = null;
+            this.root = null;
+            this.promise = null;
+        };
         return Bootstrap;
     }();
-
-    //
-    // export default options => {
-    //
-    //
-    //     let getMediators = GetMediators(handler.findMediator(loader.load), handler.hasMediator);
-    //
-    //
-    //     let promise = Build(getMediators, handler.getAllElements)(root);
-    //
-    //     return {
-    //         promise: promise
-    //         , dispose: function () {
-    //             domWatcher.dispose();
-    //             handler.dispose();
-    //             domWatcher = null;
-    //             handler = null;
-    //             getMediators = null;
-    //             definitions = null;
-    //             loader = null;
-    //             root = null;
-    //             promise = null;
-    //         }
-    //     };
-    //
-    // };
 
     /**
      * Created by marcogobbi on 07/05/2017.
      */
-
     var KE = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "h1 ", "h2", "h3", "h4", "h5", "h6", "head", "header", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "main", "map", "mark", "menu", "menuitem", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
     var query = KE.map(function (e) {
         return ":not(" + e + ")";
     }).reduce(function (prev, curr) {
         return prev + curr;
     }, "*");
-
-    var CustomElementHandler = function (_Handler2) {
-        _inherits(CustomElementHandler, _Handler2);
-
+    var CustomElementHandler = /** @class */function (_super) {
+        __extends(CustomElementHandler, _super);
         function CustomElementHandler(params) {
-            _classCallCheck(this, CustomElementHandler);
-
-            var _this10 = _possibleConstructorReturn(this, (CustomElementHandler.__proto__ || Object.getPrototypeOf(CustomElementHandler)).call(this, params));
-
-            _this10.REGISTERED_ELEMENTS = {};
-
-            return _this10;
+            var _this = _super.call(this, params) || this;
+            _this.REGISTERED_ELEMENTS = {};
+            return _this;
         }
-
-        _createClass(CustomElementHandler, [{
-            key: "updateCache",
-            value: function updateCache(id) {
-                this.REGISTERED_ELEMENTS[id] = true;
-                return this.REGISTERED_ELEMENTS;
-            }
-        }, {
-            key: "inCache",
-            value: function inCache(id) {
-                return !!this.REGISTERED_ELEMENTS[id];
-            }
-        }, {
-            key: "getDefinition",
-            value: function getDefinition(node) {
-                return this.definitions[node.tagName.toLowerCase()];
-            }
-        }, {
-            key: "create",
-            value: function create(node, Mediator) {
-                var tagName = "";
-                var dispatcher = this.dispatcher;
-                if (!this.inCache(node.tagName.toLowerCase())) {
-                    tagName = node.tagName.toLowerCase();
-                    if (!tagName.match(/-/gim)) {
-                        throw new Error("The name of a custom element must contain a dash (-). So <x-tags>, <my-element>, and <my-awesome-app> are all valid names, while <tabs> and <foo_bar> are not.");
-                    }
-                    window.customElements.define(tagName, function (_Mediator) {
-                        _inherits(_class, _Mediator);
-
-                        function _class() {
-                            _classCallCheck(this, _class);
-
-                            return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, dispatcher));
-                        }
-
-                        return _class;
-                    }(Mediator));
-
-                    this.updateCache(tagName);
+        CustomElementHandler.prototype.updateCache = function (id) {
+            this.REGISTERED_ELEMENTS[id] = true;
+            return this.REGISTERED_ELEMENTS;
+        };
+        CustomElementHandler.prototype.inCache = function (id) {
+            return !!this.REGISTERED_ELEMENTS[id];
+        };
+        CustomElementHandler.prototype.getDefinition = function (node) {
+            return this.definitions[node.tagName.toLowerCase()];
+        };
+        CustomElementHandler.prototype.create = function (node, Mediator) {
+            var tagName = "";
+            var dispatcher = this.dispatcher;
+            if (!this.inCache(node.tagName.toLowerCase())) {
+                tagName = node.tagName.toLowerCase();
+                if (!tagName.match(/-/gim)) {
+                    throw new Error("The name of a custom element must contain a dash (-). So <x-tags>, <my-element>, and <my-awesome-app> are all valid names, while <tabs> and <foo_bar> are not.");
                 }
-                return tagName;
+                window.customElements.define(tagName, /** @class */function (_super) {
+                    __extends(class_1, _super);
+                    function class_1() {
+                        return _super.call(this, dispatcher) || this;
+                    }
+                    return class_1;
+                }(Mediator));
+                this.updateCache(tagName);
             }
-        }, {
-            key: "hasMediator",
-            value: function hasMediator(node) {
-                var id = node.tagName.toLowerCase();
-                return !!this.getDefinition(node) && !this.inCache(id);
-            }
-        }, {
-            key: "getAllElements",
-            value: function getAllElements(node) {
-                return [node].concat([].slice.call(node.querySelectorAll(query), 0));
-            }
-        }, {
-            key: "dispose",
-            value: function dispose() {}
-        }, {
-            key: "destroy",
-            value: function destroy() {}
-        }]);
-
+            return tagName;
+        };
+        CustomElementHandler.prototype.hasMediator = function (node) {
+            var id = node.tagName.toLowerCase();
+            return !!this.getDefinition(node) && !this.inCache(id);
+        };
+        CustomElementHandler.prototype.getAllElements = function (node) {
+            return [node].concat([].slice.call(node.querySelectorAll(query), 0));
+        };
+        CustomElementHandler.prototype.dispose = function () {};
+        CustomElementHandler.prototype.destroy = function () {};
         return CustomElementHandler;
     }(Handler);
 
     //
-    // export default params => {
-    //     //crea un'istanza dell'EventDispatcher se non viene passata
-    //     // let {definitions = {}, dispatcher = new EventTarget()} = params;
-    //
-    //     // let REGISTERED_ELEMENTS = {};
-    //     //
-    //     // function updateCache(id) {
-    //     //     REGISTERED_ELEMENTS[id] = true;
-    //     //     return REGISTERED_ELEMENTS;
-    //     // }
-    //     //
-    //     // const inCache = curry(function (elements, id) {
-    //     //     return !!elements[id];
-    //     // });
-    //
-    //     // let getDefinition = GetDefinition(definitions);
-    //     // let _findMediator = FindMediator(getDefinition, getCreate(inCache(REGISTERED_ELEMENTS), updateCache), noop);
-    //
-    //
-    //     // function hasMediator(node) {
-    //     //      let id = node.tagName.toLowerCase();
-    //     //      return !!getDefinition(node) && !inCache(REGISTERED_ELEMENTS, id);
-    //     //   }
-    //
-    //
-    //     return Object.freeze({
-    //         dispose: noop,
-    //         destroy: noop,
-    //         findMediator: _findMediator(dispatcher),
-    //         hasMediator,
-    //         getAllElements
-    //
-    //     });
-    // };
-
-    //
-
     var bootstrap = function bootstrap(options) {
         return new Bootstrap(options);
     };

@@ -13,11 +13,11 @@ export default class Signal {
         return this.listenerBoxes.length;
     }
 
-    connect(slot, scope) {
+    connect(slot, scope?) {
         this.registerListener(slot, scope, false);
     }
 
-    connectOnce(slot, scope) {
+    connectOnce(slot, scope?) {
         this.registerListener(slot, scope, true);
     }
 

@@ -9,6 +9,10 @@ const query = KE.map(e => ":not(" + e + ")").reduce((prev, curr) => prev + curr,
 
 
 export default class CustomElementHandler extends Handler {
+    REGISTERED_ELEMENTS:Object;
+    definitions:Object;
+    dispatcher:EventTarget;
+
     constructor(params) {
         super(params);
         this.REGISTERED_ELEMENTS = {};
@@ -62,39 +66,3 @@ export default class CustomElementHandler extends Handler {
     destroy() {
     }
 }
-
-//
-// export default params => {
-//     //crea un'istanza dell'EventDispatcher se non viene passata
-//     // let {definitions = {}, dispatcher = new EventTarget()} = params;
-//
-//     // let REGISTERED_ELEMENTS = {};
-//     //
-//     // function updateCache(id) {
-//     //     REGISTERED_ELEMENTS[id] = true;
-//     //     return REGISTERED_ELEMENTS;
-//     // }
-//     //
-//     // const inCache = curry(function (elements, id) {
-//     //     return !!elements[id];
-//     // });
-//
-//     // let getDefinition = GetDefinition(definitions);
-//     // let _findMediator = FindMediator(getDefinition, getCreate(inCache(REGISTERED_ELEMENTS), updateCache), noop);
-//
-//
-//     // function hasMediator(node) {
-//     //      let id = node.tagName.toLowerCase();
-//     //      return !!getDefinition(node) && !inCache(REGISTERED_ELEMENTS, id);
-//     //   }
-//
-//
-//     return Object.freeze({
-//         dispose: noop,
-//         destroy: noop,
-//         findMediator: _findMediator(dispatcher),
-//         hasMediator,
-//         getAllElements
-//
-//     });
-// };

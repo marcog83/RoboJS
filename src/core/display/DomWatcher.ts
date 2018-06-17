@@ -4,14 +4,14 @@ import Signal from "../events/Signal";
 import {flatten, unique} from "../../internal/index";
 
 
-/**
- *
- * @param root {HTMLElement}
- * @param getAllElements {Handler_getAllElements}
- * @return {DomWatcher}
- */
 
 export default class DomWatcher {
+    onAdded: Signal;
+    onRemoved: Signal;
+    root: HTMLElement;
+    getAllElements: (value: any, index: number, array: any[]) => {};
+    observer:MutationObserver;
+
     constructor(root, getAllElements) {
         this.onAdded = new Signal();
         this.onRemoved = new Signal();
@@ -31,7 +31,7 @@ export default class DomWatcher {
     }
 
     handleMutations(mutations) {
-        mutations.forEach(mutation=>{
+        mutations.forEach(mutation => {
             this.getRemoved(mutation.removedNodes);
             this.getAdded(mutation.addedNodes);
         });
@@ -43,7 +43,7 @@ export default class DomWatcher {
         let nodes = flatten(addedNodes);
         nodes = nodes.filter(node => node.querySelectorAll)
             .map(this.getAllElements)
-            .filter(nodes => nodes.length > 0);
+            .filter((nodes:Array<HTMLElement>) => nodes.length > 0);
         nodes = flatten(nodes);
         nodes = unique(nodes);
         if (nodes.length > 0) {
@@ -57,7 +57,7 @@ export default class DomWatcher {
         let nodes = flatten(removedNodes);
         nodes = nodes.filter(node => node.querySelectorAll)
             .map(this.getAllElements)
-            .filter(nodes => nodes.length > 0);
+            .filter((nodes:Array<HTMLElement>) => nodes.length > 0);
         nodes = flatten(nodes);
         nodes = unique(nodes);
         if (nodes.length > 0) {
