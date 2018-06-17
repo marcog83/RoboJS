@@ -32,7 +32,7 @@
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     }
 
-    var Loader = /** @class */function () {
+    var Loader = function () {
         function Loader() {}
         Loader.prototype.load = function (id) {
             var _this = this;
@@ -43,7 +43,7 @@
         Loader.prototype.onComplete = function (id, resolve, reject) {};
         return Loader;
     }();
-    var AMDLoader = /** @class */function (_super) {
+    var AMDLoader = function (_super) {
         __extends(AMDLoader, _super);
         function AMDLoader() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -53,7 +53,7 @@
         };
         return AMDLoader;
     }(Loader);
-    var CustomLoader = /** @class */function (_super) {
+    var CustomLoader = function (_super) {
         __extends(CustomLoader, _super);
         function CustomLoader(fn) {
             var _this = _super.call(this) || this;
@@ -66,7 +66,7 @@
         return CustomLoader;
     }(Loader);
 
-    var EventTarget = /** @class */function () {
+    var EventTarget = function () {
         function EventTarget() {
             this.listeners_ = {};
         }
@@ -85,7 +85,6 @@
                 var handlers = this.listeners_[type];
                 var index = handlers.indexOf(handler);
                 if (index >= 0) {
-                    // Clean up if this was the last listener.
                     if (handlers.length === 1) {
                         delete this.listeners_[type];
                     } else {
@@ -95,8 +94,6 @@
             }
         };
         EventTarget.prototype.dispatchEvent = function (event) {
-            // Since we are using DOM Event objects we need to override some of the
-            // properties and methods so that we can emulate this correctly.
             var self = this;
             event.__defineGetter__("target", function () {
                 return self;
@@ -104,7 +101,6 @@
             var type = event.type;
             var prevented = 0;
             if (type in this.listeners_) {
-                // Clone to prevent removal during dispatch
                 var handlers = this.listeners_[type].concat();
                 for (var i = 0; i < handlers.length; i++) {
                     var handler = handlers[i];
@@ -126,7 +122,7 @@
     }
     var EventTarget$1 = _EventTarget;
 
-    var Signal = /** @class */function () {
+    var Signal = function () {
         function Signal() {
             this.listenerBoxes = [];
             this.listenersNeedCloning = false;
@@ -185,7 +181,6 @@
                 }
                 this.listenerBoxes.push({ listener: listener, scope: scope, once: once });
             } else {
-                //
                 var addOnce_add = _listeners.find(function (box) {
                     return box.once && !once;
                 });
@@ -203,11 +198,7 @@
         return Signal;
     }();
 
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
     function _arity(n, fn) {
-        /* eslint-disable no-unused-vars */
         switch (n) {
             case 0:
                 return function () {
@@ -262,9 +253,6 @@
         return _;
     };
 
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
     function _curryN(length, received, fn) {
         return function () {
             var combined = [];
@@ -287,9 +275,6 @@
         };
     }
 
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
     function _curry1(fn) {
         return function f1() {
             if (arguments.length === 0) {
@@ -300,9 +285,6 @@
         };
     }
 
-    /**
-     * Created by mgobbi on 14/03/2017.
-     */
     function curry(fn) {
         var length = fn.length;
         if (length === 1) {
@@ -311,9 +293,6 @@
         return _arity(length, _curryN(length, [], fn));
     }
 
-    /**
-     * Created by marcogobbi on 20/04/2017.
-     */
     curry(function (xf, acc, list) {
         var idx = 0;
         var len = list.length;
@@ -322,23 +301,8 @@
             idx += 1;
         }
         return acc;
-        /* var result=head.apply(ctx, args);
-         var idx = 0;
-         var len = tail.length;
-         while (idx < len){
-              result=tail[i].call(ctx, result);
-             i--;
-         }
-         return result;*/
     });
 
-    /**
-     * Created by mgobbi on 17/03/2017.
-     */
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
     curry(function (fn, list) {
         var idx = 0;
         var len = list.length;
@@ -350,12 +314,8 @@
             idx += 1;
         }
         return result;
-        //  return Array.from(list).filter(fn);
     });
 
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
     curry(function (fn, list) {
         var idx = 0;
         var len = list.length;
@@ -400,9 +360,6 @@
         return false;
     }
 
-    /**
-     * Created by mgobbi on 12/04/2017.
-     */
     function flatten(list) {
         var value, jlen, j;
         var result = [];
@@ -425,9 +382,6 @@
         return result;
     }
 
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
     curry(function (fn, list) {
         var len = list.length;
         var idx = 0;
@@ -438,11 +392,7 @@
         return list;
     });
 
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
     var map = curry(function (fn, list) {
-        //  return Array.from(list).map(fn);
         var idx = 0;
         var length = list.length;
         var result = [];
@@ -452,9 +402,6 @@
         return result;
     });
 
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
     curry(function (p, list) {
         return map(function (obj) {
             return obj[p];
@@ -467,7 +414,7 @@
         });
     }
 
-    var DomWatcher = /** @class */function () {
+    var DomWatcher = function () {
         function DomWatcher(root, getAllElements) {
             this.onAdded = new Signal();
             this.onRemoved = new Signal();
@@ -532,15 +479,8 @@
         return DomWatcher;
     }();
 
-    /**
-     * Created by mgobbi on 31/03/2017.
-     */
     var REG_EXP = /[xy]/g;
     var STRING = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-    /**
-     *
-     * @return {string}
-     */
     var nextUid = function nextUid() {
         return STRING.replace(REG_EXP, function (c) {
             var r = Math.random() * 16 | 0;
@@ -549,10 +489,7 @@
         });
     };
 
-    /**
-     * Created by marco.gobbi on 21/01/2015.
-     */
-    var Handler = /** @class */function () {
+    var Handler = function () {
         function Handler(params) {
             var _a = params.definitions,
                 definitions = _a === void 0 ? {} : _a,
@@ -561,73 +498,30 @@
             this.definitions = definitions;
             this.dispatcher = dispatcher;
         }
-        /**
-         *
-         * @param node
-         * @return {*}
-         */
         Handler.prototype.getDefinition = function (node) {};
-        /**
-         *
-         * @param node
-         * @return {boolean}
-         */
         Handler.prototype.inCache = function (node) {
             return false;
         };
-        /**
-         *
-         * @param disposable
-         */
         Handler.prototype.updateCache = function (disposable) {};
-        /**
-         *
-         * @param {HTMLElement} node
-         * @return {boolean}
-         */
         Handler.prototype.hasMediator = function (node) {
             return false;
         };
-        /**
-         *
-         * @param load
-         * @param node
-         * @return {Promise.<TResult>}
-         */
         Handler.prototype.findMediator = function (load, node) {
             var _this = this;
             return load(this.getDefinition(node)).then(function (Mediator) {
                 return _this.create(node, Mediator);
             }).then(this.updateCache.bind(this));
         };
-        /**
-         *
-         * @param node
-         * @param Mediator
-         * @return {*}
-         */
         Handler.prototype.create = function (node, Mediator) {
             throw new Error("not implemented");
         };
-        /**
-         *
-         * @param node
-         * @return {Array.<TResult>}
-         */
         Handler.prototype.getAllElements = function (node) {};
-        /**
-         *
-         * @param node
-         */
         Handler.prototype.destroy = function (node) {};
         Handler.prototype.dispose = function () {};
         return Handler;
     }();
 
-    /**
-     * Created by marco.gobbi on 21/01/2015.
-     */
-    var MediatorHandler = /** @class */function (_super) {
+    var MediatorHandler = function (_super) {
         __extends(MediatorHandler, _super);
         function MediatorHandler(params) {
             if (params === void 0) {
@@ -653,7 +547,7 @@
             });
         };
         MediatorHandler.prototype.updateCache = function (disposable) {
-            this.MEDIATORS_CACHE.push(disposable); //[mediatorId] = disposeFunction;
+            this.MEDIATORS_CACHE.push(disposable);
             return this.MEDIATORS_CACHE;
         };
         MediatorHandler.prototype.hasMediator = function (node) {
@@ -721,16 +615,12 @@
         MediatorHandler.prototype.dispose = function () {
             this.MEDIATORS_CACHE.forEach(MediatorHandler.disposeMediator);
             this.MEDIATORS_CACHE = null;
-            //  this.dispatcher.listeners_ = null;
             this.dispatcher = null;
         };
         return MediatorHandler;
     }(Handler);
 
-    /**
-     * Created by marco.gobbi on 21/01/2015.
-     */
-    var Bootstrap = /** @class */function () {
+    var Bootstrap = function () {
         function Bootstrap(options) {
             var definitions = options.definitions,
                 _a = options.loader,
@@ -740,15 +630,7 @@
             this.definitions = definitions;
             this.loader = loader;
             this.root = root;
-            /**
-             *
-             * @type {MediatorHandler}
-             */
             this.handler = options.handler || new MediatorHandler({ definitions: definitions });
-            /**
-             *
-             * @type {DomWatcher}
-             */
             this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler.getAllElements.bind(this.handler));
             this.domWatcher.onAdded.connect(this.handleAdded.bind(this));
             this.domWatcher.onRemoved.connect(this.handleRemoved.bind(this));
@@ -789,16 +671,13 @@
         return Bootstrap;
     }();
 
-    /**
-     * Created by marcogobbi on 07/05/2017.
-     */
     var KE = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "h1 ", "h2", "h3", "h4", "h5", "h6", "head", "header", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "main", "map", "mark", "menu", "menuitem", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
     var query = KE.map(function (e) {
         return ":not(" + e + ")";
     }).reduce(function (prev, curr) {
         return prev + curr;
     }, "*");
-    var CustomElementHandler = /** @class */function (_super) {
+    var CustomElementHandler = function (_super) {
         __extends(CustomElementHandler, _super);
         function CustomElementHandler(params) {
             var _this = _super.call(this, params) || this;
@@ -823,7 +702,7 @@
                 if (!tagName.match(/-/gim)) {
                     throw new Error("The name of a custom element must contain a dash (-). So <x-tags>, <my-element>, and <my-awesome-app> are all valid names, while <tabs> and <foo_bar> are not.");
                 }
-                window.customElements.define(tagName, /** @class */function (_super) {
+                window.customElements.define(tagName, function (_super) {
                     __extends(class_1, _super);
                     function class_1() {
                         return _super.call(this, dispatcher) || this;
@@ -846,7 +725,6 @@
         return CustomElementHandler;
     }(Handler);
 
-    //
     var bootstrap = function bootstrap(options) {
         return new Bootstrap(options);
     };

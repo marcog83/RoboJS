@@ -3,17 +3,21 @@
  */
 
 import typescript from 'rollup-plugin-typescript';
+
 export default {
-    input: 'src/index.ts',
+    input: 'robojs.ts',
     output: {
         format: 'es',
         file: 'dist/robojs.js'
         , name: 'robojs'
         , exports: 'named'
     }
-    ,plugins: [typescript({
+    , plugins: [typescript({
         typescript: require('typescript')
-        ,tsconfig:false
+        , declaration: true
+        , "module": "es2015",
+        "target": "es5"
+        , removeComments: true
     })]
 
 
