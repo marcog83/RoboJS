@@ -84,7 +84,7 @@ var G = typeof global === typeof null ? global : self;
 var _EventTarget = G.EventTarget;
 
 try {
-    new EventTarget();
+    new _EventTarget();
 } catch (e) {
     _EventTarget = EventTarget;
 }

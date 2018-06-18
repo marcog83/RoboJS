@@ -117,7 +117,9 @@
     }();
     var G = (typeof global === "undefined" ? "undefined" : _typeof(global)) === _typeof(null) ? global : self;
     var _EventTarget = G.EventTarget;
-    try {} catch (e) {
+    try {
+        new _EventTarget();
+    } catch (e) {
         _EventTarget = EventTarget;
     }
     var EventTarget$1 = _EventTarget;

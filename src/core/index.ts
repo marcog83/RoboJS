@@ -15,4 +15,4 @@ export {default as CustomElementHandler} from "./display/CustomElementHandler";
 
 export const bootstrap = options => {
     return new Bootstrap(options);
-}
+};

@@ -3,7 +3,7 @@
  */
 
 
-import {find, noop} from "../../internal";
+import { noop} from "../../internal";
 import nextUid from "./next-uid";
 import Handler from "./Handler";
 
