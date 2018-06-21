@@ -9,15 +9,15 @@
   "module": "robojs.js",
   "typings": "src/type-definitions/robojs.d.ts",
   "scripts": {
-    "build:babel-it": "cross-env NODE_ENV=production babel ./dist/robojs.js --out-file ./dist/robojs.js",
-    "build:bundle": "rollup -c",
-    "build:uglify": "uglifyjs --compress unsafe --mangle -o dist/robojs.min.js dist/robojs.js",
+    "build:babel-it": "cross-env NODE_ENV=production node_modules/.bin/babel ./dist/robojs.js --out-file ./dist/robojs.js",
+    "build:bundle": "node_modules/.bin/rollup -c",
+    "build:uglify": "node_modules/.bin/uglifyjs --compress unsafe --mangle -o dist/robojs.min.js dist/robojs.js",
     "build": "cross-env NODE_ENV=production npm run build:bundle && npm run build:babel-it && npm run build:uglify",
     "release:major": "shelljs-release major",
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch",
     "test": "cross-env NODE_ENV=test nyc mocha --recursive test",
-    "coverage": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
+    "coverage": "cross-env NODE_ENV=test nyc report --reporter=lcov | coveralls",
     "nsp": "nsp check",
     "docs": "typedoc --includeDeclarations --out docs src/type-definitions"
   },
@@ -29,10 +29,10 @@
     "babel-preset-import-export": "^1.0.2",
     "chai": "^4.1.2",
     "coveralls": "^3.0.1",
-    "cross-env": "^5.1.5",
+    "cross-env": "^5.2.0",
     "eslint": "^4.19.1",
     "hoek": "^5.0.3",
-    "jsdom": "^11.10.0",
+    "jsdom": "^11.11.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^5.1.1",
     "mochawesome": "^3.0.2",
@@ -40,7 +40,7 @@
     "rollup": "^0.61.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "shelljs-release": "^0.3.0",
-    "uglify-js": "^3.3.25"
+    "uglify-js": "^3.4.1"
   },
   "nyc": {
     "require": [
