@@ -15,8 +15,8 @@ export default {
     , plugins: [typescript({
         typescript: require('typescript')
         , declaration: true
-        , "module": "es2015",
-        "target": "es5"
+        , module: "es2015"
+        , target: "es5"
         , removeComments: true
     })]
 

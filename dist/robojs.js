@@ -117,7 +117,9 @@
     }();
     var G = (typeof global === "undefined" ? "undefined" : _typeof(global)) === _typeof(null) ? global : self;
     var _EventTarget = G.EventTarget;
-    try {} catch (e) {
+    try {
+        new _EventTarget();
+    } catch (e) {
         _EventTarget = EventTarget;
     }
     var EventTarget$1 = _EventTarget;
@@ -249,7 +251,7 @@
         }
     }
 
-    var noop = function noop(_) {
+    var _noop = function _noop(_) {
         return _;
     };
 
@@ -448,9 +450,7 @@
             nodes = flatten(nodes);
             nodes = unique(nodes);
             if (nodes.length > 0) {
-                return this.onAdded.emit(nodes);
-            } else {
-                return [];
+                this.onAdded.emit(nodes);
             }
         };
         DomWatcher.prototype.getRemoved = function (removedNodes) {
@@ -506,12 +506,6 @@
         Handler.prototype.hasMediator = function (node) {
             return false;
         };
-        Handler.prototype.findMediator = function (load, node) {
-            var _this = this;
-            return load(this.getDefinition(node)).then(function (Mediator) {
-                return _this.create(node, Mediator);
-            }).then(this.updateCache.bind(this));
-        };
         Handler.prototype.create = function (node, Mediator) {
             throw new Error("not implemented");
         };
@@ -519,6 +513,19 @@
         Handler.prototype.destroy = function (node) {};
         Handler.prototype.dispose = function () {};
         return Handler;
+    }();
+
+    var Disposable = function () {
+        function Disposable(_a) {
+            var mediatorId = _a.mediatorId,
+                node = _a.node,
+                _b = _a.dispose,
+                dispose = _b === void 0 ? _noop : _b;
+            this.mediatorId = mediatorId;
+            this.node = node;
+            this.dispose = dispose;
+        }
+        return Disposable;
     }();
 
     var MediatorHandler = function (_super) {
@@ -553,32 +560,28 @@
         MediatorHandler.prototype.hasMediator = function (node) {
             return !!this.getDefinition(node) && !this.inCache(node);
         };
-        MediatorHandler.prototype.findMediator = function (load, node) {
-            var _this = this;
-            return load(this.getDefinition(node)).then(function (Mediator) {
-                return _this.create(node, Mediator);
-            }).then(this.updateCache.bind(this));
-        };
         MediatorHandler.prototype.create = function (node, Mediator) {
             var mediatorId = nextUid();
             node.setAttribute("mediatorid", mediatorId);
-            var disposable = {
+            var dispose = _noop;
+            new Disposable({
                 mediatorId: mediatorId,
                 node: node,
-                dispose: noop
-            };
+                dispose: _noop
+            });
             if (node.parentNode) {
-                var dispose = Mediator(node, this.dispatcher) || noop;
-                disposable = {
-                    mediatorId: mediatorId,
-                    node: node,
-                    dispose: dispose
-                };
+                dispose = Mediator(node, this.dispatcher);
             }
+            var disposable = new Disposable({
+                mediatorId: mediatorId,
+                node: node,
+                dispose: dispose
+            });
+            this.updateCache(disposable);
             return disposable;
         };
         MediatorHandler.prototype.getAllElements = function (node) {
-            var nodes = [].slice.call(node.querySelectorAll("[" + this.selector + "]"), 0);
+            var nodes = Array.from(node.querySelectorAll("[" + this.selector + "]")).slice(0);
             if (node.getAttribute(this.selector)) {
                 nodes.unshift(node);
             }
@@ -632,7 +635,7 @@
             this.root = root;
             this.handler = options.handler || new MediatorHandler({ definitions: definitions });
             this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler.getAllElements.bind(this.handler));
-            this.domWatcher.onAdded.connect(this.handleAdded.bind(this));
+            this.domWatcher.onAdded.connect(this.getMediators.bind(this));
             this.domWatcher.onRemoved.connect(this.handleRemoved.bind(this));
             this.init();
         }
@@ -640,23 +643,19 @@
             var nodes = [this.root].map(this.handler.getAllElements.bind(this.handler));
             this.promise = this.getMediators(nodes);
         };
-        Bootstrap.prototype.handleAdded = function (nodes) {
+        Bootstrap.prototype.getMediators = function (nodes) {
             var _this = this;
             nodes = flatten(nodes);
             var promises = nodes.filter(this.handler.hasMediator.bind(this.handler)).map(function (node) {
-                return _this.loader.load(_this.handler.getDefinition(node)).then(function (Mediator) {
+                var definition = _this.handler.getDefinition(node);
+                return _this.loader.load(definition).then(function (Mediator) {
                     return _this.handler.create(node, Mediator);
-                }).then(_this.handler.updateCache.bind(_this.handler));
+                });
             });
             return Promise.all(promises);
         };
         Bootstrap.prototype.handleRemoved = function (nodes) {
             nodes.forEach(this.handler.destroy.bind(this.handler));
-        };
-        Bootstrap.prototype.getMediators = function (nodes) {
-            nodes = flatten(nodes);
-            var promises = nodes.filter(this.handler.hasMediator.bind(this.handler)).map(this.handler.findMediator.bind(this.handler, this.loader.load.bind(this.loader)));
-            return Promise.all(promises);
         };
         Bootstrap.prototype.dispose = function () {
             this.domWatcher.dispose();
