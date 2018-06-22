@@ -417,11 +417,11 @@
     }
 
     var DomWatcher = function () {
-        function DomWatcher(root, getAllElements) {
+        function DomWatcher(root, handler) {
             this.onAdded = new Signal();
             this.onRemoved = new Signal();
             this.root = root;
-            this.getAllElements = getAllElements;
+            this.handler = handler;
             this.init();
         }
         DomWatcher.prototype.init = function () {
@@ -444,7 +444,7 @@
             var nodes = flatten(addedNodes);
             nodes = nodes.filter(function (node) {
                 return node.querySelectorAll;
-            }).map(this.getAllElements).filter(function (nodes) {
+            }).map(this.handler.getAllElements.bind(this.handler)).filter(function (nodes) {
                 return nodes.length > 0;
             });
             nodes = flatten(nodes);
@@ -457,15 +457,13 @@
             var nodes = flatten(removedNodes);
             nodes = nodes.filter(function (node) {
                 return node.querySelectorAll;
-            }).map(this.getAllElements).filter(function (nodes) {
+            }).map(this.handler.getAllElements.bind(this.handler)).filter(function (nodes) {
                 return nodes.length > 0;
             });
             nodes = flatten(nodes);
             nodes = unique(nodes);
             if (nodes.length > 0) {
-                return this.onRemoved.emit(nodes);
-            } else {
-                return [];
+                this.onRemoved.emit(nodes);
             }
         };
         DomWatcher.prototype.dispose = function () {
@@ -634,7 +632,7 @@
             this.loader = loader;
             this.root = root;
             this.handler = options.handler || new MediatorHandler({ definitions: definitions });
-            this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler.getAllElements.bind(this.handler));
+            this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler);
             this.domWatcher.onAdded.connect(this.getMediators.bind(this));
             this.domWatcher.onRemoved.connect(this.handleRemoved.bind(this));
             this.init();

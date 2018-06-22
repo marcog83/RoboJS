@@ -45,28 +45,24 @@ export default class DomWatcher implements IWatcher {
     getAdded(addedNodes) {
         let nodes = flatten(addedNodes);
         nodes = nodes.filter(node => node.querySelectorAll)
-            .map(this.handler.getAllElements)
+            .map(this.handler.getAllElements.bind(this.handler))
             .filter((nodes:Array<HTMLElement>) => nodes.length > 0);
         nodes = flatten(nodes);
         nodes = unique(nodes);
         if (nodes.length > 0) {
              this.onAdded.emit(nodes);
-        } else {
-
         }
     }
 
     getRemoved(removedNodes) {
         let nodes = flatten(removedNodes);
         nodes = nodes.filter(node => node.querySelectorAll)
-            .map(this.handler.getAllElements)
+            .map(this.handler.getAllElements.bind(this.handler))
             .filter((nodes:Array<HTMLElement>) => nodes.length > 0);
         nodes = flatten(nodes);
         nodes = unique(nodes);
         if (nodes.length > 0) {
-            return this.onRemoved.emit(nodes);
-        } else {
-            return [];
+             this.onRemoved.emit(nodes);
         }
     }
 
