@@ -1,22 +1,25 @@
-import Signal from "../events/Signal";
+import Signal from "../../events/Signal";
 
 
 import {flatten, unique} from "../../internal/index";
+import IWatcher from "../api/IWatcher";
+import ISignal from "../../events/api/ISignal";
+import IHandler from "../api/IHandler";
 
 
 
-export default class DomWatcher {
-    onAdded: Signal;
-    onRemoved: Signal;
+export default class DomWatcher implements IWatcher {
+    onAdded: ISignal;
+    onRemoved: ISignal;
     root: HTMLElement;
-    getAllElements: (value: any, index: number, array: any[]) => {};
+    handler: IHandler;
     observer:MutationObserver;
 
-    constructor(root, getAllElements) {
+    constructor(root, handler:IHandler) {
         this.onAdded = new Signal();
         this.onRemoved = new Signal();
         this.root = root;
-        this.getAllElements = getAllElements;
+        this.handler = handler;
         this.init();
     }
 
@@ -30,7 +33,7 @@ export default class DomWatcher {
         });
     }
 
-    handleMutations(mutations) {
+    handleMutations(mutations:Array<MutationRecord>) {
         mutations.forEach(mutation => {
             this.getRemoved(mutation.removedNodes);
             this.getAdded(mutation.addedNodes);
@@ -42,21 +45,21 @@ export default class DomWatcher {
     getAdded(addedNodes) {
         let nodes = flatten(addedNodes);
         nodes = nodes.filter(node => node.querySelectorAll)
-            .map(this.getAllElements)
+            .map(this.handler.getAllElements)
             .filter((nodes:Array<HTMLElement>) => nodes.length > 0);
         nodes = flatten(nodes);
         nodes = unique(nodes);
         if (nodes.length > 0) {
-            return this.onAdded.emit(nodes);
+             this.onAdded.emit(nodes);
         } else {
-            return [];
+
         }
     }
 
     getRemoved(removedNodes) {
         let nodes = flatten(removedNodes);
         nodes = nodes.filter(node => node.querySelectorAll)
-            .map(this.getAllElements)
+            .map(this.handler.getAllElements)
             .filter((nodes:Array<HTMLElement>) => nodes.length > 0);
         nodes = flatten(nodes);
         nodes = unique(nodes);

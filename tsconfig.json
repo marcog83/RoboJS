@@ -3,7 +3,8 @@
     "module": "es2015",
     "target": "es5",
     "declaration": true,
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "lib": ["es6", "dom"]
   },
   "include": [
     "robojs.ts"

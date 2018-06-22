@@ -3,19 +3,14 @@
  */
 
 
-import { noop} from "../../internal";
+import {noop} from "../../internal";
 import nextUid from "./next-uid";
-import Handler from "./Handler";
+import AHandler from "./AHandler";
+import IDisposable, {Disposable} from "../api/IDisposable";
 
 
-interface Disposable {
-    mediatorId: string,
-    node: HTMLElement,
-    dispose: () => void
-}
-
-export default class MediatorHandler extends Handler {
-    MEDIATORS_CACHE: Array<Disposable>;
+export default class MediatorHandler extends AHandler {
+    MEDIATORS_CACHE: Array<IDisposable>;
     definitions: Object;
     dispatcher: EventTarget;
 
@@ -38,7 +33,7 @@ export default class MediatorHandler extends Handler {
         return !!this.MEDIATORS_CACHE.find((disposable: Disposable) => disposable.node === node);
     }
 
-    updateCache(disposable: Disposable) {
+    updateCache(disposable: IDisposable) {
         this.MEDIATORS_CACHE.push(disposable);//[mediatorId] = disposeFunction;
         return this.MEDIATORS_CACHE;
     }
@@ -48,41 +43,36 @@ export default class MediatorHandler extends Handler {
     }
 
 
-    findMediator(load, node: HTMLElement) {
-        return load(this.getDefinition(node))
-            .then(Mediator => this.create(node, Mediator))
-            .then(this.updateCache.bind(this));
-    }
-
     create(node, Mediator) {
         const mediatorId = nextUid();
         node.setAttribute("mediatorid", mediatorId);
-        let disposable = {
+        let dispose = noop;
+        new Disposable({
             mediatorId,
             node,
             dispose: noop
-        };
+        });
         if (node.parentNode) {
-
-            const dispose = Mediator(node, this.dispatcher) || noop;
-            disposable = {
-                mediatorId,
-                node,
-                dispose
-            };
+            dispose = Mediator(node, this.dispatcher);
         }
+        let disposable = new Disposable({
+            mediatorId,
+            node,
+            dispose
+        });
+        this.updateCache(disposable);
         return disposable;
     }
 
     getAllElements(node: HTMLElement) {
-        const nodes = [].slice.call(node.querySelectorAll("[" + this.selector + "]"), 0);
+        const nodes = Array.from(node.querySelectorAll(`[${this.selector}]`)).slice( 0);
         if (node.getAttribute(this.selector)) {
             nodes.unshift(node);
         }
         return nodes;
     }
 
-    static disposeMediator(disposable: Disposable) {
+    static disposeMediator(disposable: IDisposable) {
         if (disposable) {
             disposable.dispose();
             disposable.node = null;

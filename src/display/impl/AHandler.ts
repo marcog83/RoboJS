@@ -1,10 +1,12 @@
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
-import EventTarget from "../events/EventTarget";
+import EventTarget from "../../events/EventTarget";
+import IHandler from "../api/IHandler";
+import IDisposable from "../api/IDisposable";
 
 
-export default class Handler {
+export default class Handler implements IHandler{
     definitions:{};
     dispatcher:EventTarget;
     constructor(params){
@@ -49,25 +51,15 @@ export default class Handler {
         return false;
     }
 
-    /**
-     *
-     * @param load
-     * @param node
-     * @return {Promise.<TResult>}
-     */
-    findMediator(load, node) {
-        return load(this.getDefinition(node))
-            .then(Mediator => this.create(node, Mediator))
-            .then(this.updateCache.bind(this));
-    }
+
 
     /**
      *
      * @param node
      * @param Mediator
-     * @return {*}
+     * @return {IDisposable}
      */
-    create(node, Mediator) {
+    create(node, Mediator):IDisposable {
         throw new Error("not implemented");
     }
 
