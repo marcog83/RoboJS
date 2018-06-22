@@ -1,6 +1,6 @@
 {
   "name": "robojs",
-  "version": "5.6.1",
+  "version": "5.6.3",
   "license": "MIT",
   "repository": "https://github.com/marcog83/RoboJS",
   "author": "Marco Gobbi",
@@ -17,7 +17,7 @@
     "release:minor": "shelljs-release minor",
     "release:patch": "shelljs-release patch",
     "test": "cross-env NODE_ENV=test nyc mocha --recursive test",
-    "coverage": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
+    "coverage": "cross-env NODE_ENV=test nyc report --reporter=lcov | coveralls",
     "nsp": "nsp check",
     "docs": "typedoc --includeDeclarations --out docs src/type-definitions"
   },
@@ -34,13 +34,13 @@
     "hoek": "^5.0.3",
     "jsdom": "^11.11.0",
     "jsdom-global": "^3.0.2",
-    "mocha": "^5.2.0",
+    "mocha": "^5.1.1",
     "mochawesome": "^3.0.2",
     "nyc": "^12.0.1",
-    "rollup": "^0.60.0",
+    "rollup": "^0.61.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "shelljs-release": "^0.3.0",
-    "uglify-js": "^3.4.0"
+    "uglify-js": "^3.4.1"
   },
   "nyc": {
     "require": [
