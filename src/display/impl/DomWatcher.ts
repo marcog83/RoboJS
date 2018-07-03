@@ -1,14 +1,14 @@
-import Signal from "../../events/Signal";
+import {Signal} from "../../events/impl/Signal";
 
 
 import {flatten, unique} from "../../internal/index";
-import IWatcher from "../api/IWatcher";
-import ISignal from "../../events/api/ISignal";
-import IHandler from "../api/IHandler";
+import {IWatcher} from "../api/IWatcher";
+import {ISignal} from "../../events/api/ISignal";
+import {IHandler} from "../api/IHandler";
 
 
 
-export default class DomWatcher implements IWatcher {
+export  class DomWatcher implements IWatcher {
     onAdded: ISignal;
     onRemoved: ISignal;
     root: HTMLElement;

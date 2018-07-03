@@ -2,28 +2,29 @@
  * Created by marco.gobbi on 21/01/2015.
  */
 
-import DomWatcher from "./DomWatcher";
-import {AMDLoader, default as Loader} from "../../net/Loader";
-import MediatorHandler from "./MediatorHandler";
+import {DomWatcher} from "./DomWatcher";
+import {AMDLoader} from "../../net/impl/Loader";
+import {MediatorHandler} from "./MediatorHandler";
 
-import {flatten} from "../../internal";
+import flatten from "../../internal/_flatten";
 
-import IBootstrap from "../api/IBootstrap";
-import IWatcher from "../api/IWatcher";
-import IHandler from "../api/IHandler";
+import {IBootstrap} from "../api/IBootstrap";
+import {IWatcher} from "../api/IWatcher";
+import {IHandler} from "../api/IHandler";
+import {ILoader} from "../../net/api/ILoader";
 
 interface BootstrapConfig {
     handler?: IHandler;
     definitions: any;
-    loader?: Loader;
+    loader?: ILoader;
     root?: HTMLElement;
     domWatcher?: IWatcher;
 }
 
-export default class Bootstrap implements IBootstrap {
+export class Bootstrap implements IBootstrap {
     handler: IHandler;
     definitions: Object;
-    loader: Loader;
+    loader: ILoader;
     root: HTMLElement;
     domWatcher: IWatcher;
     promise: Promise<any>;
@@ -47,11 +48,11 @@ export default class Bootstrap implements IBootstrap {
 
     init() {
 
-        const nodes = [this.root].map(this.handler.getAllElements.bind(this.handler));
+        const nodes:Element[] = [this.root].map(this.handler.getAllElements.bind(this.handler));
         this.promise = this.getMediators(nodes);
     }
 
-    getMediators(nodes: Array<HTMLElement>) {
+    getMediators(nodes: Array<Element>) {
         nodes = flatten(nodes);
         const promises = nodes.filter(this.handler.hasMediator.bind(this.handler))
             .map((node: HTMLElement) => {

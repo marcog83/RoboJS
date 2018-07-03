@@ -3,13 +3,14 @@
  */
 
 
-import {noop} from "../../internal";
-import nextUid from "./next-uid";
-import AHandler from "./AHandler";
-import IDisposable, {Disposable} from "../api/IDisposable";
+import noop from "../../internal/_noop";
+import {nextUid} from "./next-uid";
+import {AHandler} from "./AHandler";
+import {IDisposable, Disposable} from "../api/IDisposable";
+import {EventTarget} from "../../events/impl/EventTarget";
 
 
-export default class MediatorHandler extends AHandler {
+export class MediatorHandler extends AHandler {
     MEDIATORS_CACHE: Array<IDisposable>;
     definitions: Object;
     dispatcher: EventTarget;
@@ -30,7 +31,7 @@ export default class MediatorHandler extends AHandler {
     }
 
     inCache(node: HTMLElement) {
-        return !!this.MEDIATORS_CACHE.find((disposable: Disposable) => disposable.node === node);
+        return !!this.MEDIATORS_CACHE.find((disposable: IDisposable) => disposable.node === node);
     }
 
     updateCache(disposable: IDisposable) {
@@ -43,17 +44,13 @@ export default class MediatorHandler extends AHandler {
     }
 
 
-    create(node, Mediator) {
+    create(node: HTMLElement, Mediator: any): IDisposable {
         const mediatorId = nextUid();
         node.setAttribute("mediatorid", mediatorId);
         let dispose = noop;
-        new Disposable({
-            mediatorId,
-            node,
-            dispose: noop
-        });
+
         if (node.parentNode) {
-            dispose = Mediator(node, this.dispatcher);
+            dispose = Mediator(node, this.dispatcher) || noop;
         }
         let disposable = new Disposable({
             mediatorId,
@@ -64,8 +61,8 @@ export default class MediatorHandler extends AHandler {
         return disposable;
     }
 
-    getAllElements(node: HTMLElement) {
-        const nodes = Array.from(node.querySelectorAll(`[${this.selector}]`)).slice( 0);
+    getAllElements(node: HTMLElement): Array<Element> {
+        const nodes = Array.from(node.querySelectorAll(`[${this.selector}]`)).slice(0);
         if (node.getAttribute(this.selector)) {
             nodes.unshift(node);
         }

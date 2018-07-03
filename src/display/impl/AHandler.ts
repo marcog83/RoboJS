@@ -1,75 +1,45 @@
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
-import EventTarget from "../../events/EventTarget";
-import IHandler from "../api/IHandler";
-import IDisposable from "../api/IDisposable";
+import {EventTarget} from "../../events/impl/EventTarget";
+import {IHandler} from "../api/IHandler";
+import {IDisposable} from "../api/IDisposable";
 
 
-export default class Handler implements IHandler{
-    definitions:{};
-    dispatcher:EventTarget;
-    constructor(params){
+export class AHandler implements IHandler {
+    definitions: {};
+    dispatcher: EventTarget;
+
+    constructor(params) {
         let {definitions = {}, dispatcher = new EventTarget()} = params;
         this.definitions = definitions;
         this.dispatcher = dispatcher;
     }
-    /**
-     *
-     * @param node
-     * @return {*}
-     */
 
-    getDefinition(node) {
+    getDefinition(node): any {
 
     }
 
-    /**
-     *
-     * @param node
-     * @return {boolean}
-     */
-    inCache(node) {
+    inCache(node): boolean {
         return false;
     }
 
-    /**
-     *
-     * @param disposable
-     */
-    updateCache(disposable) {
+    updateCache(disposable: IDisposable): void {
 
 
     }
 
-    /**
-     *
-     * @param {HTMLElement} node
-     * @return {boolean}
-     */
-    hasMediator(node) {
+    hasMediator(node): boolean {
         return false;
     }
 
 
-
-    /**
-     *
-     * @param node
-     * @param Mediator
-     * @return {IDisposable}
-     */
-    create(node, Mediator):IDisposable {
+    create(node: HTMLElement, Mediator): IDisposable {
         throw new Error("not implemented");
     }
 
-    /**
-     *
-     * @param node
-     * @return {Array.<TResult>}
-     */
-    getAllElements(node) {
-
+    getAllElements(node: HTMLElement): Array<Element> {
+        throw new Error("not implemented");
     }
 
 
@@ -78,11 +48,11 @@ export default class Handler implements IHandler{
      * @param node
      */
 
-    destroy(node:HTMLElement) {
+    destroy(node: HTMLElement): void {
 
     }
 
-    dispose() {
+    dispose(): void {
 
 
     }

@@ -7,7 +7,7 @@
   "main": "dist/robojs.min.js",
   "jsnext:main": "robojs.js",
   "module": "robojs.js",
-  "typings": "src/type-definitions/robojs.d.ts",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "build:babel-it": "cross-env NODE_ENV=production babel ./dist/robojs.js --out-file ./dist/robojs.js",
     "build:bundle": "rollup -c",
@@ -43,7 +43,7 @@
     "nyc": "^11.9.0",
     "rollup": "^0.59.0",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-typescript": "^0.8.1",
+    "rollup-plugin-typescript2": "^0.15.1",
     "shelljs-release": "^0.3.0",
     "typescript": "^2.9.2",
     "uglify-js": "^3.4.0"

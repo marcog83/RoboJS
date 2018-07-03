@@ -1,15 +1,15 @@
-export {default as Loader} from "./net/Loader";
-export {AMDLoader, CustomLoader} from "./net/Loader";
+// export {} from "./net/Loader";
+export {Loader, AMDLoader, CustomLoader} from "./net/impl/Loader";
 
-export {default as EventTarget} from "./events/EventTarget";
-export {default as Signal} from "./events/Signal";
-export {default as DomWatcher} from "./display/impl/DomWatcher";
+export {EventTarget} from "./events/impl/EventTarget";
+export {Signal} from "./events/impl/Signal";
+export {DomWatcher} from "./display/impl/DomWatcher";
 
-export {default as MediatorHandler} from "./display/impl/MediatorHandler";
-import Bootstrap from "./display/impl/Bootstrap";
+export {MediatorHandler} from "./display/impl/MediatorHandler";
+import {Bootstrap} from "./display/impl/Bootstrap";
 
-export {default as Bootstrap} from "./display/impl/Bootstrap";
-export {default as CustomElementHandler} from "./display/impl/CustomElementHandler";
+export {Bootstrap} from "./display/impl/Bootstrap";
+export {CustomElementHandler} from "./display/impl/CustomElementHandler";
 
 //
 

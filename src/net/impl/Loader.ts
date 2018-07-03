@@ -1,6 +1,8 @@
+import {ILoader} from "../api/ILoader";
+
 declare function require(path: Array<string>, resolve: Function, reject: Function): void;
 
-export default class Loader {
+export  class Loader implements ILoader{
     constructor() {
     }
 
@@ -9,6 +11,7 @@ export default class Loader {
     }
 
     onComplete(id, resolve, reject) {
+
     }
 }
 

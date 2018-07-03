@@ -1,6 +1,6 @@
-import ISignal from "./api/ISignal";
+import {ISignal} from "../api/ISignal";
 
-export default class Signal implements ISignal {
+export  class Signal implements ISignal {
     listenerBoxes: Array<any>;
     listenersNeedCloning: boolean;
 

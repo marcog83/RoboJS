@@ -1,7 +1,6 @@
+export class EventTarget {
+    listeners_: Object;
 
-
-class EventTarget {
-    listeners_:Object;
     constructor() {
         this.listeners_ = {};
 
@@ -65,11 +64,11 @@ class EventTarget {
             for (let i = 0; i < handlers.length; i++) {
                 let handler = handlers[i];
                 if (handler.handleEvent) {
-                    prevented |= handler.handleEvent.call(handler, event) === false;
+                    prevented = handler.handleEvent.call(handler, event) === false ? 0 : 1;
                 }
 
                 else {
-                    prevented |= handler.call(this, event) === false;
+                    prevented = handler.call(this, event) === false ? 0 : 1;
                 }
 
             }
@@ -78,14 +77,14 @@ class EventTarget {
         return !prevented && !event.defaultPrevented;
     }
 }
-
-var G = typeof global === typeof null ? global : self;
-
-var _EventTarget = G.EventTarget;
-
-try {
-    new _EventTarget();
-} catch (e) {
-    _EventTarget = EventTarget;
-}
-export default _EventTarget;
+//
+// var G = typeof global === typeof null ? global : self;
+//
+// var _EventTarget = G.EventTarget;
+//
+// try {
+//     new _EventTarget();
+// } catch (e) {
+//     _EventTarget = MyEventTarget;
+// }
+// export const EventTarget = _EventTarget;

@@ -2,7 +2,7 @@
  * Created by marcogobbi on 07/05/2017.
  */
 
-import typescript from 'rollup-plugin-typescript';
+import typescript from 'rollup-plugin-typescript2';
 
 export default {
     input: 'robojs.ts',
@@ -12,13 +12,7 @@ export default {
         , name: 'robojs'
         , exports: 'named'
     }
-    , plugins: [typescript({
-        typescript: require('typescript')
-        , declaration: true
-        , module: "es2015"
-        , target: "es5"
-        , removeComments: true
-    })]
+    , plugins: [typescript()]
 
 
 };
