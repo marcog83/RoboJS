@@ -1,8 +1,4 @@
-import {ILoader} from "../api/ILoader";
-
-declare function require(path: Array<string>, resolve: Function, reject: Function): void;
-
-export class Loader implements ILoader {
+export class Loader {
     constructor() {
     }
 
@@ -21,7 +17,6 @@ export class AMDLoader extends Loader {
 }
 
 export class CustomLoader extends Loader {
-    fn: Function;
 
     constructor(fn) {
         super();

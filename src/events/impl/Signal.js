@@ -1,8 +1,4 @@
-import {ISignal} from "../api/ISignal";
-
-export  class Signal implements ISignal {
-    listenerBoxes: Array<any>;
-    listenersNeedCloning: boolean;
+export class Signal {
 
     constructor() {
         this.listenerBoxes = [];
@@ -15,15 +11,15 @@ export  class Signal implements ISignal {
         return this.listenerBoxes.length;
     }
 
-    connect(slot, scope?) {
+    connect(slot, scope) {
         this.registerListener(slot, scope, false);
     }
 
-    connectOnce(slot, scope?) {
+    connectOnce(slot, scope) {
         this.registerListener(slot, scope, true);
     }
 
-    disconnect(slot, scope?) {
+    disconnect(slot, scope) {
         if (this.listenersNeedCloning) {
             this.listenerBoxes = this.listenerBoxes.slice();
             this.listenersNeedCloning = false;

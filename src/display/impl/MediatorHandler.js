@@ -6,14 +6,10 @@
 import noop from "../../internal/_noop";
 import {nextUid} from "./next-uid";
 import {AHandler} from "./AHandler";
-import {IDisposable, Disposable} from "../api/IDisposable";
-import {EventTarget} from "../../events/impl/EventTarget";
+import {Disposable} from "./Disposable";
 
 
 export class MediatorHandler extends AHandler {
-    MEDIATORS_CACHE: Array<IDisposable>;
-    definitions: Object;
-    dispatcher: EventTarget;
 
     constructor(params = {}) {
         super(params);
@@ -26,25 +22,25 @@ export class MediatorHandler extends AHandler {
     }
 
 
-    getDefinition(node: HTMLElement) {
+    getDefinition(node) {
         return this.definitions[node.getAttribute(this.selector)];
     }
 
-    inCache(node: HTMLElement) {
-        return !!this.MEDIATORS_CACHE.find((disposable: IDisposable) => disposable.node === node);
+    inCache(node) {
+        return !!this.MEDIATORS_CACHE.find((disposable) => disposable.node === node);
     }
 
-    updateCache(disposable: IDisposable) {
+    updateCache(disposable) {
         this.MEDIATORS_CACHE.push(disposable);//[mediatorId] = disposeFunction;
         return this.MEDIATORS_CACHE;
     }
 
-    hasMediator(node: HTMLElement) {
+    hasMediator(node) {
         return !!this.getDefinition(node) && !this.inCache(node);
     }
 
 
-    create(node: HTMLElement, Mediator: any): IDisposable {
+    create(node, Mediator) {
         const mediatorId = nextUid();
         node.setAttribute("mediatorid", mediatorId);
         let dispose = noop;
@@ -61,7 +57,7 @@ export class MediatorHandler extends AHandler {
         return disposable;
     }
 
-    getAllElements(node: HTMLElement): Array<Element> {
+    getAllElements(node) {
         const nodes = Array.from(node.querySelectorAll(`[${this.selector}]`)).slice(0);
         if (node.getAttribute(this.selector)) {
             nodes.unshift(node);
@@ -69,14 +65,14 @@ export class MediatorHandler extends AHandler {
         return nodes;
     }
 
-    static disposeMediator(disposable: IDisposable) {
+    static disposeMediator(disposable) {
         if (disposable) {
             disposable.dispose();
             disposable.node = null;
         }
     }
 
-    _destroy(node: HTMLElement) {
+    _destroy(node) {
         const l = this.MEDIATORS_CACHE.length;
         for (let i = 0; i < l; i++) {
             let disposable = this.MEDIATORS_CACHE[i];
@@ -99,7 +95,7 @@ export class MediatorHandler extends AHandler {
         return this.MEDIATORS_CACHE.filter(i => i);
     }
 
-    destroy(node: HTMLElement) {
+    destroy(node) {
         this.MEDIATORS_CACHE = this._destroy(node);
         return this.MEDIATORS_CACHE;
     }

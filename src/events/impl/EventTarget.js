@@ -1,5 +1,4 @@
-export class EventTarget {
-    listeners_: Object;
+export class CustomEventTarget {
 
     constructor() {
         this.listeners_ = {};
@@ -77,14 +76,15 @@ export class EventTarget {
         return !prevented && !event.defaultPrevented;
     }
 }
+
 //
-// var G = typeof global === typeof null ? global : self;
-//
-// var _EventTarget = G.EventTarget;
-//
-// try {
-//     new _EventTarget();
-// } catch (e) {
-//     _EventTarget = MyEventTarget;
-// }
-// export const EventTarget = _EventTarget;
+var G = typeof global === typeof null ? global : self;
+
+var _EventTarget = G.EventTarget;
+
+try {
+    new _EventTarget();
+} catch (e) {
+    _EventTarget = CustomEventTarget;
+}
+export const EventTarget = _EventTarget;

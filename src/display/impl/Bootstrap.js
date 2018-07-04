@@ -8,28 +8,11 @@ import {MediatorHandler} from "./MediatorHandler";
 
 import flatten from "../../internal/_flatten";
 
-import {IBootstrap} from "../api/IBootstrap";
-import {IWatcher} from "../api/IWatcher";
-import {IHandler} from "../api/IHandler";
-import {ILoader} from "../../net/api/ILoader";
 
-export interface BootstrapConfig {
-    handler?: IHandler;
-    definitions: any;
-    loader?: ILoader;
-    root?: HTMLElement;
-    domWatcher?: IWatcher;
-}
+export class Bootstrap  {
 
-export class Bootstrap implements IBootstrap {
-    handler: IHandler;
-    definitions: Object;
-    loader: ILoader;
-    root: HTMLElement;
-    domWatcher: IWatcher;
-    promise: Promise<any>;
 
-    constructor(options: BootstrapConfig) {
+    constructor(options) {
         let {definitions, loader = new AMDLoader(), root = document.body} = options;
 
         this.definitions = definitions;
@@ -48,14 +31,14 @@ export class Bootstrap implements IBootstrap {
 
     init() {
 
-        const nodes:Element[] = [this.root].map(this.handler.getAllElements.bind(this.handler));
+        const nodes= [this.root].map(this.handler.getAllElements.bind(this.handler));
         this.promise = this.getMediators(nodes);
     }
 
-    getMediators(nodes: Array<Element>) {
+    getMediators(nodes) {
         nodes = flatten(nodes);
         const promises = nodes.filter(this.handler.hasMediator.bind(this.handler))
-            .map((node: HTMLElement) => {
+            .map(node => {
                 const definition = this.handler.getDefinition(node);
                 return this.loader.load(definition)
                     .then(Mediator => this.handler.create(node, Mediator))
@@ -64,7 +47,7 @@ export class Bootstrap implements IBootstrap {
         return Promise.all(promises);
     }
 
-    handleRemoved(nodes: Array<HTMLElement>) {
+    handleRemoved(nodes) {
         nodes.forEach(this.handler.destroy.bind(this.handler));
 
     }

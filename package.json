@@ -7,7 +7,7 @@
   "main": "dist/robojs.min.js",
   "jsnext:main": "robojs.js",
   "module": "robojs.js",
-  "types": "dist/src/index.d.ts",
+  "types": "src/type-definitions/robojs.d.ts",
   "scripts": {
     "build:babel-it": "cross-env NODE_ENV=production babel ./dist/robojs.js --out-file ./dist/robojs.js",
     "build:bundle": "rollup -c",
@@ -19,34 +19,28 @@
     "test": "cross-env NODE_ENV=test nyc mocha --recursive test",
     "coverage": "cross-env NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
     "nsp": "nsp check",
-    "docs": "typedoc --includeDeclarations --out docs src/type-definitions",
-    "build-wasm": "npm run build:untouched && npm run build:optimized",
-    "build:untouched": "asc robojs.ts -t build/robojs.untouched.wat -b build/robojs.untouched.wasm --validate --sourceMap --measure",
-    "build:optimized": "asc robojs.ts -t build/robojs.optimized.wat -b build/robojs.optimized.wasm --validate --sourceMap --measure --optimize"
+    "docs": "typedoc --includeDeclarations --out docs src/type-definitions"
   },
   "devDependencies": {
-    "assemblyscript": "github:AssemblyScript/assemblyscript",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-plugin-istanbul": "^4.1.6",
     "babel-preset-env": "^1.7.0",
     "babel-preset-import-export": "^1.0.2",
     "chai": "^4.1.2",
-    "coveralls": "^3.0.1",
+    "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
     "eslint": "^4.19.1",
     "hoek": "^5.0.3",
     "jsdom": "^11.11.0",
     "jsdom-global": "^3.0.2",
-    "mocha": "^5.1.1",
+    "mocha": "^5.2.0",
     "mochawesome": "^3.0.2",
     "nyc": "^11.9.0",
-    "rollup": "^0.59.0",
+    "rollup": "^0.62.0",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-typescript2": "^0.15.1",
     "shelljs-release": "^0.3.0",
-    "typescript": "^2.9.2",
-    "uglify-js": "^3.4.0"
+    "uglify-js": "^3.4.3"
   },
   "nyc": {
     "require": [
