@@ -13,7 +13,7 @@ import {IWatcher} from "../api/IWatcher";
 import {IHandler} from "../api/IHandler";
 import {ILoader} from "../../net/api/ILoader";
 
-interface BootstrapConfig {
+export interface BootstrapConfig {
     handler?: IHandler;
     definitions: any;
     loader?: ILoader;

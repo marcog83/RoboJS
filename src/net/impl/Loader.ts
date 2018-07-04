@@ -2,7 +2,7 @@ import {ILoader} from "../api/ILoader";
 
 declare function require(path: Array<string>, resolve: Function, reject: Function): void;
 
-export  class Loader implements ILoader{
+export class Loader implements ILoader {
     constructor() {
     }
 
@@ -11,7 +11,6 @@ export  class Loader implements ILoader{
     }
 
     onComplete(id, resolve, reject) {
-
     }
 }
 
