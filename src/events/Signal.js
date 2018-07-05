@@ -1,53 +1,46 @@
-/**
- *
- * @constructor
- * @return {Signal}
- */
-function Signal() {
+export class Signal {
 
-    this.listenerBoxes = [];
+    constructor() {
+        this.listenerBoxes = [];
 
 
-    this.listenersNeedCloning = false;
+        this.listenersNeedCloning = false;
+    }
 
-
-}
-
-Signal.prototype = {
-    getNumListeners: function () {
+    getNumListeners() {
         return this.listenerBoxes.length;
-    },
+    }
 
-    connect: function (slot, scope) {
+    connect(slot, scope) {
         this.registerListener(slot, scope, false);
-    },
+    }
 
-    connectOnce: function (slot, scope) {
+    connectOnce(slot, scope) {
         this.registerListener(slot, scope, true);
-    },
+    }
 
-    disconnect: function (slot, scope) {
+    disconnect(slot, scope) {
         if (this.listenersNeedCloning) {
             this.listenerBoxes = this.listenerBoxes.slice();
             this.listenersNeedCloning = false;
         }
 
         for (let i = this.listenerBoxes.length; i--;) {
-            if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
+            if (this.listenerBoxes[i].listener === slot && this.listenerBoxes[i].scope === scope) {
                 this.listenerBoxes.splice(i, 1);
                 return;
             }
         }
-    },
+    }
 
-    disconnectAll: function () {
+    disconnectAll() {
 
         for (let i = this.listenerBoxes.length; i--;) {
             this.disconnect(this.listenerBoxes[i].listener, this.listenerBoxes[i].scope);
         }
-    },
+    }
 
-    emit: function (...args) {
+    emit(...args) {
         this.listenersNeedCloning = true;
         this.listenerBoxes.forEach(({scope, listener, once}) => {
             if (once) {
@@ -57,9 +50,9 @@ Signal.prototype = {
         });
 
         this.listenersNeedCloning = false;
-    },
+    }
 
-    registerListener: function (listener, scope, once) {
+    registerListener(listener, scope, once) {
         const _listeners = this.listenerBoxes.filter(box => box.listener === listener && box.scope === scope);
 
         if (!_listeners.length) {
@@ -84,7 +77,6 @@ Signal.prototype = {
         }
 
     }
-};
+}
 
 
-export default Signal;
