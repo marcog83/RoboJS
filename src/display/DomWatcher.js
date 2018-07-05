@@ -34,25 +34,25 @@ export class DomWatcher {
 
     }
 
-    getAdded(addedNodes) {
-        let nodes = flatten(addedNodes);
+    _parseNodes(nodes) {
+         nodes = flatten(nodes);
         nodes = nodes.filter(node => node.querySelectorAll)
             .map(this.handler.getAllElements.bind(this.handler))
             .filter(nodes => nodes.length > 0);
         nodes = flatten(nodes);
         nodes = unique(nodes);
+        return nodes;
+    }
+
+    getAdded(addedNodes) {
+        const nodes = this._parseNodes(addedNodes);
         if (nodes.length > 0) {
             this.onAdded.emit(nodes);
         }
     }
 
     getRemoved(removedNodes) {
-        let nodes = flatten(removedNodes);
-        nodes = nodes.filter(node => node.querySelectorAll)
-            .map(this.handler.getAllElements.bind(this.handler))
-            .filter(nodes => nodes.length > 0);
-        nodes = flatten(nodes);
-        nodes = unique(nodes);
+        const nodes = this._parseNodes(removedNodes);
         if (nodes.length > 0) {
             this.onRemoved.emit(nodes);
         }

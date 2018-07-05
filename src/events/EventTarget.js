@@ -8,22 +8,47 @@ export class EventDispatcher {
 
     addEventListener(type, handler) {
 
-
-        if (!(type in this.listeners_)) {
-            this.listeners_[type] = [handler];
-        } else {
-            const handlers = this.listeners_[type];
-            if (handlers.indexOf(handler) < 0) {
-
-                handlers.push(handler);
-
-            }
-
+        let listeners_type = this.listeners_[type];
+        if (listeners_type === undefined) {
+            this.listeners_[type] = listeners_type = [];
         }
+
+        for (let i = 0, l; l = listeners_type[i]; i++) {
+            if (l === handler) return;
+            listeners_type.push(handler);
+        }
+
+
+        // if (!(type in this.listeners_)) {
+        //     this.listeners_[type] = [handler];
+        // } else {
+        //     const handlers = this.listeners_[type];
+        //     if (handlers.indexOf(handler) < 0) {
+        //
+        //         handlers.push(handler);
+        //
+        //     }
+        //
+        // }
     }
 
 
     removeEventListener(type, handler) {
+
+        let listeners_type = this.listeners_[type];
+        if (listeners_type === undefined) return;
+        for (let i = 0, l; l = listeners_type[i]; i++)
+            if (l === handler) {
+                listeners_type.splice(i, 1);
+                break;
+            }
+
+        if (!listeners_type.length) {
+            delete this.listeners_[type];
+        }
+
+        /*
+
 
 
         if (type in this.listeners_) {
@@ -42,7 +67,7 @@ export class EventDispatcher {
                 }
 
             }
-        }
+        }*/
     }
 
 

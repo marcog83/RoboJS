@@ -145,34 +145,57 @@
             key: "addEventListener",
             value: function addEventListener(type, handler) {
 
-                if (!(type in this.listeners_)) {
-                    this.listeners_[type] = [handler];
-                } else {
-                    var handlers = this.listeners_[type];
-                    if (handlers.indexOf(handler) < 0) {
-
-                        handlers.push(handler);
-                    }
+                var listeners_type = this.listeners_[type];
+                if (listeners_type === undefined) {
+                    this.listeners_[type] = listeners_type = [];
                 }
+
+                for (var i = 0, l; l = listeners_type[i]; i++) {
+                    if (l === handler) return;
+                    listeners_type.push(handler);
+                }
+
+                // if (!(type in this.listeners_)) {
+                //     this.listeners_[type] = [handler];
+                // } else {
+                //     const handlers = this.listeners_[type];
+                //     if (handlers.indexOf(handler) < 0) {
+                //
+                //         handlers.push(handler);
+                //
+                //     }
+                //
+                // }
             }
         }, {
             key: "removeEventListener",
             value: function removeEventListener(type, handler) {
 
-                if (type in this.listeners_) {
-                    var handlers = this.listeners_[type];
-                    var index = handlers.indexOf(handler);
+                var listeners_type = this.listeners_[type];
+                if (listeners_type === undefined) return;
+                for (var i = 0, l; l = listeners_type[i]; i++) {
+                    if (l === handler) {
+                        listeners_type.splice(i, 1);
+                        break;
+                    }
+                }if (!listeners_type.length) {
+                    delete this.listeners_[type];
+                }
 
-                    if (index >= 0) {
-
-                        // Clean up if this was the last listener.
+                /*
+                      if (type in this.listeners_) {
+                    const handlers = this.listeners_[type];
+                    const index = handlers.indexOf(handler);
+                      if (index >= 0) {
+                          // Clean up if this was the last listener.
                         if (handlers.length === 1) {
                             delete this.listeners_[type];
-                        } else {
+                        }
+                          else {
                             handlers.splice(index, 1);
                         }
-                    }
-                }
+                      }
+                }*/
             }
         }, {
             key: "dispatchEvent",
@@ -427,9 +450,9 @@
                 });
             }
         }, {
-            key: "getAdded",
-            value: function getAdded(addedNodes) {
-                var nodes = flatten(addedNodes);
+            key: "_parseNodes",
+            value: function _parseNodes(nodes) {
+                nodes = flatten(nodes);
                 nodes = nodes.filter(function (node) {
                     return node.querySelectorAll;
                 }).map(this.handler.getAllElements.bind(this.handler)).filter(function (nodes) {
@@ -437,6 +460,12 @@
                 });
                 nodes = flatten(nodes);
                 nodes = unique(nodes);
+                return nodes;
+            }
+        }, {
+            key: "getAdded",
+            value: function getAdded(addedNodes) {
+                var nodes = this._parseNodes(addedNodes);
                 if (nodes.length > 0) {
                     this.onAdded.emit(nodes);
                 }
@@ -444,14 +473,7 @@
         }, {
             key: "getRemoved",
             value: function getRemoved(removedNodes) {
-                var nodes = flatten(removedNodes);
-                nodes = nodes.filter(function (node) {
-                    return node.querySelectorAll;
-                }).map(this.handler.getAllElements.bind(this.handler)).filter(function (nodes) {
-                    return nodes.length > 0;
-                });
-                nodes = flatten(nodes);
-                nodes = unique(nodes);
+                var nodes = this._parseNodes(removedNodes);
                 if (nodes.length > 0) {
                     this.onRemoved.emit(nodes);
                 }
