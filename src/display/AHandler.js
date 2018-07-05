@@ -12,39 +12,33 @@ export class AHandler {
         this.dispatcher = dispatcher;
     }
 
-    getDefinition(node) {
+    getDefinition() {
         throw new Error("not implemented");
     }
 
-    inCache(node) {
+    inCache() {
         throw new Error("not implemented");
     }
 
-    updateCache(disposable) {
+    updateCache() {
         throw new Error("not implemented");
 
     }
 
-    hasMediator(node) {
+    hasMediator() {
         return false;
     }
 
 
-    create(node, Mediator) {
+    create() {
         throw new Error("not implemented");
     }
 
-    getAllElements(node) {
+    getAllElements() {
         throw new Error("not implemented");
     }
 
-
-    /**
-     *
-     * @param node
-     */
-
-    destroy(node) {
+    destroy() {
 
     }
 

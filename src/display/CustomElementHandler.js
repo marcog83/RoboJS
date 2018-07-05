@@ -59,9 +59,4 @@ export  class CustomElementHandler extends AHandler {
         return [node].concat([].slice.call(node.querySelectorAll(query), 0));
     }
 
-    dispose() {
-    }
-
-    destroy(node) {
-    }
 }
