@@ -1,4 +1,4 @@
-import _noop from "../../internal/_noop";
+import _noop from "../internal/_noop";
 
 export class Disposable  {
 

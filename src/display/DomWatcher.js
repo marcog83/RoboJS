@@ -1,7 +1,8 @@
-import {Signal} from "../../events/impl/Signal";
+import {Signal} from "../events/Signal";
 
 
-import {flatten, unique} from "../../internal/index";
+import flatten from "../internal/_flatten";
+import unique from "../internal/_unique";
 
 
 export class DomWatcher {

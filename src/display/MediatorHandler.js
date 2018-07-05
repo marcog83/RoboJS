@@ -3,7 +3,7 @@
  */
 
 
-import noop from "../../internal/_noop";
+import noop from "../internal/_noop";
 import {nextUid} from "./next-uid";
 import {AHandler} from "./AHandler";
 import {Disposable} from "./Disposable";

@@ -1,18 +1,18 @@
 // export {} from "./net/Loader";
-export {Loader, AMDLoader, CustomLoader} from "./net/impl/Loader";
+export {Loader, AMDLoader, CustomLoader} from "./net/Loader";
 
-export {EventTarget} from "./events/impl/EventTarget";
-export {Signal} from "./events/impl/Signal";
-export {DomWatcher} from "./display/impl/DomWatcher";
+export {EventTarget} from "./events/EventTarget";
+export {Signal} from "./events/Signal";
+export {DomWatcher} from "./display/DomWatcher";
 
-export {MediatorHandler} from "./display/impl/MediatorHandler";
-import {Bootstrap} from "./display/impl/Bootstrap";
+export {MediatorHandler} from "./display/MediatorHandler";
+import {Robo} from "./display/Robo";
 
-export {Bootstrap} from "./display/impl/Bootstrap";
-export {CustomElementHandler} from "./display/impl/CustomElementHandler";
+export {Robo} from "./display/Robo";
+export {CustomElementHandler} from "./display/CustomElementHandler";
 
 //
 
 export const bootstrap = options => {
-    return new Bootstrap(options);
+    return new Robo(options);
 };

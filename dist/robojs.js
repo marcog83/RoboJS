@@ -134,14 +134,14 @@
         return CustomLoader;
     }(Loader);
 
-    var CustomEventTarget = function () {
-        function CustomEventTarget() {
-            _classCallCheck(this, CustomEventTarget);
+    var EventDispatcher = function () {
+        function EventDispatcher() {
+            _classCallCheck(this, EventDispatcher);
 
             this.listeners_ = {};
         }
 
-        _createClass(CustomEventTarget, [{
+        _createClass(EventDispatcher, [{
             key: "addEventListener",
             value: function addEventListener(type, handler) {
 
@@ -204,7 +204,7 @@
             }
         }]);
 
-        return CustomEventTarget;
+        return EventDispatcher;
     }();
 
     //
@@ -215,7 +215,7 @@
     try {
         new _EventTarget();
     } catch (e) {
-        _EventTarget = CustomEventTarget;
+        _EventTarget = EventDispatcher;
     }
     var EventTarget = _EventTarget;
 
@@ -324,175 +324,6 @@
         return Signal;
     }();
 
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    function _arity(n, fn) {
-        /* eslint-disable no-unused-vars */
-        switch (n) {
-            case 0:
-                return function () {
-                    return fn.apply(this, arguments);
-                };
-            case 1:
-                return function (a0) {
-                    return fn.apply(this, arguments);
-                };
-            case 2:
-                return function (a0, a1) {
-                    return fn.apply(this, arguments);
-                };
-            case 3:
-                return function (a0, a1, a2) {
-                    return fn.apply(this, arguments);
-                };
-            case 4:
-                return function (a0, a1, a2, a3) {
-                    return fn.apply(this, arguments);
-                };
-            case 5:
-                return function (a0, a1, a2, a3, a4) {
-                    return fn.apply(this, arguments);
-                };
-            case 6:
-                return function (a0, a1, a2, a3, a4, a5) {
-                    return fn.apply(this, arguments);
-                };
-            case 7:
-                return function (a0, a1, a2, a3, a4, a5, a6) {
-                    return fn.apply(this, arguments);
-                };
-            case 8:
-                return function (a0, a1, a2, a3, a4, a5, a6, a7) {
-                    return fn.apply(this, arguments);
-                };
-            case 9:
-                return function (a0, a1, a2, a3, a4, a5, a6, a7, a8) {
-                    return fn.apply(this, arguments);
-                };
-            case 10:
-                return function (a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) {
-                    return fn.apply(this, arguments);
-                };
-            default:
-                throw new Error("First argument to _arity must be a non-negative integer no greater than ten");
-        }
-    }
-
-    var _noop = function _noop(_) {
-        return _;
-    };
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    function _curryN(length, received, fn) {
-        return function () {
-            var combined = [];
-            var argsIdx = 0;
-            var left = length;
-            var combinedIdx = 0;
-            while (combinedIdx < received.length || argsIdx < arguments.length) {
-                var result = void 0;
-                if (combinedIdx < received.length) {
-                    result = received[combinedIdx];
-                } else {
-                    result = arguments[argsIdx];
-                    argsIdx += 1;
-                }
-                combined[combinedIdx] = result;
-                left -= 1;
-                combinedIdx += 1;
-            }
-            return left <= 0 ? fn.apply(this, combined) : _arity(left, _curryN(length, combined, fn));
-        };
-    }
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    function _curry1(fn) {
-        return function f1() {
-            if (arguments.length === 0) {
-                return f1;
-            } else {
-                return fn.apply(this, arguments);
-            }
-        };
-    }
-
-    /**
-     * Created by mgobbi on 14/03/2017.
-     */
-
-    function curry(fn) {
-        var length = fn.length;
-        if (length === 1) {
-            return _curry1(fn);
-        }
-        return _arity(length, _curryN(length, [], fn));
-    }
-
-    /**
-     * Created by marcogobbi on 20/04/2017.
-     */
-
-    curry(function (xf, acc, list) {
-        var idx = 0;
-        var len = list.length;
-        while (idx < len) {
-            acc = xf(acc, list[idx]);
-
-            idx += 1;
-        }
-        return acc;
-
-        /* var result=head.apply(ctx, args);
-         var idx = 0;
-         var len = tail.length;
-         while (idx < len){
-              result=tail[i].call(ctx, result);
-             i--;
-         }
-         return result;*/
-    });
-
-    /**
-     * Created by mgobbi on 17/03/2017.
-     */
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    curry(function (fn, list) {
-        var idx = 0;
-        var len = list.length;
-        var result = [];
-
-        while (idx < len) {
-            if (fn(list[idx])) {
-                result[result.length] = list[idx];
-            }
-            idx += 1;
-        }
-        return result;
-        //  return Array.from(list).filter(fn);
-    });
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    curry(function (fn, list) {
-        var idx = 0;
-        var len = list.length;
-        while (idx < len) {
-            if (fn(list[idx])) {
-                return list[idx];
-            }
-            idx += 1;
-        }
-    });
-
     var _isArray = function _isArray(val) {
         return val != null && val.length >= 0 && Object.prototype.toString.call(val) === "[object Array]";
     };
@@ -556,43 +387,6 @@
         }
         return result;
     }
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    curry(function (fn, list) {
-        var len = list.length;
-        var idx = 0;
-        while (idx < len) {
-            fn(list[idx]);
-            idx += 1;
-        }
-        return list;
-    });
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    var map = curry(function (fn, list) {
-        //  return Array.from(list).map(fn);
-        var idx = 0;
-        var length = list.length;
-        var result = [];
-        for (idx; idx < length; idx++) {
-            result[idx] = fn(list[idx]);
-        }
-
-        return result;
-    });
-
-    /**
-     * Created by mgobbi on 20/04/2017.
-     */
-    curry(function (p, list) {
-        return map(function (obj) {
-            return obj[p];
-        }, list);
-    });
 
     function unique(arrArg) {
         return arrArg.filter(function (elem, pos, arr) {
@@ -676,6 +470,10 @@
 
         return DomWatcher;
     }();
+
+    var _noop = function _noop(_) {
+        return _;
+    };
 
     /**
      * Created by mgobbi on 31/03/2017.
@@ -886,9 +684,9 @@
         return MediatorHandler;
     }(AHandler);
 
-    var Bootstrap = function () {
-        function Bootstrap(options) {
-            _classCallCheck(this, Bootstrap);
+    var Robo = function () {
+        function Robo(options) {
+            _classCallCheck(this, Robo);
 
             var definitions = options.definitions,
                 _options$loader = options.loader,
@@ -910,7 +708,7 @@
             this.init();
         }
 
-        _createClass(Bootstrap, [{
+        _createClass(Robo, [{
             key: "init",
             value: function init() {
 
@@ -951,7 +749,7 @@
             }
         }]);
 
-        return Bootstrap;
+        return Robo;
     }();
 
     /**
@@ -1047,7 +845,7 @@
     //
 
     var bootstrap = function bootstrap(options) {
-        return new Bootstrap(options);
+        return new Robo(options);
     };
 
     exports.bootstrap = bootstrap;
@@ -1058,6 +856,6 @@
     exports.Signal = Signal;
     exports.DomWatcher = DomWatcher;
     exports.MediatorHandler = MediatorHandler;
-    exports.Bootstrap = Bootstrap;
+    exports.Robo = Robo;
     exports.CustomElementHandler = CustomElementHandler;
 });

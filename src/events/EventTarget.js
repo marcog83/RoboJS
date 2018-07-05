@@ -1,4 +1,4 @@
-export class CustomEventTarget {
+export class EventDispatcher {
 
     constructor() {
         this.listeners_ = {};
@@ -85,6 +85,6 @@ var _EventTarget = G.EventTarget;
 try {
     new _EventTarget();
 } catch (e) {
-    _EventTarget = CustomEventTarget;
+    _EventTarget = EventDispatcher;
 }
 export const EventTarget = _EventTarget;

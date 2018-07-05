@@ -3,13 +3,13 @@
  */
 
 import {DomWatcher} from "./DomWatcher";
-import {AMDLoader} from "../../net/impl/Loader";
+import {AMDLoader} from "../net/Loader";
 import {MediatorHandler} from "./MediatorHandler";
 
-import flatten from "../../internal/_flatten";
+import flatten from "../internal/_flatten";
 
 
-export class Bootstrap  {
+export class Robo  {
 
 
     constructor(options) {

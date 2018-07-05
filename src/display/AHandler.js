@@ -1,7 +1,7 @@
 /**
  * Created by marco.gobbi on 21/01/2015.
  */
-import {EventTarget} from "../../events/impl/EventTarget";
+import {EventTarget} from "../events/EventTarget";
 
 
 export class AHandler {
