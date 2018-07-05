@@ -6,7 +6,7 @@ export class Loader {
     }
 
     onComplete() {
-        throw new Error("not implemented");
+        //not implemented
     }
 }
 
