@@ -156,18 +156,6 @@
                     if (l === handler) return;
                     listeners_type.push(handler);
                 }
-
-                // if (!(type in this.listeners_)) {
-                //     this.listeners_[type] = [handler];
-                // } else {
-                //     const handlers = this.listeners_[type];
-                //     if (handlers.indexOf(handler) < 0) {
-                //
-                //         handlers.push(handler);
-                //
-                //     }
-                //
-                // }
             }
         }, {
             key: "removeEventListener",
@@ -183,21 +171,6 @@
                 }if (!listeners_type.length) {
                     delete this.listeners_[type];
                 }
-
-                /*
-                      if (type in this.listeners_) {
-                    const handlers = this.listeners_[type];
-                    const index = handlers.indexOf(handler);
-                      if (index >= 0) {
-                          // Clean up if this was the last listener.
-                        if (handlers.length === 1) {
-                            delete this.listeners_[type];
-                        }
-                          else {
-                            handlers.splice(index, 1);
-                        }
-                      }
-                }*/
             }
         }, {
             key: "dispatchEvent",
@@ -760,17 +733,6 @@
         return Robo;
     }();
 
-    /**
-     * Created by marcogobbi on 07/05/2017.
-     */
-
-    var KE = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "h1 ", "h2", "h3", "h4", "h5", "h6", "head", "header", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "main", "map", "mark", "menu", "menuitem", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
-    var query = KE.map(function (e) {
-        return ":not(" + e + ")";
-    }).reduce(function (prev, curr) {
-        return prev + curr;
-    }, "*");
-
     var CustomElementHandler = function (_AHandler2) {
         _inherits(CustomElementHandler, _AHandler2);
 
@@ -835,7 +797,10 @@
         }, {
             key: "getAllElements",
             value: function getAllElements(node) {
-                return [node].concat([].slice.call(node.querySelectorAll(query), 0));
+                var _children = Array.from(node.querySelectorAll("*")).filter(function (el) {
+                    return el.tagName.match(/-/gim);
+                });
+                return [node].concat(_children);
             }
         }]);
 
