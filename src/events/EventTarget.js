@@ -81,22 +81,18 @@ export class EventDispatcher {
 
         const type = event.type;
         let prevented = 0;
-        if (type in this.listeners_) {
-            // Clone to prevent removal during dispatch
-            let handlers = this.listeners_[type].concat();
 
-            for (let i = 0; i < handlers.length; i++) {
-                let handler = handlers[i];
-                if (handler.handleEvent) {
-                    prevented = handler.handleEvent.call(handler, event) === false ? 0 : 1;
-                }
+        let listeners_type = this.listeners_[type];
+        if (listeners_type === undefined) return true;
 
-                else {
-                    prevented = handler.call(this, event) === false ? 0 : 1;
-                }
+        let handlers = listeners_type.concat();
 
-            }
-        }
+        handlers
+            .map(handler => handler.handleEvent || handler)
+            .forEach(handler => {
+                prevented = handler(event) === false ? 0 : 1;
+
+            });
 
         return !prevented && !event.defaultPrevented;
     }

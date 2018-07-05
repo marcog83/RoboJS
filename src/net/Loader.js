@@ -1,12 +1,12 @@
 export class Loader {
-    constructor() {
-    }
+
 
     load(id) {
         return new Promise((resolve, reject) => this.onComplete(id, resolve, reject));
     }
 
-    onComplete(id, resolve, reject) {
+    onComplete() {
+        throw new Error("not implemented");
     }
 }
 

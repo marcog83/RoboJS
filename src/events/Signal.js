@@ -26,7 +26,7 @@ export class Signal {
         }
 
         for (let i = this.listenerBoxes.length; i--;) {
-            if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
+            if (this.listenerBoxes[i].listener === slot && this.listenerBoxes[i].scope === scope) {
                 this.listenerBoxes.splice(i, 1);
                 return;
             }
