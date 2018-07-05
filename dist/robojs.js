@@ -386,29 +386,13 @@
     /**
      * Created by mgobbi on 12/04/2017.
      */
-    function flatten(list) {
-        var value = void 0,
-            jlen = void 0,
-            j = void 0;
-        var result = [];
-        var idx = 0;
-        var ilen = list.length;
-
-        while (idx < ilen) {
-            if (_isArrayLike(list[idx])) {
-                value = flatten(list[idx]);
-                j = 0;
-                jlen = value.length;
-                while (j < jlen) {
-                    result[result.length] = value[j];
-                    j += 1;
-                }
-            } else {
-                result[result.length] = list[idx];
+    function flatten(arr) {
+        return Array.from(arr).reduce(function (flat, toFlatten) {
+            if (_isArrayLike(toFlatten)) {
+                toFlatten = Array.from(toFlatten);
             }
-            idx += 1;
-        }
-        return result;
+            return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+        }, []);
     }
 
     function unique(arrArg) {
