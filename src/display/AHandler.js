@@ -13,37 +13,37 @@ export class AHandler {
     }
 
     getDefinition() {
-        throw new Error("not implemented");
+        // do nothing.
     }
 
     inCache() {
-        throw new Error("not implemented");
+        // do nothing.
     }
 
     updateCache() {
-        throw new Error("not implemented");
+        // do nothing.
 
     }
 
     hasMediator() {
-        return false;
+        // do nothing.
     }
 
 
     create() {
-        throw new Error("not implemented");
+        // do nothing.
     }
 
     getAllElements() {
-        throw new Error("not implemented");
+        // do nothing.
     }
 
     destroy() {
-
+        // do nothing.
     }
 
     dispose() {
-
+        // do nothing.
 
     }
 }

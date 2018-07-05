@@ -397,7 +397,7 @@
 
     function unique(arrArg) {
         return arrArg.filter(function (elem, pos, arr) {
-            return arr.indexOf(elem) == pos;
+            return arr.indexOf(elem) === pos;
         });
     }
 
@@ -518,39 +518,45 @@
         _createClass(AHandler, [{
             key: "getDefinition",
             value: function getDefinition() {
-                throw new Error("not implemented");
+                // do nothing.
             }
         }, {
             key: "inCache",
             value: function inCache() {
-                throw new Error("not implemented");
+                // do nothing.
             }
         }, {
             key: "updateCache",
             value: function updateCache() {
-                throw new Error("not implemented");
+                // do nothing.
+
             }
         }, {
             key: "hasMediator",
             value: function hasMediator() {
-                return false;
+                // do nothing.
             }
         }, {
             key: "create",
             value: function create() {
-                throw new Error("not implemented");
+                // do nothing.
             }
         }, {
             key: "getAllElements",
             value: function getAllElements() {
-                throw new Error("not implemented");
+                // do nothing.
             }
         }, {
             key: "destroy",
-            value: function destroy() {}
+            value: function destroy() {
+                // do nothing.
+            }
         }, {
             key: "dispose",
-            value: function dispose() {}
+            value: function dispose() {
+                // do nothing.
+
+            }
         }]);
 
         return AHandler;
