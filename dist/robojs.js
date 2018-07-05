@@ -87,7 +87,9 @@
             }
         }, {
             key: "onComplete",
-            value: function onComplete(id, resolve, reject) {}
+            value: function onComplete() {
+                throw new Error("not implemented");
+            }
         }]);
 
         return Loader;
@@ -209,19 +211,17 @@
 
                 var type = event.type;
                 var prevented = 0;
-                if (type in this.listeners_) {
-                    // Clone to prevent removal during dispatch
-                    var handlers = this.listeners_[type].concat();
 
-                    for (var i = 0; i < handlers.length; i++) {
-                        var handler = handlers[i];
-                        if (handler.handleEvent) {
-                            prevented = handler.handleEvent.call(handler, event) === false ? 0 : 1;
-                        } else {
-                            prevented = handler.call(this, event) === false ? 0 : 1;
-                        }
-                    }
-                }
+                var listeners_type = this.listeners_[type];
+                if (listeners_type === undefined) return true;
+
+                var handlers = listeners_type.concat();
+
+                handlers.map(function (handler) {
+                    return handler.handleEvent || handler;
+                }).forEach(function (handler) {
+                    prevented = handler(event) === false ? 0 : 1;
+                });
 
                 return !prevented && !event.defaultPrevented;
             }
@@ -275,7 +275,7 @@
                 }
 
                 for (var i = this.listenerBoxes.length; i--;) {
-                    if (this.listenerBoxes[i].listener == slot && this.listenerBoxes[i].scope == scope) {
+                    if (this.listenerBoxes[i].listener === slot && this.listenerBoxes[i].scope === scope) {
                         this.listenerBoxes.splice(i, 1);
                         return;
                     }
@@ -533,37 +533,37 @@
 
         _createClass(AHandler, [{
             key: "getDefinition",
-            value: function getDefinition(node) {
+            value: function getDefinition() {
                 throw new Error("not implemented");
             }
         }, {
             key: "inCache",
-            value: function inCache(node) {
+            value: function inCache() {
                 throw new Error("not implemented");
             }
         }, {
             key: "updateCache",
-            value: function updateCache(disposable) {
+            value: function updateCache() {
                 throw new Error("not implemented");
             }
         }, {
             key: "hasMediator",
-            value: function hasMediator(node) {
+            value: function hasMediator() {
                 return false;
             }
         }, {
             key: "create",
-            value: function create(node, Mediator) {
+            value: function create() {
                 throw new Error("not implemented");
             }
         }, {
             key: "getAllElements",
-            value: function getAllElements(node) {
+            value: function getAllElements() {
                 throw new Error("not implemented");
             }
         }, {
             key: "destroy",
-            value: function destroy(node) {}
+            value: function destroy() {}
         }, {
             key: "dispose",
             value: function dispose() {}
@@ -656,16 +656,12 @@
             key: "_destroy",
             value: function _destroy(node) {
                 var l = this.MEDIATORS_CACHE.length;
+
                 for (var i = 0; i < l; i++) {
                     var disposable = this.MEDIATORS_CACHE[i];
-                    if (disposable) {
-                        if (!disposable.node || disposable.node === node) {
-                            disposable.dispose && disposable.dispose();
-                            disposable.node = null;
-                            this.MEDIATORS_CACHE[i] = null;
-                        }
-                    } else {
-
+                    if (disposable && (!disposable.node || disposable.node === node)) {
+                        disposable.dispose();
+                        disposable.node = null;
                         this.MEDIATORS_CACHE[i] = null;
                     }
                 }
@@ -851,12 +847,6 @@
             value: function getAllElements(node) {
                 return [node].concat([].slice.call(node.querySelectorAll(query), 0));
             }
-        }, {
-            key: "dispose",
-            value: function dispose() {}
-        }, {
-            key: "destroy",
-            value: function destroy(node) {}
         }]);
 
         return CustomElementHandler;

@@ -74,18 +74,12 @@ export class MediatorHandler extends AHandler {
 
     _destroy(node) {
         const l = this.MEDIATORS_CACHE.length;
+
         for (let i = 0; i < l; i++) {
             let disposable = this.MEDIATORS_CACHE[i];
-            if (disposable) {
-                if (!disposable.node || disposable.node === node) {
-                    disposable.dispose && disposable.dispose();
-                    disposable.node = null;
-                    this.MEDIATORS_CACHE[i] = null;
-
-                }
-
-            } else {
-
+            if (disposable && (!disposable.node || disposable.node === node)) {
+                disposable.dispose();
+                disposable.node = null;
                 this.MEDIATORS_CACHE[i] = null;
 
             }
