@@ -11,8 +11,8 @@ define(function (require) {
 
         rjs.bootstrap({
             definitions: definitions,
-            loader: rjs.Loader(),
-            handler:rjs.CustomElementHandler({definitions:definitions})
+            loader: new rjs.AMDLoader(),
+            handler:new rjs.CustomElementHandler({definitions:definitions})
         }).promise.catch(function (e) {
             console.log(e);
         })

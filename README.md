@@ -25,7 +25,7 @@ A quick demo can be found [HERE](http://marcog83.github.io/RoboJS/). It simulate
 
 # Installation
 ```javascript
-bower install robojs
+ 
 npm install robojs
 ```
 

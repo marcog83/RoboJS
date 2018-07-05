@@ -11,7 +11,8 @@
             "modules": "umd",
             "targets": {
               "browsers": [
-                "last 2 versions"
+                "last 2 versions",
+                "safari >8"
               ]
             }
           }

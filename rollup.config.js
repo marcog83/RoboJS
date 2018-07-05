@@ -2,7 +2,8 @@
  * Created by marcogobbi on 07/05/2017.
  */
 
-import resolve from 'rollup-plugin-node-resolve';
+
+
 export default {
     input: 'robojs.js',
     output: {
@@ -11,7 +12,7 @@ export default {
         , name: 'robojs'
         , exports: 'named'
     }
-    ,plugins: [resolve()]
+    , plugins: []
 
 
 };
