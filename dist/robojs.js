@@ -88,7 +88,7 @@
         }, {
             key: "onComplete",
             value: function onComplete() {
-                throw new Error("not implemented");
+                //not implemented
             }
         }]);
 
@@ -841,8 +841,6 @@
 
         return CustomElementHandler;
     }(AHandler);
-
-    // export {} from "./net/Loader";
 
     //
 

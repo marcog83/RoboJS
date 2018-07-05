@@ -1,4 +1,4 @@
-// export {} from "./net/Loader";
+
 export {Loader, AMDLoader, CustomLoader} from "./net/Loader";
 
 export {EventTarget} from "./events/EventTarget";
