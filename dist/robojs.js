@@ -682,9 +682,9 @@
 
             this.handler = options.handler || new MediatorHandler({ definitions: definitions });
 
-            this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler);
-            this.domWatcher.onAdded.connect(this.getMediators.bind(this));
-            this.domWatcher.onRemoved.connect(this.handleRemoved.bind(this));
+            this.watcher = options.watcher || new DomWatcher(root, this.handler);
+            this.watcher.onAdded.connect(this.getMediators.bind(this));
+            this.watcher.onRemoved.connect(this.handleRemoved.bind(this));
 
             this.init();
         }
@@ -718,9 +718,9 @@
         }, {
             key: "dispose",
             value: function dispose() {
-                this.domWatcher.dispose();
+                this.watcher.dispose();
                 this.handler.dispose();
-                this.domWatcher = null;
+                this.watcher = null;
                 this.handler = null;
 
                 this.definitions = null;
