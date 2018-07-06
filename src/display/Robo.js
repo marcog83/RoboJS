@@ -1,6 +1,4 @@
-/**
- * Created by marco.gobbi on 21/01/2015.
- */
+/* @flow  */
 
 import {DomWatcher} from "./DomWatcher";
 import {AMDLoader} from "../net/Loader";
@@ -21,9 +19,9 @@ export class Robo  {
 
         this.handler = options.handler || new MediatorHandler({definitions});
 
-        this.domWatcher = options.domWatcher || new DomWatcher(root, this.handler);
-        this.domWatcher.onAdded.connect(this.getMediators.bind(this));
-        this.domWatcher.onRemoved.connect(this.handleRemoved.bind(this));
+        this.watcher = options.watcher || new DomWatcher(root, this.handler);
+        this.watcher.onAdded.connect(this.getMediators.bind(this));
+        this.watcher.onRemoved.connect(this.handleRemoved.bind(this));
 
         this.init();
 
@@ -49,14 +47,13 @@ export class Robo  {
 
     handleRemoved(nodes) {
         nodes.forEach(this.handler.destroy.bind(this.handler));
-
     }
 
 
     dispose() {
-        this.domWatcher.dispose();
+        this.watcher.dispose();
         this.handler.dispose();
-        this.domWatcher = null;
+        this.watcher = null;
         this.handler = null;
 
         this.definitions = null;
