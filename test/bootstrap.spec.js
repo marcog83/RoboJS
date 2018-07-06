@@ -1,14 +1,14 @@
 /**
  * Created by mgobbi on 05/04/2017.
  */
-import bootstrap from "../src/core/display/bootstrap";
-import Loader from "../src/core/net/loader";
+import {bootstrap} from "../src/index";
+import {Loader} from "../src/net/loader";
+import {Robo} from "../src/display/Robo";
 
 
 var assert = require("chai").assert;
 
 require('./libs/MutationObserver');
-
 
 
 describe('bootstrap', function () {
@@ -28,33 +28,29 @@ describe('bootstrap', function () {
         assert.lengthOf(bootstrap, 1);
     });
 
-    it('ritorna un Oggetto', function () {
+    it('ritorna una istanza di Robo', function () {
 
-        assert.isObject(bootstrap({definitions: {}}), "non ritorna un Oggetto");
+        assert.instanceOf(bootstrap({definitions: {}}), Robo, "non ritorna una istanza di Robo");
 
     });
     it('Si può passare il loader', function () {
-
-        assert.isObject(bootstrap({definitions: {},loader:Loader()}), "non ritorna un Oggetto");
+        const loader = new Loader();
+        const robo = bootstrap({definitions: {}, loader});
+        assert.equal(robo.loader, loader, "non ritorna un Oggetto");
 
     });
     it('Si può passare la root', function () {
-
-        assert.isObject(bootstrap({definitions: {},root:document.createElement("div")}), "non ritorna un Oggetto");
-
-    });
-    it('bootstrap: L\'oggetto ritornato ha due proprietà, promise e dispose', function () {
-        let {promise,dispose} = bootstrap({definitions: {}});
-
-        assert.instanceOf(promise, Promise, "promise non è una promessa");
-        assert.isFunction(dispose, "dispose non è una funzione");
+        const root = document.createElement("div");
+        const robo = bootstrap({definitions: {}, root });
+        assert.equal(robo.root,root, "non ritorna un Oggetto");
 
     });
+
     it('bootstrap: dispose viene chiamata ', function () {
-        let {dispose} = bootstrap({definitions: {}});
-        dispose();
+        const robo = bootstrap({definitions: {} });
+        robo.dispose();
 
-        assert.ok( "dispose non da errori");
+        assert.ok("dispose non da errori");
 
     });
 
