@@ -14,3 +14,4 @@ export {default as pluck} from "./_pluck";
 export {default as pipe} from "./_pipe";
 export {default as reduce} from "./_reduce";
 export {default as unique} from "./_unique";
+export {default as root} from "./_root";

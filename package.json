@@ -50,6 +50,10 @@
       "lcov",
       "text"
     ],
+    "exclude": [
+      "src/internal/_root.js",
+      "test/**/*.*"
+    ],
     "sourceMap": false,
     "instrument": false
   }

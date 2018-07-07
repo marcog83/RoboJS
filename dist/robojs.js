@@ -136,6 +136,8 @@
         return CustomLoader;
     }(Loader);
 
+    var _root = (typeof self === "undefined" ? "undefined" : _typeof(self)) === "object" && self.self === self && self || (typeof global === "undefined" ? "undefined" : _typeof(global)) === "object" && global.global === global && global || self;
+
     var EventDispatcher = function () {
         function EventDispatcher() {
             _classCallCheck(this, EventDispatcher);
@@ -202,9 +204,9 @@
     }();
 
     //
-    var G = (typeof global === "undefined" ? "undefined" : _typeof(global)) === _typeof(null) ? global : self;
 
-    var _EventTarget = G.EventTarget;
+
+    var _EventTarget = _root.EventTarget;
 
     try {
         new _EventTarget();

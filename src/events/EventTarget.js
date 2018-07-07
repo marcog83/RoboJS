@@ -1,3 +1,4 @@
+import root from "../internal/_root";
 export class EventDispatcher {
 
     constructor() {
@@ -66,9 +67,9 @@ export class EventDispatcher {
 }
 
 //
-var G = typeof global === typeof null ? global : self;
 
-var _EventTarget = G.EventTarget;
+
+let _EventTarget = root.EventTarget;
 
 try {
     new _EventTarget();
