@@ -67,6 +67,21 @@ describe('EventTarget', function () {
         dispatcher.addEventListener("b", e => assert.equal(e.detail, params));
         dispatcher.dispatchEvent(new CustomEvent("b", {detail: params}));
     });
+    it('dispatcher preventdefault ', function () {
+
+
+
+        dispatcher.addEventListener("b", e => {
+            return false;
+        });
+        dispatcher.addEventListener("a", e => {
+
+        });
+
+
+        assert.isFalse(dispatcher.dispatchEvent(new Event("b")));
+        assert.isTrue(dispatcher.dispatchEvent(new Event("a")));
+    });
 
     it('addEventListener accetta un oggetto Listener', function () {
         var listener = {

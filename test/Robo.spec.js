@@ -88,7 +88,7 @@ describe('Robo', function () {
             done();
         })
     });
-    it('robo.handleRemoved removes mediators and update cache', function (done) {
+    it('robo.removeMediators removes mediators and update cache', function (done) {
 
         window.require = (id, resolve, reject) => {
 
@@ -107,13 +107,13 @@ describe('Robo', function () {
 
         robo.getMediators(document.body.querySelectorAll("*"))
             .then(_ => {
-                robo.handleRemoved([div1]);
+                robo.removeMediators([div1]);
 
                 assert.lengthOf(robo.handler.MEDIATORS_CACHE, 1);
-                robo.handleRemoved([div3]);
+                robo.removeMediators([div3]);
 
                 assert.lengthOf(robo.handler.MEDIATORS_CACHE, 1);
-                robo.handleRemoved(Array.from(document.body.querySelectorAll("*")));
+                robo.removeMediators(Array.from(document.body.querySelectorAll("*")));
                 assert.lengthOf(robo.handler.MEDIATORS_CACHE, 0);
 
                 done();

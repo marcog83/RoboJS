@@ -27,8 +27,8 @@ export class DomWatcher {
 
     handleMutations(mutations) {
         mutations.forEach(mutation => {
-            this.getRemoved(mutation.removedNodes);
-            this.getAdded(mutation.addedNodes);
+            this.updateNodes(mutation.removedNodes, this.onRemoved);
+            this.updateNodes(mutation.addedNodes, this.onAdded);
         });
 
 
@@ -44,19 +44,13 @@ export class DomWatcher {
         return nodes;
     }
 
-    getAdded(addedNodes) {
-        const nodes = this._parseNodes(addedNodes);
+    updateNodes(nodes, signal) {
+        nodes = this._parseNodes(nodes);
         if (nodes.length > 0) {
-            this.onAdded.emit(nodes);
+            signal.emit(nodes);
         }
     }
 
-    getRemoved(removedNodes) {
-        const nodes = this._parseNodes(removedNodes);
-        if (nodes.length > 0) {
-            this.onRemoved.emit(nodes);
-        }
-    }
 
     dispose() {
         this.observer.disconnect();

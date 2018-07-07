@@ -11,7 +11,7 @@ import {Disposable} from "./Disposable";
 
 export class MediatorHandler extends AHandler {
 
-    constructor(params = {}) {
+    constructor(params) {
         super(params);
 
         this.MEDIATORS_CACHE = [];
@@ -67,10 +67,8 @@ export class MediatorHandler extends AHandler {
     }
 
     static disposeMediator(disposable) {
-        if (disposable) {
-            disposable.dispose();
-            disposable.node = null;
-        }
+        disposable.dispose();
+        disposable.node = null;
     }
 
     _destroy(node) {
@@ -98,7 +96,7 @@ export class MediatorHandler extends AHandler {
     dispose() {
         this.MEDIATORS_CACHE.forEach(MediatorHandler.disposeMediator);
         this.MEDIATORS_CACHE = null;
-        //  this.dispatcher.listeners_ = null;
+
         this.dispatcher = null;
 
     }

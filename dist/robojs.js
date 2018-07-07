@@ -107,7 +107,7 @@
         _createClass(AMDLoader, [{
             key: "onComplete",
             value: function onComplete(id, resolve, reject) {
-                require([id], resolve, reject);
+                window.require([id], resolve, reject);
             }
         }]);
 
@@ -147,14 +147,12 @@
             key: "addEventListener",
             value: function addEventListener(type, handler) {
 
-                var listeners_type = this.listeners_[type];
-                if (listeners_type === undefined) {
-                    this.listeners_[type] = listeners_type = [];
+                // let listeners_type = this.listeners_[type];
+                if (!this.listeners_[type]) {
+                    this.listeners_[type] = [];
                 }
-
-                for (var i = 0, l; l = listeners_type[i]; i++) {
-                    if (l === handler) return;
-                    listeners_type.push(handler);
+                if (!this.listeners_[type].includes(handler)) {
+                    this.listeners_[type].push(handler);
                 }
             }
         }, {
@@ -191,9 +189,9 @@
                 var handlers = listeners_type.concat();
 
                 handlers.map(function (handler) {
-                    return handler.handleEvent || handler;
+                    return handler.handleEvent ? handler.handleEvent.bind(handler) : handler;
                 }).forEach(function (handler) {
-                    prevented = handler(event) === false ? 0 : 1;
+                    prevented = handler(event) === false;
                 });
 
                 return !prevented && !event.defaultPrevented;
@@ -402,8 +400,8 @@
                 var _this5 = this;
 
                 mutations.forEach(function (mutation) {
-                    _this5.getRemoved(mutation.removedNodes);
-                    _this5.getAdded(mutation.addedNodes);
+                    _this5.updateNodes(mutation.removedNodes, _this5.onRemoved);
+                    _this5.updateNodes(mutation.addedNodes, _this5.onAdded);
                 });
             }
         }, {
@@ -420,19 +418,11 @@
                 return nodes;
             }
         }, {
-            key: "getAdded",
-            value: function getAdded(addedNodes) {
-                var nodes = this._parseNodes(addedNodes);
+            key: "updateNodes",
+            value: function updateNodes(nodes, signal) {
+                nodes = this._parseNodes(nodes);
                 if (nodes.length > 0) {
-                    this.onAdded.emit(nodes);
-                }
-            }
-        }, {
-            key: "getRemoved",
-            value: function getRemoved(removedNodes) {
-                var nodes = this._parseNodes(removedNodes);
-                if (nodes.length > 0) {
-                    this.onRemoved.emit(nodes);
+                    signal.emit(nodes);
                 }
             }
         }, {
@@ -479,8 +469,7 @@
         function AHandler(params) {
             _classCallCheck(this, AHandler);
 
-            var _params$definitions = params.definitions,
-                definitions = _params$definitions === undefined ? {} : _params$definitions,
+            var definitions = params.definitions,
                 _params$dispatcher = params.dispatcher,
                 dispatcher = _params$dispatcher === undefined ? new EventTarget() : _params$dispatcher;
 
@@ -554,9 +543,7 @@
     var MediatorHandler = function (_AHandler) {
         _inherits(MediatorHandler, _AHandler);
 
-        function MediatorHandler() {
-            var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
+        function MediatorHandler(params) {
             _classCallCheck(this, MediatorHandler);
 
             var _this6 = _possibleConstructorReturn(this, (MediatorHandler.__proto__ || Object.getPrototypeOf(MediatorHandler)).call(this, params));
@@ -591,6 +578,7 @@
         }, {
             key: "create",
             value: function create(node, Mediator) {
+
                 var mediatorId = nextUid();
                 node.setAttribute("mediatorid", mediatorId);
                 var dispose = _noop;
@@ -644,7 +632,7 @@
             value: function dispose() {
                 this.MEDIATORS_CACHE.forEach(MediatorHandler.disposeMediator);
                 this.MEDIATORS_CACHE = null;
-                //  this.dispatcher.listeners_ = null;
+
                 this.dispatcher = null;
             }
         }, {
@@ -655,10 +643,8 @@
         }], [{
             key: "disposeMediator",
             value: function disposeMediator(disposable) {
-                if (disposable) {
-                    disposable.dispose();
-                    disposable.node = null;
-                }
+                disposable.dispose();
+                disposable.node = null;
             }
         }]);
 
@@ -684,7 +670,7 @@
 
             this.watcher = options.watcher || new DomWatcher(root, this.handler);
             this.watcher.onAdded.connect(this.getMediators.bind(this));
-            this.watcher.onRemoved.connect(this.handleRemoved.bind(this));
+            this.watcher.onRemoved.connect(this.removeMediators.bind(this));
 
             this.init();
         }
@@ -711,8 +697,8 @@
                 return Promise.all(promises);
             }
         }, {
-            key: "handleRemoved",
-            value: function handleRemoved(nodes) {
+            key: "removeMediators",
+            value: function removeMediators(nodes) {
                 nodes.forEach(this.handler.destroy.bind(this.handler));
             }
         }, {

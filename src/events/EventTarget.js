@@ -57,7 +57,7 @@ export class EventDispatcher {
         handlers
             .map(handler => handler.handleEvent ? handler.handleEvent.bind(handler) : handler)
             .forEach(handler => {
-                prevented = handler(event) === false ? 0 : 1;
+                prevented = handler(event) === false;
 
             });
 

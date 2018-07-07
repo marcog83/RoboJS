@@ -21,7 +21,7 @@ export class Robo  {
 
         this.watcher = options.watcher || new DomWatcher(root, this.handler);
         this.watcher.onAdded.connect(this.getMediators.bind(this));
-        this.watcher.onRemoved.connect(this.handleRemoved.bind(this));
+        this.watcher.onRemoved.connect(this.removeMediators.bind(this));
 
         this.init();
 
@@ -45,7 +45,7 @@ export class Robo  {
         return Promise.all(promises);
     }
 
-    handleRemoved(nodes) {
+    removeMediators(nodes) {
         nodes.forEach(this.handler.destroy.bind(this.handler));
     }
 
