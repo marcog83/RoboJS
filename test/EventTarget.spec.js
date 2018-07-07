@@ -2,8 +2,8 @@
  * Created by mgobbi on 05/04/2017.
  */
 
-import EventTarget from "../src/core/events/event-dispatcher";
-//import dispatcher from "../src/core/events/event-dispatcher";
+import {EventDispatcher} from "../src/events/EventTarget";
+
 var assert = require("chai").assert;
 
 
@@ -20,7 +20,7 @@ describe('EventTarget', function () {
     beforeEach(function () {
         Event = window.Event;
         CustomEvent = window.CustomEvent;
-        dispatcher = new EventTarget();
+        dispatcher = new EventDispatcher();
     })
 
     it('dispatcher: it is a object', function () {

@@ -41,6 +41,7 @@ export class MediatorHandler extends AHandler {
 
 
     create(node, Mediator) {
+
         const mediatorId = nextUid();
         node.setAttribute("mediatorid", mediatorId);
         let dispose = noop;

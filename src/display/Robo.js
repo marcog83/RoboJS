@@ -39,7 +39,7 @@ export class Robo  {
             .map(node => {
                 const definition = this.handler.getDefinition(node);
                 return this.loader.load(definition)
-                    .then(Mediator => this.handler.create(node, Mediator))
+                    .then(Mediator => this.handler.create(node, Mediator));
 
             });
         return Promise.all(promises);

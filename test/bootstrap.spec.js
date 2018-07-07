@@ -2,7 +2,7 @@
  * Created by mgobbi on 05/04/2017.
  */
 import {bootstrap} from "../src/index";
-import {Loader} from "../src/net/loader";
+import {Loader} from "../src/net/Loader";
 import {Robo} from "../src/display/Robo";
 
 

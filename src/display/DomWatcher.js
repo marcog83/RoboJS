@@ -35,7 +35,7 @@ export class DomWatcher {
     }
 
     _parseNodes(nodes) {
-         nodes = flatten(nodes);
+        nodes = flatten(nodes);
         nodes = nodes.filter(node => node.querySelectorAll)
             .map(this.handler.getAllElements.bind(this.handler))
             .filter(nodes => nodes.length > 0);

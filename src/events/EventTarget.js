@@ -8,14 +8,12 @@ export class EventDispatcher {
 
     addEventListener(type, handler) {
 
-        let listeners_type = this.listeners_[type];
-        if (listeners_type === undefined) {
-            this.listeners_[type] = listeners_type = [];
+        // let listeners_type = this.listeners_[type];
+        if (!this.listeners_[type]) {
+            this.listeners_[type] = [];
         }
-
-        for (let i = 0, l; l = listeners_type[i]; i++) {
-            if (l === handler) return;
-            listeners_type.push(handler);
+        if (!this.listeners_[type].includes(handler)) {
+            this.listeners_[type].push(handler);
         }
 
 
@@ -57,7 +55,7 @@ export class EventDispatcher {
         let handlers = listeners_type.concat();
 
         handlers
-            .map(handler => handler.handleEvent || handler)
+            .map(handler => handler.handleEvent ? handler.handleEvent.bind(handler) : handler)
             .forEach(handler => {
                 prevented = handler(event) === false ? 0 : 1;
 

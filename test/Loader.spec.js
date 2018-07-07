@@ -1,8 +1,7 @@
 /**
  * Created by mgobbi on 05/04/2017.
  */
-import Loader from "../src/core/net/loader";
-import AMDLoader from "../src/core/net/amd-loader";
+import {Loader, AMDLoader, CustomLoader} from "../src/net/Loader";
 
 
 var assert = require("chai").assert;
@@ -19,32 +18,28 @@ describe('Loader', function () {
     beforeEach(() => {
 
     })
-    it('it is a function', function () {
-        assert.isFunction(Loader);
+    it('it is a instanceof Loader', function () {
+        assert.instanceOf(new Loader(),Loader);
     });
 
-    it('ritorna un Oggetto', function () {
 
-        assert.isObject(Loader(), "non ritorna un Oggetto");
-
-    });
     it('L\'oggetto ritornato ha 1 metodo load', function () {
-        var {load} = Loader(_ => _);
+        var loader = new CustomLoader(_ => _);
 
-        assert.instanceOf(load(""), Promise, "load non è un Promise");
+        assert.instanceOf(loader.load(""), Promise, "load non è un Promise");
 
-        assert.isFunction(load, "load non è una funzione");
+        assert.isFunction(loader.load, "load non è una funzione");
 
     });
     it('AMDLoader function', function () {
 
-        window.require = (id,resolve,reject) => {
-            assert.equal(id[0],"my-id", "AMDLoader non è una funzione");
+        window.require = (id, resolve, reject) => {
+            assert.equal(id[0], "my-id", "AMDLoader non è una funzione");
             assert.isFunction(resolve, "resolve non è una funzione");
             assert.isFunction(reject, "reject non è una funzione");
         };
         assert.isFunction(AMDLoader, "AMDLoader non è una funzione");
-        AMDLoader("my-id",_=>_,_=>_);
+        new AMDLoader();
 
     });
     it('AMDLoader arity 3', function () {

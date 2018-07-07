@@ -2,7 +2,7 @@
  * Created by mgobbi on 05/04/2017.
  */
 
-import Signal from "../src/core/events/signal";
+import {Signal} from "../src/events/Signal";
 
 var assert = require("chai").assert;
 
@@ -12,7 +12,7 @@ describe('Signal', function () {
 
     it('it is a function', function () {
 
-        assert.isFunction(Signal);
+        assert.instanceOf(new Signal(),Signal);
     });
 
     it('ritorna un oggetto con le funzioni esposte', function () {

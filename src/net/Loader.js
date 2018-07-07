@@ -12,7 +12,7 @@ export class Loader {
 
 export class AMDLoader extends Loader {
     onComplete(id, resolve, reject) {
-        require([id], resolve, reject);
+        window.require([id], resolve, reject);
     }
 }
 

@@ -5,6 +5,6 @@ global.MutationObserver.prototype = {
     disconnect() {
     }
     , observe(root, spec) {
-        this.callback(global.mutations || {addedNodes: [], removedNodes: []});
+        this.callback(global.mutations || [{addedNodes: [], removedNodes: []}]);
     }
 }
