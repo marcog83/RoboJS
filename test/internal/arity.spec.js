@@ -48,17 +48,15 @@ describe('arity', function () {
             assert.equal(arguments.length, 10)
         })(1, 2, 3, 4, 5, 6, 7, 8, 9, 0);
 
-        try {
-            arity(11, function fn() {
-                assert.fail("non più di 10 arguments")
-            })();
 
-        } catch (e) {
-            assert.ok("sì! va in error");
-        }
 
     });
+    it('accept only numbers', function () {
+        assert.throws(() => {
+            arity("1", _ => _);
+        }, TypeError);
 
+    });
     it('has length 2', function () {
         assert.lengthOf(arity, 2);
 

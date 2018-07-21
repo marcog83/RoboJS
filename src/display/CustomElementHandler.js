@@ -57,7 +57,11 @@ export class CustomElementHandler extends AHandler {
         const _children = Array.from(node.querySelectorAll("*")).filter(function (el) {
             return el.tagName.match(/-/gim);
         });
-        return [node].concat(_children);
+        let root=[];
+        if(node.tagName.match(/-/gim)){
+            root=[node];
+        }
+        return root.concat(_children);
     }
 
 }

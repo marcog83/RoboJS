@@ -13,13 +13,4 @@ export default curry(function (xf, acc, list) {
     }
     return acc;
 
-    /* var result=head.apply(ctx, args);
-     var idx = 0;
-     var len = tail.length;
-     while (idx < len){
-
-         result=tail[i].call(ctx, result);
-         i--;
-     }
-     return result;*/
 });

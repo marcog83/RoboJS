@@ -3,12 +3,13 @@
  */
 const arityFn=(function (FUNCTIONS) {
     return (arity, fn) => {
+        if (typeof arity !== 'number') {
+            throw new TypeError('Expected arity to be a number, got ' + arity);
+        }
         if (!FUNCTIONS[arity]) {
             let params = [];
 
-            if (typeof arity !== 'number') {
-                throw new TypeError('Expected arity to be a number, got ' + arity);
-            }
+
 
             for (let i = 0; i < arity; i++) {
                 params.push('_' + i);

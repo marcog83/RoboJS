@@ -52,14 +52,14 @@ describe('CustomElementHandler', function () {
     it('handler.inCache', function () {
 
 
-         handler.REGISTERED_ELEMENTS["my-component"]=true;
+        handler.REGISTERED_ELEMENTS["my-component"] = true;
         assert.isTrue(handler.inCache("my-component"));
         assert.isFalse(handler.inCache("my-component-b"));
 
     });
     it('handler.updateCache', function () {
-         handler.updateCache("my-component");
-        assert.isTrue( handler.REGISTERED_ELEMENTS["my-component"]);
+        handler.updateCache("my-component");
+        assert.isTrue(handler.REGISTERED_ELEMENTS["my-component"]);
 
 
     });
@@ -69,7 +69,7 @@ describe('CustomElementHandler', function () {
 
         assert.isTrue(handler.hasMediator(div));
 
-         handler.updateCache("my-component");
+        handler.updateCache("my-component");
         assert.isFalse(handler.hasMediator(div));
 
         const divB = document.createElement("my-component-b");
@@ -77,29 +77,55 @@ describe('CustomElementHandler', function () {
         assert.isTrue(handler.hasMediator(divB));
 
     });
+    //FIXME https://github.com/jsdom/jsdom/issues/1030
     it('handler.create', function () {
+        let div = document.createElement("my-component");
+        let div2 = document.createElement("my-component");
+        let div3 = document.createElement("div");
+        window.HTMLElement=function HTMLElement() {
 
+        }
+        window.customElements = {
+            define(tagName, Clazz) {
+                assert.equal(tagName, "my-component");
+                const instance = new Clazz();
+                assert.instanceOf(instance, MyMediator);
+                 assert.equal(instance.dispatcher, handler.dispatcher);
+            }
+        };
+
+
+
+        class MyMediator extends window.HTMLElement {
+            constructor(dispatcher) {
+                super();
+                this.dispatcher = dispatcher;
+            }
+        };
+
+        handler.create(div, MyMediator);
+        handler.create(div2, MyMediator);
+        assert.isTrue(handler.REGISTERED_ELEMENTS["my-component"]);
+        assert.throws(()=>{
+            handler.create(div3,MyMediator)
+        },Error);
 
 
     });
+
     it('handler.getAllElements', function () {
-
-
-    });
-    it('MediatorHandler.disposeMediator', function () {
-
-
-    });
-    it('handler._destroy', function () {
-
-
-    });
-    it('handler.destroy', function () {
-
+        let container1 = document.createElement("div");
+        let container2 = document.createElement("my-component");
+        let div = document.createElement("my-component-b");
+        let div2 = document.createElement("my-component");
+        container1.appendChild(div);
+        div.appendChild(div2);
+        let childrenNoRoot=handler.getAllElements(container1);
+        assert.sameMembers(childrenNoRoot,[div,div2]);
+        container2.appendChild(div);
+        let childrenRoot=handler.getAllElements(container2);
+        assert.sameMembers(childrenRoot,[container2,div,div2]);
 
     });
-    it('handler.dispose', function () {
 
-
-    });
 });

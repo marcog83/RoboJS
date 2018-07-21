@@ -136,7 +136,7 @@
         return CustomLoader;
     }(Loader);
 
-    var _root = (typeof self === "undefined" ? "undefined" : _typeof(self)) === "object" && self.self === self && self || (typeof global === "undefined" ? "undefined" : _typeof(global)) === "object" && global.global === global && global || self;
+    var _root = (typeof self === "undefined" ? "undefined" : _typeof(self)) === "object" && self.self === self && self || (typeof global === "undefined" ? "undefined" : _typeof(global)) === "object" && global.global === global && global || window || self;
 
     var EventDispatcher = function () {
         function EventDispatcher() {
@@ -613,8 +613,7 @@
                 for (var i = 0; i < l; i++) {
                     var disposable = this.MEDIATORS_CACHE[i];
                     if (disposable && (!disposable.node || disposable.node === node)) {
-                        disposable.dispose();
-                        disposable.node = null;
+                        MediatorHandler.disposeMediator(disposable);
                         this.MEDIATORS_CACHE[i] = null;
                     }
                 }
@@ -788,7 +787,11 @@
                 var _children = Array.from(node.querySelectorAll("*")).filter(function (el) {
                     return el.tagName.match(/-/gim);
                 });
-                return [node].concat(_children);
+                var root = [];
+                if (node.tagName.match(/-/gim)) {
+                    root = [node];
+                }
+                return root.concat(_children);
             }
         }]);
 
