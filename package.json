@@ -30,7 +30,7 @@
     "chai": "^4.1.2",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
-    "eslint": "^5.0.0",
+    "eslint": "^5.2.0",
     "hoek": "^5.0.3",
     "jsdom": "^11.11.0",
     "jsdom-global": "^3.0.2",
@@ -40,7 +40,7 @@
     "rollup": "^0.63.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "shelljs-release": "^0.3.0",
-    "uglify-js": "^3.4.3"
+    "uglify-js": "^3.4.5"
   },
   "nyc": {
     "require": [
