@@ -14,6 +14,7 @@ Not further framework frontend , but a tool that lets you manage the association
 [![Inline docs](http://inch-ci.org/github/marcog83/RoboJS.svg?branch=master)](http://inch-ci.org/github/marcog83/RoboJS)
 [![NSP Status](https://nodesecurity.io/orgs/marcog83/projects/c8621ee6-fb99-4e5f-ae62-265279409532/badge)](https://nodesecurity.io/orgs/marcog83/projects/c8621ee6-fb99-4e5f-ae62-265279409532)
 [![devDependencies Status](https://david-dm.org/marcog83/RoboJS/dev-status.svg)](https://david-dm.org/marcog83/RoboJS?type=dev)
+[![Known Vulnerabilities](https://snyk.io/test/github/marcog83/RoboJS/badge.svg?targetFile=package.json)](https://snyk.io/test/github/marcog83/RoboJS?targetFile=package.json)
 
 # The idea behind the code
 
