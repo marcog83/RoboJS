@@ -32,7 +32,7 @@
     "cross-env": "^5.2.0",
     "eslint": "^5.2.0",
     "hoek": "^5.0.3",
-    "jsdom": "^11.11.0",
+    "jsdom": "^12.0.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
     "mochawesome": "^3.0.2",
