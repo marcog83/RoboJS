@@ -37,7 +37,7 @@
     "mocha": "^5.2.0",
     "mochawesome": "^3.0.2",
     "nyc": "^12.0.1",
-    "rollup": "^1.0.0",
+    "rollup": "^1.1.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "shelljs-release": "^0.3.0",
     "uglify-js": "^3.4.5"
