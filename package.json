@@ -36,7 +36,7 @@
     "jsdom-global": "^3.0.2",
     "mocha": "^5.2.0",
     "mochawesome": "^3.0.2",
-    "nyc": "^12.0.1",
+    "nyc": "^13.2.0",
     "rollup": "^1.0.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "shelljs-release": "^0.3.0",
