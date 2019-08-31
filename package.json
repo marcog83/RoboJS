@@ -29,7 +29,7 @@
     "babel-preset-import-export": "^1.0.2",
     "chai": "^4.1.2",
     "coveralls": "^3.0.2",
-    "cross-env": "^5.2.0",
+    "cross-env": "^5.2.1",
     "eslint": "^5.2.0",
     "hoek": "^6.0.0",
     "jsdom": "^14.0.0",
