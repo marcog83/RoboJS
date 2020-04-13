@@ -35,7 +35,7 @@
     "jsdom": "^14.0.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^6.0.0",
-    "mochawesome": "^3.0.2",
+    "mochawesome": "^6.1.0",
 
     "nyc": "^13.2.0",
     "rollup": "^1.0.0",
